@@ -1,4 +1,4 @@
-# @bigtest/interactor
+# @bigtest/interactor [![CircleCI](https://circleci.com/gh/bigtestjs/interactor/tree/master.svg?style=svg)](https://circleci.com/gh/bigtestjs/interactor/tree/master)
 
 Synchronously interact with DOM elements using a
 [convergence](https://github.com/thefrontside/bigtest/tree/master/packages/convergence)
