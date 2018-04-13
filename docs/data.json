@@ -1,0 +1,336 @@
+[
+  {
+    "comment": "/**\n * ``` javascript\n * import { interactor } from '@bigtest/interactor';\n * ```\n *\n * Creates a custom interactor class from methods and properties of\n * another class. Instance initializers that define property\n * descriptors will have their descriptors added to the custom class's\n * prototype.\n *\n * ``` javascript\n * import {\n *   interactor,\n *   isPresent,\n *   clickable\n * } from '@bigtest/interactor';\n *\n * @interactor class CustomInteractor {\n *   // optional default scope for this interactor\n *   static defaultScope = '#some-element'\n *\n *   // `isPresent` returns a getter descriptor\n *   hasError = isPresent('div.error')\n *\n *   // `*able` helpers return method descriptors\n *   submit = clickable('button[type=\"submit\"]')\n *\n *   // normal getters and methods work as well\n *   fillForm(name, email) {\n *     return this\n *       .fill('input#name', name)\n *       .fill('input#email', email)\n *       .submit()\n *   }\n * }\n * ```\n *\n * @function interactor\n * @param {Class} Class - The class to decorate\n * @returns {Class} Custom interactor class\n */",
+    "meta": {
+      "filename": "decorator.js",
+      "lineno": 4,
+      "columnno": 0,
+      "path": "/src",
+      "code": {}
+    },
+    "description": "``` javascript\nimport { interactor } from '@bigtest/interactor';\n```\n\nCreates a custom interactor class from methods and properties of\nanother class. Instance initializers that define property\ndescriptors will have their descriptors added to the custom class's\nprototype.\n\n``` javascript\nimport {\n  interactor,\n  isPresent,\n  clickable\n} from '@bigtest/interactor';",
+    "tags": [
+      {
+        "originalTitle": "interactor",
+        "title": "interactor",
+        "text": "class CustomInteractor {\n  // optional default scope for this interactor\n  static defaultScope = '#some-element'\n\n  // `isPresent` returns a getter descriptor\n  hasError = isPresent('div.error')\n\n  // `*able` helpers return method descriptors\n  submit = clickable('button[type=\"submit\"]')\n\n  // normal getters and methods work as well\n  fillForm(name, email) {\n    return this\n      .fill('input#name', name)\n      .fill('input#email', email)\n      .submit()\n  }\n}\n```",
+        "value": "class CustomInteractor {\n  // optional default scope for this interactor\n  static defaultScope = '#some-element'\n\n  // `isPresent` returns a getter descriptor\n  hasError = isPresent('div.error')\n\n  // `*able` helpers return method descriptors\n  submit = clickable('button[type=\"submit\"]')\n\n  // normal getters and methods work as well\n  fillForm(name, email) {\n    return this\n      .fill('input#name', name)\n      .fill('input#email', email)\n      .submit()\n  }\n}\n```"
+      }
+    ],
+    "kind": "function",
+    "name": "interactor",
+    "params": [
+      {
+        "type": {
+          "names": [
+            "Class"
+          ]
+        },
+        "description": "The class to decorate",
+        "name": "Class"
+      }
+    ],
+    "returns": [
+      {
+        "type": {
+          "names": [
+            "Class"
+          ]
+        },
+        "description": "Custom interactor class"
+      }
+    ],
+    "longname": "interactor",
+    "scope": "global"
+  },
+  {
+    "comment": "/**\n * ``` javascript\n * import { Interactor } from '@bigtest/interactor'\n * ```\n *\n * In biology, an _interactor_ is defined as part of an organism that\n * natural selection acts upon. A `@bigtest/interaction` interactor\n * defines part of an _app_ that _tests_ act upon.\n *\n * ``` javascript\n * let input = new Interactor('input')\n *\n * await input\n *   .focus()\n *   .fill('some value')\n *   .blur()\n *\n * expect(input.value).to.equal('some value')\n * ```\n *\n * Interactors are [Convergences](/docs/convergence). They directly\n * extend the `Convergence` class and as such are immutable, reusable,\n * and composable.\n *\n * ``` javascript\n * let input = new Interactor('input')\n * let submit = new Interactor('button[type=\"submit\"]')\n *\n * let fillAndSubmit = (value) => {\n *   return input.fill(value)\n *     .append(submit.click())\n * }\n *\n * await fillAndSubmit('some value')\n * ```\n *\n * Interactors don't have to be narrowly scoped either. The various\n * interaction methods support passing a selector as the first\n * argument.\n *\n * ``` javascript\n * new Interactor('#some-form')\n *   .fill('input[type=\"email\"]', 'email@domain.tld')\n *   .click('buttom[type=\"submit\"]')\n * ```\n *\n * You can create custom interactors by extending the class...\n *\n * ``` javascript\n * class FormInteractor extends Interactor {\n *   fillEmail(email) {\n *     // return an instance of this interactor to allow chaining\n *     return this.fill('input[type=\"email\"]', email)\n *   }\n *\n *   submit() {\n *     return this.click('buttom[type=\"submit\"]')\n *   }\n *\n *   fillAndSubmit(email) {\n *     return this\n *       .fillEmail(email)\n *       .submit()\n *   }\n * }\n * ```\n *\n * ... or use the [`interactor`](#interactor) class decorator in\n * conjuction with the various interaction helpers.\n *\n * ``` javascript\n * import { interactor, fillable, clickable } from '@bigtest/interaction'\n *\n * @interactor class FormInteractor {\n *   fillEmail = fillable('input[type=\"email\"]')\n *   submit = clickable('button[type=\"submit\"]')\n *\n *   fillAndSubmit(email) {\n *     return this\n *       .fillEmail(email)\n *       .submit()\n *   }\n * }\n * ```\n */",
+    "meta": {
+      "range": [
+        2319,
+        5894
+      ],
+      "filename": "interactor.js",
+      "lineno": 91,
+      "columnno": 15,
+      "path": "/src",
+      "code": {
+        "id": "astnode100000191",
+        "name": "module.exports",
+        "type": "ClassDeclaration",
+        "paramnames": [
+          "options",
+          "previous"
+        ]
+      }
+    },
+    "classdesc": "``` javascript\nimport { Interactor } from '@bigtest/interactor'\n```\n\nIn biology, an _interactor_ is defined as part of an organism that\nnatural selection acts upon. A `@bigtest/interaction` interactor\ndefines part of an _app_ that _tests_ act upon.\n\n``` javascript\nlet input = new Interactor('input')\n\nawait input\n  .focus()\n  .fill('some value')\n  .blur()\n\nexpect(input.value).to.equal('some value')\n```\n\nInteractors are [Convergences](/docs/convergence). They directly\nextend the `Convergence` class and as such are immutable, reusable,\nand composable.\n\n``` javascript\nlet input = new Interactor('input')\nlet submit = new Interactor('button[type=\"submit\"]')\n\nlet fillAndSubmit = (value) => {\n  return input.fill(value)\n    .append(submit.click())\n}\n\nawait fillAndSubmit('some value')\n```\n\nInteractors don't have to be narrowly scoped either. The various\ninteraction methods support passing a selector as the first\nargument.\n\n``` javascript\nnew Interactor('#some-form')\n  .fill('input[type=\"email\"]', 'email@domain.tld')\n  .click('buttom[type=\"submit\"]')\n```\n\nYou can create custom interactors by extending the class...\n\n``` javascript\nclass FormInteractor extends Interactor {\n  fillEmail(email) {\n    // return an instance of this interactor to allow chaining\n    return this.fill('input[type=\"email\"]', email)\n  }\n\n  submit() {\n    return this.click('buttom[type=\"submit\"]')\n  }\n\n  fillAndSubmit(email) {\n    return this\n      .fillEmail(email)\n      .submit()\n  }\n}\n```\n\n... or use the [`interactor`](#interactor) class decorator in\nconjuction with the various interaction helpers.\n\n``` javascript\nimport { interactor, fillable, clickable } from '@bigtest/interaction'",
+    "tags": [
+      {
+        "originalTitle": "interactor",
+        "title": "interactor",
+        "text": "class FormInteractor {\n  fillEmail = fillable('input[type=\"email\"]')\n  submit = clickable('button[type=\"submit\"]')\n\n  fillAndSubmit(email) {\n    return this\n      .fillEmail(email)\n      .submit()\n  }\n}\n```",
+        "value": "class FormInteractor {\n  fillEmail = fillable('input[type=\"email\"]')\n  submit = clickable('button[type=\"submit\"]')\n\n  fillAndSubmit(email) {\n    return this\n      .fillEmail(email)\n      .submit()\n  }\n}\n```"
+      }
+    ],
+    "name": "exports",
+    "longname": "module.exports",
+    "kind": "class",
+    "memberof": "module",
+    "scope": "static",
+    "description": "The constructor arguments mimic convergence constructor arguments\nin that new instances receive new `options` in addition to the\n`previous` instance. Publicly, however, an Interactor's only\nconstructing argument is currently `scope`. But that may change\nin the future to support providing an initial timeout or adding\nadditional interactor-specific options.",
+    "params": [
+      {
+        "type": {
+          "names": [
+            "String",
+            "Element",
+            "function"
+          ]
+        },
+        "optional": true,
+        "description": "The selector or\nelement this interactor is scoped to. When provided a function,\nit is lazily evaluated whenever the scope getter is invoked",
+        "name": "scope"
+      }
+    ]
+  },
+  {
+    "comment": "/**\n   * A `querySelector`-like method that is scoped to the current\n   * interactor. Unlike `querySelector`, this method will throw an\n   * error when the element cannot be found.\n   *\n   * ``` javascript\n   * let page = new Interactor('#page-scope')\n   *\n   * // returns an element matching `#page-scope .some-element`, and\n   * // throws an error if it cannot be found\n   * page.$('.some-element')\n   * ```\n   *\n   * @param {String} selector - Selector string\n   * @throws {Error} When the element or scope cannot be found\n   * @returns {Element} Element found via `querySelector`\n   */",
+    "meta": {
+      "range": [
+        4484,
+        4537
+      ],
+      "filename": "interactor.js",
+      "lineno": 157,
+      "columnno": 2,
+      "path": "/src",
+      "code": {
+        "id": "astnode100000305",
+        "name": "$",
+        "type": "MethodDefinition",
+        "paramnames": [
+          "selector"
+        ]
+      },
+      "vars": {
+        "": null
+      }
+    },
+    "description": "A `querySelector`-like method that is scoped to the current\ninteractor. Unlike `querySelector`, this method will throw an\nerror when the element cannot be found.\n\n``` javascript\nlet page = new Interactor('#page-scope')\n\n// returns an element matching `#page-scope .some-element`, and\n// throws an error if it cannot be found\npage.$('.some-element')\n```",
+    "params": [
+      {
+        "type": {
+          "names": [
+            "String"
+          ]
+        },
+        "description": "Selector string",
+        "name": "selector"
+      }
+    ],
+    "exceptions": [
+      {
+        "type": {
+          "names": [
+            "Error"
+          ]
+        },
+        "description": "When the element or scope cannot be found"
+      }
+    ],
+    "returns": [
+      {
+        "type": {
+          "names": [
+            "Element"
+          ]
+        },
+        "description": "Element found via `querySelector`"
+      }
+    ],
+    "name": "$",
+    "longname": "$",
+    "kind": "function",
+    "scope": "global"
+  },
+  {
+    "comment": "/**\n   * A `querySelectorAll`-like method that is scoped to the current\n   * interactor and returns an array instead of a nodelist. If\n   * `selector` cannot be found, an empty array is returned. If the\n   * current scope cannot be found, an error is thrown.\n   *\n   * ``` javascript\n   * let list = new Interactor('ul.some-list')\n   *\n   * // returns an array of elements matching `ul.some-list li`; only\n   * // throws an error when `ul.some-list` cannot be found\n   * page.$$('li')\n   * ```\n   *\n   * @param {String} selector - Selector string\n   * @throws {Error} When the interactor scope cannot be found\n   * @returns {Array} Array of elements found via `querySelectorAll`\n   */",
+    "meta": {
+      "range": [
+        5228,
+        5283
+      ],
+      "filename": "interactor.js",
+      "lineno": 179,
+      "columnno": 2,
+      "path": "/src",
+      "code": {
+        "id": "astnode100000317",
+        "name": "$$",
+        "type": "MethodDefinition",
+        "paramnames": [
+          "selector"
+        ]
+      },
+      "vars": {
+        "": null
+      }
+    },
+    "description": "A `querySelectorAll`-like method that is scoped to the current\ninteractor and returns an array instead of a nodelist. If\n`selector` cannot be found, an empty array is returned. If the\ncurrent scope cannot be found, an error is thrown.\n\n``` javascript\nlet list = new Interactor('ul.some-list')\n\n// returns an array of elements matching `ul.some-list li`; only\n// throws an error when `ul.some-list` cannot be found\npage.$$('li')\n```",
+    "params": [
+      {
+        "type": {
+          "names": [
+            "String"
+          ]
+        },
+        "description": "Selector string",
+        "name": "selector"
+      }
+    ],
+    "exceptions": [
+      {
+        "type": {
+          "names": [
+            "Error"
+          ]
+        },
+        "description": "When the interactor scope cannot be found"
+      }
+    ],
+    "returns": [
+      {
+        "type": {
+          "names": [
+            "Array"
+          ]
+        },
+        "description": "Array of elements found via `querySelectorAll`"
+      }
+    ],
+    "name": "$$",
+    "longname": "$$",
+    "kind": "function",
+    "scope": "global"
+  },
+  {
+    "comment": "/**\n   * Pauses an interactor by halting the convergence while it is\n   * running with an unresolving promise.\n   *\n   * This is a hack which causes the event loop to hang and in some\n   * situations become unresponsive. Consider moving any teardown code\n   * to execute _before_ setup. This way, when a test is finished, the\n   * DOM and state is preserved for interacting with and inspecting.\n   *\n   * @returns {Interactor} An instance of this interactor which will\n   * halt when it encounters this method in the convergence stack\n   */",
+    "meta": {
+      "range": [
+        5830,
+        5892
+      ],
+      "filename": "interactor.js",
+      "lineno": 195,
+      "columnno": 2,
+      "path": "/src",
+      "code": {
+        "id": "astnode100000329",
+        "name": "pause",
+        "type": "MethodDefinition",
+        "paramnames": []
+      },
+      "vars": {
+        "": null
+      }
+    },
+    "description": "Pauses an interactor by halting the convergence while it is\nrunning with an unresolving promise.\n\nThis is a hack which causes the event loop to hang and in some\nsituations become unresponsive. Consider moving any teardown code\nto execute _before_ setup. This way, when a test is finished, the\nDOM and state is preserved for interacting with and inspecting.",
+    "returns": [
+      {
+        "type": {
+          "names": [
+            "Interactor"
+          ]
+        },
+        "description": "An instance of this interactor which will\nhalt when it encounters this method in the convergence stack"
+      }
+    ],
+    "name": "pause",
+    "longname": "pause",
+    "kind": "function",
+    "scope": "global",
+    "params": []
+  },
+  {
+    "comment": "/**\n   * The default selector or element an interactor is scoped to when a\n   * scope is not provided during initialization.\n   *\n   * ``` javascript\n   * new Interactor().$root //=> document.body\n   * ```\n   *\n   * When extending the `Interactor` class, this static property may\n   * be overridden to define a new default scope.\n   *\n   * ``` javascript\n   * class CustomInteractor extends Interactor {\n   *   static defaultScope = '#some-element'\n   * }\n   *\n   * new CustomInteractor().$root //=> <div id=\"some-element\">...</div>\n   * ```\n   *\n   * @static\n   * @member {String|Element} defaultScope\n   * @alias Interactor.defaultScope\n   * @default document.body\n   */",
+    "meta": {
+      "filename": "interactor.js",
+      "lineno": 204,
+      "columnno": 2,
+      "path": "/src",
+      "code": {}
+    },
+    "description": "The default selector or element an interactor is scoped to when a\nscope is not provided during initialization.\n\n``` javascript\nnew Interactor().$root //=> document.body\n```\n\nWhen extending the `Interactor` class, this static property may\nbe overridden to define a new default scope.\n\n``` javascript\nclass CustomInteractor extends Interactor {\n  static defaultScope = '#some-element'\n}\n\nnew CustomInteractor().$root //=> <div id=\"some-element\">...</div>\n```",
+    "scope": "static",
+    "kind": "member",
+    "name": "defaultScope",
+    "type": {
+      "names": [
+        "String",
+        "Element"
+      ]
+    },
+    "alias": "Interactor.defaultScope",
+    "defaultvalue": "document.body",
+    "longname": "defaultScope"
+  },
+  {
+    "comment": "/**\n * Returns `true` if the object has common interactor properties\n *\n * ``` javascript\n * let result = maybeInteractor()\n *\n * if (isInteractor(result)) {\n *   await result.login(user)\n * } else {\n *   something(result)\n * }\n * ```\n *\n * @static\n * @alias Interactor.isInteractor\n * @param {Object} obj - A possible interactor object\n * @returns {Boolean}\n */",
+    "meta": {
+      "range": [
+        1768,
+        1956
+      ],
+      "filename": "utils.js",
+      "lineno": 75,
+      "columnno": 0,
+      "path": "/src",
+      "code": {
+        "id": "astnode100000539",
+        "name": "exports.isInteractor",
+        "type": "FunctionDeclaration",
+        "paramnames": [
+          "obj"
+        ]
+      }
+    },
+    "description": "Returns `true` if the object has common interactor properties\n\n``` javascript\nlet result = maybeInteractor()\n\nif (isInteractor(result)) {\n  await result.login(user)\n} else {\n  something(result)\n}\n```",
+    "scope": "static",
+    "alias": "Interactor.isInteractor",
+    "params": [
+      {
+        "type": {
+          "names": [
+            "Object"
+          ]
+        },
+        "description": "A possible interactor object",
+        "name": "obj"
+      }
+    ],
+    "returns": [
+      {
+        "type": {
+          "names": [
+            "Boolean"
+          ]
+        }
+      }
+    ],
+    "name": "isInteractor",
+    "longname": "Interactor.isInteractor",
+    "kind": "function",
+    "memberof": "Interactor"
+  },
+  {
+    "kind": "package",
+    "longname": "package:undefined",
+    "files": [
+      "/Users/wil/Code/BigTest/interactor/src/decorator.js",
+      "/Users/wil/Code/BigTest/interactor/src/index.js",
+      "/Users/wil/Code/BigTest/interactor/src/interactor.js",
+      "/Users/wil/Code/BigTest/interactor/src/utils.js"
+    ]
+  }
+]
