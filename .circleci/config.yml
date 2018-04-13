@@ -4,8 +4,6 @@ references:
     docker:
       - image: circleci/node:8-browsers
 
-  add_ssh_keys: &add_ssh_keys
-
   cache_key: &cache_key
     interactor-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
 
@@ -66,18 +64,17 @@ jobs:
     <<: *defaults
     steps:
       - *attach_workspace
-      - add_ssh_keys:
-          fingerprints:
-            - 2e:3e:1e:98:92:42:17:a6:ee:23:fb:d6:cb:cc:42:5e
-      - run:
-          name: Setup NPM
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
       - run:
           name: Publish to NPM
-          command: yarn bigtest-release --access=public
+          command: |
+            echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+            npx bigtest-release --access=public
       - run:
           name: Push Tags
-          command: git push --tags
+          command: |
+            mkdir -p ~/.ssh
+            ssh-keyscan github.com >> ~/.ssh/known_hosts
+            git push --tags
 
 workflows:
   version: 2
