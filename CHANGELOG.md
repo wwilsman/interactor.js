@@ -5,9 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Changed
+
+- providing a `parent` to an interactor will return a modified
+  instance that contains wrapped methods to append new instances to
+  the `parent` interactor
+
 ### Fixed
 
 - deployment issues
+- nested interactors incorrectly returned a parent instance within
+  complex interaction methods which caused errors
 
 ## [0.4.0] - 2018-04-07
 

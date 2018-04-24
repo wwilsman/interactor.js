@@ -1,6 +1,6 @@
 /* global Element */
 import Convergence from '@bigtest/convergence';
-import { $, $$, isInteractor } from './utils';
+import { $, $$, isInteractor, getMethodNames } from './utils';
 import { methods, properties } from './interactions';
 
 /**
@@ -105,11 +105,6 @@ export default class Interactor extends Convergence {
   constructor(options = {}, previous = {}) {
     super(options, previous);
 
-    // if there was a parent, append to it
-    if (previous.parent) {
-      return previous.parent.append(this);
-    }
-
     // a scope selector, element, or function was given
     if (typeof options === 'string' ||
         options instanceof Element ||
@@ -122,11 +117,7 @@ export default class Interactor extends Convergence {
       scope = this.constructor.defaultScope
     } = options;
 
-    // the topmost parent is the real parent
-    while (parent && parent.parent) {
-      parent = parent.parent;
-    }
-
+    // assign some things to this instance
     Object.defineProperties(this, {
       parent: { value: parent },
 
@@ -135,6 +126,19 @@ export default class Interactor extends Convergence {
         get: () => $(typeof scope === 'function' ? scope() : scope)
       }
     });
+
+    if (parent) {
+      // if given a parent, return a modified instance of this
+      // interactor that wraps all methods to return an appended
+      // parent when chainable methods return new instances
+      return Object.create(this, getMethodNames(this).reduce((acc, method) => {
+        return Object.assign(acc, { [method]: { value: (...args) => {
+          let result = this[method].apply(this, args);
+          let isChain = result instanceof this.constructor;
+          return isChain ? parent.append(result) : result;
+        } } });
+      }, {}));
+    }
   }
 
   /**

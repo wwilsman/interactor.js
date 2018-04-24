@@ -95,3 +95,27 @@ export function isPropertyDescriptor(descr) {
     Object.hasOwnProperty.call(descr, 'enumerable') &&
     Object.hasOwnProperty.call(descr, 'configurable');
 }
+
+/**
+ * Returns an array of all method names found on an object including
+ * any inherited methods (not including Object.prototype).
+ *
+ * @private
+ * @param {Object} instance - Instance to find methods for
+ * @returns {String[]} Array of method names
+ */
+export function getMethodNames(instance) {
+  let proto = Object.getPrototypeOf(instance);
+  let descr = {};
+
+  while (proto && proto !== Object.prototype) {
+    // uses descriptors to avoid invoking getters when filtering
+    descr = Object.assign({}, Object.getOwnPropertyDescriptors(proto), descr);
+    proto = Object.getPrototypeOf(proto);
+  }
+
+  return Object.keys(descr).filter(name => {
+    return name !== 'constructor' &&
+      typeof descr[name].value === 'function';
+  });
+}
