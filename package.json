@@ -6,17 +6,19 @@
   "repository": "https://github.com/bigtestjs/interactor",
   "main": "dist/index.js",
   "module": "src/index.js",
+  "files": [
+    "dist",
+    "docs",
+    "src"
+  ],
   "scripts": {
     "build": "rollup --config",
-    "start": "karma start",
-    "test": "karma start --single-run",
-    "postpublish": "bigtest-tag-version",
     "docs": "bigtest-docs",
-    "lint": "eslint ./"
+    "lint": "eslint --ignore-path .gitignore ./",
+    "postpublish": "bigtest-tag-version",
+    "start": "karma start",
+    "test": "karma start --single-run"
   },
-  "eslintIgnore": [
-    "/dist/"
-  ],
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.0",
     "@babel/polyfill": "^7.0.0-beta.0",
