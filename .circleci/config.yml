@@ -1,6 +1,6 @@
 references:
   defaults: &defaults
-    working_directory: ~/bigtest
+    working_directory: ~/interactor
     docker:
       - image: circleci/node:8-browsers
 
@@ -9,7 +9,7 @@ references:
 
   attach_workspace: &attach_workspace
     attach_workspace:
-      at: ~/bigtest
+      at: ~/
 
 version: 2.0
 jobs:
@@ -23,22 +23,23 @@ jobs:
       - run:
           name: Install dependencies
           command: yarn
-      - persist_to_workspace:
-          root: ./
-          paths:
-            - ./
       - save_cache:
           name: Save cache
           key: *cache_key
           paths:
             - node_modules
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - interactor
+            - .ssh
 
   lint:
     <<: *defaults
     steps:
       - *attach_workspace
       - run:
-          name: Lint packages
+          name: Lint package
           command: yarn lint
 
   build:
@@ -49,8 +50,13 @@ jobs:
           name: Build documentation
           command: yarn docs
       - run:
-          name: Build packages
+          name: Build package
           command: yarn build
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - interactor/dist
+            - interactor/docs
 
   test:
     <<: *defaults
@@ -71,10 +77,7 @@ jobs:
             npx bigtest-release --access=public
       - run:
           name: Push Tags
-          command: |
-            mkdir -p ~/.ssh
-            ssh-keyscan github.com >> ~/.ssh/known_hosts
-            git push --tags
+          command: git push --tags
 
 workflows:
   version: 2

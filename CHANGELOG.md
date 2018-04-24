@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Fixed
+
+- deployment issues
+
 ## [0.4.0] - 2018-04-07
 
 ### Added
