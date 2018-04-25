@@ -81,6 +81,67 @@ describe('BigTest Interaction: Interactor', () => {
     });
   });
 
+  describe('with a parent', () => {
+    let child;
+
+    class ParentInteractor extends Interactor {}
+    class ChildInteractor extends Interactor {
+      test1() { return this.do(() => {}); }
+      test2() { return this.test1().test1(); }
+      test3() { return instance; }
+    }
+
+    beforeEach(() => {
+      child = new ChildInteractor({
+        parent: new ParentInteractor()
+      });
+    });
+
+    it('is an instance of the current interactor', () => {
+      expect(child).to.be.an.instanceof(ChildInteractor);
+    });
+
+    it('contains a reference to the parent instance', () => {
+      expect(child.parent).to.be.an.instanceof(ParentInteractor);
+    });
+
+    it('returns a new parent instance from methods', () => {
+      expect(child.test1()).to.be.an.instanceof(ParentInteractor);
+    });
+
+    it('returns a new parent instance from complex methods', () => {
+      expect(child.test2()).to.be.an.instanceof(ParentInteractor);
+    });
+
+    it('does not return a new parent when a new child is not returned', () => {
+      expect(child.test3()).to.not.be.an.instanceof(ChildInteractor);
+      expect(child.test3()).to.not.be.an.instanceof(ParentInteractor);
+    });
+
+    describe('and deeply nested', () => {
+      let deep;
+
+      class DeepInteractor extends Interactor {
+        test() { return this.do(() => {}); }
+      }
+
+      beforeEach(() => {
+        deep = new DeepInteractor({
+          parent: child
+        });
+      });
+
+      it('contains a reference to the immediate parent', () => {
+        expect(deep.parent).to.be.an.instanceof(ChildInteractor);
+        expect(deep.parent.parent).to.be.an.instanceof(ParentInteractor);
+      });
+
+      it('returns a new instance of the topmost parent from methods', () => {
+        expect(deep.test()).to.be.an.instanceof(ParentInteractor);
+      });
+    });
+  });
+
   describe('DOM helpers', () => {
     useFixture('find-fixture');
 

@@ -16,9 +16,7 @@ describe('BigTest Interaction: decorator', () => {
           value() {}
         };
 
-        this.nested = new (interactor(function() {
-          this.deep = new Interactor();
-        }))();
+        this.nested = new Interactor();
       }
 
       get getter() {
@@ -50,16 +48,10 @@ describe('BigTest Interaction: decorator', () => {
     expect(new TestInteractor()).to.respondTo('test');
   });
 
-  it('returns a new parent instance from nested interactor methods', () => {
+  it('attaches a parent to nested interactors', () => {
     expect(new TestInteractor().nested).to.be.an.instanceOf(Interactor);
     expect(new TestInteractor().nested).to.not.be.an.instanceOf(TestInteractor);
-    expect(new TestInteractor().nested.do(() => {})).to.be.an.instanceOf(TestInteractor);
-  });
-
-  it('returns a new parent instance from deeply nested interactor methods', () => {
-    expect(new TestInteractor().nested.deep).to.be.an.instanceOf(Interactor);
-    expect(new TestInteractor().nested.deep).to.not.be.an.instanceOf(TestInteractor);
-    expect(new TestInteractor().nested.deep.do(() => {})).to.be.an.instanceOf(TestInteractor);
+    expect(new TestInteractor().nested.parent).to.be.an.instanceOf(TestInteractor);
   });
 
   it('throws an error when attempting to redefine existing properties', () => {
