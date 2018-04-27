@@ -4,8 +4,8 @@
   "version": "0.4.0",
   "license": "MIT",
   "repository": "https://github.com/bigtestjs/interactor",
-  "main": "dist/index.js",
-  "module": "src/index.js",
+  "main": "dist/umd/index.js",
+  "module": "dist/esm/index.js",
   "files": [
     "dist",
     "docs",
