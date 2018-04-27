@@ -1,7 +1,19 @@
 /* global Element */
 import Convergence from '@bigtest/convergence';
 import { $, $$, isInteractor, getMethodNames } from './utils';
-import { methods, properties } from './interactions';
+import { find } from './interactions/find';
+import { findAll } from './interactions/find-all';
+import { click } from './interactions/clickable';
+import { fill } from './interactions/fillable';
+import { focus } from './interactions/focusable';
+import { blur } from './interactions/blurrable';
+import { trigger } from './interactions/triggerable';
+import { scroll } from './interactions/scrollable';
+import { text } from './interactions/text';
+import { value } from './interactions/value';
+import { isVisible } from './interactions/is-visible';
+import { isHidden } from './interactions/is-hidden';
+import { isPresent } from './interactions/is-present';
 
 /**
  * ``` javascript
@@ -235,15 +247,34 @@ Object.defineProperties(Interactor, {
 // default interaction methods
 Object.defineProperties(
   Interactor.prototype,
-  Object.entries(methods).reduce((descriptors, [name, method]) => {
-    return Object.assign(descriptors, { [name]: { value: method } });
+  Object.entries({
+    find,
+    findAll,
+    click,
+    fill,
+    focus,
+    blur,
+    trigger,
+    scroll
+  }).reduce((descriptors, [name, method]) => {
+    return Object.assign(descriptors, {
+      [name]: { value: method }
+    });
   }, {})
 );
 
 // default interaction properties
 Object.defineProperties(
   Interactor.prototype,
-  Object.entries(properties).reduce((descriptors, [name, getter]) => {
-    return Object.assign(descriptors, { [name]: { get: getter } });
+  Object.entries({
+    text,
+    value,
+    isVisible,
+    isHidden,
+    isPresent
+  }).reduce((descriptors, [name, getter]) => {
+    return Object.assign(descriptors, {
+      [name]: { get: getter }
+    });
   }, {})
 );
