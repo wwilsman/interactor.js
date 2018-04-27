@@ -1,5 +1,4 @@
 {
-  "extends": "../.eslintrc.json",
   "rules": {
     "no-return-assign": 0,
     "no-unused-expressions": 0

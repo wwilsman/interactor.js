@@ -1,38 +1,3 @@
-import { find } from './find';
-import { findAll } from './find-all';
-import { click } from './clickable';
-import { fill } from './fillable';
-import { focus } from './focusable';
-import { blur } from './blurrable';
-import { trigger } from './triggerable';
-import { scroll } from './scrollable';
-import { text } from './text';
-import { value } from './value';
-import { isVisible } from './is-visible';
-import { isHidden } from './is-hidden';
-import { isPresent } from './is-present';
-
-// interaction methods
-export const methods = {
-  find,
-  findAll,
-  click,
-  fill,
-  focus,
-  blur,
-  trigger,
-  scroll
-};
-
-// interaction properties
-export const properties = {
-  text,
-  value,
-  isVisible,
-  isHidden,
-  isPresent
-};
-
 // interaction creators
 export { default as clickable } from './clickable';
 export { default as fillable } from './fillable';
