@@ -1,13 +1,13 @@
 # @bigtest/interactor [![CircleCI](https://circleci.com/gh/bigtestjs/interactor/tree/master.svg?style=svg)](https://circleci.com/gh/bigtestjs/interactor/tree/master)
 
 Synchronously interact with DOM elements using a
-[convergence](https://github.com/thefrontside/bigtest/tree/master/packages/convergence)
+[convergence](https://github.com/bigtestjs/convergence)
 interface.
 
 ## Convergent Interactions
 
 This libarary uses convergences from
-[`@bigtest/convergence`](https://github.com/thefrontside/bigtest/tree/master/packages/convergence)
+[`@bigtest/convergence`](https://github.com/bigtestjs/convergence)
 to ensure that elements exist in the DOM before being interacted
 with. As such, the `Interactor` class provided by this library
 supports the `Convergence` methods  as well as interaction specific
