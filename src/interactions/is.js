@@ -49,6 +49,11 @@ function elementMatches($el, selector) {
  * @returns {Object} Property descriptor
  */
 export default function(selector, match) {
+  if (!match) {
+    match = selector;
+    selector = null;
+  }
+
   return computed(function() {
     return elementMatches(this.$(selector), match);
   });
