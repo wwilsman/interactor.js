@@ -21,7 +21,7 @@ import { isPresent } from './interactions/is-present';
  * ```
  *
  * In biology, an _interactor_ is defined as part of an organism that
- * natural selection acts upon. A `@bigtest/interaction` interactor
+ * natural selection acts upon. A `@bigtest/interactor` interactor
  * defines part of an _app_ that _tests_ act upon.
  *
  * ``` javascript

@@ -14,7 +14,7 @@ supports the `Convergence` methods  as well as interaction specific
 ones.
 
 ``` javascript
-import { Interactor } from '@bigtest/interaction';
+import { Interactor } from '@bigtest/interactor';
 
 let logIn = new Interactor('#login-form')   // optional scope selector
   .fill('.email-input', 'email@domain.tld') // fills in an email
