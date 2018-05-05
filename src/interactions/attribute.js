@@ -13,7 +13,7 @@ import { computed } from './helpers';
  * ```
  *
  * ``` javascript
- * @interactor class CardInteractor {
+ * \@interactor class CardInteractor {
  *   id = attribute('id')
  *   url = attribute('.card-link', 'href')
  * }

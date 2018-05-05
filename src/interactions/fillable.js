@@ -18,8 +18,7 @@ import { action } from './helpers';
  * await new Interactor('form').fill('input#name', 'value')
  * ```
  *
- * @method fill
- * @memberOf Interactor
+ * @method Interactor#fill
  * @param {String} [selector] - Nested element query selector
  * @param {String} value - Value to set
  * @returns {Interactor} A new instance with additional convergences
@@ -84,7 +83,7 @@ export function fill(selectorOrValue, value) {
  * ```
  *
  * ``` javascript
- * @interactor class FormInteractor {
+ * \@interactor class FormInteractor {
  *   fillName = fillable('input#name')
  * }
  * ```

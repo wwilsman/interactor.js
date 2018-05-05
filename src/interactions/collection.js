@@ -15,7 +15,7 @@ import interactor from '../decorator';
  * ```
 
  * ``` javascript
- * @interactor class CheckboxGroupInteractor {
+ * \@interactor class CheckboxGroupInteractor {
  *   items = collection('input[type="checkbox"]')
  * }
  * ```
@@ -59,7 +59,7 @@ import interactor from '../decorator';
  * ```
  *
  * ``` javascript
- * @interactor class CardsListInteractor {
+ * \@interactor class CardsListInteractor {
  *   cards = collection('.card', {
  *     clickThrough: clickable('.card-link')
  *   })
@@ -69,11 +69,11 @@ import interactor from '../decorator';
  * You can also use another interactor class.
  *
  * ``` javascript
- * @interactor class CardInteractor {
+ * \@interactor class CardInteractor {
  *   clickThrough = clickable('.card-link')
  * }
  *
- * @interactor class CardsListInteractor {
+ * \@interactor class CardsListInteractor {
  *   cards = collection('.card', CardInteractor)
  * }
  * ```

@@ -23,8 +23,7 @@ import { computed } from './helpers';
  * SVG elements that do not render anything themselves, `display:
  * none` elements, and generally any elements that are not rendered.
  *
- * @member {Boolean} isHidden
- * @memberOf Interactor
+ * @member {Boolean} Interactor#isHidden
  * @throws {Error} When the interactor scope cannot be found
  */
 export function isHidden() {
@@ -45,7 +44,7 @@ export function isHidden() {
  * ```
  *
  * ``` javascript
- * @interactor class PageInteractor {
+ * \@interactor class PageInteractor {
  *   isFooHidden = isHidden('#foo')
  *   isBarHidden = isHidden('#bar')
  * }

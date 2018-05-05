@@ -12,7 +12,7 @@ import { computed } from './helpers';
  * ```
  *
  * ``` javascript
- * @interactor class FormInteractor {
+ * \@interactor class FormInteractor {
  *   hasErrors = hasClass('error')
  *   hasNameError = hasClass('input#name', 'error')
  *   hasEmailError = hasClass('input#email', 'error')

@@ -18,8 +18,7 @@ import { action } from './helpers';
  * await new Interactor('form').click('[type="submit"]')
  * ```
  *
- * @method click
- * @memberOf Interactor
+ * @method Interactor#click
  * @param {String} [selector] - Nested element query selector
  * @returns {Interactor} A new instance with additional convergences
  */
@@ -42,7 +41,7 @@ export function click(selector) {
  * ```
  *
  * ``` javascript
- * @interactor class CardInteractor {
+ * \@interactor class CardInteractor {
  *   clickThrough = clickable('.card-link')
  * }
  * ```

@@ -17,8 +17,7 @@ import { action } from './helpers';
  * await new Interactor('form').blur('input[type="email"]')
  * ```
  *
- * @method blur
- * @memberOf Interactor
+ * @method Interactor#blur
  * @param {String} [selector] - Nested element query selector
  * @returns {Interactor} A new instance with additional convergences
  */
@@ -46,7 +45,7 @@ export function blur(selector) {
  * ```
  *
  * ``` javascript
- * @interactor class FormInteractor {
+ * \@interactor class FormInteractor {
  *   blurEmail = blurrable('input[type="email"]')
  * }
  * ```

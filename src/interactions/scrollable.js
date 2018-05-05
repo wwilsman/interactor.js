@@ -11,8 +11,7 @@ import { action } from './helpers';
  * await new Interaction('#page').scroll('.nested-view', { left: 100 })
  * ```
  *
- * @method scroll
- * @memberOf Interactor
+ * @method Interactor#scroll
  * @param {String} [selector] - Nested element query selector
  * @param {Number} scrollTo.top - Number of pixels to scroll the top-offset
  * @param {Number} scrollTo.left - Number of pixels to scroll the left-offset
@@ -53,7 +52,7 @@ export function scroll(selectorOrScrollTo, scrollTo) {
  * custom interactor class.
  *
  * ``` javascript
- * @interactor class PageInteractor {
+ * \@interactor class PageInteractor {
  *   scrollSection = scrollable('.scrollview')
  * }
  * ```

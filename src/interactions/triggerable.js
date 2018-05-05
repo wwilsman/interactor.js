@@ -44,6 +44,7 @@ function getTriggerArgs(args) {
  * await new Interactor('#foo').trigger('#bar', 'customEvent', { ... })
  * ```
  *
+ * @method Interactor#trigger
  * @param {String} [selector] - Nested element query selector
  * @param {String} eventName - Event name or options object
  * @param {Object} [options] - Event init options
@@ -76,7 +77,7 @@ export function trigger(...args) {
  * within a custom interactor class.
  *
  * ``` javascript
- * @interactor class PageInteractor {
+ * \@interactor class PageInteractor {
  *   triggerEvent = triggerable('customEvent', { ... })
  *   triggerFooEvent = triggerable('#foo', 'customEvent')
  * }
@@ -89,6 +90,7 @@ export function trigger(...args) {
  * await new PageInteractor().triggerFooEvent({ ... })
  * ```
  *
+ * @function triggerable
  * @param {String} [selector] - Element query selector
  * @param {String} eventName - Event name or options object
  * @param {Object} [options] - Event init options

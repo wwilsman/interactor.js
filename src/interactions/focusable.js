@@ -17,8 +17,7 @@ import { action } from './helpers';
  * await new Interactor('form').focus('input[type="email"]')
  * ```
  *
- * @method focus
- * @memberOf Interactor
+ * @method Interactor#focus
  * @param {String} selector - Nested element query selector
  * @returns {Interactor} A new instance with additional convergences
  */
@@ -46,7 +45,7 @@ export function focus(selector) {
  * ```
  *
  * ``` javascript
- * @interactor class FormInteractor {
+ * \@interactor class FormInteractor {
  *   focusEmail = focusable('input[type="email"]')
  * }
  * ```

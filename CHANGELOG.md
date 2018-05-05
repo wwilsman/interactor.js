@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [0.4.3] - 2018-05-05
+
+### Changed
+
+- escaped decorator documentation and updated documentation tags for
+  more accurate output
+
 ## [0.4.2] - 2018-04-30
 
 ### Fixed

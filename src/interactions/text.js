@@ -33,8 +33,7 @@ function getText($el) {
  * new Interactor('p').text //=> "Hello World!"
  * ```
  *
- * @member {Boolean} text
- * @memberOf Interactor
+ * @member {Boolean} Interactor#text
  * @throws {Error} When the interactor scope cannot be found
  */
 export function text() {
@@ -52,7 +51,7 @@ export function text() {
  * ```
  *
  * ``` javascript
- * @interactor class PageInteractor {
+ * \@interactor class PageInteractor {
  *   heading = text('h1')
  * }
  * ```

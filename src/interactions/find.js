@@ -7,8 +7,7 @@ import { computed } from './helpers';
  * let $el = await new Interactor().find('.some-element')
  * ```
  *
- * @method find
- * @memberOf Interactor
+ * @method Interactor#find
  * @param {String} selector - Element query selector
  * @returns {Interactor} A new instance with additional convergences
  */
@@ -23,7 +22,7 @@ export function find(selector) {
  * interactor class.
  *
  * ``` javascript
- * @interactor class PageInteractor {
+ * \@interactor class PageInteractor {
  *   getHeading = find('h1.heading')
  * }
  * ```

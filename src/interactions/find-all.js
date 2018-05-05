@@ -9,8 +9,7 @@ import { computed } from './helpers';
  * let $listItems = await new Interactor('ul').findAll('li')
  * ```
  *
- * @method findAll
- * @memberOf Interactor
+ * @method Interactor#findAll
  * @param {String} selector - Element query selector
  * @returns {Interactor} A new instance with additional convergences
  */
@@ -25,7 +24,7 @@ export function findAll(selector) {
  * custom interactor class.
  *
  * ``` javascript
- * @interactor class ListInteractor {
+ * \@interactor class ListInteractor {
  *   getItems = findAll('li')
  * }
  * ```

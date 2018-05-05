@@ -88,7 +88,7 @@ import { isPresent } from './interactions/is-present';
  * ``` javascript
  * import { interactor, fillable, clickable } from '@bigtest/interaction'
  *
- * @interactor class FormInteractor {
+ * \@interactor class FormInteractor {
  *   fillEmail = fillable('input[type="email"]')
  *   submit = clickable('button[type="submit"]')
  *
@@ -100,7 +100,7 @@ import { isPresent } from './interactions/is-present';
  * }
  * ```
  */
-export default class Interactor extends Convergence {
+class Interactor extends Convergence {
   /**
    * The constructor arguments mimic convergence constructor arguments
    * in that new instances receive new `options` in addition to the
@@ -237,8 +237,7 @@ Object.defineProperties(Interactor, {
    * ```
    *
    * @static
-   * @member {String|Element} defaultScope
-   * @alias Interactor.defaultScope
+   * @member {String|Element} Interactor.defaultScope
    * @default document.body
    */
   defaultScope: { value: document.body }
@@ -278,3 +277,5 @@ Object.defineProperties(
     });
   }, {})
 );
+
+export default Interactor;

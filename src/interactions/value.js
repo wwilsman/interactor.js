@@ -11,8 +11,7 @@ import { computed } from './helpers';
  * new Interactor('input').value //=> "Hello World!"
  * ```
  *
- * @member {Boolean} value
- * @memberOf Interactor
+ * @member {Boolean} Interactor#value
  * @throws {Error} When the interactor scope cannot be found
  */
 export function value() {
@@ -30,7 +29,7 @@ export function value() {
  * ```
  *
  * ``` javascript
- * @interactor class FormInteractor {
+ * \@interactor class FormInteractor {
  *   name = value('input#name')
  * }
  * ```

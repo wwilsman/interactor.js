@@ -18,7 +18,7 @@ import { isInteractor, isPropertyDescriptor } from './utils';
  *   clickable
  * } from '@bigtest/interactor';
  *
- * @interactor class CustomInteractor {
+ * \@interactor class CustomInteractor {
  *   // optional default scope for this interactor
  *   static defaultScope = '#some-element'
  *

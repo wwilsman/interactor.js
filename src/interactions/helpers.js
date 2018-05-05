@@ -10,7 +10,7 @@
  * ```
  *
  * ``` javascript
- * @interactor class PageInteractor {
+ * \@interactor class PageInteractor {
  *   username = data('user', '#user-info')
  * }
  * ```
@@ -39,7 +39,7 @@ export function computed(getter) {
  * ```
  *
  * ``` javascript
- * @interactor class CheckboxGroupInteractor {
+ * \@interactor class CheckboxGroupInteractor {
  *   check = check('input[type="checkbox"]')
  * }
  * ```

@@ -15,8 +15,7 @@ import { computed } from './helpers';
  * new Interactor('#bar').isPresent //=> false
  * ```
  *
- * @member {Boolean} isPresent
- * @memberOf Interactor
+ * @member {Boolean} Interactor#isPresent
  */
 export function isPresent() {
   try {
@@ -38,7 +37,7 @@ export function isPresent() {
  * ```
  *
  * ``` javascript
- * @interactor class PageInteractor {
+ * \@interactor class PageInteractor {
  *   isFooPresent = isPresent('#foo')
  *   isBarPresent = isPresent('#bar')
  * }

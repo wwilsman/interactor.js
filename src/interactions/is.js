@@ -30,7 +30,7 @@ function elementMatches($el, selector) {
  * ```
  *
  * ``` javascript
- * @interactor class ListInteractor {
+ * \@interactor class ListInteractor {
  *   isList = is('.list')
  *   isFooFirst = is('#foo', ':first-child')
  *   isBarLast = is('#bar', ':last-child')
