@@ -59,6 +59,7 @@ export function isVisible() {
  * SVG elements that do not render anything themselves, `display:
  * none` elements, and generally any elements that are not rendered.
  *
+ * @function isVisible
  * @param {String} selector - Element query selector
  * @returns {Object} Property descriptor
  */

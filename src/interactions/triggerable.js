@@ -6,6 +6,7 @@ import { action } from './helpers';
  * argument. This function normalizes the shorter form to match the
  * argument positions of the longer form.
  *
+ * @private
  * @param {Array} args - Arguments for `#trigger()`
  * @returns {Array} Normalized arguments
  */
