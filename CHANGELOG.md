@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ### Changed
 
 - relax restrictions around reserved interactor properties
+- default properties can be freely overwritten
 
 ## [0.4.4] - 2018-05-05
 

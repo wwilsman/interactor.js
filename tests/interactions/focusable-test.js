@@ -41,4 +41,17 @@ describe('BigTest Interaction: focusable', () => {
     await expect(test.focusInput().run()).to.be.fulfilled;
     expect(focused).to.be.true;
   });
+
+  describe('overwriting the default focus method', () => {
+    beforeEach(() => {
+      test = new (interactor(function() {
+        this.focus = focusable('.test-input');
+      }))();
+    });
+
+    it('focuses the correct element', async () => {
+      await expect(test.focus().run()).to.be.fulfilled;
+      expect(focused).to.be.true;
+    });
+  });
 });

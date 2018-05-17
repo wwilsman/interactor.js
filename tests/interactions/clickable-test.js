@@ -41,4 +41,17 @@ describe('BigTest Interaction: clickable', () => {
     await expect(test.clickBtn().run()).to.be.fulfilled;
     expect(clicked).to.be.true;
   });
+
+  describe('overwriting the default click method', () => {
+    beforeEach(() => {
+      test = new (interactor(function() {
+        this.click = clickable('.test-btn');
+      }))();
+    });
+
+    it('clicks the correct element', async () => {
+      await expect(test.click().run()).to.be.fulfilled;
+      expect(clicked).to.be.true;
+    });
+  });
 });

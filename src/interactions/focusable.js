@@ -1,5 +1,6 @@
 /* global Event */
 import { action } from './helpers';
+import { find } from './find';
 
 /**
  * Converges on an element first existing in the DOM, then triggers a
@@ -22,7 +23,7 @@ import { action } from './helpers';
  * @returns {Interactor} A new instance with additional convergences
  */
 export function focus(selector) {
-  return this.find(selector)
+  return find.call(this, selector)
     .do(($node) => {
       $node.dispatchEvent(
         new Event('focus', {
@@ -60,6 +61,6 @@ export function focus(selector) {
  */
 export default function(selector) {
   return action(function() {
-    return this.focus(selector);
+    return focus.call(this, selector);
   });
 }

@@ -49,4 +49,17 @@ describe('BigTest Interaction: fillable', () => {
     await expect(test.fillInput('').run()).to.be.fulfilled;
     expect(events).to.have.members(['input', 'change']);
   });
+
+  describe('overwriting the default fill method', () => {
+    beforeEach(() => {
+      test = new (interactor(function() {
+        this.fill = fillable('.test-input');
+      }))();
+    });
+
+    it('fills the correct element', async () => {
+      await expect(test.fill('something').run()).to.be.fulfilled;
+      expect($input.value).to.equal('something');
+    });
+  });
 });

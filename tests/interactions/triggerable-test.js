@@ -66,4 +66,17 @@ describe('BigTest Interaction: triggerable', () => {
     expect(divEvent).to.have.property('custom', true);
     expect(divEvent).to.have.property('something', 'else');
   });
+
+  describe('overwriting the default trigger method', () => {
+    beforeEach(() => {
+      test = new (interactor(function() {
+        this.trigger = triggerable('.test-div', 'divEvent');
+      }))();
+    });
+
+    it('triggers the event on the correct element', async () => {
+      await expect(test.trigger({ test: 0 }).run()).to.be.fulfilled;
+      expect(divEvent).to.have.property('test', 0);
+    });
+  });
 });
