@@ -28,6 +28,18 @@ import interactor from '../decorator';
  *   .item(1).click()
  * ```
  *
+ * Nested interactors also have an additional method, `#only()`, which
+ * disables the default nested chaining behavior, but retains any
+ * previous interactions.
+ *
+ * ``` javascript
+ * await checkboxGroup
+ *   .item(0).click()
+ *   .item(1).only()
+ *     .focus()
+ *     .trigger('keydown', { which: 32 })
+ * ```
+ *
  * When calling a collection method without an index, an array of
  * interactors are returned, each corresponding to an element in the
  * DOM at the time the method was invoked.

@@ -66,7 +66,8 @@ describe('BigTest Interaction: decorator', () => {
       'timeout',
       'run',
       'then',
-      'append'
+      'append',
+      'only'
     ];
 
     for (let name of reserved) {

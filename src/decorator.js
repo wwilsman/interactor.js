@@ -48,7 +48,9 @@ function getInteractorDescriptors(instance) {
  * @throws {Error} if any reserverd properties were found
  */
 function checkForReservedProperties(obj) {
-  let blacklist = Object.getOwnPropertyNames(Convergence.prototype);
+  let blacklist = ['only'].concat(
+    Object.getOwnPropertyNames(Convergence.prototype)
+  );
 
   for (let key of Object.keys(obj)) {
     if (blacklist.includes(key)) {

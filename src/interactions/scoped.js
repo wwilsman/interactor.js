@@ -31,6 +31,18 @@ import { computed } from './helpers';
  *   .submit()
  * ```
  *
+ * Nested interactors also have an additional method, `#only()`, which
+ * disables the default nested chaining behavior, but retains any
+ * previous interactions.
+ *
+ * ``` javascript
+ * await loginForm
+ *   .username.fill('h4x0r')
+ *   .email.only()
+ *     .fill('not@an@email')
+ *     .blur()
+ * ```
+ *
  * With the second argument, you can define additional interactions
  * using the various interaction helpers.
  *

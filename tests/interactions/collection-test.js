@@ -29,9 +29,10 @@ describe('BigTest Interaction: collection', () => {
 
   it('returns an interactor scoped to the element at an index', () => {
     expect(test.simple(2))
-      .to.be.an('object')
-      .that.has.property('$root')
+      .to.have.property('$root')
       .that.has.property('id', 'c');
+    expect(test.items(2)).to.have.property('parent', test);
+    expect(test.items(2)).to.respondTo('only');
   });
 
   it('returns an array of interactors when no index is provided', () => {
@@ -69,9 +70,14 @@ describe('BigTest Interaction: collection', () => {
     expect(clickedB).to.be.true;
   });
 
-  it('returns a new parent instance from collection interactor methods', () => {
+  it('returns new parent instances from collection methods', () => {
     expect(test.items(0).click()).to.not.equal(test);
     expect(test.items(0).click()).to.be.an.instanceOf(CollectionInteractor);
+  });
+
+  it('returns own instances from collection methods after calling #only', () => {
+    expect(test.items(0).only()).to.be.an.instanceOf(ItemInteractor);
+    expect(test.items(0).only().click()).to.be.an.instanceOf(ItemInteractor);
   });
 
   it('lazily throws an error when the element does not exist', () => {

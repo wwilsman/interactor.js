@@ -1,6 +1,7 @@
 /* global Element */
 import Convergence from '@bigtest/convergence';
-import { $, $$, isInteractor, getMethodNames } from './utils';
+import { $, $$, isInteractor, getMethodNames, maybeNested } from './utils';
+import { action } from './interactions/helpers';
 import { find } from './interactions/find';
 import { findAll } from './interactions/find-all';
 import { click } from './interactions/clickable';
@@ -139,17 +140,25 @@ class Interactor extends Convergence {
       }
     });
 
+    // given a parent, return a nested instance of this interactor
+    // that will return parent instances from chainable methods
     if (parent) {
-      // if given a parent, return a modified instance of this
-      // interactor that wraps all methods to return an appended
-      // parent when chainable methods return new instances
-      return Object.create(this, getMethodNames(this).reduce((acc, method) => {
-        return Object.assign(acc, { [method]: { value: (...args) => {
-          let result = this[method].apply(this, args);
-          let isChain = result instanceof this.constructor;
-          return isChain ? parent.append(result) : result;
-        } } });
-      }, {}));
+      return Object.create(this,
+        getMethodNames(this).reduce((acc, method) => {
+          return Object.assign({
+            [method]: action(
+              maybeNested(this, method)
+            )
+          }, acc);
+        }, {
+          // nested interactors can break a parent chain
+          only: action(function() {
+            return new this.constructor(scope)
+              .append(this.parent)
+              .append(this);
+          })
+        })
+      );
     }
   }
 
