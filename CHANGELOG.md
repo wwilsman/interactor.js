@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Added
+
+- `scoped` property creator for scoped interactors
+
 ### Changed
 
 - relax restrictions around reserved interactor properties
