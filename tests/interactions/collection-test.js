@@ -11,10 +11,6 @@ const ItemInteractor = interactor(function() {
 const CollectionInteractor = interactor(function() {
   this.simple = collection('.test-item');
   this.items = collection('.test-item', ItemInteractor);
-  this.nested = collection('.test-item', {
-    content: text('.test-p'),
-    clickBtn: clickable('button')
-  });
 });
 
 describe('BigTest Interaction: collection', () => {
@@ -29,7 +25,6 @@ describe('BigTest Interaction: collection', () => {
   it('has collection methods', () => {
     expect(test).to.respondTo('simple');
     expect(test).to.respondTo('items');
-    expect(test).to.respondTo('nested');
   });
 
   it('returns an interactor scoped to the element at an index', () => {
@@ -46,8 +41,9 @@ describe('BigTest Interaction: collection', () => {
   });
 
   it('has nested interactions', () => {
-    expect(test.nested(1)).to.have.property('content');
-    expect(test.nested(1)).to.respondTo('clickBtn');
+    expect(test.items(1)).to.be.an.instanceOf(ItemInteractor);
+    expect(test.items(1)).to.have.property('content');
+    expect(test.items(1)).to.respondTo('clickBtn');
   });
 
   it('has a scoped text property', () => {

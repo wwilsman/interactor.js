@@ -54,6 +54,10 @@ describe('BigTest Interaction: decorator', () => {
     expect(new TestInteractor().nested.parent).to.be.an.instanceOf(TestInteractor);
   });
 
+  it('nested interactor methods return parent instances', () => {
+    expect(new TestInteractor().nested.do(() => {})).to.be.an.instanceOf(TestInteractor);
+  });
+
   it('throws an error when attempting to redefine reserved properties', () => {
     let reserved = [
       'when',
@@ -69,5 +73,33 @@ describe('BigTest Interaction: decorator', () => {
       expect(() => interactor(class { [name]() {} }))
         .to.throw(`"${name}" is a reserved property name`);
     }
+  });
+
+  describe('with a plain object', () => {
+    beforeEach(() => {
+      TestInteractor = interactor({
+        foo: 'bar',
+
+        test: {
+          enumerable: false,
+          configurable: false,
+          value: () => 'test'
+        },
+
+        get getter() {
+          return 'got';
+        },
+
+        nested: new Interactor()
+      });
+    });
+
+    it('returns an interactor class with the specified properties', () => {
+      expect(new TestInteractor()).to.have.property('foo', 'bar');
+      expect(new TestInteractor()).to.have.property('getter', 'got');
+      expect(new TestInteractor()).to.respondTo('test');
+      expect(new TestInteractor().nested).to.be.an.instanceOf(Interactor);
+      expect(new TestInteractor().nested.parent).to.be.an.instanceOf(TestInteractor);
+    });
   });
 });

@@ -3,6 +3,43 @@ import Interactor from './interactor';
 import { isInteractor, isPropertyDescriptor } from './utils';
 
 /**
+ * Returns property descriptors of an instance and any other defined
+ * properties that look like property descriptors. If an interactor is
+ * encountered, it is configured to return the parent instance. The
+ * returned descriptors are meant to be used with custom interactors.
+ *
+ * @private
+ * @param {Object} instance - Instance used for collecting descriptors
+ * @returns {Object} - Property descriptors
+ */
+function getInteractorDescriptors(instance) {
+  let descriptors = Object.getOwnPropertyDescriptors(instance);
+
+  // check instance properties for property descriptors
+  for (let [key, value] of Object.entries(instance)) {
+    if (isPropertyDescriptor(value)) {
+      descriptors[key] = value;
+
+    // nested interactions need to return their parent
+    } else if (isInteractor(value)) {
+      descriptors[key] = {
+        get() {
+          return new value.constructor({
+            parent: this
+          }, value);
+        }
+      };
+
+    // preserve other values
+    } else {
+      descriptors[key] = { value };
+    }
+  }
+
+  return descriptors;
+}
+
+/**
  * Throws an error if an object contains reserved properties. Reserved
  * properties are convergence prototype properties.
  *
@@ -58,46 +95,40 @@ function checkForReservedProperties(obj) {
  * ```
  *
  * @function interactor
- * @param {Class} Class - The class to decorate
+ * @param {Class} Class - Used for creating custom interactions
  * @returns {Class} Custom interactor class
  */
-export default function interactor(Class) {
+export default function interactor(from) {
   let CustomInteractor = class extends Interactor {};
-  let proto = Object.getOwnPropertyDescriptors(Class.prototype);
+  let proto = Object.create(null);
 
-  // check instance properties for property descriptors
-  for (let [key, value] of Object.entries(new Class())) {
-    if (isPropertyDescriptor(value)) {
-      proto[key] = value;
+  // the class is already an interactor
+  if (from.prototype instanceof Interactor) {
+    return from;
+  }
 
-    // nested interactions need to return their parent
-    } else if (isInteractor(value)) {
-      proto[key] = {
-        get() {
-          return new value.constructor({
-            parent: this
-          }, value);
-        }
-      };
+  // a descriptor object was provided
+  if (Object.getPrototypeOf(from) === Object.prototype) {
+    proto = Object.getOwnPropertyDescriptors(from);
+    Object.assign(proto, getInteractorDescriptors(from));
 
-    // preserve other values
-    } else {
-      proto[key] = { value };
-    }
+  // a class was provided
+  } else if (typeof from === 'function') {
+    proto = Object.getOwnPropertyDescriptors(from.prototype);
+    Object.assign(proto, getInteractorDescriptors(new from())); // eslint-disable-line new-cap
+
+    // preserve static class properties
+    Object.defineProperties(CustomInteractor, {
+      name: { value: from.name },
+      defaultScope: { value: from.defaultScope || Interactor.defaultScope }
+    });
   }
 
   // remove the constructor and check for reserved properties
   delete proto.constructor;
   checkForReservedProperties(proto);
 
-  // extend the custom interactor's prototype
+  // extend the custom interactor's prototype and return it
   Object.defineProperties(CustomInteractor.prototype, proto);
-  Object.defineProperty(CustomInteractor, 'name', { value: Class.name });
-
-  // if a default scope was defined, use it
-  if (Class.defaultScope) {
-    Object.defineProperty(CustomInteractor, 'defaultScope', { value: Class.defaultScope });
-  }
-
   return CustomInteractor;
 }

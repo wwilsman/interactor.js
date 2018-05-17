@@ -1,4 +1,3 @@
-import Interactor from '../interactor';
 import interactor from '../decorator';
 
 /**
@@ -89,18 +88,7 @@ import interactor from '../decorator';
  * @returns {Object} Property descriptor
  */
 export default function(selector, descriptors = {}) {
-  let ItemInteractor;
-
-  // if an interactor was provided, use it
-  if (descriptors.prototype instanceof Interactor) {
-    ItemInteractor = descriptors;
-
-    // otherwise, create a new one
-  } else {
-    ItemInteractor = interactor(function() {
-      Object.assign(this, descriptors);
-    });
-  }
+  let ItemInteractor = interactor(descriptors);
 
   return function(index) {
     // when no index is provided, map all elements to interactors
