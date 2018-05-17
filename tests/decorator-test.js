@@ -54,8 +54,20 @@ describe('BigTest Interaction: decorator', () => {
     expect(new TestInteractor().nested.parent).to.be.an.instanceOf(TestInteractor);
   });
 
-  it('throws an error when attempting to redefine existing properties', () => {
-    expect(() => interactor(class { get find() {} }))
-      .to.throw('cannot redefine existing property "find"');
+  it('throws an error when attempting to redefine reserved properties', () => {
+    let reserved = [
+      'when',
+      'always',
+      'do',
+      'timeout',
+      'run',
+      'then',
+      'append'
+    ];
+
+    for (let name of reserved) {
+      expect(() => interactor(class { [name]() {} }))
+        .to.throw(`"${name}" is a reserved property name`);
+    }
   });
 });

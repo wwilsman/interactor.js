@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Changed
+
+- relax restrictions around reserved interactor properties
+
 ## [0.4.4] - 2018-05-05
 
 ### Changed
