@@ -1,5 +1,6 @@
 /* global Event */
 import { action } from './helpers';
+import { find } from './find';
 
 /**
  * Converges on an element first existing in the DOM, then sets its
@@ -34,7 +35,7 @@ export function fill(selectorOrValue, value) {
     selector = selectorOrValue;
   }
 
-  return this.find(selector)
+  return find.call(this, selector)
     .do(($node) => {
       // React has a custom property descriptor for the `value`
       // property of input elements. To work around this, we cache any
@@ -98,6 +99,6 @@ export function fill(selectorOrValue, value) {
  */
 export default function(selector) {
   return action(function(value) {
-    return this.fill(selector, value);
+    return fill.call(this, selector, value);
   });
 }

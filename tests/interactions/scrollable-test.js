@@ -43,4 +43,17 @@ describe('BigTest Interaction: scrollable', () => {
     await expect(test.scrollDiv({ top: 50, left: 100 }).run()).to.be.fulfilled;
     expect(offset).to.deep.equal({ top: 50, left: 100 });
   });
+
+  describe('overwriting the default scroll method', () => {
+    beforeEach(() => {
+      test = new (interactor(function() {
+        this.scroll = scrollable('.test-div');
+      }))();
+    });
+
+    it('scrolls the correct element', async () => {
+      await expect(test.scroll({ left: 10 }).run()).to.be.fulfilled;
+      expect(offset).to.deep.equal({ top: 0, left: 10 });
+    });
+  });
 });

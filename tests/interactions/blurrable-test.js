@@ -41,4 +41,17 @@ describe('BigTest Interaction: blurrable', () => {
     await expect(test.blurInput().run()).to.be.fulfilled;
     expect(blurred).to.be.true;
   });
+
+  describe('overwriting the default blur method', () => {
+    beforeEach(() => {
+      test = new (interactor(function() {
+        this.blur = blurrable('.test-input');
+      }))();
+    });
+
+    it('blurs the correct element', async () => {
+      await expect(test.blur().run()).to.be.fulfilled;
+      expect(blurred).to.be.true;
+    });
+  });
 });

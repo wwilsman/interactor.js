@@ -1,5 +1,6 @@
 /* global Event */
 import { action } from './helpers';
+import { find } from './find';
 
 /**
  * Trigger has two forms, both of which have an optional last
@@ -54,7 +55,7 @@ function getTriggerArgs(args) {
 export function trigger(...args) {
   let [selector, eventName, options = {}] = getTriggerArgs(args);
 
-  return this.find(selector)
+  return find.call(this, selector)
     .do(($node) => {
       // default options for any event
       let bubbles = 'bubbles' in options ? options.bubbles : true;
@@ -102,6 +103,6 @@ export default function(...args) {
 
   return action(function(opts) {
     opts = Object.assign({}, options, opts);
-    return this.trigger(selector, eventName, opts);
+    return trigger.call(this, selector, eventName, opts);
   });
 }

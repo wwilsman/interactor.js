@@ -1,4 +1,5 @@
 import { action } from './helpers';
+import { find } from './find';
 
 /**
  * Converges on an element first existing in the DOM, then triggers a
@@ -23,7 +24,7 @@ import { action } from './helpers';
  * @returns {Interactor} A new instance with additional convergences
  */
 export function click(selector) {
-  return this.find(selector)
+  return find.call(this, selector)
     .do(($node) => $node.click());
 }
 
@@ -56,6 +57,6 @@ export function click(selector) {
  */
 export default function(selector) {
   return action(function() {
-    return this.click(selector);
+    return click.call(this, selector);
   });
 }

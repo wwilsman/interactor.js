@@ -1,5 +1,24 @@
+import Convergence from '@bigtest/convergence';
 import Interactor from './interactor';
 import { isInteractor, isPropertyDescriptor } from './utils';
+
+/**
+ * Throws an error if an object contains reserved properties. Reserved
+ * properties are convergence prototype properties.
+ *
+ * @private
+ * @param {Object} obj - Object to check for reserved properties
+ * @throws {Error} if any reserverd properties were found
+ */
+function checkForReservedProperties(obj) {
+  let blacklist = Object.getOwnPropertyNames(Convergence.prototype);
+
+  for (let key of Object.keys(obj)) {
+    if (blacklist.includes(key)) {
+      throw new Error(`"${key}" is a reserved property name`);
+    }
+  }
+}
 
 /**
  * ``` javascript
@@ -67,16 +86,9 @@ export default function interactor(Class) {
     }
   }
 
-  // remove the given class's constructor
+  // remove the constructor and check for reserved properties
   delete proto.constructor;
-
-  // ensure that interactor methods and properties are not overwritten
-  // to avoid potential issues such as infinite recursion
-  for (let key of Object.keys(proto)) {
-    if (key in Interactor.prototype) {
-      throw new Error(`cannot redefine existing property "${key}"`);
-    }
-  }
+  checkForReservedProperties(proto);
 
   // extend the custom interactor's prototype
   Object.defineProperties(CustomInteractor.prototype, proto);

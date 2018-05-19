@@ -1,5 +1,6 @@
 /* global Event */
 import { action } from './helpers';
+import { find } from './find';
 
 /**
  * Converges on an element first existing in the DOM, then sets the
@@ -28,7 +29,7 @@ export function scroll(selectorOrScrollTo, scrollTo) {
     selector = selectorOrScrollTo;
   }
 
-  return this.find(selector)
+  return find.call(this, selector)
     .do(($node) => {
       if (typeof scrollTo.left === 'number') {
         $node.scrollLeft = scrollTo.left;
@@ -67,6 +68,6 @@ export function scroll(selectorOrScrollTo, scrollTo) {
  */
 export default function(selector) {
   return action(function(scrollTo) {
-    return this.scroll(selector, scrollTo);
+    return scroll.call(this, selector, scrollTo);
   });
 }
