@@ -119,3 +119,26 @@ export function getMethodNames(instance) {
       typeof descr[name].value === 'function';
   });
 }
+
+/**
+ * Returns a wrapped function that will maybe return a parent instance
+ * from chainable methods with any resulting instance appended to it.
+ *
+ * Chainable methods are methods which return new instances of their
+ * own interactor.
+ *
+ * @private
+ * @param {Interactor} instance - Interactor instance to wrap
+ * @param {String} method - Method name to wrap
+ * @returns {Function} Wrapped method
+ */
+export function maybeNested(instance, method) {
+  return (...args) => {
+    let result = instance[method].apply(instance, args);
+
+    // same instance results are chained instances
+    return result instanceof instance.constructor
+      ? instance.parent.append(result)
+      : result;
+  };
+}

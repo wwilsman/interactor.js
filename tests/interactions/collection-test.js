@@ -11,10 +11,6 @@ const ItemInteractor = interactor(function() {
 const CollectionInteractor = interactor(function() {
   this.simple = collection('.test-item');
   this.items = collection('.test-item', ItemInteractor);
-  this.nested = collection('.test-item', {
-    content: text('.test-p'),
-    clickBtn: clickable('button')
-  });
 });
 
 describe('BigTest Interaction: collection', () => {
@@ -29,14 +25,14 @@ describe('BigTest Interaction: collection', () => {
   it('has collection methods', () => {
     expect(test).to.respondTo('simple');
     expect(test).to.respondTo('items');
-    expect(test).to.respondTo('nested');
   });
 
   it('returns an interactor scoped to the element at an index', () => {
     expect(test.simple(2))
-      .to.be.an('object')
-      .that.has.property('$root')
+      .to.have.property('$root')
       .that.has.property('id', 'c');
+    expect(test.items(2)).to.have.property('parent', test);
+    expect(test.items(2)).to.respondTo('only');
   });
 
   it('returns an array of interactors when no index is provided', () => {
@@ -46,8 +42,9 @@ describe('BigTest Interaction: collection', () => {
   });
 
   it('has nested interactions', () => {
-    expect(test.nested(1)).to.have.property('content');
-    expect(test.nested(1)).to.respondTo('clickBtn');
+    expect(test.items(1)).to.be.an.instanceOf(ItemInteractor);
+    expect(test.items(1)).to.have.property('content');
+    expect(test.items(1)).to.respondTo('clickBtn');
   });
 
   it('has a scoped text property', () => {
@@ -73,9 +70,14 @@ describe('BigTest Interaction: collection', () => {
     expect(clickedB).to.be.true;
   });
 
-  it('returns a new parent instance from collection interactor methods', () => {
+  it('returns new parent instances from collection methods', () => {
     expect(test.items(0).click()).to.not.equal(test);
     expect(test.items(0).click()).to.be.an.instanceOf(CollectionInteractor);
+  });
+
+  it('returns own instances from collection methods after calling #only', () => {
+    expect(test.items(0).only()).to.be.an.instanceOf(ItemInteractor);
+    expect(test.items(0).only().click()).to.be.an.instanceOf(ItemInteractor);
   });
 
   it('lazily throws an error when the element does not exist', () => {

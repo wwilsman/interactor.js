@@ -6,6 +6,7 @@ export { default as blurrable } from './blurrable';
 export { default as triggerable } from './triggerable';
 export { default as scrollable } from './scrollable';
 export { default as collection } from './collection';
+export { default as scoped } from './scoped';
 
 // property creators
 export { default as find } from './find';
