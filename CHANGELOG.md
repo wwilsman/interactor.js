@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 - relax restrictions around reserved interactor properties
 - default properties can be freely overwritten
 - interactor decorator to support pojos
+- upgrade `@bigtest/convergence` to `0.9.1`
 
 ## [0.4.4] - 2018-05-05
 
