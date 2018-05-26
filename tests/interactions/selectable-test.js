@@ -8,14 +8,15 @@ const SelectInteractor = interactor(function() {
 });
 
 describe('BigTest Interaction: selectable', () => {
-  let test, $select, changed;
+  let test, $select, events;
 
   useFixture('select-fixture');
 
   beforeEach(() => {
-    changed = false;
+    events = [];
     $select = document.querySelector('.test-select');
-    $select.addEventListener('change', () => changed = true);
+    $select.addEventListener('input', () => events.push('input'));
+    $select.addEventListener('change', () => events.push('change'));
     test = new SelectInteractor();
   });
 
@@ -42,11 +43,11 @@ describe('BigTest Interaction: selectable', () => {
 
   it('eventually fires a change event', async () => {
     await expect(test.select('.test-select', 'Option 1').run()).to.be.fulfilled;
-    expect(changed).to.be.true;
+    expect(events).to.have.members(['input', 'change']);
 
-    changed = false;
+    events = [];
     await expect(test.selectOption('Option 2').run()).to.be.fulfilled;
-    expect(changed).to.be.true;
+    expect(events).to.have.members(['input', 'change']);
   });
 
   it('throws an error when the option cannot be found', async () => {

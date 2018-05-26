@@ -4,8 +4,8 @@ import { find } from './find';
 
 /**
  * Converges on an element first existing in the DOM, then selects a
- * matching option based on the text content, and triggers a `change`
- * events for the select element.
+ * matching option based on the text content, and triggers `change`
+ * and `input` events for the select element.
  *
  * ``` html
  * <form ...>
@@ -54,6 +54,14 @@ export function select(selectorOrOption, option) {
     .do(([$select, $option]) => {
       // select the option
       $option.selected = true;
+
+      // dispatch input event
+      $select.dispatchEvent(
+        new Event('input', {
+          bubbles: true,
+          cancelable: true
+        })
+      );
 
       // dispatch change event
       $select.dispatchEvent(
