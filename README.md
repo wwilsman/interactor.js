@@ -49,6 +49,7 @@ The interaction getters return the state of the scoped element.
 
 - `.click(selector)`
 - `.fill(selector, value)`
+- `.select(selector, option)`
 - `.focus(selector)`
 - `.blur(selector)`
 - `.trigger(selector, event, eventOptions)`
@@ -225,6 +226,7 @@ freely, with the exception of Convergence methods `when`, `always`,
 - `blurrable(selector)`
 - `triggerable(selector, event, eventOptions)`
 - `fillable(selector) => function(value)`
+- `selectable(selector) => function(option)`
 - `scrollable(selector) => function({ left, top })`
 
 Just like interactor methods, you may omit any `selector` to interact
