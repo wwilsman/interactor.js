@@ -33,7 +33,19 @@ logIn.timeout(1000).run()
 await logIn.do(() => console.log('logged in')).timeout(500)
 ```
 
-### Available Interaction Methods
+### Available Interactions
+
+**Getters**
+
+- `.text`
+- `.value`
+- `.isVisible`
+- `.isHidden`
+- `.isPresent`
+
+The interaction getters return the state of the scoped element.
+
+**Methods**
 
 - `.click(selector)`
 - `.fill(selector, value)`
@@ -42,12 +54,17 @@ await logIn.do(() => console.log('logged in')).timeout(500)
 - `.trigger(selector, event, eventOptions)`
 - `.scroll(selector, { left, top })`
 
-These interaction methods can omit the `selector` and interact
-directly with the scoped element of the interaction.
+The interaction methods can omit the `selector` and also interact
+directly with the scoped element.
 
-In addition to the above, you may use the `.find(selector)` method
-to converge on an element existing. That element is then passed on to
-the next convergence method in the stack.
+**Misc**
+
+- `.find(selector)`
+- `.findAll(selector)`
+
+You may use the `.find` method to converge on an element
+existing. That element is then passed on to the next convergence
+method in the stack.
 
 ``` javascript
 new Interactor('#login-page')
@@ -57,9 +74,9 @@ new Interactor('#login-page')
   .timeout(100)
 ```
 
-Similarly, there is `.findAll(selector)`, but this method does not
-converge on elements existing. Instead it will return an empty array
-if it cannot find any elements matching `selector`.
+The `.findAll` method passes on an array of elements found at the time
+it was called. If it cannot find any elements matching `selector`, an
+empty array is passed along instead.
 
 ## Custom Interactors
 
@@ -181,7 +198,7 @@ describe('Logging in', () => {
 
 ### Available Helpers
 
-**Getters:**
+**Getters**
 
 - `find(selector)`
 - `findAll(selector)`
@@ -195,6 +212,11 @@ describe('Logging in', () => {
 - `isPresent(selector)`
 - `is(selector, match)`
 - `hasClass(selector)`
+
+All default interactor properties and methods may be overwritten
+freely, with the exception of Convergence methods `when`, `always`,
+`do`, `timeout`, `run`, `then`, `append`, and a reserved method,
+`only`, meant for nested interactors.
 
 **Methods**
 
@@ -211,7 +233,35 @@ directly with the root element. This root element is also available as
 
 **Misc**
 
+- `scoped(selector, properties)`
 - `collection(selector, properties)`
+
+The `scoped` property returns an interactor scoped to the selector
+nested within the current scope. The second argument, `properties`,
+can either be an object or class defining property descriptors, or
+another interactor class entirely.
+
+``` javascript
+@interactor class FormInteractor {
+  input = scoped('input', {
+    placeholder: property('placeholder')
+  })
+}
+
+// fills the input's value and blur it
+await new FormInteractor('form')
+  .input.fill('some value')
+  .input.blur()
+
+// returns the placeholder of the form input, or throws
+// an error when the element cannot be found
+new Forminteractor('form').input.placeholder
+
+// nested interactors can be severed from the parent
+// chain using `.only()`
+new FormInteractor('form').input.only()
+  .focus().fill('value').blur()
+```
 
 The `collection` property is a method that returns the item at an
 index. This item is just like another scoped interactor that has it's
