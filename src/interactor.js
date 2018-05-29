@@ -6,6 +6,7 @@ import { find } from './interactions/find';
 import { findAll } from './interactions/find-all';
 import { click } from './interactions/clickable';
 import { fill } from './interactions/fillable';
+import { select } from './interactions/selectable';
 import { focus } from './interactions/focusable';
 import { blur } from './interactions/blurrable';
 import { trigger } from './interactions/triggerable';
@@ -260,6 +261,7 @@ Object.defineProperties(
     findAll,
     click,
     fill,
+    select,
     focus,
     blur,
     trigger,
