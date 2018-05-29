@@ -20,12 +20,12 @@ module.exports = (config) => {
       module: {
         rules: [{
           test: /\.js$/,
-          exclude: /node_modules(?!\/@bigtest)/,
+          exclude: /node_modules/,
           loader: 'babel-loader',
           options: {
             babelrc: false,
             presets: [
-              ['@babel/preset-env', {
+              ['@babel/env', {
                 modules: false
               }]
             ]
