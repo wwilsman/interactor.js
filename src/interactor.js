@@ -1,7 +1,7 @@
 /* global Element */
 import Convergence from '@bigtest/convergence';
-import { $, $$, isInteractor, getMethodNames, maybeNested } from './utils';
-import { action } from './interactions/helpers';
+import { $, $$, isInteractor, getDescriptors } from './utils';
+import { action, computed } from './interactions/helpers';
 import { find } from './interactions/find';
 import { findAll } from './interactions/find-all';
 import { click } from './interactions/clickable';
@@ -127,13 +127,13 @@ class Interactor extends Convergence {
     }
 
     let {
-      parent = null,
+      parent = previous.__parent__,
       scope = this.constructor.defaultScope
     } = options;
 
     // assign some things to this instance
     Object.defineProperties(this, {
-      parent: { value: parent },
+      __parent__: { value: parent },
 
       // the previous descriptor always takes precedence
       $root: Object.getOwnPropertyDescriptor(previous, '$root') || {
@@ -141,22 +141,44 @@ class Interactor extends Convergence {
       }
     });
 
-    // given a parent, return a nested instance of this interactor
+    // given a parent, return a wrapped instance of this interactor
     // that will return parent instances from chainable methods
     if (parent) {
+      let descriptors = Object.entries(getDescriptors(this));
+
+      // given the same instance type, appends it up the parent chain
+      let chain = (instance) => {
+        if (instance instanceof this.constructor) {
+          while (instance.__parent__) {
+            instance = instance.__parent__.append(instance);
+          }
+        }
+
+        return instance;
+      };
+
+      // wrap nested methods to return parent instances
       return Object.create(this,
-        getMethodNames(this).reduce((acc, method) => {
-          return Object.assign({
-            [method]: action(
-              maybeNested(this, method)
-            )
-          }, acc);
+        descriptors.reduce((acc, [name, descriptor]) => {
+          let { value, get } = descriptor;
+
+          // methods return the topmost chained instance
+          if (typeof value === 'function') {
+            descriptor = action((...args) => {
+              return chain(value.apply(this, args));
+            });
+
+          // getters need to always reference the unwrapped instance
+          } else if (typeof get === 'function') {
+            descriptor = computed(get.bind(this));
+          }
+
+          // assign wrapped descriptors
+          return Object.assign({ [name]: descriptor }, acc);
         }, {
           // nested interactors can break a parent chain
-          only: action(function() {
-            return new this.constructor(scope)
-              .append(this.parent)
-              .append(this);
+          only: action(() => {
+            return new this.constructor(scope).append(chain(this));
           })
         })
       );
@@ -268,7 +290,7 @@ Object.defineProperties(
     scroll
   }).reduce((descriptors, [name, method]) => {
     return Object.assign(descriptors, {
-      [name]: { value: method }
+      [name]: action(method)
     });
   }, {})
 );
@@ -284,7 +306,7 @@ Object.defineProperties(
     isPresent
   }).reduce((descriptors, [name, getter]) => {
     return Object.assign(descriptors, {
-      [name]: { get: getter }
+      [name]: computed(getter)
     });
   }, {})
 );

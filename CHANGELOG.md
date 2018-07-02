@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Fixed
+
+- a bug where interactors returned from deeply nested methods were not
+  instances of the topmost parent
+
 ## [0.5.0] - 2018-05-26
 
 ### Added
