@@ -97,14 +97,14 @@ export function isPropertyDescriptor(descr) {
 }
 
 /**
- * Returns an array of all method names found on an object including
- * any inherited methods (not including Object.prototype).
+ * Returns all descriptors found on an object including any inherited
+ * descriptors (not including the constructor or Object descriptors).
  *
  * @private
  * @param {Object} instance - Instance to find methods for
- * @returns {String[]} Array of method names
+ * @returns {Object} own and inherited descriptors
  */
-export function getMethodNames(instance) {
+export function getDescriptors(instance) {
   let proto = Object.getPrototypeOf(instance);
   let descr = {};
 
@@ -114,31 +114,7 @@ export function getMethodNames(instance) {
     proto = Object.getPrototypeOf(proto);
   }
 
-  return Object.keys(descr).filter(name => {
-    return name !== 'constructor' &&
-      typeof descr[name].value === 'function';
-  });
-}
-
-/**
- * Returns a wrapped function that will maybe return a parent instance
- * from chainable methods with any resulting instance appended to it.
- *
- * Chainable methods are methods which return new instances of their
- * own interactor.
- *
- * @private
- * @param {Interactor} instance - Interactor instance to wrap
- * @param {String} method - Method name to wrap
- * @returns {Function} Wrapped method
- */
-export function maybeNested(instance, method) {
-  return (...args) => {
-    let result = instance[method].apply(instance, args);
-
-    // same instance results are chained instances
-    return result instanceof instance.constructor
-      ? instance.parent.append(result)
-      : result;
-  };
+  // do not return the constructor
+  delete descr.constructor;
+  return descr;
 }

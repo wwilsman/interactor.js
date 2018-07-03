@@ -28,17 +28,12 @@ describe('BigTest Interaction: collection', () => {
   });
 
   it('returns an interactor scoped to the element at an index', () => {
-    expect(test.simple(2))
-      .to.have.property('$root')
-      .that.has.property('id', 'c');
-    expect(test.items(2)).to.have.property('parent', test);
+    expect(test.simple(2)).to.have.property('$root').that.has.property('id', 'c');
     expect(test.items(2)).to.respondTo('only');
   });
 
   it('returns an array of interactors when no index is provided', () => {
-    expect(test.simple())
-      .to.be.an('Array')
-      .that.has.lengthOf(4);
+    expect(test.simple()).to.be.an('Array').that.has.lengthOf(4);
   });
 
   it('has nested interactions', () => {
@@ -48,10 +43,7 @@ describe('BigTest Interaction: collection', () => {
   });
 
   it('has a scoped text property', () => {
-    expect(test.items(3))
-      .to.have.property('content')
-      .that.is.a('string')
-      .that.equals('Item D');
+    expect(test.items(3)).to.have.property('content').that.equals('Item D');
   });
 
   it('has scoped clickable properties', async () => {

@@ -51,7 +51,8 @@ describe('BigTest Interaction: decorator', () => {
   it('attaches a parent to nested interactors', () => {
     expect(new TestInteractor().nested).to.be.an.instanceOf(Interactor);
     expect(new TestInteractor().nested).to.not.be.an.instanceOf(TestInteractor);
-    expect(new TestInteractor().nested.parent).to.be.an.instanceOf(TestInteractor);
+    expect(new TestInteractor().nested)
+      .to.have.property('__parent__').that.is.an.instanceOf(TestInteractor);
   });
 
   it('nested interactor methods return parent instances', () => {
@@ -99,8 +100,8 @@ describe('BigTest Interaction: decorator', () => {
       expect(new TestInteractor()).to.have.property('foo', 'bar');
       expect(new TestInteractor()).to.have.property('getter', 'got');
       expect(new TestInteractor()).to.respondTo('test');
-      expect(new TestInteractor().nested).to.be.an.instanceOf(Interactor);
-      expect(new TestInteractor().nested.parent).to.be.an.instanceOf(TestInteractor);
+      expect(new TestInteractor().nested).to.be.an.instanceOf(Interactor)
+        .that.has.property('__parent__').that.is.an.instanceOf(TestInteractor);
     });
   });
 });
