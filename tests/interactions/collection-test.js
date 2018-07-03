@@ -11,6 +11,11 @@ const ItemInteractor = interactor(function() {
 const CollectionInteractor = interactor(function() {
   this.simple = collection('.test-item');
   this.items = collection('.test-item', ItemInteractor);
+
+  this.byId = collection(
+    (id) => id ? `#${id}` : '.test-item',
+    ItemInteractor
+  );
 });
 
 describe('BigTest Interaction: collection', () => {
@@ -25,15 +30,26 @@ describe('BigTest Interaction: collection', () => {
   it('has collection methods', () => {
     expect(test).to.respondTo('simple');
     expect(test).to.respondTo('items');
+    expect(test).to.respondTo('byId');
   });
 
   it('returns an interactor scoped to the element at an index', () => {
-    expect(test.simple(2)).to.have.property('$root').that.has.property('id', 'c');
-    expect(test.items(2)).to.respondTo('only');
+    expect(test.simple(0)).to.have.property('$root').that.has.property('id', 'a');
+    expect(test.items(1)).to.have.property('$root').that.has.property('id', 'b');
   });
 
-  it('returns an array of interactors when no index is provided', () => {
+  it('returns an interactor scoped to the element by a generated selector', () => {
+    expect(test.byId('c')).to.have.property('$root').that.has.property('id', 'c');
+  });
+
+  it('returns an array of interactors when no argument is provided', () => {
     expect(test.simple()).to.be.an('Array').that.has.lengthOf(4);
+    expect(test.items()).to.be.an('Array').that.has.lengthOf(4);
+    expect(test.byId()).to.be.an('Array').that.has.lengthOf(4)
+      .that.satisfies((items) => items.every((item) => {
+        return expect(item).to.be.an.instanceof(ItemInteractor)
+          .and.have.property('$root').that.has.property('className', 'test-item');
+      }));
   });
 
   it('has nested interactions', () => {
@@ -43,7 +59,7 @@ describe('BigTest Interaction: collection', () => {
   });
 
   it('has a scoped text property', () => {
-    expect(test.items(3)).to.have.property('content').that.equals('Item D');
+    expect(test.byId('d')).to.have.property('content').that.equals('Item D');
   });
 
   it('has scoped clickable properties', async () => {
@@ -55,10 +71,10 @@ describe('BigTest Interaction: collection', () => {
     document.querySelector('#b')
       .addEventListener('click', () => clickedB = true);
 
-    await expect(test.items(0).clickBtn().run()).to.be.fulfilled;
+    await expect(test.byId('a').clickBtn().run()).to.be.fulfilled;
     expect(clickedA).to.be.true;
 
-    await expect(test.items(1).click().run()).to.be.fulfilled;
+    await expect(test.byId('b').click().run()).to.be.fulfilled;
     expect(clickedB).to.be.true;
   });
 

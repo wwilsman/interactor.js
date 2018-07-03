@@ -27,11 +27,16 @@ describe('BigTest Interaction: scoped', () => {
     expect(test).to.have.property('field');
   });
 
+  it('has a scoped method', () => {
+    expect(test).to.respondTo('scoped');
+  });
+
   it('returns a nested interactor', () => {
     expect(test.simple).to.have.property('$root')
       .that.has.property('className', 'test-field');
-    expect(test.field).to.be.an.instanceOf(FieldInteractor);
-    expect(test.field).to.respondTo('only');
+    expect(test.field).to.be.an.instanceOf(FieldInteractor).and.respondTo('only');
+    expect(test.scoped('.test-field', FieldInteractor))
+      .to.be.an.instanceOf(FieldInteractor).and.respondTo('only');
   });
 
   it('has nested interactions', async () => {
@@ -51,6 +56,7 @@ describe('BigTest Interaction: scoped', () => {
   it('returns parent instances from nested interaction methods', () => {
     expect(test.field.click()).to.not.equal(test);
     expect(test.field.click()).to.be.an.instanceOf(ScopedInteractor);
+    expect(test.scoped('.test-field').click()).to.be.an.instanceOf(ScopedInteractor);
   });
 
   it('returns own instances after calling #only()', () => {

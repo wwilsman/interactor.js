@@ -1,9 +1,10 @@
 import interactor from '../decorator';
+import { action } from './helpers';
 
 /**
  * Interaction creator for a collection of nested interactors. A
  * collection interaction takes an index as it's argument and returns
- * an interactor scoped to that element.
+ * a nested interactor scoped to that element.
  *
  * ``` html
  * <ul class="checkboxes">
@@ -41,11 +42,11 @@ import interactor from '../decorator';
  * ```
  *
  * When calling a collection method without an index, an array of
- * interactors are returned, each corresponding to an element in the
- * DOM at the time the method was invoked.
+ * un-nested interactors are returned, each corresponding to an
+ * element in the DOM at the time the method was invoked.
  *
  * ``` javascript
-  * checkboxGroup.items().length // => 3
+ * checkboxGroup.items().length // => 3
  *
  * // checks all checkboxes
  * await checkboxGroup.do(function() {
@@ -94,38 +95,66 @@ import interactor from '../decorator';
  *   .cards(0).clickThrough()
  * ```
  *
+ * The collection interaction creator also accepts a function instead
+ * of a selector. This function is invoked with any arguments given to
+ * the resulting collection method and **must** return a new selector
+ * string. When no arguments are provided, the selector should match
+ * multiple elements within the current scope; when arguments are
+ * given, the selector should match only one element within the
+ * current scope.
+ *
+ * ``` javascript
+ * \@interactor class CheckboxGroupInteractor {
+ *   items = collection((value) => {
+ *     return `[type="radio"]${value ? '[value="${value}"]' : ''}`;
+ *   })
+ * }
+ * ```
+ *
+ * ``` javascript
+ * await checkBoxGroup
+ *   .items('green').click()
+ *   .items('red').click()
+ * ```
+ *
  * @function collection
- * @param {String} selector - Element query selector
+ * @param {String|Function} selector - Element query selector or
+ * function that returns a selector
  * @param {Object} [descriptors] - Interaction descriptors
  * @returns {Object} Property descriptor
  */
 export default function(selector, descriptors = {}) {
   let ItemInteractor = interactor(descriptors);
+  let scope = selector;
 
-  return function(index) {
-    // when no index is provided, map all elements to interactors
-    if (typeof index === 'undefined') {
-      return this.$$(selector).map((item) => {
+  // with a string selector, the scope is defined as a function that
+  // will throw an error when the element at an index cannot be found
+  if (typeof selector === 'string') {
+    scope = function(index) {
+      if (typeof index === 'number') {
+        let items = this.$$(selector);
+
+        if (!items[index]) {
+          throw new Error(`unable to find "${selector}" at index ${index}`);
+        }
+
+        return items[index];
+      } else {
+        return selector;
+      }
+    };
+  }
+
+  return action(function(...args) {
+    if (args.length) {
+      return new ItemInteractor({
+        scope: () => scope.apply(this, args),
+        parent: this
+      });
+    } else {
+      return this.$$(scope.call(this)).map((item) => {
         return new ItemInteractor(item);
       });
-
-    // with an index, the scope is defined as a function that will
-    // throw an error when the element at the index cannot be found;
-    // this gives the interactor a chance to converge on the scope
-    // existing before performing any interactions with it
-    } else {
-      return new ItemInteractor({
-        parent: this,
-        scope: () => {
-          let items = this.$$(selector);
-
-          if (!items[index]) {
-            throw new Error(`unable to find "${selector}" at index ${index}`);
-          }
-
-          return items[index];
-        }
-      });
     }
-  };
+  });
 }

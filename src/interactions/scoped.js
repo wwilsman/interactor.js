@@ -2,6 +2,55 @@ import interactor from '../decorator';
 import { computed } from './helpers';
 
 /**
+ * Returns a nested interactor scoped to the selector within the
+ * current interactor's scope.
+ *
+ * ``` html
+ * <form ...>
+ *   <button type="submit">
+ *     ...
+ *   </button>
+ *   ...
+ * </form>
+ * ```
+
+ * ``` javascript
+ * await new Interactor('form').scoped('[type="submit"]').click()
+ * ```
+ *
+ * This is especially useful for returning nested interactors from
+ * custom methods.
+ *
+ * ``` javascript
+ * \@interactor class RadioGroupInteractor {
+ *   radio(value) {
+ *     return this.scoped(`[type="radio"][value="${value}"]`, {
+ *       isDisabled: property('disabled')
+ *     });
+ *   }
+ * }
+ * ```
+ *
+ * ``` javascript
+ * radioGroup.radio('option-1').isDisabled //=> Boolean
+ * radioGroup.radio('option-1').click() //=> RadioGroupInteractor
+ * ```
+ *
+ * @method Interactor#scoped
+ * @param {String} selector - Nested element query selector
+ * @param {Object} [descriptors] - Interaction descriptors
+ * @returns {Interactor} A new nested interactor instance
+ */
+export function scoped(selector, descriptors = {}) {
+  let ScopedInteractor = interactor(descriptors);
+
+  return new ScopedInteractor({
+    scope: () => this.$(selector),
+    parent: this
+  });
+}
+
+/**
  * Interaction creator for a single nested interactor.
  *
  * ``` html
@@ -94,12 +143,7 @@ import { computed } from './helpers';
  * @returns {Object} Property descriptor
  */
 export default function(selector, descriptors = {}) {
-  let ScopedInteractor = interactor(descriptors);
-
   return computed(function() {
-    return new ScopedInteractor({
-      parent: this,
-      scope: () => this.$(selector)
-    });
+    return scoped.call(this, selector, descriptors);
   });
 }
