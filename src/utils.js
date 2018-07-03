@@ -1,3 +1,4 @@
+/* global Element */
 import { isConvergence } from '@bigtest/convergence';
 
 /**
@@ -10,7 +11,7 @@ import { isConvergence } from '@bigtest/convergence';
  * @returns {Element} Matching element
  */
 export function $(selector, $ctx = document) {
-  let $node = selector;
+  let $node = null;
 
   if (!$ctx || typeof $ctx.querySelector !== 'function') {
     throw new Error('unable to use the current context');
@@ -19,7 +20,11 @@ export function $(selector, $ctx = document) {
   if (typeof selector === 'string') {
     $node = $ctx.querySelector(selector);
 
-  // if a non-string is falsy, return the context element
+  // if an element was given, return it
+  } else if (selector instanceof Element) {
+    return selector;
+
+  // if the selector is falsy, return the context element
   } else if (!selector) {
     return $ctx;
   }
@@ -47,11 +52,17 @@ export function $$(selector, $ctx = document) {
     throw new Error('unable to use the current context');
   }
 
+  // given a string, use `querySelectorAll`
   if (typeof selector === 'string') {
     nodes = [].slice.call($ctx.querySelectorAll(selector));
+
+  // given an iterable, assume it contains nodes
+  } else if (Symbol.iterator in Object(selector)) {
+    nodes = [].slice.call(selector);
   }
 
-  return nodes;
+  // only return elements
+  return nodes.filter(($node) => $node instanceof Element);
 }
 
 /**

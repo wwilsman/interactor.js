@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ### Added
 
 - `scoped` interactor method to return nested and scoped interactors
+- ability to specify a selector function for collections
 
 ## [0.5.1] - 2018-07-02
 
