@@ -4,6 +4,7 @@ import { $, $$, isInteractor, getDescriptors } from './utils';
 import { action, computed } from './interactions/helpers';
 import { find } from './interactions/find';
 import { findAll } from './interactions/find-all';
+import { scoped } from './interactions/scoped';
 import { click } from './interactions/clickable';
 import { fill } from './interactions/fillable';
 import { select } from './interactions/selectable';
@@ -281,6 +282,7 @@ Object.defineProperties(
   Object.entries({
     find,
     findAll,
+    scoped,
     click,
     fill,
     select,

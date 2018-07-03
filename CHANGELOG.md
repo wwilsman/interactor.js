@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Added
+
+- `scoped` interactor method to return nested and scoped interactors
+
 ## [0.5.1] - 2018-07-02
 
 ### Fixed
