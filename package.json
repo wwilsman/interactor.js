@@ -1,7 +1,7 @@
 {
   "name": "@bigtest/interactor",
   "description": "Interaction library for testing big",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "license": "MIT",
   "repository": "https://github.com/bigtestjs/interactor",
   "main": "dist/umd/index.js",
