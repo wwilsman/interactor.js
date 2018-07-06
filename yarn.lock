@@ -517,9 +517,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@bigtest/convergence@^0.9.1":
-  version "0.9.1"
-  resolved "https://registry.yarnpkg.com/@bigtest/convergence/-/convergence-0.9.1.tgz#ddbe3e85e757b8fb82b80df95ed2e574c9d24429"
+"@bigtest/convergence@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@bigtest/convergence/-/convergence-0.10.0.tgz#ed2212b7034c84917ccfbaa8cf875730ee535702"
 
 "@bigtest/meta@bigtestjs/meta#v0.0.1":
   version "0.0.1"
