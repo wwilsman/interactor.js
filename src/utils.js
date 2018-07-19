@@ -137,3 +137,19 @@ export function getDescriptors(instance) {
   delete descr.constructor;
   return descr;
 }
+
+/**
+ * Returns an instance of the topmost parent interactor by appending
+ * the interactor up the chain of its parents.
+ *
+ * @private
+ * @param {Interactor} interactor - Potentially nested interactor
+ * @returns {Interactor} topmost interactor instance
+ */
+export function appendUp(interactor) {
+  while (interactor.__parent__) {
+    interactor = interactor.__parent__.append(interactor);
+  }
+
+  return interactor;
+}

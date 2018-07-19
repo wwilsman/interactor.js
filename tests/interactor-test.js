@@ -107,6 +107,8 @@ describe('BigTest Interaction: Interactor', () => {
       deep() {
         return new DeepInteractor({ parent: this });
       }
+
+      test4() { return this.deep().test().deep().test(); }
     }
 
     class DeepInteractor extends Interactor {
@@ -126,6 +128,7 @@ describe('BigTest Interaction: Interactor', () => {
       expect(parent.child.test1()).to.be.an.instanceof(ParentInteractor);
       expect(parent.child.test2()).to.be.an.instanceof(ParentInteractor);
       expect(parent.child.deep().test()).to.be.an.instanceof(ParentInteractor);
+      expect(parent.child.test4()).to.be.an.instanceof(ParentInteractor);
     });
 
     it('appends child interactions to the parent instance queue', () => {
