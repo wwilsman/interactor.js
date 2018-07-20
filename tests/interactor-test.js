@@ -52,6 +52,15 @@ describe('BigTest Interaction: Interactor', () => {
       expect(() => scoped.$root).to.throw('unable to find "#not-scoped"');
     });
 
+    it('throws when the selector is invalid', () => {
+      let scoped = new Interactor('.#not-valid').timeout(50);
+
+      expect(() => scoped.$root).to.throw(
+        SyntaxError,
+        '".#not-valid" is not a valid selector'
+      );
+    });
+
     it('can have an evaulated scope', () => {
       let scopeID;
       let scoped = new Interactor(() => `#${scopeID}`);
