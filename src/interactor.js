@@ -1,6 +1,6 @@
 /* global Element */
 import Convergence from '@bigtest/convergence';
-import { $, $$, isInteractor, getDescriptors } from './utils';
+import { $, $$, isInteractor, getDescriptors, appendUp } from './utils';
 import { action, computed } from './interactions/helpers';
 import { find } from './interactions/find';
 import { findAll } from './interactions/find-all';
@@ -146,40 +146,49 @@ class Interactor extends Convergence {
     // that will return parent instances from chainable methods
     if (parent) {
       let descriptors = Object.entries(getDescriptors(this));
+      let isSameType = (i) => i instanceof this.constructor;
 
-      // given the same instance type, appends it up the parent chain
-      let chain = (instance) => {
-        if (instance instanceof this.constructor) {
-          while (instance.__parent__) {
-            instance = instance.__parent__.append(instance);
-          }
+      // enables the parent chaining pattern by appending returned
+      // instances of this interactor up to the topmost parent, and
+      // returns that topmost parent instance
+      let chainable = (fn) => (...args) => {
+        // create an orphaned instance so that the parent is never
+        // returned inside of methods and getters
+        let orphan = new this.constructor({ parent: null }, this);
+        let results = fn.apply(orphan, args);
+
+        // return orphaned children to their parent
+        if (results && isSameType(results.__parent__)) {
+          results = new results.constructor({
+            parent: this
+          }, results);
         }
 
-        return instance;
+        // return the topmost parent instance for chaining
+        if (isSameType(results)) {
+          results = appendUp(parent.append(results));
+        }
+
+        return results;
       };
 
-      // wrap nested methods to return parent instances
       return Object.create(this,
+        // make methods and getters chainable
         descriptors.reduce((acc, [name, descriptor]) => {
           let { value, get } = descriptor;
 
-          // methods return the topmost chained instance
           if (typeof value === 'function') {
-            descriptor = action((...args) => {
-              return chain(value.apply(this, args));
-            });
-
-          // getters need to always reference the unwrapped instance
+            descriptor = action(chainable(value));
           } else if (typeof get === 'function') {
-            descriptor = computed(get.bind(this));
+            descriptor = computed(chainable(get));
           }
 
-          // assign wrapped descriptors
           return Object.assign({ [name]: descriptor }, acc);
         }, {
           // nested interactors can break a parent chain
           only: action(() => {
-            return new this.constructor(scope).append(chain(this));
+            return new this.constructor(scope)
+              .append(appendUp(this));
           })
         })
       );
