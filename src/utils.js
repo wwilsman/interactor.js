@@ -18,7 +18,11 @@ export function $(selector, $ctx = document) {
   }
 
   if (typeof selector === 'string') {
-    $node = $ctx.querySelector(selector);
+    try {
+      $node = $ctx.querySelector(selector);
+    } catch (e) {
+      throw new SyntaxError(`"${selector}" is not a valid selector`);
+    }
 
   // if an element was given, return it
   } else if (selector instanceof Element) {
@@ -54,7 +58,11 @@ export function $$(selector, $ctx = document) {
 
   // given a string, use `querySelectorAll`
   if (typeof selector === 'string') {
-    nodes = [].slice.call($ctx.querySelectorAll(selector));
+    try {
+      nodes = [].slice.call($ctx.querySelectorAll(selector));
+    } catch (e) {
+      throw new SyntaxError(`"${selector}" is not a valid selector`);
+    }
 
   // given an iterable, assume it contains nodes
   } else if (Symbol.iterator in Object(selector)) {
