@@ -240,10 +240,15 @@ class Interactor extends Convergence {
    * to execute _before_ setup. This way, when a test is finished, the
    * DOM and state is preserved for interacting with and inspecting.
    *
+   * @deprecated
    * @returns {Interactor} An instance of this interactor which will
    * halt when it encounters this method in the convergence stack
    */
   pause() {
+    console.warn(`Using \`#pause()\` is deprecated.
+It is a hack that prevents the current event loop from running, \
+and can cause some browsers or processes to hang.`);
+
     return this.do(() => new Promise(() => {}));
   }
 }

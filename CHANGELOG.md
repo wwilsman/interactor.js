@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ### Deprecated
 
 - decorator usage with plain objects
+- pause method becuase it caused the event loop to hang
 
 ## [0.8.1] - 2018-10-10
 
