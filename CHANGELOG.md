@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [0.7.2] - 2018-07-23
+
 ### Fixed
 
 - a bug where deeply nested interactors lost their scoped root element
