@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Fixed
+
+- a bug where deeply nested interactors lost their scoped root element
+
 ## [0.7.1] - 2018-07-20
 
 ### Added
@@ -13,8 +17,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ### Fixed
 
-- a bug where parent interactors were returned within nested
-  methods when using deeper nested methods
+- a bug where parent interactors were returned within nested methods
+  when using deeper nested methods
 
 ## [0.7.0] - 2018-07-06
 
