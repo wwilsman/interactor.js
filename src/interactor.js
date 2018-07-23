@@ -1,6 +1,13 @@
 /* global Element */
 import Convergence from '@bigtest/convergence';
-import { $, $$, isInteractor, getDescriptors, appendUp } from './utils';
+import {
+  $,
+  $$,
+  isInteractor,
+  getDescriptor,
+  getDescriptors,
+  appendUp
+} from './utils';
 import { action, computed } from './interactions/helpers';
 import { find } from './interactions/find';
 import { findAll } from './interactions/find-all';
@@ -137,7 +144,7 @@ class Interactor extends Convergence {
       __parent__: { value: parent },
 
       // the previous descriptor always takes precedence
-      $root: Object.getOwnPropertyDescriptor(previous, '$root') || {
+      $root: getDescriptor(previous, '$root') || {
         get: () => $(typeof scope === 'function' ? scope() : scope)
       }
     });

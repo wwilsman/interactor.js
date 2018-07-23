@@ -47,6 +47,11 @@ describe('BigTest Interaction: Interactor', () => {
       expect(scoped.$root).to.equal($scope);
     });
 
+    it('retains the correct nested scopes', () => {
+      let scoped = new Interactor().scoped('#scoped').scoped('.test-p');
+      expect(scoped).to.have.property('text', 'Scoped');
+    });
+
     it('throws when scope does not exist', () => {
       let scoped = new Interactor('#not-scoped').timeout(50);
       expect(() => scoped.$root).to.throw('unable to find "#not-scoped"');

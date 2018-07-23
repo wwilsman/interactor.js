@@ -116,11 +116,33 @@ export function isPropertyDescriptor(descr) {
 }
 
 /**
- * Returns all descriptors found on an object including any inherited
- * descriptors (not including the constructor or Object descriptors).
+ * Returns a descriptor found on an object including inherited
+ * descriptors (not including Object descriptors).
  *
  * @private
- * @param {Object} instance - Instance to find methods for
+ * @param {Object} instance - Instance to find a descriptor for
+ * @param {String} key - Property key
+ * @returns {Object} found descriptor, or null
+ */
+export function getDescriptor(instance, key) {
+  let proto = instance;
+  let descr = null;
+
+  while (proto && proto !== Object.prototype) {
+    descr = Object.getOwnPropertyDescriptor(proto, key);
+    proto = Object.getPrototypeOf(proto);
+    if (descr) break;
+  }
+
+  return descr;
+}
+
+/**
+ * Returns all descriptors found on an object's prototype chain not
+ * including own properties, the constructor, or Object descriptors.
+ *
+ * @private
+ * @param {Object} instance - Instance to find descriptors for
  * @returns {Object} own and inherited descriptors
  */
 export function getDescriptors(instance) {
@@ -128,7 +150,7 @@ export function getDescriptors(instance) {
   let descr = {};
 
   while (proto && proto !== Object.prototype) {
-    // uses descriptors to avoid invoking getters when filtering
+    // prioritize property descriptors closest to the instance prototype
     descr = Object.assign({}, Object.getOwnPropertyDescriptors(proto), descr);
     proto = Object.getPrototypeOf(proto);
   }
