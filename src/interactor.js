@@ -68,7 +68,7 @@ import { isPresent } from './interactions/is-present';
  * ``` javascript
  * new Interactor('#some-form')
  *   .fill('input[type="email"]', 'email@domain.tld')
- *   .click('buttom[type="submit"]')
+ *   .click('button[type="submit"]')
  * ```
  *
  * You can create custom interactors by extending the class...
@@ -81,7 +81,7 @@ import { isPresent } from './interactions/is-present';
  *   }
  *
  *   submit() {
- *     return this.click('buttom[type="submit"]')
+ *     return this.click('button[type="submit"]')
  *   }
  *
  *   fillAndSubmit(email) {
