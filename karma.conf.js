@@ -17,6 +17,8 @@ module.exports = (config) => {
     },
 
     webpack: {
+      mode: 'none',
+
       module: {
         rules: [{
           test: /\.js$/,
