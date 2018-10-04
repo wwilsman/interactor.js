@@ -24,36 +24,77 @@ import { find } from './find';
  * await new Interactor('form').fill('select#month', 'March')
  * ```
  *
+ * For multiple selects you can pass an array of options you would
+ * like to select.
+ *
+ * ``` html
+ * <form ...>
+ *   <select id="month" multiple>
+ *     <option value="1">January</option>
+ *     <option value="2">February</option>
+ *     <option value="3">March</option>
+ *     ...
+ *   </select>
+ *   ...
+ * </form>
+ * ```
+ *
+ * ``` javascript
+ * await new Interactor('select').select(['February', 'March'])
+ * await new Interactor('form').select('select#month', ['February', 'March'])
+ * ```
+ *
  * @method Interactor#select
  * @param {String} [selector] - Nested element query selector
- * @param {String} option - Option text to select
+ * @param {String|String[]} options - Option or array of options text to select
  * @returns {Interactor} A new instance with additional convergences
  */
-export function select(selectorOrOption, option) {
+export function select(selectorOrOption, options) {
   let selector;
 
   // if option is not defined, it is assumed that the only passed
   // argument is the option for the root element
-  if (typeof option === 'undefined') {
-    option = selectorOrOption;
+  if (typeof options === 'undefined') {
+    options = selectorOrOption;
   } else {
     selector = selectorOrOption;
   }
 
-  return find.call(this, selector)
-    .when(($select) => {
-      // find the option by text content
-      for (let $option of $select.options) {
-        if ($option.text === option) {
-          return [$select, $option];
-        }
+  // turn options into an array
+  options = [].concat(options);
+
+  return find
+    .call(this, selector)
+    .when($select => {
+      if (!$select.multiple && options.length > 1) {
+        throw new Error(`unable to select more than one option for "${selector}"`);
       }
 
-      throw new Error(`unable to find option "${option}"`);
+      // find the option by text content
+      return [
+        $select,
+        options.map(option => {
+          for (let $option of $select.options) {
+            if ($option.text === option) {
+              return $option;
+            }
+          }
+
+          throw new Error(`unable to find option "${option}"`);
+        })
+      ];
     })
-    .do(([$select, $option]) => {
-      // select the option
-      $option.selected = true;
+    .do(([$select, $options]) => {
+      if ($select.multiple) {
+        $options.forEach(option => {
+          // since multiple selects can toggle selection, we'll toggle
+          // the option to the opposite of what it is now
+          option.selected = !option.selected;
+        });
+      } else {
+        // select the option
+        $options[0].selected = true;
+      }
 
       // dispatch input event
       $select.dispatchEvent(
@@ -97,6 +138,31 @@ export function select(selectorOrOption, option) {
  *
  * ``` javascript
  * await new FormInteractor('form').selectMonth('February')
+ * ```
+ *
+ * For multiple selects you can pass an array of options you would
+ * like to select.
+ *
+ * ``` html
+ * <form ...>
+ *   <select id="month" multiple>
+ *     <option value="1">January</option>
+ *     <option value="2">February</option>
+ *     <option value="3">March</option>
+ *     ...
+ *   </select>
+ *   ...
+ * </form>
+ * ```
+ *
+ * ``` javascript
+ * \@interactor class FormInteractor {
+ *   selectMonth = selectable('select#month')
+ * }
+ * ```
+ *
+ * ``` javascript
+ * await new FormInteractor('form').selectMonth(['February', 'March']);
  * ```
  *
  * @function selectable

@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 - call the elements `focus` method inside of `focusable` to set focus
 - call the elements `blur` method inside of `blurrable` to unset focus
 
+### Added
+
+- selecting multiple options from multiselect with `select` & `selectable`
+
 ## [0.7.2] - 2018-07-23
 
 ### Fixed
