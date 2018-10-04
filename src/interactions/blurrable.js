@@ -1,4 +1,3 @@
-/* global Event */
 import { action } from './helpers';
 import { find } from './find';
 
@@ -23,15 +22,9 @@ import { find } from './find';
  * @returns {Interactor} A new instance with additional convergences
  */
 export function blur(selector) {
-  return find.call(this, selector)
-    .do(($node) => {
-      $node.dispatchEvent(
-        new Event('blur', {
-          bubbles: true,
-          cancelable: true
-        })
-      );
-    });
+  return find.call(this, selector).do($node => {
+    $node.blur();
+  });
 }
 
 /**

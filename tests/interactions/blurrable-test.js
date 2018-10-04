@@ -2,22 +2,33 @@
 import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, blurrable } from '../../src';
+import { when } from '@bigtest/convergence';
 
 const BlurInteractor = interactor(function() {
   this.blurInput = blurrable('.test-input');
 });
 
 describe('BigTest Interaction: blurrable', () => {
-  let blurred, test;
+  let blurred, focusOut, test, $input;
 
   useFixture('input-fixture');
 
   beforeEach(() => {
     blurred = false;
+    focusOut = false;
+    $input = document.querySelector('.test-input');
 
-    document.querySelector('.test-input')
-      .addEventListener('blur', () => blurred = true);
+    $input.addEventListener('blur', e => {
+      blurred = e.target !== document.activeElement;
+    });
 
+    $input.addEventListener('focusout', e => {
+      focusOut = e.target !== document.activeElement;
+    });
+
+    // Set focus on the element so we can check if blur has properly
+    // been handled
+    $input.focus();
     test = new BlurInteractor();
   });
 
@@ -35,11 +46,18 @@ describe('BigTest Interaction: blurrable', () => {
 
   it('eventually blurs the element', async () => {
     await expect(test.blur('.test-input').run()).to.be.fulfilled;
-    expect(blurred).to.be.true;
+    await when(() => {
+      expect(blurred).to.be.true;
+      expect(focusOut).to.be.true;
+    });
+  });
 
-    blurred = false;
+  it('eventually blurs the custom element', async () => {
     await expect(test.blurInput().run()).to.be.fulfilled;
-    expect(blurred).to.be.true;
+    await when(() => {
+      expect(blurred).to.be.true;
+      expect(focusOut).to.be.true;
+    });
   });
 
   describe('overwriting the default blur method', () => {
