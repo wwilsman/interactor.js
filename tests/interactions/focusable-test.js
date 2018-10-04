@@ -2,21 +2,29 @@
 import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, focusable } from '../../src';
+import { when } from '@bigtest/convergence';
 
 const FocusInteractor = interactor(function() {
   this.focusInput = focusable('.test-input');
 });
 
 describe('BigTest Interaction: focusable', () => {
-  let focused, test;
+  let focused, focusedIn, test, $input;
 
   useFixture('input-fixture');
 
   beforeEach(() => {
     focused = false;
+    focusedIn = false;
+    $input = document.querySelector('.test-input');
 
-    document.querySelector('.test-input')
-      .addEventListener('focus', () => focused = true);
+    $input.addEventListener('focus', e => {
+      focused = e.target === document.activeElement;
+    });
+
+    $input.addEventListener('focusin', e => {
+      focusedIn = e.target === document.activeElement;
+    });
 
     test = new FocusInteractor();
   });
@@ -35,11 +43,18 @@ describe('BigTest Interaction: focusable', () => {
 
   it('eventually focuses the element', async () => {
     await expect(test.focus('.test-input').run()).to.be.fulfilled;
-    expect(focused).to.be.true;
+    await when(() => {
+      expect(focused).to.be.true;
+      expect(focusedIn).to.be.true;
+    });
+  });
 
-    focused = false;
+  it('eventually focuses the custom element', async () => {
     await expect(test.focusInput().run()).to.be.fulfilled;
-    expect(focused).to.be.true;
+    await when(() => {
+      expect(focused).to.be.true;
+      expect(focusedIn).to.be.true;
+    });
   });
 
   describe('overwriting the default focus method', () => {

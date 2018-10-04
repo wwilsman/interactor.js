@@ -1,4 +1,3 @@
-/* global Event */
 import { action } from './helpers';
 import { find } from './find';
 
@@ -25,12 +24,7 @@ import { find } from './find';
 export function focus(selector) {
   return find.call(this, selector)
     .do(($node) => {
-      $node.dispatchEvent(
-        new Event('focus', {
-          bubbles: true,
-          cancelable: true
-        })
-      );
+      $node.focus();
     });
 }
 
