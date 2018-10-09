@@ -25,8 +25,8 @@ import { action } from './helpers';
  *
  * ``` javascript
  * await checkboxGroup
- *   .item(0).click()
- *   .item(1).click()
+ *   .items(0).click()
+ *   .items(1).click()
  * ```
  *
  * Nested interactors also have an additional method, `#only()`, which
@@ -35,8 +35,8 @@ import { action } from './helpers';
  *
  * ``` javascript
  * await checkboxGroup
- *   .item(0).click()
- *   .item(1).only()
+ *   .items(0).click()
+ *   .items(1).only()
  *     .focus()
  *     .trigger('keydown', { which: 32 })
  * ```
