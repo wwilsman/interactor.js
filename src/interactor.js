@@ -1,4 +1,3 @@
-/* global Element */
 import Convergence from '@bigtest/convergence';
 import {
   $,

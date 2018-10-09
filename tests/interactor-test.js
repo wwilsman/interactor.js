@@ -1,4 +1,4 @@
-/* global describe, beforeEach, it, Element */
+/* global describe, beforeEach, it */
 import { expect } from 'chai';
 import Convergence from '@bigtest/convergence';
 import { useFixture } from './helpers';

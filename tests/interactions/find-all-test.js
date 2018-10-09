@@ -1,4 +1,4 @@
-/* global describe, beforeEach, it, Element */
+/* global describe, beforeEach, it */
 import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, findAll } from '../../src';

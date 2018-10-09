@@ -1,4 +1,3 @@
-/* global Element */
 import { isConvergence } from '@bigtest/convergence';
 
 /**
