@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Fixed
+
+- update `collection` docs to be consistant (`.item(0).click()` to `.items(0).click()`)
+
 ## [0.8.0] - 2018-10-04
 
 ### Fixed
