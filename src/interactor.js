@@ -27,7 +27,7 @@ import { isPresent } from './interactions/is-present';
 
 /**
  * ``` javascript
- * import { Interactor } from '@bigtest/interactor'
+ * import { Interactor } from '@bigtest/interactor';
  * ```
  *
  * In biology, an _interactor_ is defined as part of an organism that
@@ -35,14 +35,14 @@ import { isPresent } from './interactions/is-present';
  * defines part of an _app_ that _tests_ act upon.
  *
  * ``` javascript
- * let input = new Interactor('input')
+ * let input = new Interactor('input');
  *
  * await input
  *   .focus()
  *   .fill('some value')
- *   .blur()
+ *   .blur();
  *
- * expect(input.value).to.equal('some value')
+ * expect(input.value).to.equal('some value');
  * ```
  *
  * Interactors are [Convergences](/docs/convergence). They directly
@@ -50,15 +50,15 @@ import { isPresent } from './interactions/is-present';
  * and composable.
  *
  * ``` javascript
- * let input = new Interactor('input')
- * let submit = new Interactor('button[type="submit"]')
+ * let input = new Interactor('input');
+ * let submit = new Interactor('button[type="submit"]');
  *
- * let fillAndSubmit = (value) => {
+ * let fillAndSubmit = value => {
  *   return input.fill(value)
- *     .append(submit.click())
+ *     .append(submit.click());
  * }
  *
- * await fillAndSubmit('some value')
+ * await fillAndSubmit('some value');
  * ```
  *
  * Interactors don't have to be narrowly scoped either. The various
@@ -68,7 +68,7 @@ import { isPresent } from './interactions/is-present';
  * ``` javascript
  * new Interactor('#some-form')
  *   .fill('input[type="email"]', 'email@domain.tld')
- *   .click('button[type="submit"]')
+ *   .click('button[type="submit"]');
  * ```
  *
  * You can create custom interactors by extending the class...
@@ -77,17 +77,17 @@ import { isPresent } from './interactions/is-present';
  * class FormInteractor extends Interactor {
  *   fillEmail(email) {
  *     // return an instance of this interactor to allow chaining
- *     return this.fill('input[type="email"]', email)
+ *     return this.fill('input[type="email"]', email);
  *   }
  *
  *   submit() {
- *     return this.click('button[type="submit"]')
+ *     return this.click('button[type="submit"]');
  *   }
  *
  *   fillAndSubmit(email) {
  *     return this
  *       .fillEmail(email)
- *       .submit()
+ *       .submit();
  *   }
  * }
  * ```
@@ -96,16 +96,16 @@ import { isPresent } from './interactions/is-present';
  * conjuction with the various interaction helpers.
  *
  * ``` javascript
- * import { interactor, fillable, clickable } from '@bigtest/interaction'
+ * import { interactor, fillable, clickable } from '@bigtest/interaction';
  *
  * \@interactor class FormInteractor {
- *   fillEmail = fillable('input[type="email"]')
- *   submit = clickable('button[type="submit"]')
+ *   fillEmail = fillable('input[type="email"]');
+ *   submit = clickable('button[type="submit"]');
  *
  *   fillAndSubmit(email) {
  *     return this
  *       .fillEmail(email)
- *       .submit()
+ *       .submit();
  *   }
  * }
  * ```
@@ -208,11 +208,11 @@ class Interactor extends Convergence {
    * error when the element cannot be found.
    *
    * ``` javascript
-   * let page = new Interactor('#page-scope')
+   * let page = new Interactor('#page-scope');
    *
    * // returns an element matching `#page-scope .some-element`, and
    * // throws an error if it cannot be found
-   * page.$('.some-element')
+   * page.$('.some-element');
    * ```
    *
    * @param {String} selector - Selector string
@@ -230,11 +230,11 @@ class Interactor extends Convergence {
    * current scope cannot be found, an error is thrown.
    *
    * ``` javascript
-   * let list = new Interactor('ul.some-list')
+   * let list = new Interactor('ul.some-list');
    *
    * // returns an array of elements matching `ul.some-list li`; only
    * // throws an error when `ul.some-list` cannot be found
-   * page.$$('li')
+   * page.$$('li');
    * ```
    *
    * @param {String} selector - Selector string
@@ -279,7 +279,7 @@ Object.defineProperties(Interactor, {
    *
    * ``` javascript
    * class CustomInteractor extends Interactor {
-   *   static defaultScope = '#some-element'
+   *   static defaultScope = '#some-element';
    * }
    *
    * new CustomInteractor().$root //=> <div id="some-element">...</div>

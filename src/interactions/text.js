@@ -52,7 +52,7 @@ export function text() {
  *
  * ``` javascript
  * \@interactor class PageInteractor {
- *   heading = text('h1')
+ *   heading = text('h1');
  * }
  * ```
  *

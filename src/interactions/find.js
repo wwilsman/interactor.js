@@ -4,7 +4,7 @@ import { computed } from './helpers';
  * Converges on an element existing in the DOM.
  *
  * ``` javascript
- * let $el = await new Interactor().find('.some-element')
+ * let $el = await new Interactor().find('.some-element');
  * ```
  *
  * @method Interactor#find
@@ -23,12 +23,12 @@ export function find(selector) {
  *
  * ``` javascript
  * \@interactor class PageInteractor {
- *   getHeading = find('h1.heading')
+ *   heading = find('h1.heading');
  * }
  * ```
  *
  * ``` javascript
- * let $heading = await new PageInteractor().getHeading()
+ * let $heading = new PageInteractor().heading;
  * ```
  *
  * @function find

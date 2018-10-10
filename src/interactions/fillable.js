@@ -9,14 +9,14 @@ import { find } from './find';
  *
  * ``` html
  * <form ...>
- *   <input id="name"/>
+ *   <input id="name" />
  *   ...
  * </form>
  * ```
  *
  * ``` javascript
- * await new Interactor('input').fill('value')
- * await new Interactor('form').fill('input#name', 'value')
+ * await new Interactor('input').fill('value');
+ * await new Interactor('form').fill('input#name', 'value');
  * ```
  *
  * @method Interactor#fill
@@ -78,19 +78,19 @@ export function fill(selectorOrValue, value) {
  *
  * ``` html
  * <form ...>
- *   <input id="name"/>
+ *   <input id="name" />
  *   ...
  * </form>
  * ```
  *
  * ``` javascript
  * \@interactor class FormInteractor {
- *   fillName = fillable('input#name')
+ *   fillName = fillable('input#name');
  * }
  * ```
  *
  * ``` javascript
- * await new FormInteractor('form').fillName('value')
+ * await new FormInteractor('form').fillName('value');
  * ```
  *
  * @function fillable

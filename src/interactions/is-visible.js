@@ -9,6 +9,7 @@ import { computed } from './helpers';
  * <div id="foo">
  *   ...
  * </div>
+ *
  * <div id="bar" style="display: none">
  *   ...
  * </div>
@@ -38,6 +39,7 @@ export function isVisible() {
  * <div id="foo">
  *   ...
  * </div>
+ *
  * <div id="bar" style="display: none">
  *   ...
  * </div>
@@ -45,8 +47,8 @@ export function isVisible() {
  *
  * ``` javascript
  * \@interactor class PageInteractor {
- *   isFooVisible = isVisible('#foo')
- *   isBarVisible = isVisible('#bar')
+ *   isFooVisible = isVisible('#foo');
+ *   isBarVisible = isVisible('#bar');
  * }
  * ```
  *

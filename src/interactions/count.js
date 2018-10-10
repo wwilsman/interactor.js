@@ -15,7 +15,7 @@ import { computed } from './helpers';
  *
  * ``` javascript
  * \@interactor class ListInteractor {
- *   size = count('li')
+ *   size = count('li');
  * }
  * ```
  *

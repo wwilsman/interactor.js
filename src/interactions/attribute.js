@@ -6,7 +6,7 @@ import { computed } from './helpers';
  * ``` html
  * <div class="card" id="foo">
  *   ...
- *   <a class="card-link" href="#bar">
+ *   <a class="card-link" href="https://example.com">
  *     ...
  *   </a>
  * </div>
@@ -14,14 +14,14 @@ import { computed } from './helpers';
  *
  * ``` javascript
  * \@interactor class CardInteractor {
- *   id = attribute('id')
- *   url = attribute('.card-link', 'href')
+ *   id = attribute('id');
+ *   url = attribute('.card-link', 'href');
  * }
  * ```
  *
  * ``` javascript
  * new CardInteractor('.card').id //=> "foo"
- * new CardInteractor('.card').url //=> "#bar"
+ * new CardInteractor('.card').url //=> "https://example.com"
  * ```
  *
  * @function attribute

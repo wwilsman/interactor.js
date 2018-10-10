@@ -8,8 +8,8 @@ import { find } from './find';
  * finally triggers a scroll event on the element.
  *
  * ``` javascript
- * await new Interactor('#page').scroll({ top: 100 })
- * await new Interactor('#page').scroll('.nested-view', { left: 100 })
+ * await new Interactor('#page').scroll({ top: 100 });
+ * await new Interactor('#page').scroll('.nested-view', { left: 100 });
  * ```
  *
  * @method Interactor#scroll

@@ -6,7 +6,7 @@ import { computed } from './helpers';
  * matching the provided selector.
  *
  * ``` javascript
- * let $listItems = await new Interactor('ul').findAll('li')
+ * let $listItems = await new Interactor('ul').findAll('li');
  * ```
  *
  * @method Interactor#findAll
@@ -25,12 +25,12 @@ export function findAll(selector) {
  *
  * ``` javascript
  * \@interactor class ListInteractor {
- *   getItems = findAll('li')
+ *   items = findAll('li');
  * }
  * ```
  *
  * ``` javascript
- * let $listItems = await new ListInteractor('ul').getItems()
+ * let $listItems = new ListInteractor('ul').items;
  * ```
  *
  * @function findAll

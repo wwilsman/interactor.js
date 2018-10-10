@@ -20,8 +20,8 @@ import { find } from './find';
  * ```
  *
  * ``` javascript
- * await new Interactor('select').select('February')
- * await new Interactor('form').fill('select#month', 'March')
+ * await new Interactor('select').select('February');
+ * await new Interactor('form').fill('select#month', 'March');
  * ```
  *
  * For multiple selects you can pass an array of options you would
@@ -40,8 +40,8 @@ import { find } from './find';
  * ```
  *
  * ``` javascript
- * await new Interactor('select').select(['February', 'March'])
- * await new Interactor('form').select('select#month', ['February', 'March'])
+ * await new Interactor('select').select(['February', 'March']);
+ * await new Interactor('form').select('select#month', ['February', 'March']);
  * ```
  *
  * @method Interactor#select
@@ -132,12 +132,12 @@ export function select(selectorOrOption, options) {
  *
  * ``` javascript
  * \@interactor class FormInteractor {
- *   selectMonth = selectable('select#month')
+ *   selectMonth = selectable('select#month');
  * }
  * ```
  *
  * ``` javascript
- * await new FormInteractor('form').selectMonth('February')
+ * await new FormInteractor('form').selectMonth('February');
  * ```
  *
  * For multiple selects you can pass an array of options you would
@@ -157,7 +157,7 @@ export function select(selectorOrOption, options) {
  *
  * ``` javascript
  * \@interactor class FormInteractor {
- *   selectMonth = selectable('select#month')
+ *   selectMonth = selectable('select#month');
  * }
  * ```
  *

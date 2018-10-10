@@ -4,7 +4,7 @@ import { computed } from './helpers';
  * Returns the value of an input element.
  *
  * ``` html
- * <input value="Hello World!"/>
+ * <input value="Hello World!" />
  * ```
  *
  * ``` javascript
@@ -24,13 +24,13 @@ export function value() {
  *
  * ``` html
  * <form>
- *   <input id="name" value="Foo Bar"/>
+ *   <input id="name" value="Foo Bar" />
  * </form>
  * ```
  *
  * ``` javascript
  * \@interactor class FormInteractor {
- *   name = value('input#name')
+ *   name = value('input#name');
  * }
  * ```
  *

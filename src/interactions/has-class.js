@@ -6,16 +6,16 @@ import { computed } from './helpers';
  *
  * ``` html
  * <form class="error" ...>
- *   <input id="name" class="error"/>
- *   <input type="email" id="email"/>
+ *   <input id="name" class="error" />
+ *   <input type="email" id="email" />
  * </form>
  * ```
  *
  * ``` javascript
  * \@interactor class FormInteractor {
- *   hasErrors = hasClass('error')
- *   hasNameError = hasClass('input#name', 'error')
- *   hasEmailError = hasClass('input#email', 'error')
+ *   hasErrors = hasClass('error'); // applies to the root
+ *   hasNameError = hasClass('input#name', 'error');
+ *   hasEmailError = hasClass('input#email', 'error');
  * }
  * ```
  *

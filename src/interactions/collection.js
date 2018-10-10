@@ -16,7 +16,7 @@ import { action } from './helpers';
 
  * ``` javascript
  * \@interactor class CheckboxGroupInteractor {
- *   items = collection('input[type="checkbox"]')
+ *   items = collection('input[type="checkbox"]');
  * }
  * ```
  *
@@ -26,7 +26,7 @@ import { action } from './helpers';
  * ``` javascript
  * await checkboxGroup
  *   .items(0).click()
- *   .items(1).click()
+ *   .items(1).click();
  * ```
  *
  * Nested interactors also have an additional method, `#only()`, which
@@ -51,8 +51,8 @@ import { action } from './helpers';
  * // checks all checkboxes
  * await checkboxGroup.do(function() {
  *   return this.items().reduce((group, item) => {
- *     return group.append(item.click())
- *   }, this)
+ *     return group.append(item.click());
+ *   }, this);
  * })
  * ```
  *
@@ -74,7 +74,7 @@ import { action } from './helpers';
  * \@interactor class CardsListInteractor {
  *   cards = collection('.card', {
  *     clickThrough: clickable('.card-link')
- *   })
+ *   });
  * }
  * ```
  *
@@ -82,17 +82,17 @@ import { action } from './helpers';
  *
  * ``` javascript
  * \@interactor class CardInteractor {
- *   clickThrough = clickable('.card-link')
+ *   clickThrough = clickable('.card-link');
  * }
  *
  * \@interactor class CardsListInteractor {
- *   cards = collection('.card', CardInteractor)
+ *   cards = collection('.card', CardInteractor);
  * }
  * ```
  *
  * ``` javascript
  * await new CardListinteractor('.cards')
- *   .cards(0).clickThrough()
+ *   .cards(0).clickThrough();
  * ```
  *
  * The collection interaction creator also accepts a function instead
@@ -105,7 +105,7 @@ import { action } from './helpers';
  *
  * ``` javascript
  * \@interactor class CheckboxGroupInteractor {
- *   items = collection((value) => {
+ *   items = collection(value => {
  *     return `[type="radio"]${value ? '[value="${value}"]' : ''}`;
  *   })
  * }
@@ -114,7 +114,7 @@ import { action } from './helpers';
  * ``` javascript
  * await checkBoxGroup
  *   .items('green').click()
- *   .items('red').click()
+ *   .items('red').click();
  * ```
  *
  * @function collection
@@ -152,7 +152,7 @@ export default function(selector, descriptors = {}) {
         parent: this
       });
     } else {
-      return this.$$(scope.call(this)).map((item) => {
+      return this.$$(scope.call(this)).map(item => {
         return new ItemInteractor(item);
       });
     }

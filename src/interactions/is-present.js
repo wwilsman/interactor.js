@@ -38,8 +38,8 @@ export function isPresent() {
  *
  * ``` javascript
  * \@interactor class PageInteractor {
- *   isFooPresent = isPresent('#foo')
- *   isBarPresent = isPresent('#bar')
+ *   isFooPresent = isPresent('#foo');
+ *   isBarPresent = isPresent('#bar');
  * }
  * ```
  *

@@ -14,8 +14,8 @@ import { computed } from './helpers';
  *
  * ``` javascript
  * \@interactor class CardInteractor {
- *   height = property('offsetHeight')
- *   isDisabled = property('button.card-cta', 'disabled')
+ *   height = property('offsetHeight');
+ *   isDisabled = property('button.card-cta', 'disabled');
  * }
  * ```
  *

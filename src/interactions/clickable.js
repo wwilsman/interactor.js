@@ -15,8 +15,8 @@ import { find } from './find';
  * ```
  *
  * ``` javascript
- * await new Interactor('button').click()
- * await new Interactor('form').click('[type="submit"]')
+ * await new Interactor('button').click();
+ * await new Interactor('form').click('[type="submit"]');
  * ```
  *
  * @method Interactor#click
@@ -35,7 +35,7 @@ export function click(selector) {
  * ``` html
  * <div class="card">
  *   ...
- *   <a class="card-link" href="#bar">
+ *   <a class="card-link" href="https://example.com">
  *     ...
  *   </a>
  * </div>
@@ -43,7 +43,7 @@ export function click(selector) {
  *
  * ``` javascript
  * \@interactor class CardInteractor {
- *   clickThrough = clickable('.card-link')
+ *   clickThrough = clickable('.card-link');
  * }
  * ```
  *

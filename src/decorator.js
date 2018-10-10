@@ -78,20 +78,20 @@ function checkForReservedProperties(obj) {
  *
  * \@interactor class CustomInteractor {
  *   // optional default scope for this interactor
- *   static defaultScope = '#some-element'
+ *   static defaultScope = '#some-element';
  *
  *   // `isPresent` returns a getter descriptor
- *   hasError = isPresent('div.error')
+ *   hasError = isPresent('div.error');
  *
  *   // `*able` helpers return method descriptors
- *   submit = clickable('button[type="submit"]')
+ *   submit = clickable('button[type="submit"]');
  *
  *   // normal getters and methods work as well
  *   fillForm(name, email) {
  *     return this
  *       .fill('input#name', name)
  *       .fill('input#email', email)
- *       .submit()
+ *       .submit();
  *   }
  * }
  * ```

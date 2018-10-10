@@ -4,14 +4,14 @@
  * ``` javascript
  * function data(key, selector) {
  *   return computed(function() {
- *     return this.$(selector).dataset[key]
+ *     return this.$(selector).dataset[key];
  *   })
  * }
  * ```
  *
  * ``` javascript
  * \@interactor class PageInteractor {
- *   username = data('user', '#user-info')
+ *   username = data('user', '#user-info');
  * }
  * ```
  *
@@ -33,19 +33,19 @@ export function computed(getter) {
  * ``` javascript
  * function check(selector) {
  *   return action(function(name) {
- *     return this.click(`${selector}[name="${name}"]`)
+ *     return this.click(`${selector}[name="${name}"]`);
  *   })
  * }
  * ```
  *
  * ``` javascript
  * \@interactor class CheckboxGroupInteractor {
- *   check = check('input[type="checkbox"]')
+ *   check = check('input[type="checkbox"]');
  * }
  * ```
  *
  * ``` javascript
- * new CheckboxGroupinteractor('.checkboxes').check('option-1')
+ * new CheckboxGroupinteractor('.checkboxes').check('option-1');
  * ```
  *
  * @function action

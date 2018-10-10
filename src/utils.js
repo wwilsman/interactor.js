@@ -70,19 +70,19 @@ export function $$(selector, $ctx = document) {
   }
 
   // only return elements
-  return nodes.filter(($node) => $node instanceof Element);
+  return nodes.filter($node => $node instanceof Element);
 }
 
 /**
  * Returns `true` if the object has common interactor properties
  *
  * ``` javascript
- * let result = maybeInteractor()
+ * let result = maybeInteractor();
  *
  * if (isInteractor(result)) {
- *   await result.login(user)
+ *   await result.login(user);
  * } else {
- *   something(result)
+ *   something(result);
  * }
  * ```
  *

@@ -40,10 +40,10 @@ function getTriggerArgs(args) {
  * specified event with optional event init options.
  *
  * ``` javascript
- * await new Interactor('#foo').trigger('customEvent')
- * await new Interactor('#foo').trigger('customEvent', { ... })
- * await new Interactor('#foo').trigger('#bar', 'customEvent')
- * await new Interactor('#foo').trigger('#bar', 'customEvent', { ... })
+ * await new Interactor('#foo').trigger('customEvent');
+ * await new Interactor('#foo').trigger('customEvent', { ... });
+ * await new Interactor('#foo').trigger('#bar', 'customEvent');
+ * await new Interactor('#foo').trigger('#bar', 'customEvent', { ... });
  * ```
  *
  * @method Interactor#trigger
@@ -80,16 +80,16 @@ export function trigger(...args) {
  *
  * ``` javascript
  * \@interactor class PageInteractor {
- *   triggerEvent = triggerable('customEvent', { ... })
- *   triggerFooEvent = triggerable('#foo', 'customEvent')
+ *   triggerEvent = triggerable('customEvent', { ... });
+ *   triggerFooEvent = triggerable('#foo', 'customEvent');
  * }
  * ```
  *
  * ``` javascript
- * await new PageInteractor().triggerEvent()
- * await new PageInteractor().triggerEvent({ ... })
- * await new PageInteractor().triggerFooEvent()
- * await new PageInteractor().triggerFooEvent({ ... })
+ * await new PageInteractor().triggerEvent();
+ * await new PageInteractor().triggerEvent({ ... });
+ * await new PageInteractor().triggerFooEvent();
+ * await new PageInteractor().triggerFooEvent({ ... });
  * ```
  *
  * @function triggerable

@@ -9,6 +9,7 @@ import { computed } from './helpers';
  * <div id="foo">
  *   ...
  * </div>
+ *
  * <div id="bar" style="display: none">
  *   ...
  * </div>
@@ -38,6 +39,7 @@ export function isHidden() {
  * <div id="foo">
  *   ...
  * </div>
+ *
  * <div id="bar" style="display: none">
  *   ...
  * </div>
@@ -45,8 +47,8 @@ export function isHidden() {
  *
  * ``` javascript
  * \@interactor class PageInteractor {
- *   isFooHidden = isHidden('#foo')
- *   isBarHidden = isHidden('#bar')
+ *   isFooHidden = isHidden('#foo');
+ *   isBarHidden = isHidden('#bar');
  * }
  * ```
  *

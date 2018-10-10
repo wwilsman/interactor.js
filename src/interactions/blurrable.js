@@ -7,14 +7,14 @@ import { find } from './find';
  *
  * ``` html
  * <form ...>
- *   <input type="email"/>
+ *   <input type="email" />
  *   ...
  * </form>
  * ```
  *
  * ``` javascript
- * await new Interactor('input').blur()
- * await new Interactor('form').blur('input[type="email"]')
+ * await new Interactor('input').blur();
+ * await new Interactor('form').blur('input[type="email"]');
  * ```
  *
  * @method Interactor#blur
@@ -33,19 +33,19 @@ export function blur(selector) {
  *
  * ``` html
  * <form ...>
- *   <input type="email"/>
+ *   <input type="email" />
  *   ...
  * </form>
  * ```
  *
  * ``` javascript
  * \@interactor class FormInteractor {
- *   blurEmail = blurrable('input[type="email"]')
+ *   blurEmail = blurrable('input[type="email"]');
  * }
  * ```
  *
  * ``` javascript
- * await new FormInteractor('form').blurEmail()
+ * await new FormInteractor('form').blurEmail();
  * ```
  *
  * @function blurrable

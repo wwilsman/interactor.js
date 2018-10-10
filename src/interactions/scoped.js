@@ -15,7 +15,7 @@ import { computed } from './helpers';
  * ```
 
  * ``` javascript
- * await new Interactor('form').scoped('[type="submit"]').click()
+ * await new Interactor('form').scoped('[type="submit"]').click();
  * ```
  *
  * This is especially useful for returning nested interactors from

@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ### Fixed
 
 - update `collection` docs to be consistant (`.item(0).click()` to `.items(0).click()`)
+- make all documentation consistent in style & correct minor issues
 
 ## [0.8.0] - 2018-10-04
 

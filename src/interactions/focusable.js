@@ -7,14 +7,14 @@ import { find } from './find';
  *
  * ``` html
  * <form ...>
- *   <input type="email"/>
+ *   <input type="email" />
  *   ...
  * </form>
  * ```
  *
  * ``` javascript
- * await new Interactor('input').focus()
- * await new Interactor('form').focus('input[type="email"]')
+ * await new Interactor('input').focus();
+ * await new Interactor('form').focus('input[type="email"]');
  * ```
  *
  * @method Interactor#focus
@@ -22,10 +22,9 @@ import { find } from './find';
  * @returns {Interactor} A new instance with additional convergences
  */
 export function focus(selector) {
-  return find.call(this, selector)
-    .do(($node) => {
-      $node.focus();
-    });
+  return find.call(this, selector).do($node => {
+    $node.focus();
+  });
 }
 
 /**
@@ -34,19 +33,19 @@ export function focus(selector) {
  *
  * ``` html
  * <form ...>
- *   <input type="email"/>
+ *   <input type="email" />
  *   ...
  * </form>
  * ```
  *
  * ``` javascript
  * \@interactor class FormInteractor {
- *   focusEmail = focusable('input[type="email"]')
+ *   focusEmail = focusable('input[type="email"]');
  * }
  * ```
  *
  * ``` javascript
- * await new FormInteractor('form').focusEmail()
+ * await new FormInteractor('form').focusEmail();
  * ```
  *
  * @function focusable
