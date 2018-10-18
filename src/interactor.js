@@ -251,8 +251,10 @@ class Interactor extends Convergence {
 // static methods and properties
 defineProperties(Interactor, {
   isInteractor: { value: isInteractor },
-  extend: { value: extend },
-  from: { value: from },
+
+  // ensure these are always bound to their respective classes
+  extend: { get() { return extend.bind(this); } },
+  from: { get() { return from.bind(this); } },
 
   /**
    * The default selector or element an interactor is scoped to when a

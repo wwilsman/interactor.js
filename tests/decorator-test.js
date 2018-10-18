@@ -1,28 +1,26 @@
-/* global describe, beforeEach, it */
+/* global describe, beforeEach, afterEach, it */
 import { expect } from 'chai';
-import { Interactor, interactor } from '../src';
+import Interactor, { interactor } from '../src';
 
 describe('BigTest Interaction: decorator', () => {
   let TestInteractor;
 
   beforeEach(() => {
-    TestInteractor = interactor(class TestInteractor {
-      constructor() {
-        this.foo = 'bar';
+    TestInteractor = @interactor class TestInteractor {
+      foo = 'bar';
 
-        this.test = {
-          enumerable: false,
-          configurable: false,
-          value() {}
-        };
+      test = {
+        enumerable: false,
+        configurable: false,
+        value() {}
+      };
 
-        this.nested = new Interactor();
-      }
+      nested = new Interactor();
 
       get getter() {
         return 'got';
       }
-    });
+    };
   });
 
   it('retains the class name', () => {
@@ -79,6 +77,13 @@ describe('BigTest Interaction: decorator', () => {
 
   describe('with a plain object', () => {
     beforeEach(() => {
+      let stub = (...args) => {
+        (stub.calls = (stub.calls || [])).push(args);
+      };
+
+      stub.og = console.warn;
+      console.warn = stub;
+
       TestInteractor = interactor({
         foo: 'bar',
 
@@ -94,6 +99,15 @@ describe('BigTest Interaction: decorator', () => {
 
         nested: new Interactor()
       });
+    });
+
+    afterEach(() => {
+      console.warn = console.warn.og;
+    });
+
+    it('raises a deprication warning', () => {
+      expect(console.warn.calls).to.have.lengthOf(1);
+      expect(console.warn.calls[0][0]).to.include('Deprecated');
     });
 
     it('returns an interactor class with the specified properties', () => {

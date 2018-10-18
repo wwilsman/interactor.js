@@ -165,4 +165,104 @@ describe('BigTest Interaction: Interactor', () => {
       expect(new Interactor('.test-p').$$()).to.have.lengthOf(0);
     });
   });
+
+  describe('from an object', () => {
+    let TestInteractor, ExtendedInteractor;
+
+    beforeEach(() => {
+      TestInteractor = Interactor.from({
+        static: {
+          name: 'TestInteractor',
+          defaultScope: '.test'
+        },
+
+        foo: 'bar',
+
+        test: {
+          enumerable: false,
+          configurable: false,
+          value: () => 'test'
+        },
+
+        get getter() {
+          return 'got';
+        },
+
+        nested: new Interactor()
+      });
+
+      ExtendedInteractor = TestInteractor.from({
+        bar: 'baz'
+      });
+    });
+
+    it('uses static properties for static members', () => {
+      expect(TestInteractor.name).to.equal('TestInteractor');
+      expect(TestInteractor.defaultScope).to.equal('.test');
+    });
+
+    it('returns an interactor class with the specified properties', () => {
+      expect(new TestInteractor()).to.have.property('foo', 'bar');
+      expect(new TestInteractor()).to.have.property('getter', 'got');
+      expect(new TestInteractor()).to.respondTo('test');
+      expect(new TestInteractor().nested).to.be.an.instanceOf(Interactor)
+        .that.has.property('__parent__').that.is.an.instanceOf(TestInteractor);
+    });
+
+    it('extends the origin class', () => {
+      expect(new ExtendedInteractor()).to.have.property('bar', 'baz');
+      expect(new ExtendedInteractor()).to.be.an.instanceOf(TestInteractor);
+    });
+  });
+
+  describe('extend a class', () => {
+    let TestInteractor, ExtendedInteractor;
+
+    beforeEach(() => {
+      TestInteractor = @Interactor.extend class TestInteractor {
+        static defaultScope = '.test';
+        foo = 'bar';
+
+        test = {
+          enumerable: false,
+          configurable: false,
+          value: () => 'test'
+        };
+
+        get getter() {
+          return 'got';
+        }
+
+        nested = new Interactor();
+      };
+
+      ExtendedInteractor = @TestInteractor.extend class ExtendedInteractor {
+        static defaultScope = '.extended';
+        bar = 'baz';
+      };
+    });
+
+    it('retains the class name', () => {
+      expect(TestInteractor.name).to.equal('TestInteractor');
+      expect(ExtendedInteractor.name).to.equal('ExtendedInteractor');
+    });
+
+    it('retains static members', () => {
+      expect(TestInteractor.defaultScope).to.equal('.test');
+      expect(ExtendedInteractor.defaultScope).to.equal('.extended');
+    });
+
+    it('returns an interactor class with the specified properties', () => {
+      expect(new TestInteractor()).to.have.property('foo', 'bar');
+      expect(new TestInteractor()).to.have.property('getter', 'got');
+      expect(new TestInteractor()).to.respondTo('test');
+      expect(new TestInteractor().nested).to.be.an.instanceOf(Interactor)
+        .that.has.property('__parent__').that.is.an.instanceOf(TestInteractor);
+    });
+
+    it('extends the origin class', () => {
+      expect(new ExtendedInteractor()).to.have.property('bar', 'baz');
+      expect(new ExtendedInteractor()).to.be.an.instanceOf(TestInteractor);
+    });
+  });
 });
