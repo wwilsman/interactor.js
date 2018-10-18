@@ -5,9 +5,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Added
+
+- static `from` method for plain objects
+- static `extend` decorator
+
 ### Changed
 
 - upgraded babel, webpack and other relevant packages
+
+### Deprecated
+
+- decorator usage with plain objects
 
 ## [0.8.1] - 2018-10-10
 

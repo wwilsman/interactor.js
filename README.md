@@ -332,17 +332,61 @@ new PageInteractor()
 new PageInteractor().title // returns the document's title
 ```
 
-### Without Decorators or Property Initializers
+### Extending Custom Interactors
 
-While decorators and property initializers are still not part of the
-current JavaScript spec, you can still use these helpers in a more
-traditional manner:
+All interactors inherit a static `extend` decorator. This can be used
+in place of any `@interactor` to inherit from a custom interactor.
 
 ``` javascript
-const PageInteractor = interactor(class PageInteractor {
-  constructor() {
-    this.fillName = fillable('.name-input');
-    this.submit = clickable('.submit-btn');
+import {
+  interactor,
+  text,
+  property,
+  hasClass,
+  clickable
+} from '@bigtest/interactor';
+
+@interactor class FieldInteractor {
+  label = text('label');
+  name = property('input', 'name');
+  type = property('input', 'type');
+  placeholder = property('input', 'placeholder');
+}
+
+@FieldInteractor.extend class PasswordInteractor {
+  toggleVisibility = clickable('.toggle-visibility');
+  isPasswordVisible = hasClass('.is-password-visibile');
+}
+```
+
+### Without Decorators or Class Properties
+
+While decorators and class properties are still not part of the
+current JavaScript spec, you can use the static `from` method with a
+plain object. This method is also inherited by custom interactors.
+
+``` javascript
+const LoginInteractor = Interactor.from({
+  // static properties can be defined with a `static` object
+  static: {
+    defaultScope: '.login-form'
+  },
+
+  fillName: fillable('.name-input'),
+  submit: clickable('.submit-btn'),
+
+  // getters are copied over
+  get errors() {
+    return this.$$('.errors')
+      .map($el => $el.innerText);
+  },
+
+  // methods too
+  fillName(name) {
+    return this
+      .focus('.name-input')
+      .fill('.name-input', name)
+      .blur('.name-input');
   }
 });
 ```

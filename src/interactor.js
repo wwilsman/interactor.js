@@ -1,13 +1,11 @@
 import Convergence from '@bigtest/convergence';
-import {
-  $,
-  $$,
-  isInteractor,
-  getDescriptor,
-  getDescriptors,
-  appendUp
-} from './utils';
-import { action, computed } from './interactions/helpers';
+
+import { $, $$ } from './utils/dom';
+import makeParentChainable from './utils/parent-chainable';
+import isInteractor from './utils/is-interactor';
+import extend from './utils/extend';
+import from from './utils/from';
+
 import { find } from './interactions/find';
 import { findAll } from './interactions/find-all';
 import { scoped } from './interactions/scoped';
@@ -24,9 +22,16 @@ import { isVisible } from './interactions/is-visible';
 import { isHidden } from './interactions/is-hidden';
 import { isPresent } from './interactions/is-present';
 
+const {
+  assign,
+  entries,
+  defineProperties,
+  getOwnPropertyDescriptor
+} = Object;
+
 /**
  * ``` javascript
- * import { Interactor } from '@bigtest/interactor';
+ * import Interactor from '@bigtest/interactor';
  * ```
  *
  * In biology, an _interactor_ is defined as part of an organism that
@@ -95,7 +100,7 @@ import { isPresent } from './interactions/is-present';
  * conjuction with the various interaction helpers.
  *
  * ``` javascript
- * import { interactor, fillable, clickable } from '@bigtest/interaction';
+ * import { interactor, fillable, clickable } from '@bigtest/interactor';
  *
  * \@interactor class FormInteractor {
  *   fillEmail = fillable('input[type="email"]');
@@ -106,6 +111,33 @@ import { isPresent } from './interactions/is-present';
  *       .fillEmail(email)
  *       .submit();
  *   }
+ * }
+ * ```
+ *
+ * Interactors also have a static `from` method to create custom
+ * interactors. You can even extend from custom interactors.
+ *
+ * ``` javascript
+ * const FormInteractor = Interactor.from({
+ *   fillEmail: fillable('input[type="email"]'),
+ *   submit: clickable('button[type="submit"]'),
+ *
+ *   fillAndSubmit(email) {
+ *     return this
+ *       .fillEmail(email)
+ *       .submit();
+ *   }
+ * });
+ * ```
+ *
+ * Custom interactors also have a static `extend` decorator available
+ * that you can use to extend from custom interactors while still
+ * using the class syntax.
+ *
+ * ``` javascript
+ * \@FieldInteractor.extend
+ * class PasswordInteractor {
+ *   // ...
  * }
  * ```
  */
@@ -124,8 +156,6 @@ class Interactor extends Convergence {
    * it is lazily evaluated whenever the scope getter is invoked
    */
   constructor(options = {}, previous = {}) {
-    super(options, previous);
-
     // a scope selector, element, or function was given
     if (typeof options === 'string' ||
         options instanceof Element ||
@@ -133,71 +163,28 @@ class Interactor extends Convergence {
       options = { scope: options };
     }
 
+    // convergence setup
+    super(options, previous);
+
     let {
       parent = previous.__parent__,
       scope = this.constructor.defaultScope
     } = options;
 
-    // assign some things to this instance
-    Object.defineProperties(this, {
+    // define any parent and the root element getter for this instance
+    defineProperties(this, {
       __parent__: { value: parent },
 
-      // the previous descriptor always takes precedence
-      $root: getDescriptor(previous, '$root') || {
+      // the previous root descriptor always takes precedence
+      $root: getOwnPropertyDescriptor(previous, '$root') || {
         get: () => $(typeof scope === 'function' ? scope() : scope)
       }
     });
 
-    // given a parent, return a wrapped instance of this interactor
-    // that will return parent instances from chainable methods
+    // given a parent, make all methods and getters return
+    // parent-chainable instances of themselves
     if (parent) {
-      let descriptors = Object.entries(getDescriptors(this));
-      let isSameType = (i) => i instanceof this.constructor;
-
-      // enables the parent chaining pattern by appending returned
-      // instances of this interactor up to the topmost parent, and
-      // returns that topmost parent instance
-      let chainable = (fn) => (...args) => {
-        // create an orphaned instance so that the parent is never
-        // returned inside of methods and getters
-        let orphan = new this.constructor({ parent: null }, this);
-        let results = fn.apply(orphan, args);
-
-        // return orphaned children to their parent
-        if (results && isSameType(results.__parent__)) {
-          results = new results.constructor({
-            parent: this
-          }, results);
-        }
-
-        // return the topmost parent instance for chaining
-        if (isSameType(results)) {
-          results = appendUp(parent.append(results));
-        }
-
-        return results;
-      };
-
-      return Object.create(this,
-        // make methods and getters chainable
-        descriptors.reduce((acc, [name, descriptor]) => {
-          let { value, get } = descriptor;
-
-          if (typeof value === 'function') {
-            descriptor = action(chainable(value));
-          } else if (typeof get === 'function') {
-            descriptor = computed(chainable(get));
-          }
-
-          return Object.assign({ [name]: descriptor }, acc);
-        }, {
-          // nested interactors can break a parent chain
-          only: action(() => {
-            return new this.constructor(scope)
-              .append(appendUp(this));
-          })
-        })
-      );
+      makeParentChainable(this);
     }
   }
 
@@ -262,8 +249,10 @@ class Interactor extends Convergence {
 }
 
 // static methods and properties
-Object.defineProperties(Interactor, {
+defineProperties(Interactor, {
   isInteractor: { value: isInteractor },
+  extend: { value: extend },
+  from: { value: from },
 
   /**
    * The default selector or element an interactor is scoped to when a
@@ -292,9 +281,9 @@ Object.defineProperties(Interactor, {
 });
 
 // default interaction methods
-Object.defineProperties(
+defineProperties(
   Interactor.prototype,
-  Object.entries({
+  entries({
     find,
     findAll,
     scoped,
@@ -306,24 +295,23 @@ Object.defineProperties(
     trigger,
     scroll
   }).reduce((descriptors, [name, method]) => {
-    return Object.assign(descriptors, {
-      [name]: action(method)
+    return assign(descriptors, {
+      [name]: { value: method }
     });
   }, {})
 );
 
-// default interaction properties
-Object.defineProperties(
+defineProperties(
   Interactor.prototype,
-  Object.entries({
+  entries({
     text,
     value,
     isVisible,
     isHidden,
     isPresent
   }).reduce((descriptors, [name, getter]) => {
-    return Object.assign(descriptors, {
-      [name]: computed(getter)
+    return assign(descriptors, {
+      [name]: { get: getter }
     });
   }, {})
 );
