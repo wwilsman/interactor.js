@@ -3,10 +3,10 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, triggerable } from '../../src';
 
-const TriggerInteractor = interactor(function() {
-  this.triggerSelf = triggerable('rootEvent', { self: 'righteous' });
-  this.triggerDiv = triggerable('.test-div', 'divEvent', { custom: true });
-});
+@interactor class TriggerInteractor {
+  triggerSelf = triggerable('rootEvent', { self: 'righteous' });
+  triggerDiv = triggerable('.test-div', 'divEvent', { custom: true });
+}
 
 describe('BigTest Interaction: triggerable', () => {
   let test, rootEvent, divEvent;
@@ -69,9 +69,9 @@ describe('BigTest Interaction: triggerable', () => {
 
   describe('overwriting the default trigger method', () => {
     beforeEach(() => {
-      test = new (interactor(function() {
-        this.trigger = triggerable('.test-div', 'divEvent');
-      }))();
+      test = new (@interactor class {
+        trigger = triggerable('.test-div', 'divEvent');
+      })();
     });
 
     it('triggers the event on the correct element', async () => {

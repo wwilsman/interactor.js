@@ -3,10 +3,10 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, property } from '../../src';
 
-const PropInteractor = interactor(function() {
-  this.height = property('offsetHeight');
-  this.isChecked = property('.test-checkbox', 'checked');
-});
+@interactor class PropInteractor {
+  height = property('offsetHeight');
+  isChecked = property('.test-checkbox', 'checked');
+}
 
 describe('BigTest Interaction: property', () => {
   let test;

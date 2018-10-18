@@ -3,10 +3,10 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, find } from '../../src';
 
-const FindInteractor = interactor(function() {
-  this.$p = find('.test-p');
-  this.$noexist = find('.test-existence');
-});
+@interactor class FindInteractor {
+  $p = find('.test-p');
+  $noexist = find('.test-existence');
+}
 
 describe('BigTest Interaction: find', () => {
   let test;

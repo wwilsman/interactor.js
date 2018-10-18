@@ -3,9 +3,9 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, fillable } from '../../src';
 
-const FillInteractor = interactor(function() {
-  this.fillInput = fillable('.test-input');
-});
+@interactor class FillInteractor {
+  fillInput = fillable('.test-input');
+}
 
 describe('BigTest Interaction: fillable', () => {
   let test, $input, events;
@@ -52,9 +52,9 @@ describe('BigTest Interaction: fillable', () => {
 
   describe('overwriting the default fill method', () => {
     beforeEach(() => {
-      test = new (interactor(function() {
-        this.fill = fillable('.test-input');
-      }))();
+      test = new (@interactor class {
+        fill = fillable('.test-input');
+      })();
     });
 
     it('fills the correct element', async () => {

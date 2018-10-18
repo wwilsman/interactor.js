@@ -3,9 +3,9 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, isVisible } from '../../src';
 
-const VisibleInteractor = interactor(function() {
-  this.isDivVisible = isVisible('.test-div');
-});
+@interactor class VisibleInteractor {
+  isDivVisible = isVisible('.test-div');
+}
 
 describe('BigTest Interaction: isVisible', () => {
   let test;

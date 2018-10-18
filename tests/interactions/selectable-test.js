@@ -3,9 +3,9 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, selectable } from '../../src';
 
-const SelectInteractor = interactor(function() {
-  this.selectOption = selectable('.test-select');
-});
+@interactor class SelectInteractor {
+  selectOption = selectable('.test-select');
+}
 
 describe('BigTest Interaction: selectable', () => {
   let test, $select, events;
@@ -71,9 +71,9 @@ describe('BigTest Interaction: selectable', () => {
 
     describe('overwriting the default select method', () => {
       beforeEach(() => {
-        test = new (interactor(function() {
-          this.select = selectable('.test-select');
-        }))();
+        test = new (@interactor class {
+          select = selectable('.test-select');
+        })();
       });
 
       it('selects the correct option', async () => {
@@ -127,12 +127,8 @@ describe('BigTest Interaction: selectable', () => {
     });
 
     it('throws an error when trying to select an option that does not exist', async () => {
-      await expect(
-        test
-          .timeout(50)
-          .selectOption(['Option 1', 'Race car'])
-          .run()
-      ).to.be.rejectedWith('unable to find option "Race car"');
+      await expect(test.timeout(50).selectOption(['Option 1', 'Race car']).run())
+        .to.be.rejectedWith('unable to find option "Race car"');
     });
   });
 });

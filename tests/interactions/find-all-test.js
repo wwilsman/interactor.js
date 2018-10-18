@@ -3,10 +3,10 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, findAll } from '../../src';
 
-const FindInteractor = interactor(function() {
-  this.paragraphs = findAll('.test-p');
-  this.nothing = findAll('.test-existence');
-});
+@interactor class FindInteractor {
+  paragraphs = findAll('.test-p');
+  nothing = findAll('.test-existence');
+}
 
 describe('BigTest Interaction: findAll', () => {
   let test;

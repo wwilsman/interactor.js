@@ -3,10 +3,10 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, attribute } from '../../src';
 
-const AttrInteractor = interactor(function() {
-  this.data = attribute('data-attr');
-  this.placeholder = attribute('.test-input', 'placeholder');
-});
+@interactor class AttrInteractor {
+  data = attribute('data-attr');
+  placeholder = attribute('.test-input', 'placeholder');
+}
 
 describe('BigTest Interaction: attribute', () => {
   let test;

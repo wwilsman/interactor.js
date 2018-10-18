@@ -3,11 +3,11 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, hasClass } from '../../src';
 
-const ClassInteractor = interactor(function() {
-  this.isCool = hasClass('cool');
-  this.isAlsoCool = hasClass('.some-div', 'also-cool');
-  this.isOtherCool = hasClass('.other-div', 'also-cool');
-});
+@interactor class ClassInteractor {
+  isCool = hasClass('cool');
+  isAlsoCool = hasClass('.some-div', 'also-cool');
+  isOtherCool = hasClass('.other-div', 'also-cool');
+}
 
 describe('BigTest Interaction: hasClass', () => {
   let test;

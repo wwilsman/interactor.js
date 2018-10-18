@@ -3,15 +3,15 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, scoped, text, fillable } from '../../src';
 
-const FieldInteractor = interactor(function() {
-  this.label = text('.test-label');
-  this.fillIn = fillable('input');
-});
+@interactor class FieldInteractor {
+  label = text('.test-label');
+  fillIn = fillable('input');
+}
 
-const ScopedInteractor = interactor(function() {
-  this.simple = scoped('.test-field');
-  this.field = scoped('.test-field', FieldInteractor);
-});
+@interactor class ScopedInteractor {
+  simple = scoped('.test-field');
+  field = scoped('.test-field', FieldInteractor);
+}
 
 describe('BigTest Interaction: scoped', () => {
   let test;
