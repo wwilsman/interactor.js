@@ -14,14 +14,6 @@ export default {
   }],
   plugins: [
     resolve(),
-    babel({
-      babelrc: false,
-      comments: false,
-      presets: [
-        ['@babel/preset-env', {
-          modules: false
-        }]
-      ]
-    })
+    babel({ comments: false })
   ]
 };

@@ -23,15 +23,7 @@ module.exports = (config) => {
         rules: [{
           test: /\.js$/,
           exclude: /node_modules/,
-          loader: 'babel-loader',
-          options: {
-            babelrc: false,
-            presets: [
-              ['@babel/env', {
-                modules: false
-              }]
-            ]
-          }
+          loader: 'babel-loader'
         }]
       }
     },
