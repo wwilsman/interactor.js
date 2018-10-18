@@ -6,6 +6,7 @@ export default {
   input: 'src/index.js',
   output: [{
     format: 'umd',
+    exports: 'named',
     name: 'BigTest.Interactor',
     file: pkg.main
   }, {
