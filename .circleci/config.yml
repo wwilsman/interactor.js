@@ -2,7 +2,7 @@ references:
   defaults: &defaults
     working_directory: ~/interactor
     docker:
-      - image: circleci/node:8-browsers
+      - image: circleci/node:10-browsers
 
   cache_key: &cache_key
     interactor-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
@@ -64,7 +64,7 @@ jobs:
       - *attach_workspace
       - run:
           name: Run tests
-          command: yarn test
+          command: yarn test --browser chrome
 
   deploy:
     <<: *defaults
