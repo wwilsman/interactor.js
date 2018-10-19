@@ -19,10 +19,17 @@ describe('BigTest Interaction: Interactor', () => {
     expect(instance).to.be.an.instanceOf(Convergence);
   });
 
-  it('has a `pause` method', () => {
+  it('has a deprecated `pause` method', () => {
+    let warning = null;
+    let ogwarn = console.warn;
+    console.warn = msg => warning = msg;
+
     expect(instance).to.respondTo('pause');
     expect(instance.pause()).to.be.an.instanceOf(Interactor);
     expect(instance.pause()).to.not.equal(instance);
+    expect(warning).to.match(/deprecated/);
+
+    console.warn = ogwarn;
   });
 
   describe('with a scope', () => {
