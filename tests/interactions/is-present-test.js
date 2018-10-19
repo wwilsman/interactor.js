@@ -3,9 +3,9 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, isPresent } from '../../src';
 
-const PresentInteractor = interactor(function() {
-  this.isDivPresent = isPresent('.test-div');
-});
+@interactor class PresentInteractor {
+  isDivPresent = isPresent('.test-div');
+}
 
 describe('BigTest Interaction: isPresent', () => {
   let test;

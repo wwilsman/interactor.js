@@ -1,4 +1,4 @@
-import interactor from '../decorator';
+import Interactor from '../interactor';
 import { computed } from './helpers';
 
 /**
@@ -38,11 +38,12 @@ import { computed } from './helpers';
  *
  * @method Interactor#scoped
  * @param {String} selector - Nested element query selector
- * @param {Object} [descriptors] - Interaction descriptors
+ * @param {Object} [properties] - Interaction descriptors
  * @returns {Interactor} A new nested interactor instance
  */
-export function scoped(selector, descriptors = {}) {
-  let ScopedInteractor = interactor(descriptors);
+export function scoped(selector, properties = {}) {
+  let ScopedInteractor = properties.prototype instanceof Interactor
+    ? properties : Interactor.from(properties);
 
   return new ScopedInteractor({
     scope: () => this.$(selector),

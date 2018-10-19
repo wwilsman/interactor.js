@@ -3,9 +3,9 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, clickable } from '../../src';
 
-const ClickInteractor = interactor(function() {
-  this.clickBtn = clickable('.test-btn');
-});
+@interactor class ClickInteractor {
+  clickBtn = clickable('.test-btn');
+}
 
 describe('BigTest Interaction: clickable', () => {
   let clicked, test;
@@ -44,9 +44,9 @@ describe('BigTest Interaction: clickable', () => {
 
   describe('overwriting the default click method', () => {
     beforeEach(() => {
-      test = new (interactor(function() {
-        this.click = clickable('.test-btn');
-      }))();
+      test = new (@interactor class {
+        click = clickable('.test-btn');
+      })();
     });
 
     it('clicks the correct element', async () => {

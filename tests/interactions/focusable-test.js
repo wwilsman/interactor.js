@@ -4,9 +4,9 @@ import { useFixture } from '../helpers';
 import { interactor, focusable } from '../../src';
 import { when } from '@bigtest/convergence';
 
-const FocusInteractor = interactor(function() {
-  this.focusInput = focusable('.test-input');
-});
+@interactor class FocusInteractor {
+  focusInput = focusable('.test-input');
+}
 
 describe('BigTest Interaction: focusable', () => {
   let focused, focusedIn, test, $input;
@@ -59,9 +59,9 @@ describe('BigTest Interaction: focusable', () => {
 
   describe('overwriting the default focus method', () => {
     beforeEach(() => {
-      test = new (interactor(function() {
-        this.focus = focusable('.test-input');
-      }))();
+      test = new (@interactor class {
+        focus = focusable('.test-input');
+      })();
     });
 
     it('focuses the correct element', async () => {

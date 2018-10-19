@@ -6,6 +6,7 @@ export default {
   input: 'src/index.js',
   output: [{
     format: 'umd',
+    exports: 'named',
     name: 'BigTest.Interactor',
     file: pkg.main
   }, {
@@ -14,14 +15,6 @@ export default {
   }],
   plugins: [
     resolve(),
-    babel({
-      babelrc: false,
-      comments: false,
-      presets: [
-        ['@babel/preset-env', {
-          modules: false
-        }]
-      ]
-    })
+    babel({ comments: false })
   ]
 };

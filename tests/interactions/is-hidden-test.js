@@ -3,9 +3,9 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, isHidden } from '../../src';
 
-const HiddenInteractor = interactor(function() {
-  this.isDivHidden = isHidden('.test-div');
-});
+@interactor class HiddenInteractor {
+  isDivHidden = isHidden('.test-div');
+}
 
 describe('BigTest Interaction: isHidden', () => {
   let test;

@@ -1,4 +1,4 @@
-import interactor from '../decorator';
+import Interactor from '../interactor';
 import { action } from './helpers';
 
 /**
@@ -120,11 +120,10 @@ import { action } from './helpers';
  * @function collection
  * @param {String|Function} selector - Element query selector or
  * function that returns a selector
- * @param {Object} [descriptors] - Interaction descriptors
+ * @param {Object} [properties] - Interaction descriptors
  * @returns {Object} Property descriptor
  */
-export default function(selector, descriptors = {}) {
-  let ItemInteractor = interactor(descriptors);
+export default function(selector, properties = {}) {
   let scope = selector;
 
   // with a string selector, the scope is defined as a function that
@@ -146,6 +145,9 @@ export default function(selector, descriptors = {}) {
   }
 
   return action(function(...args) {
+    let ItemInteractor = properties.prototype instanceof Interactor
+      ? properties : Interactor.from(properties);
+
     if (args.length) {
       return new ItemInteractor({
         scope: () => scope.apply(this, args),

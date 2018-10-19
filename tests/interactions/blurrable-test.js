@@ -4,9 +4,9 @@ import { useFixture } from '../helpers';
 import { interactor, blurrable } from '../../src';
 import { when } from '@bigtest/convergence';
 
-const BlurInteractor = interactor(function() {
-  this.blurInput = blurrable('.test-input');
-});
+@interactor class BlurInteractor {
+  blurInput = blurrable('.test-input');
+}
 
 describe('BigTest Interaction: blurrable', () => {
   let blurred, focusOut, test, $input;
@@ -62,9 +62,9 @@ describe('BigTest Interaction: blurrable', () => {
 
   describe('overwriting the default blur method', () => {
     beforeEach(() => {
-      test = new (interactor(function() {
-        this.blur = blurrable('.test-input');
-      }))();
+      test = new (@interactor class {
+        blur = blurrable('.test-input');
+      })();
     });
 
     it('blurs the correct element', async () => {

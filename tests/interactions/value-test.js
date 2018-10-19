@@ -3,9 +3,9 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, value } from '../../src';
 
-const ValueInteractor = interactor(function() {
-  this.inputVal = value('.test-input');
-});
+@interactor class ValueInteractor {
+  inputVal = value('.test-input');
+}
 
 describe('BigTest Interaction: value', () => {
   let input, test;

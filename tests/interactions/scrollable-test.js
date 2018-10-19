@@ -3,9 +3,9 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, scrollable } from '../../src';
 
-const ScrollInteractor = interactor(function() {
-  this.scrollDiv = scrollable('.test-div');
-});
+@interactor class ScrollInteractor {
+  scrollDiv = scrollable('.test-div');
+}
 
 describe('BigTest Interaction: scrollable', () => {
   let test, offset;
@@ -46,9 +46,9 @@ describe('BigTest Interaction: scrollable', () => {
 
   describe('overwriting the default scroll method', () => {
     beforeEach(() => {
-      test = new (interactor(function() {
-        this.scroll = scrollable('.test-div');
-      }))();
+      test = new (@interactor class {
+        scroll = scrollable('.test-div');
+      })();
     });
 
     it('scrolls the correct element', async () => {

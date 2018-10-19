@@ -3,20 +3,20 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, collection, text, clickable } from '../../src';
 
-const ItemInteractor = interactor(function() {
-  this.content = text('.test-p');
-  this.clickBtn = clickable('button');
-});
+@interactor class ItemInteractor {
+  content = text('.test-p');
+  clickBtn = clickable('button');
+}
 
-const CollectionInteractor = interactor(function() {
-  this.simple = collection('.test-item');
-  this.items = collection('.test-item', ItemInteractor);
+@interactor class CollectionInteractor {
+  simple = collection('.test-item');
+  items = collection('.test-item', ItemInteractor);
 
-  this.byId = collection(
+  byId = collection(
     (id) => id ? `#${id}` : '.test-item',
     ItemInteractor
   );
-});
+}
 
 describe('BigTest Interaction: collection', () => {
   let test;

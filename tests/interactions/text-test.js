@@ -3,9 +3,9 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, text } from '../../src';
 
-const TextInteractor = interactor(function() {
-  this.content = text('.test-span');
-});
+@interactor class TextInteractor {
+  content = text('.test-span');
+}
 
 describe('BigTest Interaction: text', () => {
   let test;

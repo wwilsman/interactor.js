@@ -3,9 +3,9 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, count } from '../../src';
 
-const ListInteractor = interactor(function() {
-  this.size = count('.test-item');
-});
+@interactor class ListInteractor {
+  size = count('.test-item');
+}
 
 describe('BigTest Interaction: count', () => {
   useFixture('count-fixture');

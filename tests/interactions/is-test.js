@@ -3,11 +3,11 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, is } from '../../src';
 
-const IsInteractor = interactor(function() {
-  this.isRoot = is('[data-root]');
-  this.testFirst = is('.test-p:first-child', '[data-test]');
-  this.testLast = is('.test-p:last-child', '[data-test]');
-});
+@interactor class IsInteractor {
+  isRoot = is('[data-root]');
+  testFirst = is('.test-p:first-child', '[data-test]');
+  testLast = is('.test-p:last-child', '[data-test]');
+}
 
 describe('BigTest Interaction: is', () => {
   let test;

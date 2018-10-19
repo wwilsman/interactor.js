@@ -3,15 +3,15 @@ import { expect } from 'chai';
 import { useFixture } from '../helpers';
 import { interactor, computed, action } from '../../src';
 
-const HelperInteractor = interactor(function() {
-  this.content = computed(function() {
+@interactor class HelperInteractor {
+  content = computed(function() {
     return this.$().innerText;
   });
 
-  this.doSomething = action(function() {
+  doSomething = action(function() {
     return this;
   });
-});
+}
 
 describe('BigTest Interaction: helpers', () => {
   let test;

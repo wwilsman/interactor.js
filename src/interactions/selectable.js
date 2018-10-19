@@ -1,4 +1,3 @@
-/* global Event */
 import { action } from './helpers';
 import { find } from './find';
 
