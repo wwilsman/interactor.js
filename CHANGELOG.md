@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Changed
+
+- upgrade @bigtest/convergence to fix date mocking bug
+
 ## [0.9.0] - 2018-10-19
 
 ### Added

@@ -662,6 +662,11 @@
   resolved "https://registry.yarnpkg.com/@bigtest/convergence/-/convergence-0.10.0.tgz#ed2212b7034c84917ccfbaa8cf875730ee535702"
   integrity sha512-jJBPq3TTmMD/s/5k/mINzL6EXyPdNq0cEDZXufICFjpXmuUabRS/PX/NfzmXVlNENDJ6yOrDnrsO4IJboNTu9g==
 
+"@bigtest/convergence@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@bigtest/convergence/-/convergence-1.1.1.tgz#b314d8b1edc392d3e8780f99499a9a03aa528d54"
+  integrity sha512-zorukvQJ7JxD5Jqy3ChzhCJzlD45bZudBASbgJvY5ffw5Hu+/9Ia/+8KlU1/XRWm32O2P5SBB2soHoFtGi1eGQ==
+
 "@bigtest/meta@bigtestjs/meta":
   version "0.0.1"
   resolved "https://codeload.github.com/bigtestjs/meta/tar.gz/45e15f4eacea3b83733f7585804f5658e91aa917"

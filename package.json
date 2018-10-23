@@ -49,6 +49,6 @@
     "webpack-dev-server": "^3.1.9"
   },
   "dependencies": {
-    "@bigtest/convergence": "^0.10.0"
+    "@bigtest/convergence": "^1.1.1"
   }
 }
