@@ -6,6 +6,8 @@ import isInteractor from './utils/is-interactor';
 import extend from './utils/extend';
 import from from './utils/from';
 
+import { validate } from './interactions/validate';
+import { remains } from './interactions/remains';
 import { find } from './interactions/find';
 import { findAll } from './interactions/find-all';
 import { scoped } from './interactions/scoped';
@@ -291,6 +293,8 @@ defineProperties(Interactor, {
 defineProperties(
   Interactor.prototype,
   entries({
+    validate,
+    remains,
     find,
     findAll,
     scoped,

@@ -1,4 +1,6 @@
 // interaction creators
+export { default as validate } from './validate';
+export { default as remains } from './remains';
 export { default as clickable } from './clickable';
 export { default as fillable } from './fillable';
 export { default as selectable } from './selectable';
