@@ -1,7 +1,7 @@
 {
   "name": "@bigtest/interactor",
   "description": "Interaction library for testing big",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "license": "MIT",
   "repository": "https://github.com/bigtestjs/interactor",
   "main": "dist/umd/index.js",
@@ -49,6 +49,6 @@
     "webpack-dev-server": "^3.1.9"
   },
   "dependencies": {
-    "@bigtest/convergence": "^0.10.0"
+    "@bigtest/convergence": "^1.1.1"
   }
 }
