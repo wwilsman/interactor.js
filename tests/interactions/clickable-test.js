@@ -37,7 +37,7 @@ describe('BigTest Interaction: clickable', () => {
     await expect(test.click('.test-btn').run()).to.be.fulfilled;
     expect(clicked).to.be.true;
 
-    clicked = true;
+    clicked = false;
     await expect(test.clickBtn().run()).to.be.fulfilled;
     expect(clicked).to.be.true;
   });
