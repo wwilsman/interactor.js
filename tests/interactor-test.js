@@ -212,8 +212,7 @@ describe('BigTest Interaction: Interactor', () => {
       expect(new TestInteractor()).to.have.property('foo', 'bar');
       expect(new TestInteractor()).to.have.property('getter', 'got');
       expect(new TestInteractor()).to.respondTo('test');
-      expect(new TestInteractor().nested).to.be.an.instanceOf(Interactor)
-        .that.has.property('__parent__').that.is.an.instanceOf(TestInteractor);
+      expect(new TestInteractor().nested).to.be.an.instanceOf(Interactor);
     });
 
     it('extends the origin class', () => {
@@ -263,8 +262,7 @@ describe('BigTest Interaction: Interactor', () => {
       expect(new TestInteractor()).to.have.property('foo', 'bar');
       expect(new TestInteractor()).to.have.property('getter', 'got');
       expect(new TestInteractor()).to.respondTo('test');
-      expect(new TestInteractor().nested).to.be.an.instanceOf(Interactor)
-        .that.has.property('__parent__').that.is.an.instanceOf(TestInteractor);
+      expect(new TestInteractor().nested).to.be.an.instanceOf(Interactor);
     });
 
     it('extends the origin class', () => {

@@ -5,6 +5,7 @@ import makeParentChainable from './utils/parent-chainable';
 import isInteractor from './utils/is-interactor';
 import extend from './utils/extend';
 import from from './utils/from';
+import meta from './utils/meta';
 
 import { validate } from './interactions/validate';
 import { remains } from './interactions/remains';
@@ -26,8 +27,9 @@ import { isPresent } from './interactions/is-present';
 
 const {
   assign,
-  entries,
   defineProperties,
+  entries,
+  freeze,
   getOwnPropertyDescriptor
 } = Object;
 
@@ -168,14 +170,21 @@ class Interactor extends Convergence {
     // convergence setup
     super(options, previous);
 
+    // combine with defaults
+    options = freeze({
+      scope: this.constructor.defaultScope,
+      ...previous[meta],
+      ...options
+    });
+
     let {
-      parent = previous.__parent__,
-      scope = this.constructor.defaultScope
+      parent,
+      scope
     } = options;
 
-    // define any parent and the root element getter for this instance
+    // define meta properties and the root element getter for this instance
     defineProperties(this, {
-      __parent__: { value: parent },
+      [meta]: { value: options },
 
       // the previous root descriptor always takes precedence
       $root: getOwnPropertyDescriptor(previous, '$root') || {

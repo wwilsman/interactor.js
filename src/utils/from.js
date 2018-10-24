@@ -1,5 +1,6 @@
 import Convergence from '@bigtest/convergence';
 import isInteractor from './is-interactor';
+import meta from './meta';
 
 const {
   assign,
@@ -20,7 +21,7 @@ const {
  */
 function checkForReservedPropertyNames(obj) {
   const blacklist = [
-    '$', '$$', '$root', 'only', '__parent__',
+    '$', '$$', '$root', 'only', meta,
     ...getOwnPropertyNames(Convergence.prototype)
   ];
 
@@ -113,6 +114,7 @@ function toInteractorDescriptor(from) {
  */
 
 export default function from(properties) {
+  let { static: staticProps, ...ownProps } = properties;
   class CustomInteractor extends this {};
 
   // define properties from descriptors
@@ -120,7 +122,7 @@ export default function from(properties) {
     CustomInteractor.prototype,
     checkForReservedPropertyNames(
       entries(
-        getOwnPropertyDescriptors(properties)
+        getOwnPropertyDescriptors(ownProps)
       ).reduce((acc, [key, descr]) => assign(acc, {
         [key]: hasOwnProperty.call(descr, 'value')
         // some values are themselves descriptors
@@ -131,10 +133,10 @@ export default function from(properties) {
   );
 
   // define static properties
-  if (properties.static) {
+  if (staticProps) {
     defineProperties(
       CustomInteractor,
-      getOwnPropertyDescriptors(properties.static)
+      getOwnPropertyDescriptors(staticProps)
     );
   }
 

@@ -1,3 +1,5 @@
+import meta from './meta';
+
 const {
   assign,
   defineProperties,
@@ -19,6 +21,19 @@ function isSameType(a, b) {
 }
 
 /**
+ * Returns the parent of an interactor instance
+ *
+ * @private
+ * @param {Interactor} interactor
+ * @returns {Interactor}
+ */
+function getParent(interactor) {
+  return interactor &&
+    interactor[meta] &&
+    interactor[meta].parent;
+}
+
+/**
  * Wraps a method or getter to return an appended parent instance when
  * another same-type instance is returned. The original function is
  * called with the context of an orphaned instance so that it does not
@@ -36,13 +51,15 @@ function chainable(fn) {
     let results = fn.apply(this.only(), args);
 
     // return orphaned children to their parent
-    if (isSameType(this, results && results.__parent__)) {
-      results = new results.constructor({ parent: this }, results);
+    if (isSameType(this, getParent(results))) {
+      results = new results.constructor({
+        parent: this
+      }, results);
     }
 
     // return the parent instance for chaining
     if (isSameType(this, results)) {
-      results = this.__parent__.append(results);
+      results = getParent(this).append(results);
     }
 
     return results;
