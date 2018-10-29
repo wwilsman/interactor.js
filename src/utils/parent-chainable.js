@@ -52,9 +52,7 @@ function chainable(fn) {
 
     // return orphaned children to their parent
     if (isSameType(this, getParent(results))) {
-      results = new results.constructor({
-        parent: this
-      }, results);
+      results = withParent(results, this);
     }
 
     // return the parent instance for chaining
@@ -85,6 +83,18 @@ function getAllDescriptors(instance) {
   }
 
   return descr;
+}
+
+/**
+ * Returns a new instance of the provided interactor with a parent
+ *
+ * @private
+ * @param {Interactor} interactor
+ * @param {Interactor|Null} parent
+ * @returns {Interactor}
+ */
+export function withParent(interactor, parent) {
+  return new interactor.constructor({ parent }, interactor);
 }
 
 /**
@@ -131,9 +141,7 @@ export default function makeParentChainable(instance) {
         // provide method for breaking the parent chain
         only: {
           value: () => {
-            return new instance.constructor({
-              parent: null
-            }, instance);
+            return withParent(instance, null);
           }
         }
       })

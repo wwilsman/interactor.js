@@ -1,4 +1,5 @@
 import Convergence from '@bigtest/convergence';
+import { withParent } from './parent-chainable';
 import isInteractor from './is-interactor';
 import meta from './meta';
 
@@ -64,13 +65,23 @@ function toInteractorDescriptor(from) {
 
   // nested interactors get parent references
   } else if (isInteractor(from)) {
-    return {
-      get() {
-        return new from.constructor({
-          parent: this
-        }, from);
-      }
-    };
+    // actions are functions that auto-run the interactor
+    if (from[meta].action) {
+      return {
+        value() {
+          return this.do(() => {
+            return withParent(from, this);
+          });
+        }
+      };
+    // all other interactors are nested getters
+    } else {
+      return {
+        get() {
+          return withParent(from, this);
+        }
+      };
+    }
 
   // preserve all other values
   } else {

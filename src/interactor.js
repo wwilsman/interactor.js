@@ -29,8 +29,7 @@ const {
   assign,
   defineProperties,
   entries,
-  freeze,
-  getOwnPropertyDescriptor
+  freeze
 } = Object;
 
 /**
@@ -179,6 +178,7 @@ class Interactor extends Convergence {
 
     let {
       parent,
+      action,
       scope
     } = options;
 
@@ -186,9 +186,11 @@ class Interactor extends Convergence {
     defineProperties(this, {
       [meta]: { value: options },
 
-      // the previous root descriptor always takes precedence
-      $root: getOwnPropertyDescriptor(previous, '$root') || {
-        get: () => $(typeof scope === 'function' ? scope() : scope)
+      $root: {
+        get: () => $(
+          typeof scope === 'function' ? scope() : scope,
+          (action && parent && parent.$root) || undefined
+        )
       }
     });
 

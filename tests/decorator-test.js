@@ -1,5 +1,6 @@
 /* global describe, beforeEach, afterEach, it */
 import { expect } from 'chai';
+import { useFixture } from './helpers';
 import Interactor, { interactor } from '../src';
 
 describe('BigTest Interaction: decorator', () => {
@@ -113,6 +114,36 @@ describe('BigTest Interaction: decorator', () => {
       expect(new TestInteractor()).to.have.property('getter', 'got');
       expect(new TestInteractor()).to.respondTo('test');
       expect(new TestInteractor().nested).to.be.an.instanceOf(Interactor);
+    });
+  });
+
+  describe('with nested interactor actions', () => {
+    useFixture('scoped-fixture');
+
+    beforeEach(() => {
+      TestInteractor = @interactor class TestInteractor {
+        action = new Interactor({ action: true });
+
+        scopedAction = new Interactor({ scope: 'p', action: true })
+          .do(function() {
+            expect(this.text).to.equal('Scoped');
+          });
+      };
+    });
+
+    it('has nested action methods', () => {
+      expect(new TestInteractor()).to.respondTo('action');
+      expect(new TestInteractor()).to.respondTo('scopedAction');
+    });
+
+    it('returns an instance of the parent interactor', () => {
+      expect(new TestInteractor().action()).to.be.an.instanceof(TestInteractor);
+      expect(new TestInteractor().scopedAction()).to.be.an.instanceof(TestInteractor);
+    });
+
+    it('is properly scoped within the parent scope', async () => {
+      await expect(new TestInteractor().scopedAction().run()).to.be.rejected;
+      await expect(new TestInteractor('#scoped').scopedAction().run()).to.be.fulfilled;
     });
   });
 });
