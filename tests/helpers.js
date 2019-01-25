@@ -1,24 +1,45 @@
-/* global beforeEach */
+import { $ } from '../src/utils/dom';
+export { $ } from '../src/utils/dom';
 
 /**
- * Inserts a fixture's HTML into a testing DOM element
+ * Inserts HTML into a testing DOM element
  *
- * @param {String} name - name of the fixture
+ * @param {String} html - HTML string to inject
  */
-export function useFixture(name) {
-  let html = require(`html-loader!./fixtures/${name}.html`);
+export function injectHtml(html) {
+  let $container = document.getElementById('test');
 
-  beforeEach(() => {
-    let $container = document.getElementById('test');
+  if ($container) {
+    document.body.removeChild($container);
+  }
 
-    if ($container) {
-      document.body.removeChild($container);
-    }
+  $container = document.createElement('div');
+  $container.innerHTML = html;
+  $container.id = 'test';
 
-    $container = document.createElement('div');
-    $container.innerHTML = html;
-    $container.id = 'test';
+  document.body.insertBefore($container, document.body.firstChild);
+}
 
-    document.body.insertBefore($container, document.body.firstChild);
+/**
+ * Creates a reusable test object that is updated when the specified
+ * event is triggered and reset when the reset method is invoked.
+ *
+ * @param {String} selector - Element selector
+ * @param {String} event - Event name
+ * @param {Function} [callback] - Event callback
+ */
+export function testDOMEvent(selector, event, callback = () => {}) {
+  let test = { result: false };
+
+  $(selector).addEventListener(event, e => {
+    test.result = true;
+    e.preventDefault();
+    callback(e);
   });
+
+  test.reset = () => {
+    test.result = false;
+  };
+
+  return test;
 }
