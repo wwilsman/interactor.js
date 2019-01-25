@@ -186,7 +186,7 @@ class Interactor extends Convergence {
     defineProperties(this, {
       [meta]: { value: options },
 
-      $root: {
+      $element: {
         get: () => $(
           typeof scope === 'function' ? scope() : scope,
           (action && parent && parent.$root) || undefined
@@ -219,7 +219,7 @@ class Interactor extends Convergence {
    * @returns {Element} Element found via `querySelector`
    */
   $(selector) {
-    return $(selector, this.$root);
+    return $(selector, this.$element);
   }
 
   /**
@@ -241,7 +241,7 @@ class Interactor extends Convergence {
    * @returns {Array} Array of elements found via `querySelectorAll`
    */
   $$(selector) {
-    return $$(selector, this.$root);
+    return $$(selector, this.$element);
   }
 
   /**

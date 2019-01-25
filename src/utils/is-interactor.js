@@ -22,5 +22,5 @@ export default function isInteractor(obj) {
   return isConvergence(obj) &&
     '$' in obj && typeof obj.$ === 'function' &&
     '$$' in obj && typeof obj.$$ === 'function' &&
-    '$root' in obj;
+    '$element' in obj;
 }
