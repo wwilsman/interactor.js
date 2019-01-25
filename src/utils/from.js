@@ -66,11 +66,11 @@ function toInteractorDescriptor(from) {
   // nested interactors get parent references
   } else if (isInteractor(from)) {
     // actions are functions that auto-run the interactor
-    if (from[meta].action) {
+    if (from._queue.length > 0) {
       return {
         value() {
           return this.do(() => {
-            return withParent(from, this);
+            return withParent(from, this, false);
           });
         }
       };

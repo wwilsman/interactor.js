@@ -164,39 +164,44 @@ class Interactor extends Convergence {
         options instanceof Element ||
         typeof options === 'function') {
       options = { scope: options };
+
+    // convergence timeout was provided
+    } else if (typeof options === 'number') {
+      options = { timeout: options };
     }
 
-    // convergence setup
+    // convergence super
     super(options, previous);
 
-    // combine with defaults
-    options = freeze({
-      scope: this.constructor.defaultScope,
-      ...previous[meta],
-      ...options
-    });
-
+    // gather options
     let {
       parent,
-      action,
-      scope
-    } = options;
+      chain = false,
+      detached = true,
+      scope = this.constructor.defaultScope
+    } = assign({}, previous[meta], options);
 
-    // define meta properties and the root element getter for this instance
+    // define meta properties and the element getter for this instance
     defineProperties(this, {
-      [meta]: { value: options },
+      [meta]: {
+        value: freeze({
+          parent,
+          detached,
+          scope
+        })
+      },
 
       $element: {
         get: () => $(
           typeof scope === 'function' ? scope() : scope,
-          (action && parent && parent.$root) || undefined
+          (!detached && parent && parent.$element) || undefined
         )
       }
     });
 
     // given a parent, make all methods and getters return
     // parent-chainable instances of themselves
-    if (parent) {
+    if (parent && chain) {
       makeParentChainable(this);
     }
   }

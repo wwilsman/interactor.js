@@ -93,8 +93,8 @@ function getAllDescriptors(instance) {
  * @param {Interactor|Null} parent
  * @returns {Interactor}
  */
-export function withParent(interactor, parent) {
-  return new interactor.constructor({ parent }, interactor);
+export function withParent(interactor, parent, chain = !!parent) {
+  return new interactor.constructor({ parent, chain }, interactor);
 }
 
 /**
