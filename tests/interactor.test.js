@@ -3,7 +3,6 @@ import Convergence from '@bigtest/convergence';
 
 import { $, injectHtml } from './helpers';
 import Interactor from '../src/interactor';
-import meta from '../src/utils/meta';
 
 describe('Interactor', () => {
   let instance;
@@ -18,18 +17,6 @@ describe('Interactor', () => {
 
   it('extends the convergence class', () => {
     expect(instance).toBeInstanceOf(Convergence);
-  });
-
-  it('has a deprecated `pause` method', () => {
-    let warning = null;
-    let ogwarn = console.warn;
-    console.warn = msg => warning = msg;
-
-    expect(instance.pause()).toBeInstanceOf(Interactor);
-    expect(instance.pause()).not.toBe(instance);
-    expect(warning).toMatch('deprecated');
-
-    console.warn = ogwarn;
   });
 
   describe('with a scope', () => {

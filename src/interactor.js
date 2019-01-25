@@ -3,27 +3,17 @@ import Convergence from '@bigtest/convergence';
 import { $, $$ } from './utils/dom';
 import makeParentChainable from './utils/parent-chainable';
 import isInteractor from './utils/is-interactor';
+import validation, { validator } from './utils/validation';
 import extend from './utils/extend';
 import from from './utils/from';
 import meta from './utils/meta';
 
-import { validate } from './interactions/validate';
-import { remains } from './interactions/remains';
-import { find } from './interactions/find';
-import { findAll } from './interactions/find-all';
-import { scoped } from './interactions/scoped';
-import { click } from './interactions/clickable';
-import { fill } from './interactions/fillable';
-import { select } from './interactions/selectable';
-import { focus } from './interactions/focusable';
-import { blur } from './interactions/blurrable';
-import { trigger } from './interactions/triggerable';
-import { scroll } from './interactions/scrollable';
-import { text } from './interactions/text';
-import { value } from './interactions/value';
-import { isVisible } from './interactions/is-visible';
-import { isHidden } from './interactions/is-hidden';
-import { isPresent } from './interactions/is-present';
+// validations
+import { disabled } from './validations/disabled';
+import { focusable } from './validations/focusable';
+
+// actions
+// import { click } from './actions/click';
 
 const {
   assign,
@@ -249,25 +239,43 @@ class Interactor extends Convergence {
     return $$(selector, this.$element);
   }
 
-  /**
-   * Pauses an interactor by halting the convergence while it is
-   * running with an unresolving promise.
-   *
-   * This is a hack which causes the event loop to hang and in some
-   * situations become unresponsive. Consider moving any teardown code
-   * to execute _before_ setup. This way, when a test is finished, the
-   * DOM and state is preserved for interacting with and inspecting.
-   *
-   * @deprecated
-   * @returns {Interactor} An instance of this interactor which will
-   * halt when it encounters this method in the convergence stack
-   */
-  pause() {
-    console.warn(`Using \`#pause()\` is deprecated.
-It is a hack that prevents the current event loop from running, \
-and can cause some browsers or processes to hang.`);
+  find(selector) {
+    if (selector) {
+      return new this.constructor({
+        scope: selector,
+        parent: this
+      });
+    } else {
+      return this;
+    }
+  }
 
-    return this.do(() => new Promise(() => {}));
+  validate(predicates, format) {
+    let validate = validator(this, { raise: true, format });
+    return this.when(() => validate(predicates));
+  }
+
+  remains(predicates, format) {
+    let validate = validator(this, { raise: true, format });
+    return this.always(() => validate(predicates));
+  }
+
+  when(fn) {
+    return super.when(function() {
+      return fn.call(this, (fn.length > 0 ? this.$element : undefined));
+    });
+  }
+
+  always(fn, timeout) {
+    return super.always(function() {
+      return fn.call(this, (fn.length > 0 ? this.$element : undefined));
+    }, timeout);
+  }
+
+  do(fn) {
+    return super.do(function() {
+      return fn.call(this, (fn.length > 0 ? this.$element : undefined));
+    });
   }
 }
 
@@ -305,22 +313,24 @@ defineProperties(Interactor, {
   defaultScope: { value: document.body }
 });
 
-// default interaction methods
+// define validation properties
 defineProperties(
   Interactor.prototype,
   entries({
-    validate,
-    remains,
-    find,
-    findAll,
-    scoped,
-    click,
-    fill,
-    select,
-    focus,
-    blur,
-    trigger,
-    scroll
+    disabled,
+    focusable
+  }).reduce((descriptors, [name, predicate]) => {
+    return assign(descriptors, {
+      [name]: validation(predicate)
+    });
+  }, {})
+);
+
+// define action methods
+defineProperties(
+  Interactor.prototype,
+  entries({
+    // click
   }).reduce((descriptors, [name, method]) => {
     return assign(descriptors, {
       [name]: { value: method }
@@ -328,19 +338,20 @@ defineProperties(
   }, {})
 );
 
-defineProperties(
-  Interactor.prototype,
-  entries({
-    text,
-    value,
-    isVisible,
-    isHidden,
-    isPresent
-  }).reduce((descriptors, [name, getter]) => {
-    return assign(descriptors, {
-      [name]: { get: getter }
-    });
-  }, {})
-);
+// define computed properties
+// defineProperties(
+//   Interactor.prototype,
+//   entries({
+//     text,
+//     value,
+//     isVisible,
+//     isHidden,
+//     isPresent
+//   }).reduce((descriptors, [name, getter]) => {
+//     return assign(descriptors, {
+//       [name]: { get: getter }
+//     });
+//   }, {})
+// );
 
 export default Interactor;
