@@ -1,5 +1,6 @@
 import meta from './meta';
 import computed from './computed';
+import isInteractor from './is-interactor';
 
 const {
   isArray
@@ -27,7 +28,7 @@ function getComputedFn(instance, key) {
     proto = getPrototypeOf(proto);
   }
 
-  if (!descr.get) {
+  if (!(descr && descr.get)) {
     throw new Error(`\`${key}\` is not a computed property.`);
   }
 
@@ -43,11 +44,15 @@ function getComputedFn(instance, key) {
  * @returns {String}
  */
 function getScopeName(interactor) {
-  let { scope } = interactor[meta];
+  let { scope, parent, detached } = interactor[meta];
 
-  return typeof scope === 'string'
-    ? `"${scope}"`
-    : interactor.constructor.name;
+  if (typeof scope === 'string') {
+    return `"${scope}"`;
+  } else if (typeof scope === 'undefined' && parent && !detached) {
+    return getScopeName(parent);
+  } else {
+    return interactor.constructor.name;
+  }
 }
 
 /**
@@ -59,17 +64,17 @@ function getScopeName(interactor) {
  * the error message provided by the validation that failed.
  *
  * @private
- * @param {Interactor} interactor
  * @param {Boolean} [options.raise]
  * @param {String} [options.format]
  * @returns {Function}
  */
-export function validator(interactor, {
+export function validator({
   raise = false,
-  format = '%s validation failed: %e'
+  format = '%s validation failed: %e',
+  initial
 } = {}) {
+  let interactor, subject;
   let messages = [];
-  let subject;
 
   function getSubject(required) {
     return (subject = subject || (
@@ -89,19 +94,23 @@ export function validator(interactor, {
     return new Error(message);
   }
 
-  return function validate(predicate, ...msgs) {
+  function validate(predicate, ...msgs) {
     let key, result, error;
     let expected = true;
+
+    if (!interactor && isInteractor(this)) {
+      interactor = this;
+    }
+
+    if (messages.length === 0 && msgs.length > 0) {
+      messages = msgs;
+    }
 
     if (isArray(predicate)) {
       return predicate.reduce((res, condition) => {
         messages = res ? [] : messages;
         return res && validate(condition, ...msgs);
       }, true);
-    }
-
-    if (messages.length === 0 && msgs.length > 0) {
-      messages = msgs;
     }
 
     if (typeof predicate === 'string') {
@@ -134,6 +143,12 @@ export function validator(interactor, {
     }
 
     return passed;
+  };
+
+  // if initial predicates were provided, the returned function will
+  // bind the next context
+  return !initial ? validate : function() {
+    validate.call(this, initial);
   };
 }
 
@@ -196,7 +211,7 @@ export function validationFor(selector, predicate) {
 export default function validation(...args) {
   return computed(function() {
     // when invoked as a predicate, this will already be provided
-    let [validate = validator(this)] = arguments;
-    return validate(...args);
+    let [validate = validator()] = arguments;
+    return validate.apply(this, args);
   });
 }

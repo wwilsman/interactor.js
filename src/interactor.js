@@ -1,8 +1,8 @@
 import Convergence from '@bigtest/convergence';
 
 import { $, $$ } from './utils/dom';
-import makeParentChainable from './utils/parent-chainable';
 import isInteractor from './utils/is-interactor';
+import makeParentChainable, { withParent } from './utils/parent-chainable';
 import validation, { validator } from './utils/validation';
 import extend from './utils/extend';
 import from from './utils/from';
@@ -13,10 +13,14 @@ import { disabled } from './validations/disabled';
 import { focusable } from './validations/focusable';
 
 // actions
-// import { click } from './actions/click';
+import { click } from './actions/click';
+
+// properties
+import scoped from './properties/scoped';
 
 const {
   assign,
+  defineProperty,
   defineProperties,
   entries,
   freeze
@@ -165,28 +169,19 @@ class Interactor extends Convergence {
 
     // gather options
     let {
+      scope,
       parent,
       chain = false,
-      detached = true,
-      scope = this.constructor.defaultScope
+      detached = true
     } = assign({}, previous[meta], options);
 
-    // define meta properties and the element getter for this instance
-    defineProperties(this, {
-      [meta]: {
-        value: freeze({
-          parent,
-          detached,
-          scope
-        })
-      },
-
-      $element: {
-        get: () => $(
-          typeof scope === 'function' ? scope() : scope,
-          (!detached && parent && parent.$element) || undefined
-        )
-      }
+    // define meta properties for this instance
+    defineProperty(this, meta, {
+      value: freeze({
+        scope,
+        parent,
+        detached
+      })
     });
 
     // given a parent, make all methods and getters return
@@ -194,6 +189,16 @@ class Interactor extends Convergence {
     if (parent && chain) {
       makeParentChainable(this);
     }
+  }
+
+  get $element() {
+    let { scope, parent, detached } = this[meta];
+    let nested = !detached && parent;
+
+    scope = typeof scope === 'function' ? scope() : scope;
+    scope = scope || (!nested && this.constructor.defaultScope);
+
+    return $(scope, nested ? parent.$element : undefined);
   }
 
   /**
@@ -239,25 +244,32 @@ class Interactor extends Convergence {
     return $$(selector, this.$element);
   }
 
-  find(selector) {
-    if (selector) {
-      return new this.constructor({
-        scope: selector,
-        parent: this
-      });
-    } else {
-      return this;
+  scoped(selector, properties, chain = true) {
+    if (!selector) return this;
+
+    if (typeof properties === 'boolean') {
+      chain = properties;
+      properties = undefined;
     }
+
+    let interactor = scoped(selector, properties);
+    return withParent(interactor, this, chain);
   }
 
   validate(predicates, format) {
-    let validate = validator(this, { raise: true, format });
-    return this.when(() => validate(predicates));
+    return this.when(validator({
+      initial: predicates,
+      raise: true,
+      format
+    }));
   }
 
   remains(predicates, format) {
-    let validate = validator(this, { raise: true, format });
-    return this.always(() => validate(predicates));
+    return this.always(validator({
+      initial: predicates,
+      raise: true,
+      format
+    }));
   }
 
   when(fn) {
@@ -330,7 +342,7 @@ defineProperties(
 defineProperties(
   Interactor.prototype,
   entries({
-    // click
+    click
   }).reduce((descriptors, [name, method]) => {
     return assign(descriptors, {
       [name]: { value: method }

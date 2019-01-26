@@ -117,8 +117,9 @@ export default function makeParentChainable(instance) {
       .reduce((acc, [key, descriptor]) => {
         let { value, get } = descriptor;
 
-        // do not include the constructor or non-configurable descriptors
-        if (key === 'constructor' ||
+        // do not include the constructor, element getter, or other
+        // non-configurable descriptors
+        if (key === 'constructor' || key === '$element' ||
             descriptor.configurable === false) {
           return acc;
         }
@@ -138,10 +139,10 @@ export default function makeParentChainable(instance) {
           [key]: descriptor
         });
       }, {
-        // provide method for breaking the parent chain
+        // provide method for breaking the chain
         only: {
           value: () => {
-            return withParent(instance, null);
+            return withParent(instance, undefined, false);
           }
         }
       })

@@ -38,12 +38,15 @@ describe('Interactor validations', () => {
     });
   });
 
+  // TODO: make these tests bigger by using public methods instead of
+  // testing the validator function directly
   describe('validating instance props', () => {
     let validate;
 
     describe('without raising errors', () => {
       beforeEach(() => {
-        validate = validator(instance);
+        validate = validator();
+        validate.call(instance);
       });
 
       it('is bound to the instance and subject', () => {
@@ -91,7 +94,8 @@ describe('Interactor validations', () => {
 
     describe('with errors raised', () => {
       beforeEach(() => {
-        validate = validator(instance, { raise: true });
+        validate = validator({ raise: true });
+        validate.call(instance, true);
       });
 
       it('throws an error when false', () => {
@@ -136,10 +140,13 @@ describe('Interactor validations', () => {
 
     describe('with errors raised and a custom format', () => {
       it('throws errors using the custom format', () => {
-        validate = validator(instance, {
+        validate = validator({
           raise: true,
           format: '%s - %e'
         });
+
+        // bind instance by calling it once
+        validate.call(instance, true);
 
         expect(() => validate('!passing'))
           .toThrow('CustomInteractor - `passing` returned true');
@@ -149,10 +156,14 @@ describe('Interactor validations', () => {
 
       it('replaces %s with the scope selector when available', () => {
         instance = new CustomInteractor('.foo');
-        validate = validator(instance, {
+
+        validate = validator({
           raise: true,
           format: 'Validating %s failed: %e'
         });
+
+        // bind instance by calling it once
+        validate.call(instance, true);
 
         expect(() => validate('!passing'))
           .toThrow('Validating ".foo" failed: `passing` returned true');
