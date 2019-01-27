@@ -3,17 +3,18 @@
  *
  * @private
  * @param {String} selector - Query selector string
- * @param {Element} [$ctx=document] - optional context that supports
- * the `querySelector` method
+ * @param {Element} $ctx - Context with a `querySelector` method
  * @returns {Element} Matching element
  */
 export function $(selector, $ctx = document) {
   let $node = null;
 
+  /* istanbul ignore if: sanity check */
   if (!$ctx || typeof $ctx.querySelector !== 'function') {
     throw new Error('unable to use the current context');
   }
 
+  /* istanbul ignore else: unnecessary */
   if (typeof selector === 'string') {
     try {
       $node = $ctx.querySelector(selector);
@@ -42,18 +43,18 @@ export function $(selector, $ctx = document) {
  *
  * @private
  * @param {String} selector - Query selector string
- * @param {Element} [$ctx=document] - optional context that supports
- * the `querySelectorAll` method
+ * @param {Element} $ctx - Context with a `querySelectorAll` method
  * @returns {Array} Array of elements
  */
-export function $$(selector, $ctx = document) {
+export function $$(selector, $ctx) {
   let nodes = [];
 
-  if (!$ctx || typeof $ctx.querySelectorAll !== 'function') {
+  /* istanbul ignore if: sanity check */
+  if (!$ctx || /* istanbul ignore next */ typeof $ctx.querySelectorAll !== 'function') {
     throw new Error('unable to use the current context');
   }
 
-  // given a string, use `querySelectorAll`
+  /* istanbul ignore else: unnecessary */
   if (typeof selector === 'string') {
     try {
       nodes = [].slice.call($ctx.querySelectorAll(selector));
@@ -67,5 +68,6 @@ export function $$(selector, $ctx = document) {
   }
 
   // only return elements
+  /* istanbul ignore next */
   return nodes.filter($node => $node instanceof Element);
 }

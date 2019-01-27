@@ -77,7 +77,7 @@ export default function extend(classDescriptor) {
 
   // a class constructor was provided (legacy decorator syntax)
   } else if (typeof classDescriptor === 'function') {
-    // console.warn(`Deprecated. Please upgrade to Stage 2 decorators.`);
+    console.warn(`Deprecated. Please upgrade to Stage 2 decorators.`);
     let constructor = classDescriptor;
 
     // make a pojo for `from`
@@ -94,5 +94,9 @@ export default function extend(classDescriptor) {
   } else if (getPrototypeOf(classDescriptor) === Object.prototype) {
     console.warn(`Deprecated usage of decorator with plain objects. Use \`${this.name}.from\` instead.`);
     return this.from(classDescriptor);
+
+  // catch everything else with a generic error
+  } else {
+    throw new Error(`Invalid argument: ${classDescriptor}`);
   }
 }

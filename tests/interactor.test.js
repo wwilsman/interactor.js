@@ -68,19 +68,51 @@ describe('Interactor', () => {
       expect(() => scoped.$element).toThrow('unable to find "#not-scoped"');
     });
 
-    it('can find a single DOM element within the scope', () => {
-      expect(new Interactor().$('.test-p').innerText).toBe('A');
-      expect(new Interactor('#scoped').$('.test-p').innerText).toBe('B');
+    it('can access the scoped element from convergent methods', async () => {
+      let scoped = new Interactor('#scoped').timeout(50);
+      let $scoped = $('#scoped');
+
+      await expect(scoped.when($element => {
+        expect($element).toBe($scoped);
+      })).resolves.toBeUndefined();
+      await expect(scoped.always($element => {
+        expect($element).toBe($scoped);
+      })).resolves.toBeUndefined();
+      await expect(scoped.do($element => {
+        expect($element).toBe($scoped);
+      })).resolves.toBeUndefined();
     });
 
-    it('throws when finding a single element that does not exist', () => {
-      expect(() => new Interactor().$('.non-existent'))
-        .toThrow('unable to find ".non-existent"');
-    });
+    describe('finding elements within the scope', () => {
+      it('can find a single DOM element within the scope', () => {
+        expect(new Interactor().$('.test-p').innerText).toBe('A');
+        expect(new Interactor('#scoped').$('.test-p').innerText).toBe('B');
+      });
 
-    it('has a helper for finding multiple DOM elements', () => {
-      expect(new Interactor().$$('.test-p')).toHaveLength(2);
-      expect(new Interactor('.test-p').$$()).toHaveLength(0);
+      it('returns the root element when no selector is given', () => {
+        expect(new Interactor('.test-p').$().innerText).toBe('A');
+      });
+
+      it('throws when finding a single element that does not exist', () => {
+        expect(() => new Interactor().$('.non-existent'))
+          .toThrow('unable to find ".non-existent"');
+      });
+
+      it('can find multiple DOM elements within the scope', () => {
+        expect(new Interactor().$$('.test-p')).toHaveLength(2);
+        expect(new Interactor('.test-p').$$()).toHaveLength(0);
+      });
+
+      it('throws when finding elements with an invalid selector', () => {
+        expect(() => new Interactor().$('.#invalid')).toThrow('not a valid selector');
+        expect(() => new Interactor().$$('.#invalid')).toThrow('not a valid selector');
+      });
+
+      it('returns element nodes given element nodes', () => {
+        let $el = $('.test-p');
+        expect(new Interactor().$($el)).toBe($el);
+        expect(new Interactor().$$([$el])).toHaveLength(1);
+      });
     });
 
     describe('with a custom default scope', () => {
@@ -352,9 +384,7 @@ describe('Interactor', () => {
       }
     });
 
-    describe('with a plain object', () => {
-      let TestInteractor;
-
+    describe('with a plain object or function', () => {
       beforeEach(() => {
         let stub = (...args) => {
           (stub.calls = (stub.calls || [])).push(args);
@@ -362,8 +392,6 @@ describe('Interactor', () => {
 
         stub.og = console.warn;
         console.warn = stub;
-
-        TestInteractor = Interactor.extend({});
       });
 
       afterEach(() => {
@@ -371,13 +399,26 @@ describe('Interactor', () => {
       });
 
       it('creates an interactor class', () => {
-        expect(TestInteractor.prototype).toBeInstanceOf(Interactor);
+        let ObjInteractor = Interactor.extend({});
+        expect(ObjInteractor.prototype).toBeInstanceOf(Interactor);
+        let FnInteractor = Interactor.extend(() => {});
+        expect(FnInteractor.prototype).toBeInstanceOf(Interactor);
       });
 
       it('raises a deprication warning', () => {
+        Interactor.extend({});
         expect(console.warn.calls).toHaveLength(1);
         expect(console.warn.calls[0][0]).toMatch('Deprecated');
+        Interactor.extend(() => {});
+        expect(console.warn.calls).toHaveLength(2);
+        expect(console.warn.calls[1][0]).toMatch('Deprecated');
       });
+    });
+
+    describe('with anything else', () => {
+      expect(() => Interactor.extend('string')).toThrow('Invalid');
+      expect(() => Interactor.extend(42)).toThrow('Invalid');
+      expect(() => Interactor.extend(true)).toThrow('Invalid');
     });
   });
 });

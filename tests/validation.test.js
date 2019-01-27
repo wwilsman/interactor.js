@@ -97,6 +97,11 @@ describe('Interactor validations', () => {
       await expect(instance.validate('!passing')).rejects.toThrow('returned true');
     });
 
+    it('rejects when a property is not a computed property', async () => {
+      await expect(instance.validate('foo')).rejects.toThrow('computed');
+      await expect(instance.validate('validate')).rejects.toThrow('computed');
+    });
+
     it('accurately validates complex properties', async () => {
       await expect(instance.validate('complex')).rejects.toThrow('expect');
       await expect(instance.validate('!complex')).resolves.toBe(true);
