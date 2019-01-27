@@ -27,7 +27,7 @@ describe('Interactor validations - disabled', () => {
       let input = new Interactor('input').timeout(50);
 
       it('resolves when passing', async () => {
-        await expect(input.validate('disabled')).resolves.toBeUndefined();
+        await expect(input.validate('disabled')).resolves.toBe(true);
       });
 
       it('rejects with an error when failing', async () => {
@@ -56,7 +56,7 @@ describe('Interactor validations - disabled', () => {
       let field = new FieldInteractor().timeout(50);
 
       it('resolves when passing', async () => {
-        await expect(field.validate('disabled')).resolves.toBeUndefined();
+        await expect(field.validate('disabled')).resolves.toBe(true);
       });
 
       it('rejects with an error when failing', async () => {

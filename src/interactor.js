@@ -261,7 +261,7 @@ class Interactor extends Convergence {
 
     let assertion = function() {
       validate = validate || validator(this, true, format);
-      validate(predicates);
+      return validate(predicates);
     };
 
     return this.when(assertion);

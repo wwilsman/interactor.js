@@ -31,11 +31,11 @@ describe('Interactor validations - focusable', () => {
     describe('using validate', () => {
       it('resolves when passing', async () => {
         let input = new Interactor('input');
-        await expect(input.validate('focusable')).resolves.toBeUndefined();
+        await expect(input.validate('focusable')).resolves.toBe(true);
 
         $('span').tabIndex = 0;
         let span = new Interactor('span');
-        await expect(span.validate('focusable')).resolves.toBeUndefined();
+        await expect(span.validate('focusable')).resolves.toBe(true);
       });
 
       it('rejects with an error when failing', async () => {
@@ -64,7 +64,7 @@ describe('Interactor validations - focusable', () => {
       let field = new FieldInteractor().timeout(50);
 
       it('resolves when passing', async () => {
-        await expect(field.validate('focusable')).resolves.toBeUndefined();
+        await expect(field.validate('focusable')).resolves.toBe(true);
       });
 
       it('rejects with an error when failing', async () => {

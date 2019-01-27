@@ -53,7 +53,7 @@ describe('Interactor validations', () => {
       setTimeout(() => pass = true, 20);
       await expect(instance.validate(() => {
         expect(pass).toBe(true);
-      })).resolves.toBeUndefined();
+      })).resolves.toBe(true);
     });
 
     it('rejects when validation fails', async () => {
@@ -63,15 +63,15 @@ describe('Interactor validations', () => {
     });
 
     it('resolves when the property validates successfully', async () => {
-      await expect(instance.validate('failing')).resolves.toBeUndefined();
+      await expect(instance.validate('failing')).resolves.toBe(true);
       pass = true;
-      await expect(instance.validate('passing')).resolves.toBeUndefined();
+      await expect(instance.validate('passing')).resolves.toBe(true);
     });
 
     it('resolves when negated proeprties validate successfully', async () => {
-      await expect(instance.validate('!passing')).resolves.toBeUndefined();
+      await expect(instance.validate('!passing')).resolves.toBe(true);
       pass = true;
-      await expect(instance.validate('!failing')).resolves.toBeUndefined();
+      await expect(instance.validate('!failing')).resolves.toBe(true);
     });
 
     it('rejects when the property fails to validate', async () => {
@@ -88,9 +88,9 @@ describe('Interactor validations', () => {
 
     it('accurately validates complex properties', async () => {
       await expect(instance.validate('complex')).rejects.toThrow('expect');
-      await expect(instance.validate('!complex')).resolves.toBeUndefined();
+      await expect(instance.validate('!complex')).resolves.toBe(true);
       pass = true;
-      await expect(instance.validate('complex')).resolves.toBeUndefined();
+      await expect(instance.validate('complex')).resolves.toBe(true);
       await expect(instance.validate('!complex')).rejects.toThrow('returned true');
     });
 
@@ -103,7 +103,7 @@ describe('Interactor validations', () => {
     it('can validate multiple properties', async () => {
       await expect(instance.validate([
         '!passing', 'failing', '!multiple', '!complex', 'errored'
-      ])).resolves.toBeUndefined();
+      ])).resolves.toBe(true);
     });
 
     it('throws the first failed complex computed validation', async () => {
