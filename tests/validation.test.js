@@ -62,6 +62,17 @@ describe('Interactor validations', () => {
       })).rejects.toThrow('expect');
     });
 
+    it('provides a validate function as the first argument', async () => {
+      await expect(instance.validate(validate => {
+        expect(validate).toBeInstanceOf(Function);
+        return validate(true);
+      })).resolves.toBe(true);
+      await expect(instance.validate(validate => validate(false)))
+        .rejects.toThrow('returned false');
+      await expect(instance.validate(validate => validate(false, 'NO')))
+        .rejects.toThrow('NO');
+    });
+
     it('resolves when the property validates successfully', async () => {
       await expect(instance.validate('failing')).resolves.toBe(true);
       pass = true;
@@ -94,7 +105,7 @@ describe('Interactor validations', () => {
       await expect(instance.validate('!complex')).rejects.toThrow('returned true');
     });
 
-    it('throws custom errors when specified', async () => {
+    it('rejects with custom errors when specified', async () => {
       await expect(instance.validate('!errored')).rejects.toThrow('negated error');
       pass = true;
       await expect(instance.validate('errored')).rejects.toThrow('custom error');
@@ -106,13 +117,13 @@ describe('Interactor validations', () => {
       ])).resolves.toBe(true);
     });
 
-    it('throws the first failed complex computed validation', async () => {
+    it('rejects with the first failed complex computed validation', async () => {
       await expect(instance.validate([
         '!multiple', '!failing', 'passing'
       ])).rejects.toThrow('`failing` returned true');
     });
 
-    it('throws errors using the custom format', async () => {
+    it('rejects with a message using the custom format', async () => {
       await expect(instance.validate('!failing'))
         .rejects.toThrow('CustomInteractor validation failed: `failing` returned true');
       await expect(instance.validate('!failing', '[FAILURE] %e'))
@@ -130,6 +141,39 @@ describe('Interactor validations', () => {
     it('bubbles errors before generating a new one', async () => {
       await expect(instance.validate('multiple', 'Validating %s failed: %e'))
         .rejects.toThrow(/^expect/);
+    });
+  });
+
+  describe('the remains method', () => {
+    it('eventually resolves when validation passes and remains passing', async () => {
+      setTimeout(() => pass = true, 20);
+      await expect(instance.remains(() => {
+        expect(pass).toBe(true);
+      })).resolves.toBe(true);
+    });
+
+    it('rejects when validation fails', async () => {
+      await expect(instance.remains(() => {
+        expect(pass).toBe(true);
+      })).rejects.toThrow('expect');
+    });
+
+    it('rejects when validation fails during the timeout', async () => {
+      setTimeout(() => pass = true, 20);
+      setTimeout(() => pass = false, 40);
+      await expect(instance.remains(() => {
+        expect(pass).toBe(true);
+      }, 20)).rejects.toThrow('expect');
+    });
+
+    it('rejects with a message using the custom format', async () => {
+      instance = new CustomInteractor('.foo').timeout(100);
+      await expect(instance.remains('!failing', '%s failed: %e'))
+        .rejects.toThrow('".foo" failed: `failing` returned true');
+      setTimeout(() => pass = true, 20);
+      setTimeout(() => pass = false, 40);
+      await expect(instance.remains('!failing', 20, '%s - %e'))
+        .rejects.toThrow('".foo" - `failing` returned true');
     });
   });
 });
