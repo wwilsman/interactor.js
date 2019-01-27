@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import interactor from '../src/decorator';
-import validation, { validator } from '../src/utils/validation';
+import validation from '../src/utils/validation';
 
 describe('Interactor validations', () => {
   let instance, pass;
@@ -13,181 +13,123 @@ describe('Interactor validations', () => {
     failing = validation(() => {
       expect(pass).toBe(false);
     });
+    multiple = validation(['passing', '!failing']);
     complex = validation((validate, element) => {
       expect(element).toBeInstanceOf(Element);
-      return validate(['passing', '!failing']);
+      return validate('multiple');
     });
     errored = validation('!passing', 'custom error', 'negated error');
-    bubbly = validation(['passing', 'failing']);
   }
 
   beforeEach(() => {
-    instance = new CustomInteractor();
-    pass = true;
+    instance = new CustomInteractor({ timeout: 50 });
+    pass = false;
   });
 
-  describe('getting validation props', () => {
-    it('returns boolean values', () => {
+  describe('computed properties', () => {
+    it('returns true with successful validations', () => {
+      expect(instance.failing).toBe(true);
+      pass = true;
       expect(instance.passing).toBe(true);
+    });
+
+    it('returns false with failing validations', () => {
+      expect(instance.passing).toBe(false);
+      pass = true;
       expect(instance.failing).toBe(false);
     });
 
-    it('returns validation results', () => {
+    it('returns other validation results', () => {
+      expect(instance.complex).toBe(false);
+      expect(instance.errored).toBe(true);
+      pass = true;
       expect(instance.complex).toBe(true);
       expect(instance.errored).toBe(false);
     });
   });
 
-  // TODO: make these tests bigger by using public methods instead of
-  // testing the validator function directly
-  describe('validating instance props', () => {
-    let validate;
-
-    describe('without raising errors', () => {
-      beforeEach(() => {
-        validate = validator();
-        validate.call(instance);
-      });
-
-      it('is bound to the instance and subject', () => {
-        expect(validate).toBeInstanceOf(Function);
-
-        expect(validate(function(...args) {
-          expect(this).toBe(instance);
-          expect(args[0]).toBe(validate);
-          expect(args[1]).toBe(instance.$root);
-        })).toBe(true);
-      });
-
-      it('returns true when passing', () => {
-        expect(validate(() => {
-          expect(true).toBe(true);
-        })).toBe(true);
-      });
-
-      it('returns false when failing', () => {
-        expect(validate(() => {
-          expect(true).toBe(false);
-        })).toBe(false);
-      });
-
-      it('can validate computed properties by key', () => {
-        expect(validate('passing')).toBe(true);
-        expect(validate('failing')).toBe(false);
-      });
-
-      it('can validate negated computed properties', () => {
-        expect(validate('!passing')).toBe(false);
-        expect(validate('!failing')).toBe(true);
-      });
-
-      it('can validate complex computed properties', () => {
-        expect(validate('complex')).toBe(true);
-        expect(validate('errored')).toBe(false);
-      });
-
-      it('can validate multiple computed properties', () => {
-        expect(validate(['passing', '!failing'])).toBe(true);
-        expect(validate(['!errored', 'complex'])).toBe(true);
-      });
+  describe('the validate method', () => {
+    it('eventually resolves when validation passes', async () => {
+      setTimeout(() => pass = true, 20);
+      await expect(instance.validate(() => {
+        expect(pass).toBe(true);
+      })).resolves.toBeUndefined();
     });
 
-    describe('with errors raised', () => {
-      beforeEach(() => {
-        validate = validator({ raise: true });
-        validate.call(instance, true);
-      });
-
-      it('throws an error when false', () => {
-        expect(() => validate(() => {
-          expect(true).toBe(false);
-        })).toThrow('expect(received).toBe(expected)');
-      });
-
-      it('throws from computed validations', () => {
-        expect(validate('passing')).toBe(true);
-        expect(() => validate('failing'))
-          .toThrow('expect(received).toBe(expected)');
-      });
-
-      it('throws from negated computed validations', () => {
-        expect(validate('!failing')).toBe(true);
-        expect(() => validate('!passing'))
-          .toThrow('CustomInteractor validation failed: `passing` returned true');
-      });
-
-      it('throws from nested negated validations', () => {
-        expect(() => validate('bubbly'))
-          .toThrow('expect(received).toBe(expected)');
-      });
-
-      it('throws the first failed complex computed validation', () => {
-        expect(() => validate(['passing', '!complex', 'failing']))
-          .toThrow('CustomInteractor validation failed: `complex` returned true');
-      });
-
-      it('throws a custom validation error message', () => {
-        expect(() => validate('errored'))
-          .toThrow('CustomInteractor validation failed: custom error');
-      });
-
-      it('throws a different custom validation error message when negated', () => {
-        pass = false;
-        expect(() => validate('!errored'))
-          .toThrow('CustomInteractor validation failed: negated error');
-      });
+    it('rejects when validation fails', async () => {
+      await expect(instance.validate(() => {
+        expect(pass).toBe(true);
+      })).rejects.toThrow('expect');
     });
 
-    describe('with errors raised and a custom format', () => {
-      it('throws errors using the custom format', () => {
-        validate = validator({
-          raise: true,
-          format: '%s - %e'
-        });
-
-        // bind instance by calling it once
-        validate.call(instance, true);
-
-        expect(() => validate('!passing'))
-          .toThrow('CustomInteractor - `passing` returned true');
-        expect(() => validate('errored'))
-          .toThrow('CustomInteractor - custom error');
-      });
-
-      it('replaces %s with the scope selector when available', () => {
-        instance = new CustomInteractor('.foo');
-
-        validate = validator({
-          raise: true,
-          format: 'Validating %s failed: %e'
-        });
-
-        // bind instance by calling it once
-        validate.call(instance, true);
-
-        expect(() => validate('!passing'))
-          .toThrow('Validating ".foo" failed: `passing` returned true');
-        expect(() => validate('errored'))
-          .toThrow('Validating ".foo" failed: custom error');
-      });
-    });
-  });
-
-  describe('using the validate method', () => {
-    beforeEach(() => {
-      pass = false;
+    it('resolves when the property validates successfully', async () => {
+      await expect(instance.validate('failing')).resolves.toBeUndefined();
+      pass = true;
+      await expect(instance.validate('passing')).resolves.toBeUndefined();
     });
 
-    it('eventually passes validation', async () => {
-      setTimeout(() => pass = true, 50);
-      await expect(instance.validate('passing').run()).resolves.toBeTruthy();
-      setTimeout(() => pass = false, 50);
-      await expect(instance.validate('failing').run()).resolves.toBeTruthy();
+    it('resolves when negated proeprties validate successfully', async () => {
+      await expect(instance.validate('!passing')).resolves.toBeUndefined();
+      pass = true;
+      await expect(instance.validate('!failing')).resolves.toBeUndefined();
     });
 
-    it('eventually throws when it does not pass', async () => {
-      instance = instance.timeout(50);
-      await expect(instance.validate('passing').run()).rejects.toThrow();
+    it('rejects when the property fails to validate', async () => {
+      await expect(instance.validate('passing')).rejects.toThrow('expect');
+      pass = true;
+      await expect(instance.validate('failing')).rejects.toThrow('expect');
+    });
+
+    it('rejects when negated properties fail to validate', async () => {
+      await expect(instance.validate('!failing')).rejects.toThrow('returned true');
+      pass = true;
+      await expect(instance.validate('!passing')).rejects.toThrow('returned true');
+    });
+
+    it('accurately validates complex properties', async () => {
+      await expect(instance.validate('complex')).rejects.toThrow('expect');
+      await expect(instance.validate('!complex')).resolves.toBeUndefined();
+      pass = true;
+      await expect(instance.validate('complex')).resolves.toBeUndefined();
+      await expect(instance.validate('!complex')).rejects.toThrow('returned true');
+    });
+
+    it('throws custom errors when specified', async () => {
+      await expect(instance.validate('!errored')).rejects.toThrow('negated error');
+      pass = true;
+      await expect(instance.validate('errored')).rejects.toThrow('custom error');
+    });
+
+    it('can validate multiple properties', async () => {
+      await expect(instance.validate([
+        '!passing', 'failing', '!multiple', '!complex', 'errored'
+      ])).resolves.toBeUndefined();
+    });
+
+    it('throws the first failed complex computed validation', async () => {
+      await expect(instance.validate([
+        '!multiple', '!failing', 'passing'
+      ])).rejects.toThrow('`failing` returned true');
+    });
+
+    it('throws errors using the custom format', async () => {
+      await expect(instance.validate('!failing'))
+        .rejects.toThrow('CustomInteractor validation failed: `failing` returned true');
+      await expect(instance.validate('!failing', '[FAILURE] %e'))
+        .rejects.toThrow('[FAILURE] `failing` returned true');
+    });
+
+    it('replaces %s with the interactor name or scope when available', async () => {
+      await expect(instance.validate('!errored', '%s - %e'))
+        .rejects.toThrow('CustomInteractor - negated error');
+      instance = new CustomInteractor('.foo').timeout(50);
+      await expect(instance.validate('!errored', 'Validating %s failed: %e'))
+        .rejects.toThrow('Validating ".foo" failed: negated error');
+    });
+
+    it('bubbles errors before generating a new one', async () => {
+      await expect(instance.validate('multiple', 'Validating %s failed: %e'))
+        .rejects.toThrow(/^expect/);
     });
   });
 });
