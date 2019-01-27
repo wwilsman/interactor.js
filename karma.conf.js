@@ -17,7 +17,9 @@ module.exports = (config) => {
     },
 
     coverageReporter: {
-      type: 'text'
+      type: config.coverage === true
+        ? 'text-summary'
+        : (config.coverage || 'none')
     },
 
     webpack: {
