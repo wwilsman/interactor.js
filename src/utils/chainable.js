@@ -1,4 +1,4 @@
-import meta from './meta';
+import { get, set } from './meta';
 
 const {
   assign,
@@ -21,19 +21,6 @@ function isSameType(a, b) {
 }
 
 /**
- * Returns the parent of an interactor instance
- *
- * @private
- * @param {Interactor} interactor
- * @returns {Interactor}
- */
-function getParent(interactor) {
-  return interactor &&
-    interactor[meta] &&
-    interactor[meta].parent;
-}
-
-/**
  * Wraps a method or getter to return an appended parent instance when
  * another same-type instance is returned. The original function is
  * called with the context of an orphaned instance so that it does not
@@ -47,17 +34,21 @@ function getParent(interactor) {
  */
 function chainable(fn) {
   return function(...args) {
-    // use an instance with no parent to prevent upwards reflection
+    // use an instance with no chaining to prevent upwards reflection
     let results = fn.apply(this.only(), args);
 
-    // return orphaned children to their parent
-    if (isSameType(this, getParent(results))) {
-      results = withParent(results, this);
+    // chain new children and correct parent chaining
+    if (isSameType(this, get(results, 'parent'))) {
+      results = set(results, { parent: this, chain: true });
     }
 
-    // return the parent instance for chaining
+    // when the instance is the same type as it's parent it always
+    // enters the above branch, which is safe, but we still need it to
+    // enter the branch below; so no `else` branch is necessary
+
+    // roll up the parent chain with append
     if (isSameType(this, results)) {
-      results = getParent(this).append(results);
+      results = get(this, 'parent').append(results);
     }
 
     return results;
@@ -86,18 +77,6 @@ function getAllDescriptors(instance) {
 }
 
 /**
- * Returns a new instance of the provided interactor with a parent
- *
- * @private
- * @param {Interactor} interactor
- * @param {Interactor|Null} parent
- * @returns {Interactor}
- */
-export function withParent(interactor, parent, chain = !!parent) {
-  return new interactor.constructor({ parent, chain }, interactor);
-}
-
-/**
  * Redefines all properties of an interactor instance to return
  * parent-chainable methods and accessors. The methods and accessors
  * are bound to an orphaned instance when inovked and when returning
@@ -109,7 +88,7 @@ export function withParent(interactor, parent, chain = !!parent) {
  * @private
  * @param {Interactor} instance
  */
-export default function makeParentChainable(instance) {
+export default function makeChainable(instance) {
   defineProperties(
     instance,
     entries(getAllDescriptors(instance))
@@ -129,6 +108,7 @@ export default function makeParentChainable(instance) {
           assign(descriptor, {
             value: chainable(value)
           });
+
         } else if (typeof get === 'function') {
           assign(descriptor, {
             get: chainable(get)
@@ -142,7 +122,9 @@ export default function makeParentChainable(instance) {
         // provide method for breaking the chain
         only: {
           value: () => {
-            return withParent(instance, undefined, false);
+            return set(instance, {
+              chain: false
+            });
           }
         }
       })

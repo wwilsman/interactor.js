@@ -2,11 +2,11 @@ import Convergence from '@bigtest/convergence';
 
 import { $, $$ } from './utils/dom';
 import isInteractor from './utils/is-interactor';
-import makeParentChainable, { withParent } from './utils/parent-chainable';
+import makeChainable from './utils/chainable';
 import validation, { validator } from './utils/validation';
 import extend from './utils/extend';
 import from from './utils/from';
-import meta from './utils/meta';
+import meta, { get, set } from './utils/meta';
 
 // validations
 import { disabled } from './validations/disabled';
@@ -173,7 +173,7 @@ class Interactor extends Convergence {
       parent,
       chain = false,
       detached = true
-    } = assign({}, previous[meta], options);
+    } = assign({}, get(previous), options);
 
     // define meta properties for this instance
     defineProperty(this, meta, {
@@ -187,12 +187,12 @@ class Interactor extends Convergence {
     // given a parent, make all methods and getters return
     // parent-chainable instances of themselves
     if (parent && chain) {
-      makeParentChainable(this);
+      makeChainable(this);
     }
   }
 
   get $element() {
-    let { scope, parent, detached } = this[meta];
+    let { scope, parent, detached } = get(this);
     let nested = !detached && parent;
 
     scope = typeof scope === 'function' ? scope() : scope;
@@ -252,8 +252,10 @@ class Interactor extends Convergence {
       properties = undefined;
     }
 
-    let interactor = scoped(selector, properties);
-    return withParent(interactor, this, chain);
+    return set(
+      scoped(selector, properties),
+      { parent: this, chain }
+    );
   }
 
   validate(predicates, format) {

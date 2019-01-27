@@ -1,7 +1,6 @@
 import Convergence from '@bigtest/convergence';
-import { withParent } from './parent-chainable';
 import isInteractor from './is-interactor';
-import meta from './meta';
+import meta, { set } from './meta';
 
 const {
   assign,
@@ -70,15 +69,21 @@ function toInteractorDescriptor(from) {
       return {
         value() {
           return this.do(() => {
-            return withParent(from, this, false);
+            return set(from, {
+              parent: this
+            });
           });
         }
       };
+
     // all other interactors are nested getters
     } else {
       return {
         get() {
-          return withParent(from, this);
+          return set(from, {
+            parent: this,
+            chain: true
+          });
         }
       };
     }
