@@ -21,7 +21,7 @@ const {
  */
 function checkForReservedPropertyNames(obj) {
   const blacklist = [
-    '$', '$$', '$root', 'only', meta,
+    '$', '$$', '$element', 'scoped', 'validate', 'remains', 'only', meta,
     ...getOwnPropertyNames(Convergence.prototype)
   ];
 
