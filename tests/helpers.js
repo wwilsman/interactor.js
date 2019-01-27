@@ -37,9 +37,9 @@ export function testDOMEvent(selector, event, callback = () => {}) {
     callback(e);
   });
 
-  test.reset = () => {
-    test.result = false;
-  };
+  // test.reset = () => {
+  //   test.result = false;
+  // };
 
   return test;
 }

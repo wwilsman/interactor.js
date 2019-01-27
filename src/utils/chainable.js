@@ -104,11 +104,11 @@ export default function makeChainable(instance) {
         }
 
         // make methods and getters chainable
+        /* istanbul ignore else: unnecessary */
         if (typeof value === 'function') {
           assign(descriptor, {
             value: chainable(value)
           });
-
         } else if (typeof get === 'function') {
           assign(descriptor, {
             get: chainable(get)

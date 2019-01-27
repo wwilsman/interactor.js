@@ -60,7 +60,12 @@ export function isPropertyDescriptor(obj) {
 function toInteractorDescriptor(from) {
   // already a property descriptor
   if (isPropertyDescriptor(from)) {
-    return from;
+    // simple values may still need to be transformed
+    if ('value' in from) {
+      return toInteractorDescriptor(from.value);
+    } else {
+      return from;
+    }
 
   // nested interactors get parent references
   } else if (isInteractor(from)) {
@@ -137,14 +142,10 @@ export default function from(properties) {
   defineProperties(
     CustomInteractor.prototype,
     checkForReservedPropertyNames(
-      entries(
-        getOwnPropertyDescriptors(ownProps)
-      ).reduce((acc, [key, descr]) => assign(acc, {
-        [key]: hasOwnProperty.call(descr, 'value')
-        // some values are themselves descriptors
-          ? toInteractorDescriptor(descr.value)
-          : descr
-      }), {})
+      entries(getOwnPropertyDescriptors(ownProps))
+        .reduce((acc, [key, descr]) => assign(acc, {
+          [key]: toInteractorDescriptor(descr)
+        }), {})
     )
   );
 
