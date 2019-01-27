@@ -257,19 +257,31 @@ class Interactor extends Convergence {
   }
 
   validate(predicates, format) {
-    return this.when(validator({
-      initial: predicates,
-      raise: true,
-      format
-    }));
+    let validate;
+
+    let assertion = function() {
+      validate = validate || validator(this, true, format);
+      validate(predicates);
+    };
+
+    return this.when(assertion);
   }
 
-  remains(predicates, format) {
-    return this.always(validator({
-      initial: predicates,
-      raise: true,
-      format
-    }));
+  remains(predicates, timeout, format) {
+    let validate;
+
+    if (typeof timeout === 'string') {
+      format = timeout;
+      timeout = undefined;
+    }
+
+    let assertion = function() {
+      validate = validate || validator(this, true, format);
+      return validate(predicates);
+    };
+
+    return this.when(assertion)
+      .always(assertion, timeout);
   }
 
   when(fn) {

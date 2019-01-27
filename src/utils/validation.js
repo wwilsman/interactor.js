@@ -1,6 +1,5 @@
 import meta from './meta';
 import computed from './computed';
-import isInteractor from './is-interactor';
 
 const {
   isArray
@@ -68,13 +67,13 @@ function getScopeName(interactor) {
  * @param {String} [options.format]
  * @returns {Function}
  */
-export function validator({
+export function validator(
+  interactor,
   raise = false,
-  format = '%s validation failed: %e',
-  initial
-} = {}) {
-  let interactor, subject;
+  format = '%s validation failed: %e'
+) {
   let messages = [];
+  let subject;
 
   function getSubject(required) {
     return (subject = subject || (
@@ -94,23 +93,19 @@ export function validator({
     return new Error(message);
   }
 
-  function validate(predicate, ...msgs) {
+  return function validate(predicate, ...msgs) {
     let key, result, error;
     let expected = true;
-
-    if (!interactor && isInteractor(this)) {
-      interactor = this;
-    }
-
-    if (messages.length === 0 && msgs.length > 0) {
-      messages = msgs;
-    }
 
     if (isArray(predicate)) {
       return predicate.reduce((res, condition) => {
         messages = res ? [] : messages;
         return res && validate(condition, ...msgs);
       }, true);
+    }
+
+    if (messages.length === 0 && msgs.length > 0) {
+      messages = msgs;
     }
 
     if (typeof predicate === 'string') {
@@ -143,12 +138,6 @@ export function validator({
     }
 
     return passed;
-  };
-
-  // if initial predicates were provided, the returned function will
-  // bind the next context
-  return !initial ? validate : function() {
-    validate.call(this, initial);
   };
 }
 
@@ -211,7 +200,7 @@ export function validationFor(selector, predicate) {
 export default function validation(...args) {
   return computed(function() {
     // when invoked as a predicate, this will already be provided
-    let [validate = validator()] = arguments;
-    return validate.apply(this, args);
+    let [validate = validator(this)] = arguments;
+    return validate(...args);
   });
 }
