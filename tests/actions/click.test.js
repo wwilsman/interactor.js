@@ -74,7 +74,7 @@ describe('Interactor actions - click', () => {
       $('.test-div').tabIndex = 0;
       await new TestInteractor().clickDiv();
       expect(test.result).toBe(true);
-    }).timeout(3000);
+    });
 
     it('can chain other interactor methods', async () => {
       let $btn = $('button');

@@ -6,7 +6,7 @@ import makeChainable from './utils/chainable';
 import validation, { validator } from './utils/validation';
 import extend from './utils/extend';
 import from, { wrap } from './utils/from';
-import meta, { get, set } from './utils/meta';
+import meta, { get } from './utils/meta';
 
 // validations
 import { disabled } from './validations/disabled';
@@ -14,6 +14,7 @@ import { focusable } from './validations/focusable';
 
 // actions
 import click from './actions/click';
+import focus from './actions/focus';
 
 // properties
 import scoped from './properties/scoped';
@@ -343,6 +344,7 @@ defineProperties(
   Interactor.prototype,
   entries({
     click,
+    focus,
     scoped
   }).reduce((descriptors, [name, method]) => {
     return assign(descriptors, {
