@@ -21,7 +21,7 @@ const {
  */
 function checkForReservedPropertyNames(obj) {
   const blacklist = [
-    '$', '$$', '$element', 'scoped', 'validate', 'remains', 'only', meta,
+    '$', '$$', '$element', 'validate', 'remains', 'only', meta,
     ...getOwnPropertyNames(Convergence.prototype)
   ];
 
@@ -41,10 +41,22 @@ function checkForReservedPropertyNames(obj) {
  * @param {Object} obj
  * @returns {Boolean}
  */
-export function isPropertyDescriptor(obj) {
+function isPropertyDescriptor(obj) {
   return obj &&
     (hasOwnProperty.call(obj, 'get') ||
      hasOwnProperty.call(obj, 'value'));
+}
+
+export function wrap(from) {
+  return function() {
+    let interactor = typeof from === 'function' ? from(...arguments) : from;
+
+    if (interactor._queue.length > 0) {
+      return this.do(() => set(interactor, { parent: this }));
+    } else {
+      return set(interactor, { parent: this, chain: true });
+    }
+  };
 }
 
 /**
@@ -69,35 +81,18 @@ function toInteractorDescriptor(from) {
 
   // nested interactors get parent references
   } else if (isInteractor(from)) {
-    // actions are functions that auto-run the interactor
+    // action interactors are functions
     if (from._queue.length > 0) {
-      return {
-        value() {
-          return this.do(() => {
-            return set(from, {
-              parent: this
-            });
-          });
-        }
-      };
+      return { value: wrap(from) };
 
-    // all other interactors are nested getters
+    // all other interactors are getters
     } else {
-      return {
-        get() {
-          return set(from, {
-            parent: this,
-            chain: true
-          });
-        }
-      };
+      return { get: wrap(from) };
     }
 
   // preserve all other values
   } else {
-    return {
-      value: from
-    };
+    return { value: from };
   }
 }
 

@@ -140,7 +140,7 @@ describe('Interactor', () => {
         TestInteractor = @Interactor.extend class {
           nested = new Interactor('.test-p');
 
-          scopedP = new Interactor({
+          scoped = new Interactor({
             scope: '.test-p',
             detached: false
           });
@@ -158,7 +158,7 @@ describe('Interactor', () => {
       it('has the correct scope', () => {
         let test = new TestInteractor('#scoped');
         expect(test.nested.$element.innerText).toBe('A');
-        expect(test.scopedP.$element.innerText).toBe('B');
+        expect(test.scoped.$element.innerText).toBe('B');
       });
 
       it('creates a method when the interactor has actions', async () => {
@@ -301,10 +301,9 @@ describe('Interactor', () => {
         '$',
         '$$',
         '$element',
-        'only',
-        'scoped',
         'validate',
-        'remains'
+        'remains',
+        'only'
       ];
 
       for (let name of reserved) {

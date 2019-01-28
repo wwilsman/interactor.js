@@ -25,25 +25,21 @@ describe('Interactor properties - scoped', () => {
       let test = new Interactor('#scoped').scoped('.test-p');
       expect(test).toBeInstanceOf(Interactor);
       expect(test.$element.innerText).toBe('B');
-      expect(test.do(() => {}).$element.id).toBe('scoped');
     });
 
     it('uses defined properties for the scoped interactor', () => {
       let test = new Interactor().scoped('.test-p', { foo: true });
       expect(test).toHaveProperty('foo', true);
-      expect(test.do(() => {})).not.toHaveProperty('foo');
     });
 
     it('uses an interactor class for the scoped interactor', () => {
       let test = new Interactor('#scoped').scoped('.test-p', PInteractor);
       expect(test).toHaveProperty('b', true);
-      expect(test.do(() => {})).not.toHaveProperty('b');
     });
 
     it('can optionally opt out of parent chaining', () => {
       let test = new Interactor().scoped('.test-p', PInteractor, false);
       expect(test).toHaveProperty('a', true);
-      expect(test.do(() => {})).toHaveProperty('b', false);
     });
   });
 

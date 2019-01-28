@@ -5,7 +5,7 @@ import isInteractor from './utils/is-interactor';
 import makeChainable from './utils/chainable';
 import validation, { validator } from './utils/validation';
 import extend from './utils/extend';
-import from from './utils/from';
+import from, { wrap } from './utils/from';
 import meta, { get, set } from './utils/meta';
 
 // validations
@@ -13,7 +13,7 @@ import { disabled } from './validations/disabled';
 import { focusable } from './validations/focusable';
 
 // actions
-import { click } from './actions/click';
+import click from './actions/click';
 
 // properties
 import scoped from './properties/scoped';
@@ -244,20 +244,6 @@ class Interactor extends Convergence {
     return $$(selector, this.$element);
   }
 
-  scoped(selector, properties, chain = true) {
-    if (!selector) return this;
-
-    if (typeof properties === 'boolean') {
-      chain = properties;
-      properties = undefined;
-    }
-
-    return set(
-      scoped(selector, properties),
-      { parent: this, chain }
-    );
-  }
-
   validate(predicates, format) {
     let validate;
 
@@ -352,14 +338,17 @@ defineProperties(
   }, {})
 );
 
-// define action methods
+// default actions
 defineProperties(
   Interactor.prototype,
   entries({
-    click
+    click,
+    scoped
   }).reduce((descriptors, [name, method]) => {
     return assign(descriptors, {
-      [name]: { value: method }
+      [name]: {
+        value: wrap(method)
+      }
     });
   }, {})
 );

@@ -1,9 +1,7 @@
 import scoped from '../properties/scoped';
 
-export function click(selector) {
-  return this
-  // possibly scoped to a selector
-    .scoped(selector, false)
+export default function click(selector) {
+  return scoped(selector)
   // perform clickable validation
     .validate(
       ['focusable', '!disabled'],
@@ -13,8 +11,4 @@ export function click(selector) {
     .do(element => {
       element.click();
     });
-}
-
-export default function(selector) {
-  return scoped(selector).click();
 }
