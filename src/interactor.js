@@ -11,6 +11,7 @@ import meta, { get } from './utils/meta';
 // validations
 import { disabled } from './validations/disabled';
 import { focusable } from './validations/focusable';
+import { focused } from './validations/focused';
 
 // actions
 import click from './actions/click';
@@ -331,7 +332,8 @@ defineProperties(
   Interactor.prototype,
   entries({
     disabled,
-    focusable
+    focusable,
+    focused
   }).reduce((descriptors, [name, predicate]) => {
     return assign(descriptors, {
       [name]: validation(predicate)
