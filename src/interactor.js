@@ -16,6 +16,7 @@ import { focused } from './validations/focused';
 // actions
 import click from './actions/click';
 import focus from './actions/focus';
+import blur from './actions/blur';
 
 // properties
 import scoped from './properties/scoped';
@@ -347,6 +348,7 @@ defineProperties(
   entries({
     click,
     focus,
+    blur,
     scoped
   }).reduce((descriptors, [name, method]) => {
     return assign(descriptors, {

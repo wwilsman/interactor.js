@@ -29,9 +29,12 @@ export function injectHtml(html) {
  * @param {Function} [callback] - Event callback
  */
 export function testDOMEvent(selector, event, callback = () => {}) {
-  let test = { result: false };
+  let test = {
+    $element: $(selector),
+    result: false
+  };
 
-  $(selector).addEventListener(event, e => {
+  test.$element.addEventListener(event, e => {
     test.result = true;
     e.preventDefault();
     callback(e);

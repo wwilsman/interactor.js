@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import { $, injectHtml, testDOMEvent } from '../helpers';
+import { injectHtml, testDOMEvent } from '../helpers';
 import Interactor from '../../src/interactor';
 import focus from '../../src/actions/focus';
 
@@ -63,7 +63,7 @@ describe('Interactor actions - focus', () => {
 
     it('focuses the root element when unspecified', async () => {
       let test = testDOMEvent('fieldset', 'focus');
-      $('fieldset').tabIndex = 0;
+      test.$element.tabIndex = 0;
       await new TestInteractor().focusField();
       expect(test.result).toBe(true);
     });
@@ -72,7 +72,7 @@ describe('Interactor actions - focus', () => {
       let test = testDOMEvent('input', 'focus');
       await new TestInteractor().focusInput();
       expect(test.result).toBe(true);
-      expect($('input')).toBe(document.activeElement);
+      expect(test.$element).toBe(document.activeElement);
     });
   });
 });

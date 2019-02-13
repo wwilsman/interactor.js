@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import { $, injectHtml, testDOMEvent } from '../helpers';
+import { injectHtml, testDOMEvent } from '../helpers';
 import Interactor from '../../src/interactor';
 import click from '../../src/actions/click';
 
@@ -43,7 +43,7 @@ describe('Interactor actions - click', () => {
       let test = testDOMEvent('button', 'click');
       let button = new Interactor('button').timeout(50);
 
-      $('button').disabled = true;
+      test.$element.disabled = true;
       await expect(button.click()).rejects.toThrow('Failed to click "button": disabled');
       expect(test.result).toBe(false);
     });
@@ -58,8 +58,9 @@ describe('Interactor actions - click', () => {
 
         click = click('a');
         clickDiv = click();
-        clickBtn = click('button')
-          .validate('disabled');
+        clickBtn = click('button').validate(function() {
+          expect(this.$element.disabled).toBe(true);
+        });
       };
     });
 
@@ -71,17 +72,19 @@ describe('Interactor actions - click', () => {
 
     it('clicks the root element when unspecified', async () => {
       let test = testDOMEvent('.test-div', 'click');
-      $('.test-div').tabIndex = 0;
+      test.$element.tabIndex = 0;
       await new TestInteractor().clickDiv();
       expect(test.result).toBe(true);
     });
 
     it('can chain other interactor methods', async () => {
-      let $btn = $('button');
-      let test = testDOMEvent($btn, 'click', () => $btn.disabled = true);
+      let test = testDOMEvent('button', 'click', () => {
+        test.$element.disabled = true;
+      });
+
       await new TestInteractor().clickBtn();
       expect(test.result).toBe(true);
-      expect($btn.disabled).toBe(true);
+      expect(test.$element.disabled).toBe(true);
     });
   });
 });

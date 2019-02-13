@@ -1,14 +1,14 @@
 import scoped from '../properties/scoped';
 
-export default function focus(selector) {
+export default function blur(selector) {
   return scoped(selector)
-  // perform focusable validation
+  // preform focused validation
     .validate(
-      'focusable',
-      'Failed to focus %s: %e'
+      'focused',
+      'Failed to blur %s: %e'
     )
   // invoke the native DOM method
     .do(element => {
-      element.focus();
+      element.blur();
     });
 }
