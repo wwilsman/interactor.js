@@ -87,4 +87,16 @@ describe('Interactor actions - click', () => {
       expect(test.$element.disabled).toBe(true);
     });
   });
+
+  describe('using the action directly', () => {
+    it('returns an interactor', () => {
+      expect(click('button')).toBeInstanceOf(Interactor);
+    });
+
+    it('eventually clicks the element', async () => {
+      let test = testDOMEvent('button', 'click');
+      await click('button');
+      expect(test.result).toBe(true);
+    });
+  });
 });

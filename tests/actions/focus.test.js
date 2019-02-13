@@ -75,4 +75,16 @@ describe('Interactor actions - focus', () => {
       expect(test.$element).toBe(document.activeElement);
     });
   });
+
+  describe('using the action directly', () => {
+    it('returns an interactor', () => {
+      expect(focus('input')).toBeInstanceOf(Interactor);
+    });
+
+    it('eventually focuses the element', async () => {
+      let test = testDOMEvent('input', 'focus');
+      await focus('input');
+      expect(test.result).toBe(true);
+    });
+  });
 });

@@ -4,7 +4,7 @@ import { $, injectHtml, testDOMEvent } from '../helpers';
 import Interactor from '../../src/interactor';
 import blur from '../../src/actions/blur';
 
-describe.only('Interactor actions - blur', () => {
+describe('Interactor actions - blur', () => {
   beforeEach(() => {
     injectHtml(`
       <fieldset>
@@ -82,6 +82,20 @@ describe.only('Interactor actions - blur', () => {
       await new TestInteractor().blurInput();
       expect(test.result).toBe(true);
       expect(test.$element).not.toBe(document.activeElement);
+    });
+  });
+
+  describe('using the action directly', () => {
+    it('returns an interactor', () => {
+      expect(blur('input')).toBeInstanceOf(Interactor);
+    });
+
+    it('eventually clicks the element', async () => {
+      let test = testDOMEvent('input', 'blur');
+      test.$element.focus();
+
+      await blur('input');
+      expect(test.result).toBe(true);
     });
   });
 });
