@@ -1,4 +1,4 @@
-import { validationFor } from '../utils/validation';
+import validation from '../utils/validation';
 
 const { self, top } = window;
 
@@ -12,18 +12,20 @@ function documentHasFocus() {
   return document.hasFocus();
 }
 
-export function focusable(validate, element) {
-  let tabbable = ('tabIndex' in element) && element.tabIndex > -1;
-  let result = tabbable && documentHasFocus();
+export default function focusable(selector) {
+  return validation(function(validate, element) {
+    element = this.$(selector || element);
+    let tabbable = ('tabIndex' in element) && element.tabIndex > -1;
+    let result = tabbable && documentHasFocus();
 
-  let reason = (tabbable && !result)
-    /* istanbul ignore next: encountered when browser is unfocused */
-    ? 'the document does not have focus'
-    : 'tabindex must be greater than -1';
+    return validate(result, () => {
+      let reason = (tabbable && !result)
+      /* istanbul ignore next: encountered when browser is unfocused */
+        ? 'the document does not have focus'
+        : 'tabindex must be greater than -1';
 
-  return validate(result, `not focusable, ${reason}`, 'focusable');
-}
-
-export default function isFocusable(selector) {
-  return validationFor(selector, focusable);
+      return (selector ? `"${selector}" ` : '') +
+        (result ? 'focusable' : `not focusable, ${reason}`);
+    });
+  });
 }

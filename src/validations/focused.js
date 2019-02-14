@@ -1,10 +1,12 @@
-import { validationFor } from '../utils/validation';
+import validation from '../utils/validation';
 
-export function focused(validate, element) {
-  let result = element === document.activeElement;
-  return validate(result, 'not focused', 'focused');
-}
+export default function focused(selector) {
+  return validation(function(validate, element) {
+    element = this.$(selector || element);
+    let result = element === document.activeElement;
 
-export default function isFocused(selector) {
-  return validationFor(selector, focused);
+    return validate(result, () => (
+      `${selector ? `"${selector}" ` : ''}${result ? '' : 'not '}focused`
+    ));
+  });
 }

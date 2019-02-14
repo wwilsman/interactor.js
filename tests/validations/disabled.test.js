@@ -2,7 +2,7 @@ import expect from 'expect';
 
 import { $, injectHtml } from '../helpers';
 import Interactor from '../../src/interactor';
-import isDisabled from '../../src/validations/disabled';
+import disabled from '../../src/validations/disabled';
 
 describe('Interactor validations - disabled', () => {
   beforeEach(() => {
@@ -40,7 +40,7 @@ describe('Interactor validations - disabled', () => {
   describe('with the validation creator', () => {
     @Interactor.extend class FieldInteractor {
       static defaultScope = 'fieldset';
-      disabled = isDisabled('input');
+      disabled = disabled('input');
     }
 
     it('returns true when the specified element is disabled', () => {

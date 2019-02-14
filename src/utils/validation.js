@@ -42,8 +42,7 @@ export function validator(
   raise = false,
   format = '%s validation failed: %e'
 ) {
-  let messages = [];
-  let subject;
+  let message, subject;
 
   function getSubject(required) {
     return (subject = subject || (
@@ -51,70 +50,68 @@ export function validator(
     ));
   }
 
-  function buildError(key, expected, result) {
-    let err = (!expected && messages[1]) || messages[0] || (
-      `${key ? `\`${key}\` ` : ''}returned ${result}`
+  function buildError(key, result) {
+    let err = message
+      ? typeof message === 'function' ? message(result) : message
+      : `${key ? `\`${key}\` ` : ''}returned ${result}`;
+
+    return new Error(
+      format
+        .replace('%s', getScopeName(interactor))
+        .replace('%e', err)
     );
-
-    let message = format
-      .replace('%s', getScopeName(interactor))
-      .replace('%e', err);
-
-    return new Error(message);
   }
 
-  return function validate(predicate, ...msgs) {
+  return function validate(predicate, err) {
     let key, result, error;
     let expected = true;
 
+    // array of predicates
     if (isArray(predicate)) {
       return predicate.reduce((res, condition) => {
-        messages = res ? [] : messages;
-        return res && validate(condition, ...msgs);
+        message = res ? null : message;
+        return res && validate(condition, err);
       }, true);
     }
 
-    if (messages.length === 0 && msgs.length > 0) {
-      messages = msgs;
-    }
+    // set the error message
+    message = message || err;
 
+    // get a validation function and possibly negate the expectation
     if (typeof predicate === 'string') {
       expected = predicate[0] !== '!';
       key = predicate.replace(/^!/, '');
       predicate = getComputedFn(interactor, key);
     }
 
+    // run the validation
     if (typeof predicate === 'function') {
       let subject = getSubject(predicate.length >= 2);
 
       try {
         result = predicate.call(interactor, validate, subject);
         result = typeof result === 'undefined' || !!result;
-      } catch (err) {
+      } catch (e) {
         result = false;
-        error = err;
+        error = e;
       }
-    }
-
-    if (typeof predicate === 'boolean') {
+    } else {
+      // coerse to a booleann
       result = !!predicate;
     }
 
+    // determine if the result is expected
     let passed = result === expected;
 
+    // raise an error
     if (raise && !passed) {
-      if (!messages[0] && error) throw error;
-      throw buildError(key, expected, result);
+      if (!message && error) throw error;
+      throw buildError(key, result);
     }
 
+    // return the final result
     return passed;
   };
-}
-
-export function validationFor(selector, predicate) {
-  return validation(function(validate) {
-    return predicate(validate, this.$(selector));
-  });
 }
 
 export default function validation(...args) {

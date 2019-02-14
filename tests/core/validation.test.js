@@ -18,7 +18,9 @@ describe('Interactor validations', () => {
       expect(element).toBeInstanceOf(Element);
       return validate('multiple');
     });
-    errored = validation('!passing', 'custom error', 'negated error');
+    errored = validation('!passing', result => (
+      `custom error: ${result}`
+    ));
   }
 
   beforeEach(() => {
@@ -111,9 +113,9 @@ describe('Interactor validations', () => {
     });
 
     it('rejects with custom errors when specified', async () => {
-      await expect(instance.validate('!errored')).rejects.toThrow('negated error');
+      await expect(instance.validate('!errored')).rejects.toThrow('custom error: true');
       pass = true;
-      await expect(instance.validate('errored')).rejects.toThrow('custom error');
+      await expect(instance.validate('errored')).rejects.toThrow('custom error: false');
     });
 
     it('can validate multiple properties', async () => {
@@ -137,10 +139,10 @@ describe('Interactor validations', () => {
 
     it('replaces %s with the interactor name or scope when available', async () => {
       await expect(instance.validate('!errored', '%s - %e'))
-        .rejects.toThrow('CustomInteractor - negated error');
+        .rejects.toThrow('CustomInteractor - custom error: true');
       instance = new CustomInteractor('.foo').timeout(50);
       await expect(instance.validate('!errored', 'Validating %s failed: %e'))
-        .rejects.toThrow('Validating ".foo" failed: negated error');
+        .rejects.toThrow('Validating ".foo" failed: custom error: true');
     });
 
     it('bubbles errors before generating a new one', async () => {

@@ -1,10 +1,12 @@
-import { validationFor } from '../utils/validation';
+import validation from '../utils/validation';
 
-export function disabled(validate, element) {
-  let result = ('disabled' in element) && element.disabled;
-  return validate(result, 'not disabled', 'disabled');
-}
+export default function disabled(selector) {
+  return validation(function(validate, element) {
+    element = this.$(selector || element);
+    let result = ('disabled' in element) && element.disabled;
 
-export default function isDisabled(selector) {
-  return validationFor(selector, disabled);
+    return validate(result, () => (
+      `${selector ? `"${selector}" ` : ''}${result ? '' : 'not '}disabled`
+    ));
+  });
 }

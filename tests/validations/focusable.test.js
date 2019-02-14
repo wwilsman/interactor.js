@@ -2,7 +2,7 @@ import expect from 'expect';
 
 import { $, injectHtml } from '../helpers';
 import Interactor from '../../src/interactor';
-import isFocusable from '../../src/validations/focusable';
+import focusable from '../../src/validations/focusable';
 
 describe('Interactor validations - focusable', () => {
   beforeEach(() => {
@@ -48,7 +48,7 @@ describe('Interactor validations - focusable', () => {
   describe('with the validation creator', () => {
     @Interactor.extend class FieldInteractor {
       static defaultScope = 'fieldset';
-      focusable = isFocusable('input');
+      focusable = focusable('input');
     }
 
     it('returns true when the specified element is focusable', () => {

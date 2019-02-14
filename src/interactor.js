@@ -2,15 +2,15 @@ import Convergence from './convergence';
 import { $, $$ } from './utils/dom';
 import isInteractor from './utils/is-interactor';
 import makeChainable from './utils/chainable';
-import validation, { validator } from './utils/validation';
+import { validator } from './utils/validation';
 import extend from './utils/extend';
 import from, { wrap } from './utils/from';
 import meta, { get } from './utils/meta';
 
 // validations
-import { disabled } from './validations/disabled';
-import { focusable } from './validations/focusable';
-import { focused } from './validations/focused';
+import disabled from './validations/disabled';
+import focusable from './validations/focusable';
+import focused from './validations/focused';
 
 // actions
 import click from './actions/click';
@@ -151,9 +151,9 @@ defineProperties(
     disabled,
     focusable,
     focused
-  }).reduce((descriptors, [name, predicate]) => {
+  }).reduce((descriptors, [name, validation]) => {
     return assign(descriptors, {
-      [name]: validation(predicate)
+      [name]: validation()
     });
   }, {})
 );

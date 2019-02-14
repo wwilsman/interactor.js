@@ -2,7 +2,7 @@ import expect from 'expect';
 
 import { $, injectHtml } from '../helpers';
 import Interactor from '../../src/interactor';
-import isFocused from '../../src/validations/focused';
+import focused from '../../src/validations/focused';
 
 describe('Interactor validations - focused', () => {
   beforeEach(() => {
@@ -40,7 +40,7 @@ describe('Interactor validations - focused', () => {
   describe('with the validation creator', () => {
     @Interactor.extend class FieldInteractor {
       static defaultScope = 'fieldset';
-      focused = isFocused('input');
+      focused = focused('input');
     }
 
     it('returns true when the specified element has focus', () => {
