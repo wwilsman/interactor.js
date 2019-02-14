@@ -1,6 +1,6 @@
-import Convergence from '@bigtest/convergence';
+import Convergence from '../convergence';
 import isInteractor from './is-interactor';
-import meta, { set } from './meta';
+import meta, { set, get } from './meta';
 
 const {
   assign,
@@ -11,14 +11,6 @@ const {
   hasOwnProperty
 } = Object;
 
-/**
- * Throws an error if an object contains reserved properties.
- *
- * @private
- * @param {Object} obj - Object to check for reserved properties
- * @returns {Object} obj - The object after being checked
- * @throws {Error} if any reserverd properties were found
- */
 function checkForReservedPropertyNames(obj) {
   const blacklist = [
     '$', '$$', '$element', 'validate', 'remains', 'only', meta,
@@ -34,13 +26,6 @@ function checkForReservedPropertyNames(obj) {
   return obj;
 }
 
-/**
- * Returns true if an object has either `get` or `value` properties.
- *
- * @private
- * @param {Object} obj
- * @returns {Boolean}
- */
 function isPropertyDescriptor(obj) {
   return obj &&
     (hasOwnProperty.call(obj, 'get') ||
@@ -49,26 +34,18 @@ function isPropertyDescriptor(obj) {
 
 export function wrap(from) {
   return function() {
-    let interactor = typeof from === 'function' ? from(...arguments) : from;
+    let result = typeof from === 'function' ? from(...arguments) : from;
 
-    if (interactor._queue.length > 0) {
-      return this.do(() => set(interactor, { parent: this }));
+    if (!isInteractor(result)) {
+      return result;
+    } else if (get(result, 'queue').length > 0) {
+      return this.do(() => set(result, { parent: this }));
     } else {
-      return set(interactor, { parent: this, chain: true });
+      return set(result, { parent: this, chain: true });
     }
   };
 }
 
-/**
- * Converts a value to a property descriptor. If already a descriptor,
- * it is returned. Given an interactor will return an accessor
- * descriptor which gives the interactor a parent reference. All other
- * values are set as the `value` property of a property descriptor.
- *
- * @private
- * @param {*} from
- * @returns {Object}
- */
 function toInteractorDescriptor(from) {
   // already a property descriptor
   if (isPropertyDescriptor(from)) {
@@ -82,7 +59,7 @@ function toInteractorDescriptor(from) {
   // nested interactors get parent references
   } else if (isInteractor(from)) {
     // action interactors are functions
-    if (from._queue.length > 0) {
+    if (get(from, 'queue').length > 0) {
       return { value: wrap(from) };
 
     // all other interactors are getters
@@ -95,39 +72,6 @@ function toInteractorDescriptor(from) {
     return { value: from };
   }
 }
-
-/**
- * Creates a custom interactor class from methods and properties of an
- * object. Methods and getters are added to the custom class's
- * prototype and all other properties are defined during instance
- * initialization to support custom property creators.
- *
- * ``` javascript
- * import Interactor, {
- *   text,
- *   property,
- *   value,
- *   clickable
- * } from '@bigtest/interactor';
- *
- * const FieldInteractor = Interactor.from({
- *   label: text('label'),
- *   name: property('input', 'name'),
- *   type: property('input', 'type'),
- *   placeholder: property('input', 'placeholder'),
- *   value: value('input')
- * });
- *
- * const PasswordInteractor = FieldInteractor.from({
- *   toggleVisibility: clickable('.visibility-toggle')
- * });
- * ```
- *
- * @static
- * @alias Interactor.from
- * @param {Object} properties - Used to create a custom interactor
- * @returns {Class} Custom interactor class
- */
 
 export default function from(properties) {
   let { static: staticProps, ...ownProps } = properties;

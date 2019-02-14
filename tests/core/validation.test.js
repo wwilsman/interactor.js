@@ -1,7 +1,7 @@
 import expect from 'expect';
 
-import interactor from '../src/decorator';
-import validation from '../src/utils/validation';
+import interactor from '../../src/decorator';
+import validation from '../../src/utils/validation';
 
 describe('Interactor validations', () => {
   let instance, pass;

@@ -1,9 +1,9 @@
 {
-  "name": "@bigtest/interactor",
-  "description": "Interaction library for testing big",
-  "version": "0.9.1",
+  "name": "interactors",
+  "description": "Composable interaction library",
+  "version": "1.0.0",
   "license": "MIT",
-  "repository": "https://github.com/bigtestjs/interactor",
+  "repository": "https://github.com/wwilsman/interactors",
   "main": "dist/umd/index.js",
   "module": "dist/esm/index.js",
   "files": [
@@ -13,9 +13,7 @@
   ],
   "scripts": {
     "build": "rollup --config",
-    "docs": "bigtest-docs",
     "lint": "eslint --ignore-path .gitignore ./",
-    "postpublish": "bigtest-tag-version",
     "start": "karma start",
     "test": "yarn start --single-run"
   },
@@ -26,7 +24,6 @@
     "@babel/polyfill": "^7.0.0",
     "@babel/preset-env": "^7.0.0",
     "@babel/register": "^7.0.0",
-    "@bigtest/meta": "bigtestjs/meta",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.4",
     "babel-plugin-istanbul": "^5.1.0",
@@ -54,8 +51,5 @@
     "webpack": "^4.20.0",
     "webpack-cli": "^3.1.2",
     "webpack-dev-server": "^3.1.9"
-  },
-  "dependencies": {
-    "@bigtest/convergence": "^1.1.1"
   }
 }

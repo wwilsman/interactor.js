@@ -9,15 +9,6 @@ const {
   getPrototypeOf
 } = Object;
 
-/**
- * Returns a property descriptor found on an instance or on the
- * instance's prototype chain.
- *
- * @private
- * @param {Object} instance
- * @param {String} key
- * @returns {Object}
- */
 function getComputedFn(instance, key) {
   let proto = instance;
   let descr;
@@ -34,14 +25,6 @@ function getComputedFn(instance, key) {
   return descr.get;
 }
 
-/**
- * Returns the interactor's scope string or constructor name if the
- * scope is not a string.
- *
- * @private
- * @param {Interactor} interactor
- * @returns {String}
- */
 function getScopeName(interactor) {
   let { scope, parent, detached } = interactor[meta];
 
@@ -54,19 +37,6 @@ function getScopeName(interactor) {
   }
 }
 
-/**
- * Creates a validate function bound to an interactor instance.
- *
- * If the `raise` option is true, an error will be thrown instead of
- * returning false. The error message is generated using the `format`
- * option, where `%s` is the interactor's scope or name and `%e` is
- * the error message provided by the validation that failed.
- *
- * @private
- * @param {Boolean} [options.raise]
- * @param {String} [options.format]
- * @returns {Function}
- */
 export function validator(
   interactor,
   raise = false,
@@ -141,62 +111,12 @@ export function validator(
   };
 }
 
-/**
- *
- *
- * @param {} selector
- * @param {} predicate
- * @returns {}
- */
 export function validationFor(selector, predicate) {
   return validation(function(validate) {
     return predicate(validate, this.$(selector));
   });
 }
 
-/**
- * Creates a computed validation property. The predicate function
- * recieves a validate function and optionally the element being
- * validated against. If the element does not exist, an error will be
- * thrown before the predicate is invoked. When there is no second
- * argument to the predicate function, the element getter will not be
- * accessed and no error will be raised.
- *
- * The validate function provided to the predicate accepts a boolean,
- * a property string, another predicate function, or a mixed array and
- * returns true or false if it passes validation. Strings are treated
- * as other validation property keys and can be negated by prefixing
- * the key with `!`.
- *
- * When using the `#validate()` method, an error will be thrown
- * instead of returning false. The error message is generated from the
- * second argument given to the validation function. If a third
- * argument is provided, it will be used when the validation is
- * negated with `!`.
- *
- * ```javascript
- * \@interactor class FooBarInteractor {
- *   foo = validation((validate, element) => {
- *     let isFoo = element.classList.contains('foo');
- *     return validate(isFoo, 'not foo', 'is foo');
- *   });
- * }
- *
- * // ...
- *
- * let bar = new FooBarInteractor('.bar');
- *
- * // boolean getter
- * expect(bar.foo).toBe(false);
- *
- * // convergent assertion
- * await bar.validate('foo');
- * //=> Error: ".bar" validation failed: not foo
- * ```
- *
- * @param {Function} predicate - computed predicate function
- * @returns {Object} computed property descriptor
- */
 export default function validation(...args) {
   return computed(function() {
     // when invoked as a predicate, this will already be provided

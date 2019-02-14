@@ -1,11 +1,3 @@
-/**
- * Gets the first element matching a selector via `querySelector`.
- *
- * @private
- * @param {String} selector - Query selector string
- * @param {Element} $ctx - Context with a `querySelector` method
- * @returns {Element} Matching element
- */
 export function $(selector, $ctx = document) {
   let $node = null;
 
@@ -38,19 +30,11 @@ export function $(selector, $ctx = document) {
   return $node;
 }
 
-/**
- * Gets all elements matching a selector via `querySelectorAll()`.
- *
- * @private
- * @param {String} selector - Query selector string
- * @param {Element} $ctx - Context with a `querySelectorAll` method
- * @returns {Array} Array of elements
- */
 export function $$(selector, $ctx) {
   let nodes = [];
 
   /* istanbul ignore if: sanity check */
-  if (!$ctx || /* istanbul ignore next */ typeof $ctx.querySelectorAll !== 'function') {
+  if (!$ctx || typeof $ctx.querySelectorAll !== 'function') {
     throw new Error('unable to use the current context');
   }
 
@@ -68,6 +52,6 @@ export function $$(selector, $ctx) {
   }
 
   // only return elements
-  /* istanbul ignore next */
+  /* istanbul ignore next: sanity check */
   return nodes.filter($node => $node instanceof Element);
 }

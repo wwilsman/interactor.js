@@ -1,8 +1,9 @@
 import expect from 'expect';
-import Convergence from '@bigtest/convergence';
 
-import { $, injectHtml } from './helpers';
-import Interactor from '../src/interactor';
+import { $, injectHtml } from '../helpers';
+import Convergence from '../../src/convergence';
+import Interactor from '../../src/interactor';
+import { get } from '../../src/utils/meta';
 
 describe('Interactor', () => {
   let instance;
@@ -221,8 +222,7 @@ describe('Interactor', () => {
 
     it('appends child interactions to the parent instance queue', () => {
       let test = parent.child.test1().child.test2().child.deep().test();
-      expect(test).toHaveProperty('_queue');
-      expect(test._queue).toHaveLength(4);
+      expect(get(test, 'queue')).toHaveLength(4);
     });
 
     it('does not return a new parent when a new child is not returned', () => {

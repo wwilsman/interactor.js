@@ -1,11 +1,11 @@
 references:
   defaults: &defaults
-    working_directory: ~/interactor
+    working_directory: ~/interactors
     docker:
       - image: circleci/node:10-browsers
 
   cache_key: &cache_key
-    interactor-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+    interactors-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
 
   attach_workspace: &attach_workspace
     attach_workspace:
@@ -31,7 +31,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - interactor
+            - interactors
             - .ssh
 
   lint:
@@ -47,16 +47,12 @@ jobs:
     steps:
       - *attach_workspace
       - run:
-          name: Build documentation
-          command: yarn docs
-      - run:
           name: Build package
           command: yarn build
       - persist_to_workspace:
           root: ~/
           paths:
-            - interactor/dist
-            - interactor/docs
+            - interactors/dist
 
   test:
     <<: *defaults
@@ -64,17 +60,17 @@ jobs:
       - *attach_workspace
       - run:
           name: Run tests
-          command: yarn test --browser chrome
+          command: yarn test
 
   deploy:
     <<: *defaults
     steps:
       - *attach_workspace
       - run:
-          name: Publish to NPM
+          name: Publish
           command: |
             echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
-            npx bigtest-release --access=public
+            echo "TODO: tag and publish new versions to NPM"
       - run:
           name: Push Tags
           command: git push --tags

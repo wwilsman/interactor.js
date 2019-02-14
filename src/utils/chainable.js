@@ -8,30 +8,10 @@ const {
   getOwnPropertyDescriptors
 } = Object;
 
-/**
- * Returns true when two instances share the same prototype.
- *
- * @private
- * @param {*} a - Instance A
- * @param {*} b - Instance B
- * @returns {Boolean}
- */
 function isSameType(a, b) {
   return a && b && getPrototypeOf(a) === getPrototypeOf(b);
 }
 
-/**
- * Wraps a method or getter to return an appended parent instance when
- * another same-type instance is returned. The original function is
- * called with the context of an orphaned instance so that it does not
- * return parent instances inside of methods or getters. If a returned
- * instance has a parent with the same type, the original instance is
- * restored as the proper parent.
- *
- * @private
- * @param {Function} fn - Method or getter to wrap
- * @returns {Function}
- */
 function chainable(fn) {
   return function(...args) {
     // use an instance with no chaining to prevent upwards reflection
@@ -55,14 +35,6 @@ function chainable(fn) {
   };
 }
 
-/**
- * Returns an object containing all property descriptors for an
- * instance's own and inherited properties.
- *
- * @private
- * @param {Object} instance
- * @returns {Object}
- */
 function getAllDescriptors(instance) {
   let proto = instance;
   let descr = {};
@@ -76,18 +48,6 @@ function getAllDescriptors(instance) {
   return descr;
 }
 
-/**
- * Redefines all properties of an interactor instance to return
- * parent-chainable methods and accessors. The methods and accessors
- * are bound to an orphaned instance when inovked and when returning
- * an interactor of the same type as itself, it is appended up the
- * parent chain. When a method or property returns an interactor whose
- * parent is an instance of the current interactor, the parnet-chain
- * is ammened to relfect the proper hierarchy for appending later.
- *
- * @private
- * @param {Interactor} instance
- */
 export default function makeChainable(instance) {
   defineProperties(
     instance,

@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import { $, injectHtml, testDOMEvent } from '../helpers';
+import { injectHtml, testDOMEvent } from '../helpers';
 import Interactor from '../../src/interactor';
 import blur from '../../src/actions/blur';
 

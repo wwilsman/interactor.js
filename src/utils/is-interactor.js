@@ -1,25 +1,9 @@
-import { isConvergence } from '@bigtest/convergence';
+import isConvergence from './is-convergence';
+import meta from './meta';
 
-/**
- * Returns `true` if the object has common interactor properties
- *
- * ``` javascript
- * let result = maybeInteractor()
- *
- * if (isInteractor(result)) {
- *   await result.login(user)
- * } else {
- *   something(result)
- * }
- * ```
- *
- * @static
- * @alias Interactor.isInteractor
- * @param {Object} obj - A possible interactor object
- * @returns {Boolean}
- */
 export default function isInteractor(obj) {
   return isConvergence(obj) &&
+    'scope' in obj[meta] &&
     '$' in obj && typeof obj.$ === 'function' &&
     '$$' in obj && typeof obj.$$ === 'function' &&
     '$element' in obj;

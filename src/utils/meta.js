@@ -1,12 +1,12 @@
 const symbol = Symbol('meta');
 
-export function get(interactor, key) {
-  let meta = interactor && interactor[symbol];
+export function get(instance, key) {
+  let meta = instance && instance[symbol];
   return (meta && key) ? meta[key] : meta;
 }
 
-export function set(interactor, options) {
-  return new interactor.constructor(options, interactor);
+export function set(instance, options) {
+  return new instance.constructor(options, instance);
 }
 
 export default symbol;
