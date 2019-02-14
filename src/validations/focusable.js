@@ -3,7 +3,7 @@ import validation from '../utils/validation';
 const { self, top } = window;
 
 function documentHasFocus() {
-  /* istanbul ignore if: if the top document has focus when in an
+  /* istanbul ignore next: if the top document has focus when in an
    * iframe, this will set focus to the this iframe's document */
   if (!document.hasFocus() && self !== top && window.frameElement) {
     window.frameElement.focus();
@@ -19,8 +19,8 @@ export default function focusable(selector) {
     let result = tabbable && documentHasFocus();
 
     return validate(result, () => {
-      let reason = (tabbable && !result)
       /* istanbul ignore next: encountered when browser is unfocused */
+      let reason = (tabbable && !result)
         ? 'the document does not have focus'
         : 'tabindex must be greater than -1';
 

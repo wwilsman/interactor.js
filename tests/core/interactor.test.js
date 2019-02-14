@@ -20,6 +20,12 @@ describe('Interactor', () => {
     expect(instance).toBeInstanceOf(Convergence);
   });
 
+  it('can be created with a timeout', () => {
+    expect(instance.timeout()).toBe(2000);
+    instance = new Interactor(50);
+    expect(instance.timeout()).toBe(50);
+  });
+
   describe('with a scope', () => {
     beforeEach(() => {
       injectHtml(`

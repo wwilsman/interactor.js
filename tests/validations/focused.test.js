@@ -25,14 +25,17 @@ describe('Interactor validations - focused', () => {
 
     describe('using validate', () => {
       it('resolves when passing', async () => {
-        $('input').focus();
         let input = new Interactor('input');
+        await expect(input.validate('!focused')).resolves.toBe(true);
+        input.$element.focus();
         await expect(input.validate('focused')).resolves.toBe(true);
       });
 
       it('rejects with an error when failing', async () => {
         let input = new Interactor('input').timeout(50);
         await expect(input.validate('focused')).rejects.toThrow('not focused');
+        input.$element.focus();
+        await expect(input.validate('!focused')).rejects.toThrow('focused');
       });
     });
   });

@@ -99,6 +99,7 @@ export default class Convergence {
       }
 
       return promise.then(ret => {
+        /* istanbul ignore else: unnecessary */
         if (subject.assertion) {
           return runAssertion(this, subject, ret, stats);
         } else if (subject.callback) {

@@ -36,6 +36,7 @@ export function wrap(from) {
   return function() {
     let result = typeof from === 'function' ? from(...arguments) : from;
 
+    /* istanbul ignore if: sanity check */
     if (!isInteractor(result)) {
       return result;
     } else if (get(result, 'queue').length > 0) {

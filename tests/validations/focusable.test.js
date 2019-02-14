@@ -33,12 +33,15 @@ describe('Interactor validations - focusable', () => {
         let input = new Interactor('input');
         await expect(input.validate('focusable')).resolves.toBe(true);
 
-        $('span').tabIndex = 0;
         let span = new Interactor('span');
+        await expect(span.validate('!focusable')).resolves.toBe(true);
+        span.$element.tabIndex = 0;
         await expect(span.validate('focusable')).resolves.toBe(true);
       });
 
       it('rejects with an error when failing', async () => {
+        let input = new Interactor('input');
+        await expect(input.validate('!focusable')).rejects.toThrow('focusable');
         let span = new Interactor('span').timeout(50);
         await expect(span.validate('focusable')).rejects.toThrow('not focusable, tabindex');
       });

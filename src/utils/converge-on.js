@@ -1,7 +1,5 @@
 const { now } = Date;
 
-/**
- */
 export function convergeOn(assertion, timeout, always) {
   let start = now();
   let interval = 10;
@@ -60,6 +58,7 @@ export function convergeOn(assertion, timeout, always) {
       } catch (error) {
         let doLoop = now() - start < timeout;
 
+        /* istanbul ignore else: unnecessary */
         if (!bail && !always && doLoop) {
           setTimeout(loop, interval);
         } else if (bail || always || !doLoop) {
@@ -70,22 +69,16 @@ export function convergeOn(assertion, timeout, always) {
   });
 }
 
-/**
- */
 function thennable(fn) {
   return Object.defineProperty(fn, 'then', {
     value: (...args) => fn().then(...args)
   });
 }
 
-/**
- */
 export function when(assertion, timeout = 2000) {
   return thennable(() => convergeOn(assertion, timeout, false));
 }
 
-/**
- */
 export function always(assertion, timeout = 200) {
   return thennable(() => convergeOn(assertion, timeout, true));
 }

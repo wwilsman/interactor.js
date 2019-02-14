@@ -216,6 +216,11 @@ describe('Convergence', () => {
 
         expect(get(combined, 'queue')[1]).toHaveProperty('callback', fn);
       });
+
+      it('throws when not a convergence instance', () => {
+        expect(() => converge.append({}))
+          .toThrow('.append() only works with convergence instances');
+      });
     });
   });
 
