@@ -40,7 +40,7 @@ describe('Interactor validations - focusable', () => {
       });
 
       it('rejects with an error when failing', async () => {
-        let input = new Interactor('input');
+        let input = new Interactor('input').timeout(50);
         await expect(input.validate('!focusable')).rejects.toThrow('focusable');
         let span = new Interactor('span').timeout(50);
         await expect(span.validate('focusable')).rejects.toThrow('not focusable, tabindex');
