@@ -11,6 +11,7 @@ import meta, { get } from './utils/meta';
 import disabled from './validations/disabled';
 import focusable from './validations/focusable';
 import focused from './validations/focused';
+import scrollable, { scrollableX, scrollableY } from './validations/scrollable';
 
 // actions
 import click from './actions/click';
@@ -150,7 +151,10 @@ defineProperties(
   entries({
     disabled,
     focusable,
-    focused
+    focused,
+    scrollableX,
+    scrollableY,
+    scrollable
   }).reduce((descriptors, [name, validation]) => {
     return assign(descriptors, {
       [name]: validation()
