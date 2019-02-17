@@ -1,4 +1,4 @@
-import meta from './meta';
+import { get } from './meta';
 import computed from './computed';
 
 const {
@@ -26,11 +26,11 @@ function getComputedFn(instance, key) {
 }
 
 function getScopeName(interactor) {
-  let { scope, parent, detached } = interactor[meta];
+  let { scope, parent, detached } = get(interactor);
 
   if (typeof scope === 'string') {
     return `"${scope}"`;
-  } else if (typeof scope === 'undefined' && parent && !detached) {
+  } else if (scope == null && parent && !detached) {
     return getScopeName(parent);
   } else {
     return interactor.constructor.name;

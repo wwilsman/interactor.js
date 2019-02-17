@@ -17,6 +17,7 @@ import scrollable, { scrollableX, scrollableY } from './validations/scrollable';
 import click from './actions/click';
 import focus from './actions/focus';
 import blur from './actions/blur';
+import scroll from './actions/scroll';
 
 // properties
 import scoped from './properties/scoped';
@@ -169,6 +170,7 @@ defineProperties(
     click,
     focus,
     blur,
+    scroll,
     scoped
   }).reduce((descriptors, [name, method]) => {
     return assign(descriptors, {

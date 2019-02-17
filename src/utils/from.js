@@ -34,7 +34,9 @@ function isPropertyDescriptor(obj) {
 
 export function wrap(from) {
   return function() {
-    let result = typeof from === 'function' ? from(...arguments) : from;
+    let result = typeof from === 'function'
+      ? from.apply(this, arguments)
+      : from;
 
     /* istanbul ignore if: sanity check */
     if (!isInteractor(result)) {
@@ -67,6 +69,10 @@ function toInteractorDescriptor(from) {
     } else {
       return { get: wrap(from) };
     }
+
+  // wrap functions in case they return interactors
+  } else if (typeof from === 'function') {
+    return { value: wrap(from) };
 
   // preserve all other values
   } else {

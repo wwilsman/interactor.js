@@ -23,7 +23,6 @@ export function testDOMEvent(selector, event, callback = () => {}) {
 
   test.$element.addEventListener(event, e => {
     test.result = true;
-    e.preventDefault();
     callback(e);
   });
 
