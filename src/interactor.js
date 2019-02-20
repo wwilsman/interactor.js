@@ -12,6 +12,7 @@ import disabled from './validations/disabled';
 import focusable from './validations/focusable';
 import focused from './validations/focused';
 import scrollable, { scrollableX, scrollableY } from './validations/scrollable';
+import exists from './validations/exists';
 
 // actions
 import click from './actions/click';
@@ -155,7 +156,8 @@ defineProperties(
     focused,
     scrollableX,
     scrollableY,
-    scrollable
+    scrollable,
+    exists
   }).reduce((descriptors, [name, validation]) => {
     return assign(descriptors, {
       [name]: validation()
