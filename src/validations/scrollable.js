@@ -1,42 +1,32 @@
-import validation from '../utils/validation';
-
-function hasOverflowX(element) {
-  return element.scrollWidth > element.clientWidth;
+export function scrollableX() {
+  return {
+    validate() {
+      return this.scrollableX;
+    },
+    message(result) {
+      return `${result ? 'has' : 'no'} overflow-x`;
+    }
+  };
 }
 
-function hasOverflowY(element) {
-  return element.scrollHeight > element.clientHeight;
+export function scrollableY() {
+  return {
+    validate() {
+      return this.scrollableY;
+    },
+    message(result) {
+      return `${result ? 'has' : 'no'} overflow-y`;
+    }
+  };
 }
 
-export function scrollableX(selector) {
-  return validation(function(validate, element) {
-    element = this.$(selector || element);
-    let result = hasOverflowX(element);
-
-    return validate(result, () => (
-      `${selector ? `"${selector}" ` : ''}${result ? 'has' : 'no'} overflow-x`
-    ));
-  });
-}
-
-export function scrollableY(selector) {
-  return validation(function(validate, element) {
-    element = this.$(selector || element);
-    let result = hasOverflowY(element);
-
-    return validate(result, () => (
-      `${selector ? `"${selector}" ` : ''}${result ? 'has' : 'no'} overflow-y`
-    ));
-  });
-}
-
-export default function scrollable(selector) {
-  return validation(function(validate, element) {
-    element = this.$(selector || element);
-    let result = hasOverflowX(element) || hasOverflowY(element);
-
-    return validate(result, () => (
-      `${selector ? `"${selector}" ` : ''}${result ? 'has' : 'no'} overflow`
-    ));
-  });
+export default function scrollable() {
+  return {
+    validate() {
+      return this.scrollable;
+    },
+    message(result) {
+      return `${result ? 'has' : 'no'} overflow`;
+    }
+  };
 }

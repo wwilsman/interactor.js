@@ -110,7 +110,7 @@ describe('Interactor actions - scroll', () => {
         static defaultScope = '#container';
 
         scroll = scroll('#content');
-        scroll10 = scroll({ top: 10 }).validate(function() {
+        scroll10 = scroll({ top: 10 }).assert(function() {
           expect(this.$element.scrollTop).toBeGreaterThan(0);
         });
       };

@@ -1,10 +1,12 @@
 import Convergence from '../convergence';
 import isInteractor from './is-interactor';
+import { createAssertions } from './assertions';
 import meta, { set, get } from './meta';
 
 const {
   assign,
   defineProperties,
+  defineProperty,
   entries,
   getOwnPropertyDescriptors,
   getOwnPropertyNames,
@@ -13,7 +15,7 @@ const {
 
 function checkForReservedPropertyNames(obj) {
   const blacklist = [
-    '$', '$$', '$element', 'validate', 'remains', 'only', meta,
+    '$', '$$', '$element', 'validate', 'remains', 'only', 'assert', meta,
     ...getOwnPropertyNames(Convergence.prototype)
   ];
 
@@ -81,7 +83,14 @@ function toInteractorDescriptor(from) {
 }
 
 export default function from(properties) {
-  let { static: staticProps, ...ownProps } = properties;
+  let {
+    static: {
+      assertions = {},
+      ...staticProps
+    } = {},
+    ...ownProps
+  } = properties;
+
   class CustomInteractor extends this {};
 
   // define properties from descriptors
@@ -102,6 +111,11 @@ export default function from(properties) {
       getOwnPropertyDescriptors(staticProps)
     );
   }
+
+  // define assertions
+  defineProperty(CustomInteractor.prototype, 'assert', {
+    value: createAssertions(assertions)
+  });
 
   return CustomInteractor;
 }

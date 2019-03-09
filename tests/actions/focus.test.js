@@ -49,7 +49,7 @@ describe('Interactor actions - focus', () => {
 
         focus = focus('input');
         focusField = focus();
-        focusInput = focus('input').validate(function() {
+        focusInput = focus('input').assert(function() {
           expect(this.$element).toBe(document.activeElement);
         });
       };

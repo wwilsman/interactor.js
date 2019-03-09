@@ -2,7 +2,7 @@ import expect from 'expect';
 
 import { injectHtml } from '../helpers';
 import Interactor from '../../src/interactor';
-import scoped from '../../src/properties/scoped';
+import scoped from '../../src/helpers/scoped';
 
 describe('Interactor properties - scoped', () => {
   @Interactor.extend class PInteractor {

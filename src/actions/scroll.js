@@ -1,5 +1,5 @@
-import scoped from '../properties/scoped';
 import isInteractor from '../utils/is-interactor';
+import scoped from '../helpers/scoped';
 
 function scroll(selector, {
   x, y,
@@ -12,13 +12,18 @@ function scroll(selector, {
     throw new Error('missing scroll direction');
   }
 
-  return scoped(selector)
-    .validate(
-      top == null ? 'scrollableX'
-        : left == null ? 'scrollableY'
-          : 'scrollable',
-      'Failed to scroll %s: %e'
-    )
+  let interactor = scoped(selector);
+
+  if (top == null) {
+    interactor = interactor.assert.scrollableX();
+  } else if (left == null) {
+    interactor = interactor.assert.scrollableY();
+  } else {
+    interactor = interactor.assert.scrollable();
+  }
+
+  return interactor
+    .assert.f('Failed to scroll %s: %e')
     .do(element => {
       for (let i = 1; i <= frequency; i++) {
         let cancelled = false;

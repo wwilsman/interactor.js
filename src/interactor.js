@@ -1,27 +1,16 @@
 import Convergence from './convergence';
 import { $, $$ } from './utils/dom';
 import isInteractor from './utils/is-interactor';
+import { createAssertions, getAssertFor } from './utils/assertions';
 import makeChainable from './utils/chainable';
-import { validator } from './utils/validation';
 import extend from './utils/extend';
 import from, { wrap } from './utils/from';
 import meta, { get } from './utils/meta';
 
-// validations
-import disabled from './validations/disabled';
-import focusable from './validations/focusable';
-import focused from './validations/focused';
-import scrollable, { scrollableX, scrollableY } from './validations/scrollable';
-import exists from './validations/exists';
-
-// actions
-import click from './actions/click';
-import focus from './actions/focus';
-import blur from './actions/blur';
-import scroll from './actions/scroll';
-
-// properties
-import scoped from './properties/scoped';
+import * as validations from './validations';
+import * as actions from './actions';
+import * as properties from './properties';
+import scoped from './helpers/scoped';
 
 const {
   assign,
@@ -48,7 +37,7 @@ class Interactor extends Convergence {
         typeof options === 'function') {
       options = { scope: options };
 
-    // convergence timeout was provided
+      // convergence timeout was provided
     } else if (typeof options === 'number') {
       options = { timeout: options };
     }
@@ -64,6 +53,18 @@ class Interactor extends Convergence {
       detached = true
     } = assign({}, get(previous), options);
 
+    let assert = assign({
+      expected: true,
+      format: 'Failed validating %s: %e',
+      remains: false,
+      validations: []
+    }, (
+      options.assert !== null &&
+        get(previous, 'assert')
+    ), (
+      options.assert
+    ));
+
     // define meta properties for this instance
     defineProperty(this, meta, {
       enumerable: false,
@@ -71,8 +72,15 @@ class Interactor extends Convergence {
       value: freeze(assign({
         scope,
         parent,
-        detached
+        detached,
+        assert
       }, get(this)))
+    });
+
+    defineProperty(this, 'assert', {
+      enumerable: false,
+      configurable: true,
+      value: getAssertFor(this)
     });
 
     // given a parent, make all methods and getters return
@@ -100,79 +108,51 @@ class Interactor extends Convergence {
     return $$(selector, this.$element);
   }
 
-  validate(predicates, format) {
-    let validate;
-
-    let assertion = function() {
-      validate = validate || validator(this, true, format);
-      return validate(predicates);
-    };
-
-    return this.when(assertion);
-  }
-
-  remains(predicates, timeout, format) {
-    let validate;
-
-    if (typeof timeout === 'string') {
-      format = timeout;
-      timeout = undefined;
-    }
-
-    let assertion = function() {
-      validate = validate || validator(this, true, format);
-      return validate(predicates);
-    };
-
-    return this.when(assertion)
-      .always(assertion, timeout);
-  }
-
   when(fn) {
-    return super.when(function() {
-      return fn.call(this, (fn.length > 0 ? this.$element : undefined));
-    });
+    let next = this.assert.validate();
+    return super.when.call(next, withElement(fn));
   }
 
   always(fn, timeout) {
-    return super.always(function() {
-      return fn.call(this, (fn.length > 0 ? this.$element : undefined));
-    }, timeout);
+    let next = this.assert.validate();
+    return super.always.call(next, withElement(fn), timeout);
   }
 
   do(fn) {
-    return super.do(function() {
-      return fn.call(this, (fn.length > 0 ? this.$element : undefined));
-    });
+    let next = this.assert.validate();
+    return super.do.call(next, withElement(fn));
+  }
+
+  run() {
+    let next = this.assert.validate();
+    return super.run.call(next);
   }
 }
 
-// define validation properties
+function withElement(fn) {
+  return function([element, ...args] = []) {
+    if (!element && fn.length > 0) element = this.$element;
+    return fn.call(this, element, ...args);
+  };
+}
+
+// define computed properties
 defineProperties(
   Interactor.prototype,
-  entries({
-    disabled,
-    focusable,
-    focused,
-    scrollableX,
-    scrollableY,
-    scrollable,
-    exists
-  }).reduce((descriptors, [name, validation]) => {
+  entries(
+    properties
+  ).reduce((descriptors, [name, creator]) => {
     return assign(descriptors, {
-      [name]: validation()
+      [name]: creator()
     });
   }, {})
 );
 
-// default actions
+// default actions / methods
 defineProperties(
   Interactor.prototype,
   entries({
-    click,
-    focus,
-    blur,
-    scroll,
+    ...actions,
     scoped
   }).reduce((descriptors, [name, method]) => {
     return assign(descriptors, {
@@ -183,20 +163,9 @@ defineProperties(
   }, {})
 );
 
-// define computed properties
-// defineProperties(
-//   Interactor.prototype,
-//   entries({
-//     text,
-//     value,
-//     isVisible,
-//     isHidden,
-//     isPresent
-//   }).reduce((descriptors, [name, getter]) => {
-//     return assign(descriptors, {
-//       [name]: { get: getter }
-//     });
-//   }, {})
-// );
+// define assertions
+defineProperty(Interactor.prototype, 'assert', {
+  value: createAssertions(validations)
+});
 
 export default Interactor;

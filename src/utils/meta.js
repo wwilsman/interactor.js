@@ -5,8 +5,10 @@ export function get(instance, key) {
   return (meta && key) ? meta[key] : meta;
 }
 
-export function set(instance, options) {
-  return new instance.constructor(options, instance);
+export function set(instance, key, value) {
+  return new instance.constructor((
+    typeof key === 'object' ? key : { [key]: value }
+  ), instance);
 }
 
 export default symbol;
