@@ -130,9 +130,9 @@ class Interactor extends Convergence {
 }
 
 function withElement(fn) {
-  return function([element, ...args] = []) {
+  return function(element) {
     if (!element && fn.length > 0) element = this.$element;
-    return fn.call(this, element, ...args);
+    return fn.call(this, element);
   };
 }
 

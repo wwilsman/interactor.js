@@ -105,12 +105,10 @@ export default function from(properties) {
   );
 
   // define static properties
-  if (staticProps) {
-    defineProperties(
-      CustomInteractor,
-      getOwnPropertyDescriptors(staticProps)
-    );
-  }
+  defineProperties(
+    CustomInteractor,
+    getOwnPropertyDescriptors(staticProps)
+  );
 
   // define assertions
   defineProperty(CustomInteractor.prototype, 'assert', {
