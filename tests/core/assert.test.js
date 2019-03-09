@@ -9,20 +9,18 @@ describe('Interactor assertions', () => {
 
   @interactor class CustomInteractor {
     static assertions = {
-      passing: () => ({
-        validate: () => pass === true
-      }),
-      failing: () => ({
-        validate: () => pass === false
-      }),
-      finished: () => ({
+      passing: () => pass === true,
+      failing: () => pass === false,
+
+      finished: {
         validate: () => pass != null,
         message: () => `pass === ${pass}`
-      }),
-      even: () => ({
+      },
+
+      even: {
         validate: n => !(n % 2),
         message: (result, n) => `${n} is ${result ? '' : 'not '}even`
-      })
+      }
     };
   }
 

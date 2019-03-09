@@ -7,7 +7,7 @@ import extend from './utils/extend';
 import from, { wrap } from './utils/from';
 import meta, { get } from './utils/meta';
 
-import * as validations from './validations';
+import * as assertions from './assertions';
 import * as actions from './actions';
 import * as properties from './properties';
 import scoped from './helpers/scoped';
@@ -165,7 +165,7 @@ defineProperties(
 
 // define assertions
 defineProperty(Interactor.prototype, 'assert', {
-  value: createAssertions(validations)
+  value: createAssertions(assertions)
 });
 
 export default Interactor;

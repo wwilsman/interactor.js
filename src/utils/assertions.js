@@ -105,10 +105,17 @@ export function getAssertFor(interactor) {
 export function createAssertions(matchers) {
   return freeze(
     entries(matchers).reduce((assertions, [name, matcher]) => {
-      let {
-        validate,
-        message = result => `\`${name}\` returned ${result}`
-      } = matcher();
+      let validate, message;
+
+      if (typeof matcher === 'function') {
+        validate = matcher;
+      } else {
+        ({ validate, message } = matcher);
+      }
+
+      if (!message) {
+        message = result => `\`${name}\` returned ${result}`;
+      }
 
       return assign(assertions, {
         [name](...args) {
