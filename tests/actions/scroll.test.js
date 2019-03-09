@@ -109,9 +109,9 @@ describe('Interactor actions - scroll', () => {
       TestInteractor = @Interactor.extend class {
         static defaultScope = '#container';
 
-        scroll = scroll('#content');
+        scroll = top => scroll('#content', { top });
         scroll10 = scroll({ top: 10 }).assert(function() {
-          expect(this.$element.scrollTop).toBeGreaterThan(0);
+          expect(this.$element.scrollTop).toEqual(10);
         });
       };
     });
@@ -119,7 +119,7 @@ describe('Interactor actions - scroll', () => {
     it('attempts to scroll the specified element', async () => {
       let test = testDOMEvent('#content', 'scroll');
       let container = new TestInteractor().timeout(50);
-      await expect(container.scroll({ top: 10 })).rejects.toThrow('no overflow-y');
+      await expect(container.scroll(10)).rejects.toThrow('no overflow-y');
       expect(test.result).toBe(false);
     });
 

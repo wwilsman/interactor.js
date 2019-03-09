@@ -1,13 +1,18 @@
-import isInteractor from '../utils/is-interactor';
 import scoped from '../helpers/scoped';
 
-function scroll(selector, {
-  x, y,
-  top = y,
-  left = x,
-  wheel = false,
-  frequency = 1
-} = {}) {
+export default function scroll(selector, options = {}) {
+  if (typeof selector !== 'string') {
+    options = selector || {};
+    selector = null;
+  }
+
+  let {
+    top = options.y,
+    left = options.x,
+    wheel = false,
+    frequency = 1
+  } = options;
+
   if (top == null && left == null) {
     throw new Error('missing scroll direction');
   }
@@ -51,15 +56,4 @@ function scroll(selector, {
         }
       }
     });
-}
-
-export default function(selector, options) {
-  if (typeof selector !== 'string') {
-    options = selector;
-    selector = null;
-  }
-
-  return (options || isInteractor(this))
-    ? scroll(selector, options)
-    : options => scroll(selector, options);
 }
