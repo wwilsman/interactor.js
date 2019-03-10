@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import { $, injectHtml } from '../helpers';
+import { injectHtml } from '../helpers';
 import Interactor from '../../src/interactor';
 import focused from '../../src/properties/focused';
 
