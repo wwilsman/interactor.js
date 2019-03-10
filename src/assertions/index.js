@@ -7,3 +7,5 @@ export {
   scrollableX,
   scrollableY
 } from './scrollable';
+export { default as text } from './text';
+export { default as value } from './value';

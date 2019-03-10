@@ -50,7 +50,7 @@ function validate(interactor) {
         throw new Error(
           format
             .replace('%s', getScopeName(this))
-            .replace('%e', message(result, ...args))
+            .replace('%e', message.call(this, result, ...args))
         );
       }
     }
