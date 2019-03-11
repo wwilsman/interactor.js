@@ -10,7 +10,10 @@ import meta, { get } from './utils/meta';
 import * as assertions from './assertions';
 import * as actions from './actions';
 import * as properties from './properties';
+
+// helpers
 import scoped from './helpers/scoped';
+import attribute from './helpers/attribute';
 
 const {
   assign,
@@ -153,7 +156,8 @@ defineProperties(
   Interactor.prototype,
   entries({
     ...actions,
-    scoped
+    scoped,
+    attribute,
   }).reduce((descriptors, [name, method]) => {
     return assign(descriptors, {
       [name]: {
