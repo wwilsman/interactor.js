@@ -15,7 +15,7 @@ import * as properties from './properties';
 import scoped from './helpers/scoped';
 import attribute from './helpers/attribute';
 import property from './helpers/property';
-import is from './helpers/is';
+import matches from './helpers/matches';
 
 const {
   assign,
@@ -161,7 +161,7 @@ defineProperties(
     scoped,
     attribute,
     property,
-    is
+    matches
   }).reduce((descriptors, [name, method]) => {
     return assign(descriptors, {
       [name]: {
