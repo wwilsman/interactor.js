@@ -12,14 +12,18 @@ describe('Interactor assertions', () => {
       passing: () => pass === true,
       failing: () => pass === false,
 
-      finished: {
-        validate: () => pass != null,
+      finished: () => ({
+        result: pass != null,
         message: () => `pass === ${pass}`
-      },
+      }),
 
-      even: {
-        validate: n => !(n % 2),
-        message: (result, n) => `${n} is ${result ? '' : 'not '}even`
+      even: n => {
+        let result = !(n % 2);
+
+        return {
+          result,
+          message: () => `${n} is ${result ? '' : 'not '}even`
+        };
       }
     };
   }

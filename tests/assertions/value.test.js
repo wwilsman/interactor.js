@@ -23,9 +23,9 @@ describe('Interactor assertions - value', () => {
 
     it('rejects with an error when failing', async () => {
       await expect(input.assert.value('hallo worldo'))
-        .rejects.toThrow('expected value to equal "hallo worldo" but recieved "hello world"');
+        .rejects.toThrow('value is "hello world" not "hallo worldo"');
       await expect(input.assert.not.value('hello world'))
-        .rejects.toThrow('expected value not to equal "hello world"');
+        .rejects.toThrow('value is "hello world"');
     });
   });
 
@@ -44,9 +44,9 @@ describe('Interactor assertions - value', () => {
 
     it('rejects with an error when failing', async () => {
       await expect(field.assert.value('hallo worldo'))
-        .rejects.toThrow('expected value to equal "hallo worldo" but recieved "hello world"');
+        .rejects.toThrow('value is "hello world" not "hallo worldo"');
       await expect(field.assert.not.value('hello world'))
-        .rejects.toThrow('expected value not to equal "hello world"');
+        .rejects.toThrow('value is "hello world"');
     });
   });
 });

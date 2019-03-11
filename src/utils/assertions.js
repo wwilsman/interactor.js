@@ -43,14 +43,23 @@ function validate(interactor) {
 
   function assertion() {
     for (let matcher of validations) {
-      let { validate, message, args, expected } = matcher;
+      let { name, validate, args, expected } = matcher;
       let result = validate.apply(this, args);
+      let message;
+
+      if (typeof result === 'object') {
+        ({ result, message } = result);
+      }
+
+      if (!message) {
+        message = () => `\`${name}\` returned ${result}`;
+      }
 
       if (result !== expected) {
         throw new Error(
           format
             .replace('%s', getScopeName(this))
-            .replace('%e', message.call(this, result, ...args))
+            .replace('%e', message())
         );
       }
     }
@@ -104,23 +113,11 @@ export function getAssertFor(interactor) {
 
 export function createAssertions(matchers) {
   return freeze(
-    entries(matchers).reduce((assertions, [name, matcher]) => {
-      let validate, message;
-
-      if (typeof matcher === 'function') {
-        validate = matcher;
-      } else {
-        ({ validate, message } = matcher);
-      }
-
-      if (!message) {
-        message = result => `\`${name}\` returned ${result}`;
-      }
-
+    entries(matchers).reduce((assertions, [name, validate]) => {
       return assign(assertions, {
         [name](...args) {
           let { validations, expected } = get(this[meta], 'assert');
-          validations = validations.concat({ args, expected, validate, message });
+          validations = validations.concat({ name, args, expected, validate });
           return set(this[meta], 'assert', { validations, expected: true });
         }
       });

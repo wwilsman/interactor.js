@@ -1,8 +1,10 @@
-export default {
-  validate() {
-    return this.disabled;
-  },
-  message(result) {
-    return `${result ? '' : 'not '}disabled`;
-  }
+export default function disabled() {
+  let result = this.disabled;
+
+  return {
+    result,
+    message: () => (
+      `${result ? '' : 'not '}disabled`
+    )
+  };
 };

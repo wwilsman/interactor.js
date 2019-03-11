@@ -14,6 +14,8 @@ import * as properties from './properties';
 // helpers
 import scoped from './helpers/scoped';
 import attribute from './helpers/attribute';
+import property from './helpers/property';
+import is from './helpers/is';
 
 const {
   assign,
@@ -158,6 +160,8 @@ defineProperties(
     ...actions,
     scoped,
     attribute,
+    property,
+    is
   }).reduce((descriptors, [name, method]) => {
     return assign(descriptors, {
       [name]: {

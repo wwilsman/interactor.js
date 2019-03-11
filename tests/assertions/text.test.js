@@ -23,9 +23,9 @@ describe('Interactor assertions - text', () => {
 
     it('rejects with an error when failing', async () => {
       await expect(p.assert.text('hello world'))
-        .rejects.toThrow('expected text to equal "hello world" but recieved "Hello WORLD!"');
+        .rejects.toThrow('text is "Hello WORLD!" not "hello world"');
       await expect(p.assert.not.text('Hello WORLD!'))
-        .rejects.toThrow('expected text not to equal "Hello WORLD!"');
+        .rejects.toThrow('text is "Hello WORLD!"');
     });
   });
 
@@ -44,9 +44,9 @@ describe('Interactor assertions - text', () => {
 
     it('rejects with an error when failing', async () => {
       await expect(p.assert.text('Hello WORLD!'))
-        .rejects.toThrow('expected text to equal "Hello WORLD!" but recieved "WORLD"');
+        .rejects.toThrow('text is "WORLD" not "Hello WORLD!"');
       await expect(p.assert.not.text('WORLD'))
-        .rejects.toThrow('expected text not to equal "WORLD"');
+        .rejects.toThrow('text is "WORLD"');
     });
   });
 });

@@ -1,3 +1,4 @@
+export { default as attribute } from './attribute';
 export { default as disabled } from './disabled';
 export { default as exists } from './exists';
 export { default as focusable } from './focusable';

@@ -1,8 +1,10 @@
-export default {
-  validate() {
-    return this.focused;
-  },
-  message(result) {
-    return `${result ? '' : 'not '}focused`;
-  }
+export default function focused() {
+  let result = this.focused;
+
+  return {
+    result,
+    message: () => (
+      `${result ? '' : 'not '}focused`
+    )
+  };
 };
