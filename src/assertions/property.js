@@ -1,4 +1,5 @@
 import method from '../helpers/property';
+import { q } from '../utils/string';
 
 export default function property(prop, value) {
   let actual = method.call(this, prop);
@@ -8,9 +9,8 @@ export default function property(prop, value) {
     result,
     message: () => (
       result
-      // TODO: only quote string values
-        ? `"${prop}" is "${value}"`
-        : `"${prop}" is "${actual}" not "${value}"`
+        ? q`${prop} is ${value}`
+        : q`${prop} is ${actual} not ${value}`
     )
   };
 };

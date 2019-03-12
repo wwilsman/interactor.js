@@ -20,9 +20,9 @@ describe('Interactor assertions - property', () => {
 
     it('rejects with an error when failing', async () => {
       await expect(div.assert.property('clientLeft', 15))
-        .rejects.toThrow('"clientLeft" is "10" not "15"');
+        .rejects.toThrow('"clientLeft" is 10 not 15');
       await expect(div.assert.not.property('clientLeft', 10))
-        .rejects.toThrow('"clientLeft" is "10"');
+        .rejects.toThrow('"clientLeft" is 10');
     });
   });
 });

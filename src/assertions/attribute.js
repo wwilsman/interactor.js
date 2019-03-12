@@ -1,4 +1,5 @@
 import method from '../helpers/attribute';
+import { q } from '../utils/string';
 
 export default function attribute(attr, value) {
   let actual = method.call(this, attr);
@@ -8,8 +9,8 @@ export default function attribute(attr, value) {
     result,
     message: () => (
       result
-        ? `"${attr}" is "${value}"`
-        : `"${attr}" is "${actual}" not "${value}"`
+        ? q`${attr} is ${value}`
+        : q`${attr} is ${actual} not ${value}`
     )
   };
 };
