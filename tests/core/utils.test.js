@@ -1,10 +1,13 @@
 import expect from 'expect';
 
-import Convergence from '../../src/convergence';
-import Interactor from '../../src/interactor';
-import isConvergence from '../../src/utils/is-convergence';
-import isInteractor from '../../src/utils/is-interactor';
-import { when, always } from '../../src/utils/converge-on';
+import {
+  Convergence,
+  Interactor,
+  isConvergence,
+  isInteractor,
+  when,
+  always
+} from 'interactor.js';
 
 describe('Interactor utils - isConvergence', () => {
   it('returns true for convergence instances', () => {

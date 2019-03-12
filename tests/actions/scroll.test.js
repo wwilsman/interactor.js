@@ -1,8 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml, testDOMEvent } from '../helpers';
-import Interactor from '../../src/interactor';
-import scroll from '../../src/actions/scroll';
+import { Interactor, scroll } from 'interactor.js';
 
 describe('Interactor actions - scroll', () => {
   beforeEach(() => {

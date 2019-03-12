@@ -8,6 +8,7 @@ export default function property(prop, value) {
     result,
     message: () => (
       result
+      // TODO: only quote string values
         ? `"${prop}" is "${value}"`
         : `"${prop}" is "${actual}" not "${value}"`
     )

@@ -1,8 +1,13 @@
 import expect from 'expect';
 
 import { injectHtml } from '../helpers';
-import Interactor from '../../src/interactor';
-import scrollable, { scrollableX, scrollableY } from '../../src/properties/scrollable';
+
+import {
+  Interactor,
+  scrollable,
+  scrollableX,
+  scrollableY
+} from 'interactor.js';
 
 describe('Interactor properties - scrollable', () => {
   beforeEach(() => {

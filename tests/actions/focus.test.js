@@ -1,8 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml, testDOMEvent } from '../helpers';
-import Interactor from '../../src/interactor';
-import focus from '../../src/actions/focus';
+import { Interactor, focus } from 'interactor.js';
 
 describe('Interactor actions - focus', () => {
   beforeEach(() => {

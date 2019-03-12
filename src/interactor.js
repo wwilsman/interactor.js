@@ -1,39 +1,34 @@
 import Convergence from './convergence';
 import { $, $$ } from './utils/dom';
 import isInteractor from './utils/is-interactor';
-import { createAssertions, getAssertFor } from './utils/assertions';
-import makeChainable from './utils/chainable';
 import extend from './utils/extend';
-import from, { wrap } from './utils/from';
+import from from './utils/from';
+import { getAssertFor } from './utils/assert';
+import makeChainable from './utils/chainable';
 import meta, { get } from './utils/meta';
-
-import * as assertions from './assertions';
-import * as actions from './actions';
-import * as properties from './properties';
-
-// helpers
-import scoped from './helpers/scoped';
-import attribute from './helpers/attribute';
-import property from './helpers/property';
-import matches from './helpers/matches';
 
 const {
   assign,
   defineProperty,
-  defineProperties,
-  entries,
   freeze
 } = Object;
 
-class Interactor extends Convergence {
+function withElement(fn) {
+  return function(element) {
+    if (!element && fn.length > 0) element = this.$element;
+    return fn.call(this, element);
+  };
+}
+
+export default class Interactor extends Convergence {
   static isInteractor = isInteractor;
 
   // default `document.body` scope is lazy for fake DOM enviroments
-  static get defaultScope() { return document.body; };
+  static get defaultScope() { return document.body; }
 
-  // ensure these are always bound to their respective classes
-  static get extend() { return extend.bind(this); };
-  static get from() { return from.bind(this); };
+  // ensure these are always bound to their class
+  static get extend() { return extend.bind(this); }
+  static get from() { return from.bind(this); }
 
   constructor(options = {}, previous = {}) {
     // a scope selector, element, or function was given
@@ -133,47 +128,3 @@ class Interactor extends Convergence {
     return super.run.call(next);
   }
 }
-
-function withElement(fn) {
-  return function(element) {
-    if (!element && fn.length > 0) element = this.$element;
-    return fn.call(this, element);
-  };
-}
-
-// define computed properties
-defineProperties(
-  Interactor.prototype,
-  entries(
-    properties
-  ).reduce((descriptors, [name, creator]) => {
-    return assign(descriptors, {
-      [name]: creator()
-    });
-  }, {})
-);
-
-// default actions / methods
-defineProperties(
-  Interactor.prototype,
-  entries({
-    ...actions,
-    scoped,
-    attribute,
-    property,
-    matches
-  }).reduce((descriptors, [name, method]) => {
-    return assign(descriptors, {
-      [name]: {
-        value: wrap(method)
-      }
-    });
-  }, {})
-);
-
-// define assertions
-defineProperty(Interactor.prototype, 'assert', {
-  value: createAssertions(assertions)
-});
-
-export default Interactor;

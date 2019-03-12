@@ -1,8 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml, testDOMEvent } from '../helpers';
-import Interactor from '../../src/interactor';
-import blur from '../../src/actions/blur';
+import { Interactor, blur } from 'interactor.js';
 
 describe('Interactor actions - blur', () => {
   beforeEach(() => {

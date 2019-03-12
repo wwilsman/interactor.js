@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import interactor from '../../src/decorator';
+import interactor from 'interactor.js';
 
 const { now } = Date;
 

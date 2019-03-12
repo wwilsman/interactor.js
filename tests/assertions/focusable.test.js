@@ -1,8 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml } from '../helpers';
-import Interactor from '../../src/interactor';
-import focusable from '../../src/properties/focusable';
+import { Interactor, focusable } from 'interactor.js';
 
 describe('Interactor assertions - focusable', () => {
   beforeEach(() => {

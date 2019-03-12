@@ -111,7 +111,7 @@ export function getAssertFor(interactor) {
   );
 }
 
-export function createAssertions(matchers) {
+export default function createAsserts(matchers) {
   return freeze(
     entries(matchers).reduce((assertions, [name, validate]) => {
       return assign(assertions, {

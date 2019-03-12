@@ -1,8 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml } from '../helpers';
-import Interactor from '../../src/interactor';
-import attribute from '../../src/properties/attribute';
+import { Interactor, attribute } from 'interactor.js';
 
 describe('Interactor properties - attribute', () => {
   beforeEach(() => {

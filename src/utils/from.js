@@ -1,12 +1,11 @@
 import Convergence from '../convergence';
 import isInteractor from './is-interactor';
-import { createAssertions } from './assertions';
+import createAsserts from './assert';
 import meta, { set, get } from './meta';
 
 const {
   assign,
   defineProperties,
-  defineProperty,
   entries,
   getOwnPropertyDescriptors,
   getOwnPropertyNames,
@@ -111,8 +110,10 @@ export default function from(properties) {
   );
 
   // define assertions
-  defineProperty(CustomInteractor.prototype, 'assert', {
-    value: createAssertions(assertions)
+  defineProperties(CustomInteractor.prototype, {
+    assert: {
+      value: createAsserts(assertions)
+    }
   });
 
   return CustomInteractor;

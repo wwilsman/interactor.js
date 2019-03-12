@@ -5,6 +5,11 @@
     }]
   ],
   "plugins": [
+    ["module-resolver", {
+      "alias": {
+        "interactor.js": "./src"
+      }
+    }],
     ["@babel/proposal-decorators", {
       "decoratorsBeforeExport": true
     }],

@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import Convergence from '../../src/convergence';
+import { Convergence } from 'interactor.js';
 import { get } from '../../src/utils/meta';
 
 describe('Convergence', () => {

@@ -1,8 +1,7 @@
 import expect from 'expect';
 
 import { $, injectHtml } from '../helpers';
-import Convergence from '../../src/convergence';
-import Interactor from '../../src/interactor';
+import { Interactor, Convergence } from 'interactor.js';
 import { get } from '../../src/utils/meta';
 
 describe('Interactor', () => {
