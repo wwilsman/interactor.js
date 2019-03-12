@@ -3,7 +3,7 @@ import expect from 'expect';
 import { injectHtml } from '../helpers';
 import { Interactor, scoped } from 'interactor.js';
 
-describe('Interactor properties - scoped', () => {
+describe('Interactor helpers - scoped', () => {
   @Interactor.extend class PInteractor {
     static defaultScope = '.test-p';
     get a() { return this.$element.innerText === 'A'; }

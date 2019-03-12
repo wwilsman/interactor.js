@@ -106,11 +106,11 @@ export {
   scoped
 };
 
-// property creators
+// other exports
 export { default as attribute } from './properties/attribute';
 export { default as property } from './properties/property';
 export { default as matches } from './properties/matches';
-
+export { default as collection } from './helpers/collection';
 export { default as isConvergence } from './utils/is-convergence';
 export { default as isInteractor } from './utils/is-interactor';
 export { when, always } from './utils/converge-on';
