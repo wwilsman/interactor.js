@@ -18,11 +18,13 @@ export function injectHtml(html) {
 export function testDOMEvent(selector, event, callback = () => {}) {
   let test = {
     $element: $(selector),
-    result: false
+    result: false,
+    event: null
   };
 
   test.$element.addEventListener(event, e => {
     test.result = true;
+    test.event = e;
     callback(e);
   });
 

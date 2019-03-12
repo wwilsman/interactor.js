@@ -1,4 +1,5 @@
 import scoped from '../helpers/scoped';
+import { dispatch } from './trigger';
 
 export default function scroll(selector, options = {}) {
   if (typeof selector !== 'string') {
@@ -34,25 +35,14 @@ export default function scroll(selector, options = {}) {
         let cancelled = false;
 
         if (wheel) {
-          cancelled = !element.dispatchEvent(
-            new Event('wheel', {
-              bubbles: true,
-              cancelable: true
-            })
-          );
+          cancelled = !dispatch(element, 'wheel');
         }
 
         /* istanbul ignore else: unnecessary */
         if (!cancelled) {
           if (top) element.scrollTop = (top / frequency) * i;
           if (left) element.scrollLeft = (left / frequency) * i;
-
-          element.dispatchEvent(
-            new Event('scroll', {
-              bubbles: true,
-              cancelable: true
-            })
-          );
+          dispatch(element, 'scroll', { cancelable: false });
         }
       }
     });

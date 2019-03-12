@@ -1,4 +1,5 @@
 import scoped from '../helpers/scoped';
+import { dispatch } from './trigger';
 
 export default function select(selector, option) {
   if (arguments.length === 1) {
@@ -36,21 +37,10 @@ export default function select(selector, option) {
           $option.selected = element.multiple
             ? !$option.selected
             : true;
+
+          dispatch(element, 'input', { cancelable: false });
+          dispatch(element, 'change', { cancelable: false });
         }
       }
-
-      element.dispatchEvent(
-        new Event('input', {
-          bubbles: true,
-          cancelable: true
-        })
-      );
-
-      element.dispatchEvent(
-        new Event('change', {
-          bubbles: true,
-          cancelable: true
-        })
-      );
     });
 }
