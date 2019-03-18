@@ -14,6 +14,7 @@ import value from './properties/value';
 
 // interactions
 import blur from './actions/blur';
+import check, { uncheck } from './actions/check';
 import click from './actions/click';
 import focus from './actions/focus';
 import scroll from './actions/scroll';
@@ -61,12 +62,14 @@ defineProperties(
   Interactor.prototype,
   entries({
     blur,
+    check,
     click,
     focus,
     scroll,
     select,
     trigger,
     type,
+    uncheck,
     scoped,
     attribute,
     property,
@@ -102,12 +105,14 @@ export {
   value,
   // interactions
   blur,
+  check,
   click,
   focus,
   scroll,
   select,
   trigger,
   type,
+  uncheck,
   // helpers
   scoped
 };
