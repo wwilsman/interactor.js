@@ -19,6 +19,7 @@ import focus from './actions/focus';
 import scroll from './actions/scroll';
 import select from './actions/select';
 import trigger from './actions/trigger';
+import type from './actions/type';
 
 // helper methods
 import scoped from './helpers/scoped';
@@ -65,6 +66,7 @@ defineProperties(
     scroll,
     select,
     trigger,
+    type,
     scoped,
     attribute,
     property,
@@ -105,6 +107,7 @@ export {
   scroll,
   select,
   trigger,
+  type,
   // helpers
   scoped
 };

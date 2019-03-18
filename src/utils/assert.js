@@ -44,8 +44,14 @@ function validate(interactor) {
   function assertion() {
     for (let matcher of validations) {
       let { name, validate, args, expected } = matcher;
-      let result = validate.apply(this, args);
-      let message;
+      let result, message;
+
+      try {
+        result = validate.apply(this, args);
+      } catch (e) {
+        result = false;
+        message = () => e.message;
+      }
 
       if (typeof result === 'object') {
         ({ result, message } = result);
