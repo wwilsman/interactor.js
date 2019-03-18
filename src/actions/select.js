@@ -24,13 +24,14 @@ export default function select(selector, option) {
           let $opt = $options.find($opt => $opt.text === option);
 
           if (!$opt) {
-            throw new Error(`"${option}" is not an available option`);
+            throw new Error(`unable to find "${option}"`);
           } else if ($opt.disabled) {
             throw new Error(`"${option}" is disabled`);
           }
         }
       }
     })
+    .assert.f('Failed to select %s option: %e')
     .do(element => {
       for (let $option of element.options) {
         if (options.includes($option.text)) {

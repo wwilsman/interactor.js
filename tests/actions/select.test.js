@@ -26,7 +26,7 @@ describe('Interactor actions - select', () => {
     });
 
     it('throws an error when selecting non-existant options', async () => {
-      await expect(select.select('maybe')).rejects.toThrow('"maybe" is not an available option');
+      await expect(select.select('maybe')).rejects.toThrow('unable to find "maybe"');
     });
 
     it('throws an error when selecting disabled options', async () => {
