@@ -1,10 +1,14 @@
-export default function focused() {
-  let result = this.focused;
+export default function focused(selector) {
+  let result = selector
+    ? this.scoped(selector).focused
+    : this.focused;
 
   return {
     result,
     message: () => (
-      `${result ? '' : 'not '}focused`
+      (selector ? `"${selector}" is ` : '') + (
+        `${result ? '' : 'not '}focused`
+      )
     )
   };
 };

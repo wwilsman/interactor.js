@@ -1,12 +1,14 @@
-export default function focusable() {
-  let result = this.focusable;
+export default function focusable(selector) {
+  let result = selector
+    ? this.scoped(selector).focusable
+    : this.focusable;
 
   return {
     result,
     message: () => (
-      result
-        ? 'focusable'
-        : 'not focusable, tabindex must be greater than -1'
+      (selector ? `"${selector}" is ` : '') + (
+        result ? 'focusable' : 'not focusable, tabindex must be greater than -1'
+      )
     )
   };
 };

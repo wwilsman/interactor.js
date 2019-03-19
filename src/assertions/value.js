@@ -1,13 +1,22 @@
-export default function value(string) {
-  let actual = this.value;
+export default function value(selector, string) {
+  if (!string) {
+    string = selector;
+    selector = null;
+  }
+
+  let actual = selector
+    ? this.scoped(selector).value
+    : this.value;
   let result = actual === string;
 
   return {
     result,
     message: () => (
-      result
-        ? `value is "${string}"`
-        : `value is "${actual}" not "${string}"`
+      (selector ? `"${selector}" ` : '') + (
+        result
+          ? `value is "${string}"`
+          : `value is "${actual}" not "${string}"`
+      )
     )
   };
 };

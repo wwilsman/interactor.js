@@ -1,10 +1,14 @@
-export default function disabled() {
-  let result = this.disabled;
+export default function disabled(selector) {
+  let result = selector
+    ? this.scoped(selector).disabled
+    : this.disabled;
 
   return {
     result,
     message: () => (
-      `${result ? '' : 'not '}disabled`
+      (selector ? `"${selector}" is ` : '') + (
+        `${result ? '' : 'not '}disabled`
+      )
     )
   };
 };

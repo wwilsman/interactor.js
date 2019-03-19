@@ -85,11 +85,11 @@ describe('Interactor actions - scroll', () => {
       let test = testDOMEvent('#content', 'scroll');
       let content = new Interactor('#content').timeout(50);
       await expect(content.scroll({ top: 10 })).rejects
-        .toThrow('Failed to scroll "#content": no overflow-y');
+        .toThrow('Failed to scroll "#content": has no overflow-y');
       await expect(content.scroll({ left: 10 })).rejects
-        .toThrow('Failed to scroll "#content": no overflow-x');
+        .toThrow('Failed to scroll "#content": has no overflow-x');
       await expect(content.scroll({ top: 10, left: 10 })).rejects
-        .toThrow('Failed to scroll "#content": no overflow');
+        .toThrow('Failed to scroll "#content": has no overflow');
       expect(test.result).toBe(false);
       expect(test.$element.scrollTop).toBe(0);
       expect(test.$element.scrollLeft).toBe(0);

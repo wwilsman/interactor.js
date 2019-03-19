@@ -1,12 +1,22 @@
 import method from '../helpers/matches';
 
-export default function matches(match) {
-  let result = method.call(this, match);
+export default function matches(selector, match) {
+  if (!match) {
+    match = selector;
+    selector = null;
+  }
+
+  let result = method.call(
+    selector ? this.scoped(selector) : this,
+    match
+  );
 
   return {
     result,
     message: () => (
-      `is ${result ? '' : 'not '}"${match}"`
+      (selector ? `"${selector}" ` : '') + (
+        `is ${result ? '' : 'not '}"${match}"`
+      )
     )
   };
 };

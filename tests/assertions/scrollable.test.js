@@ -35,9 +35,37 @@ describe('Interactor assertions - scrollable', () => {
       await expect(container.assert.not.scrollableX()).rejects.toThrow('has overflow-x');
       await expect(container.assert.not.scrollableY()).rejects.toThrow('has overflow-y');
       await expect(container.assert.not.scrollable()).rejects.toThrow('has overflow');
-      await expect(content.assert.scrollableX()).rejects.toThrow('no overflow-x');
-      await expect(content.assert.scrollableY()).rejects.toThrow('no overflow-y');
-      await expect(content.assert.scrollable()).rejects.toThrow('no overflow');
+      await expect(content.assert.scrollableX()).rejects.toThrow('has no overflow-x');
+      await expect(content.assert.scrollableY()).rejects.toThrow('has no overflow-y');
+      await expect(content.assert.scrollable()).rejects.toThrow('has no overflow');
+    });
+
+    describe('and a selector', () => {
+      let test = new Interactor().timeout(50);
+
+      it('resolves when passing', async () => {
+        await expect(test.assert.scrollableX('#container')).resolves.toBeUndefined();
+        await expect(test.assert.scrollableY('#container')).resolves.toBeUndefined();
+        await expect(test.assert.scrollable('#container')).resolves.toBeUndefined();
+        await expect(test.assert.not.scrollableX('#content')).resolves.toBeUndefined();
+        await expect(test.assert.not.scrollableY('#content')).resolves.toBeUndefined();
+        await expect(test.assert.not.scrollable('#content')).resolves.toBeUndefined();
+      });
+
+      it('rejects with an error when failing', async () => {
+        await expect(test.assert.not.scrollableX('#container'))
+          .rejects.toThrow('"#container" has overflow-x');
+        await expect(test.assert.not.scrollableY('#container'))
+          .rejects.toThrow('"#container" has overflow-y');
+        await expect(test.assert.not.scrollable('#container'))
+          .rejects.toThrow('"#container" has overflow');
+        await expect(test.assert.scrollableX('#content'))
+          .rejects.toThrow('"#content" has no overflow-x');
+        await expect(test.assert.scrollableY('#content'))
+          .rejects.toThrow('"#content" has no overflow-y');
+        await expect(test.assert.scrollable('#content'))
+          .rejects.toThrow('"#content" has no overflow');
+      });
     });
   });
 
@@ -58,9 +86,23 @@ describe('Interactor assertions - scrollable', () => {
     });
 
     it('rejects with an error when failing', async () => {
-      await expect(container.assert.scrollableX()).rejects.toThrow('no overflow-x');
-      await expect(container.assert.scrollableY()).rejects.toThrow('no overflow-y');
-      await expect(container.assert.scrollable()).rejects.toThrow('no overflow');
+      await expect(container.assert.scrollableX()).rejects.toThrow('has no overflow-x');
+      await expect(container.assert.scrollableY()).rejects.toThrow('has no overflow-y');
+      await expect(container.assert.scrollable()).rejects.toThrow('has no overflow');
+    });
+
+    describe('and a selector', () => {
+      it('uses the default property', async () => {
+        await expect(container.assert.not.scrollableX('#content')).resolves.toBeUndefined();
+        await expect(container.assert.not.scrollableY('#content')).resolves.toBeUndefined();
+        await expect(container.assert.not.scrollable('#content')).resolves.toBeUndefined();
+        await expect(container.assert.scrollableX('#content'))
+          .rejects.toThrow('"#content" has no overflow-x');
+        await expect(container.assert.scrollableY('#content'))
+          .rejects.toThrow('"#content" has no overflow-y');
+        await expect(container.assert.scrollable('#content'))
+          .rejects.toThrow('"#content" has no overflow');
+      });
     });
   });
 });

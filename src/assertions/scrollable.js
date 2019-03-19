@@ -1,32 +1,44 @@
-export function scrollableX() {
-  let result = this.scrollableX;
+export function scrollableX(selector) {
+  let result = selector
+    ? this.scoped(selector).scrollableX
+    : this.scrollableX;
 
   return {
     result,
     message: () => (
-      `${result ? 'has' : 'no'} overflow-x`
+      (selector ? `"${selector}" ` : '') + (
+        `has ${result ? '' : 'no '}overflow-x`
+      )
     )
   };
 };
 
-export function scrollableY() {
-  let result = this.scrollableY;
+export function scrollableY(selector) {
+  let result = selector
+    ? this.scoped(selector).scrollableY
+    : this.scrollableY;
 
   return {
     result,
     message: () => (
-      `${result ? 'has' : 'no'} overflow-y`
+      (selector ? `"${selector}" ` : '') + (
+        `has ${result ? '' : 'no '}overflow-y`
+      )
     )
   };
 };
 
-export default function scrollable() {
-  let result = this.scrollable;
+export default function scrollable(selector) {
+  let result = selector
+    ? this.scoped(selector).scrollable
+    : this.scrollable;
 
   return {
     result,
     message: () => (
-      `${result ? 'has' : 'no'} overflow`
+      (selector ? `"${selector}" ` : '') + (
+        `has ${result ? '' : 'no '}overflow`
+      )
     )
   };
 };

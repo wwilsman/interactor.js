@@ -26,6 +26,22 @@ describe('Interactor assertions - focused', () => {
       input.$element.focus();
       await expect(input.assert.not.focused()).rejects.toThrow('focused');
     });
+
+    describe('and a selector', () => {
+      let test = new Interactor().timeout(50);
+
+      it('resolves when passing', async () => {
+        await expect(test.assert.not.focused('input')).resolves.toBeUndefined();
+        input.$element.focus();
+        await expect(test.assert.focused('input')).resolves.toBeUndefined();
+      });
+
+      it('rejects with an error when failing', async () => {
+        await expect(test.assert.focused('input')).rejects.toThrow('"input" is not focused');
+        input.$element.focus();
+        await expect(test.assert.not.focused('input')).rejects.toThrow('"input" is focused');
+      });
+    });
   });
 
   describe('with a custom property', () => {
@@ -46,6 +62,16 @@ describe('Interactor assertions - focused', () => {
       await expect(field.assert.focused()).rejects.toThrow('not focused');
       field.$('input').focus();
       await expect(field.assert.not.focused()).rejects.toThrow('focused');
+    });
+
+    describe('and a selector', () => {
+      it('uses the default property', async () => {
+        await expect(field.assert.not.focused('input')).resolves.toBeUndefined();
+        await expect(field.assert.focused('input')).rejects.toThrow('"input" is not focused');
+        field.$('input').focus();
+        await expect(field.assert.focused('input')).resolves.toBeUndefined();
+        await expect(field.assert.not.focused('input')).rejects.toThrow('"input" is focused');
+      });
     });
   });
 });

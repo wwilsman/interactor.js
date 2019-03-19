@@ -26,6 +26,22 @@ describe('Interactor assertions - value', () => {
       await expect(input.assert.not.value('hello world'))
         .rejects.toThrow('value is "hello world"');
     });
+
+    describe('and a selector', () => {
+      let test = new Interactor().timeout(50);
+
+      it('resolves when passing', async () => {
+        await expect(test.assert.value('input', 'hello world')).resolves.toBeUndefined();
+        await expect(test.assert.not.value('input', 'HELLO')).resolves.toBeUndefined();
+      });
+
+      it('rejects with an error when failing', async () => {
+        await expect(test.assert.value('input', 'hallo worldo'))
+          .rejects.toThrow('"input" value is "hello world" not "hallo worldo"');
+        await expect(test.assert.not.value('input', 'hello world'))
+          .rejects.toThrow('"input" value is "hello world"');
+      });
+    });
   });
 
   describe('with a custom property', () => {
@@ -46,6 +62,17 @@ describe('Interactor assertions - value', () => {
         .rejects.toThrow('value is "hello world" not "hallo worldo"');
       await expect(field.assert.not.value('hello world'))
         .rejects.toThrow('value is "hello world"');
+    });
+
+    describe('and a selector', () => {
+      it('uses the default property', async () => {
+        await expect(field.assert.value('input', 'hello world')).resolves.toBeUndefined();
+        await expect(field.assert.not.value('input', 'HELLO')).resolves.toBeUndefined();
+        await expect(field.assert.value('input', 'hallo worldo'))
+          .rejects.toThrow('"input" value is "hello world" not "hallo worldo"');
+        await expect(field.assert.not.value('input', 'hello world'))
+          .rejects.toThrow('"input" value is "hello world"');
+      });
     });
   });
 });
