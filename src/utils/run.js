@@ -1,5 +1,5 @@
 import isConvergence from './is-convergence';
-import { when, always } from './converge-on';
+import { when, always } from '../helpers/converge';
 
 const { now } = Date;
 const { min, max } = Math;

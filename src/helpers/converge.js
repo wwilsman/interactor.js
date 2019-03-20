@@ -1,6 +1,6 @@
 const { now } = Date;
 
-export function convergeOn(assertion, timeout, always) {
+function convergeOn(assertion, timeout, always) {
   let start = now();
   let interval = 10;
   let bail = false;
