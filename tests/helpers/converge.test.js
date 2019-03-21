@@ -50,7 +50,7 @@ describe('Interactor utils - when', () => {
     timeout = setTimeout(() => total = 5, 50);
 
     await expect(test(5)).rejects
-      .toThrow('convergent assertion was successful, but exceeded the 50ms timeout');
+      .toThrow('assertion was successful, but exceeded the 50ms timeout');
     expect(Date.now() - start).toBeGreaterThanOrEqual(50);
   });
 
@@ -87,7 +87,7 @@ describe('Interactor utils - when', () => {
     });
 
     it('rejects if `false` was continually returned', () => {
-      return expect(test(10)).rejects.toThrow('convergent assertion returned `false`');
+      return expect(test(10)).rejects.toThrow('assertion returned `false`');
     });
 
     it('resolves when `false` is not returned', () => {
@@ -211,7 +211,7 @@ describe('Interactor utils - always', () => {
 
     it('rejects when `false` is returned', () => {
       timeout = setTimeout(() => total = 10, 30);
-      return expect(test(10)).rejects.toThrow('convergent assertion returned `false`');
+      return expect(test(10)).rejects.toThrow('assertion returned `false`');
     });
   });
 

@@ -168,22 +168,20 @@ export default class Interactor {
         subject = assign({ last: true }, subject);
       }
 
-      return promise.then(ret => {
+      return promise.then(() => {
         /* istanbul ignore else: unnecessary */
         if (subject.assertion) {
-          return runAssertion(this, subject, ret, stats);
+          return runAssertion(this, subject, stats);
         } else if (subject.callback) {
-          return runCallback(this, subject, ret, stats);
+          return runCallback(this, subject, stats);
         }
       });
-    }, Promise.resolve())
-      // always resolve with the stats object
-      .then(() => stats);
+    }, Promise.resolve());
   }
 
   then() {
-    // resolve with the value of the last function in the queue
-    let promise = this.run().then(({ value }) => value);
+    // resolve to undefined
+    let promise = this.run().then(() => {});
     // pass promise arguments onward
     return promise.then.apply(promise, arguments);
   }

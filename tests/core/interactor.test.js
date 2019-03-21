@@ -26,8 +26,9 @@ describe('Interactor', () => {
   it('is thennable', async () => {
     expect(instance).toHaveProperty('then', expect.any(Function));
 
-    let value = await instance.do(() => 'hello');
-    expect(value).toBe('hello');
+    let test = false
+    await instance.do(() => test = true);
+    expect(test).toBe(true);
 
     await expect(instance.do(() => {
       throw new Error('catch me');
@@ -185,8 +186,8 @@ describe('Interactor', () => {
       expect(instance.run()).toBeInstanceOf(Promise);
     });
 
-    it('should be fulfilled when there are no assertions', () => {
-      return expect(instance.run()).resolves.toBeDefined();
+    it('should resolve when there are no assertions', () => {
+      return expect(instance.run()).resolves.toBeUndefined();
     });
 
     describe('after using `.when()`', () => {
@@ -407,18 +408,6 @@ describe('Interactor', () => {
           expect(elapsed).toBeLessThan(100);
         });
 
-        it('curries the resolved value to the next function', () => {
-          instance = instance.do(() => 1);
-          assertion = assertion.when((val) => expect(val).toBe(1));
-
-          return expect(assertion.run()).resolves
-            .toMatchObject({
-              queue: expect.arrayContaining([
-                expect.objectContaining({ value: 1 })
-              ])
-            });
-        });
-
         it('rejects after the exceeding the timeout', () => {
           instance = instance.do(() => {
             return new Promise((resolve) => {
@@ -463,19 +452,6 @@ describe('Interactor', () => {
           let elapsed = Date.now() - start;
           expect(elapsed).toBeGreaterThanOrEqual(50);
           expect(elapsed).toBeLessThan(100);
-        });
-
-        it('curries the resolved value to the next function', () => {
-          assertion = assertion
-            .when((val) => expect(val).toBe(1));
-
-          createTimeout(() => resolve(1), 10);
-          return expect(assertion.run()).resolves
-            .toMatchObject({
-              queue: expect.arrayContaining([
-                expect.objectContaining({ value: 1 })
-              ])
-            });
         });
 
         it('rejects after the exceeding the timeout', () => {

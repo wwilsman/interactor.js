@@ -15,20 +15,18 @@ function getElapsedSince(start, timeout) {
   return elapsed;
 };
 
-function collectStats(accumulator, stats, ret) {
+function collectStats(accumulator, stats) {
   accumulator.runs += stats.runs;
   accumulator.elapsed += stats.elapsed;
   accumulator.end = stats.end;
   accumulator.value = stats.value;
   accumulator.queue.push(stats);
-
-  return typeof stats.value !== 'undefined'
-    ? stats.value : ret;
+  return accumulator;
 }
 
-export function runAssertion(context, subject, arg, stats) {
+export function runAssertion(context, subject, stats) {
   let timeout = stats.timeout - getElapsedSince(stats.start, stats.timeout);
-  if (!arg && subject.assertion.length) arg = context.$element;
+  let arg = subject.assertion.length ? context.$element : undefined;
   let assertion = subject.assertion.bind(context, arg);
   let converge = subject.always ? always : when;
 
@@ -45,12 +43,12 @@ export function runAssertion(context, subject, arg, stats) {
 
   return converge(assertion, timeout)
   // incorporate stats and curry the assertion return value
-    .then((convergeStats) => collectStats(stats, convergeStats, arg));
+    .then(convergeStats => collectStats(stats, convergeStats));
 }
 
-export function runCallback(context, subject, arg, stats) {
+export function runCallback(context, subject, stats) {
   let start = now();
-  if (!arg && subject.callback.length) arg = context.$element;
+  let arg = subject.callback.length ? context.$element : undefined;
   let result = subject.callback.call(context, arg);
 
   let collectExecStats = value => {
@@ -60,7 +58,7 @@ export function runCallback(context, subject, arg, stats) {
       end: now(),
       elapsed: getElapsedSince(start, stats.timeout),
       value
-    }, arg);
+    });
   };
 
   // an interactor is called with the current remaining timeout
@@ -70,12 +68,12 @@ export function runCallback(context, subject, arg, stats) {
     if (!subject.last) {
       // this .do() just prevents the last .always() from
       // using the entire timeout
-      result = result.do(ret => ret);
+      result = result.do(() => {});
     }
 
     return result.timeout(timeout).run()
     // incorporate stats and curry the return value
-      .then(convergeStats => collectStats(stats, convergeStats, arg));
+      .then(convergeStats => collectStats(stats, convergeStats));
 
   // a promise will need to settle first
   } else if (result && typeof result.then === 'function') {

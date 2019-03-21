@@ -29,8 +29,8 @@ function convergeOn(assertion, timeout, always) {
           bail = true;
 
           throw new Error(
-            'convergent assertion encountered a async function or promise; ' +
-            'since convergent assertions can run multiple times, you should ' +
+            'assertion encountered an async function or promise; ' +
+            'since assertions can run multiple times, you should ' +
             'avoid introducing side-effects inside of them'
           );
         }
@@ -42,10 +42,10 @@ function convergeOn(assertion, timeout, always) {
         if (always && doLoop) {
           setTimeout(loop, interval);
         } else if (results === false) {
-          throw new Error('convergent assertion returned `false`');
+          throw new Error('assertion returned `false`');
         } else if (!always && !doLoop) {
           throw new Error(
-            'convergent assertion was successful, ' +
+            'assertion was successful, ' +
             `but exceeded the ${timeout}ms timeout`
           );
         } else {

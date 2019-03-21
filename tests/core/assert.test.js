@@ -71,6 +71,11 @@ describe('Interactor assertions', () => {
       await expect(instance.assert.even(2)).resolves.toBeUndefined();
       await expect(instance.assert.even(3)).rejects.toThrow('3 is not even');
     });
+
+    it('rejects when an async function is used', async () => {
+      await expect(instance.assert(async () => {})).rejects.toThrow('async');
+      await expect(instance.assert(() => Promise.resolve())).rejects.toThrow('promise');
+    });
   });
 
   describe('negating assertions with `.not`', () => {

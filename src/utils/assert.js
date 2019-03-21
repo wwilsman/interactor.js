@@ -41,7 +41,7 @@ function validate(interactor) {
   } = get(interactor, 'assert');
 
   function assertion() {
-    for (let matcher of validations) {
+    return validations.reduce((ret, matcher) => {
       let { name, validate, args, expected } = matcher;
       let result, message;
 
@@ -52,7 +52,7 @@ function validate(interactor) {
         message = () => e.message;
       }
 
-      if (typeof result === 'object') {
+      if (result && getPrototypeOf(result) === Object.prototype) {
         ({ result, message } = result);
       }
 
@@ -60,14 +60,18 @@ function validate(interactor) {
         message = () => `\`${name}\` returned ${result}`;
       }
 
-      if (result !== expected) {
+      let pass = typeof result === 'undefined' || !!result;
+
+      if (pass !== expected) {
         throw new Error(
           format
             .replace('%s', getScopeName(this))
             .replace('%e', message())
         );
       }
-    }
+
+      return result || ret;
+    }, undefined);
   }
 
   let next = set(interactor, 'assert', null).when(assertion);
@@ -79,13 +83,11 @@ function assert(assertion) {
 
   return set(this, 'assert', {
     validations: validations.concat({
+      name: 'assertion',
+      expected: true,
       validate() {
-        return assertion.call(
-          this,
-          assertion.length
-            ? this.$element
-            : undefined
-        );
+        let arg = assertion.length ? this.$element : undefined;
+        return assertion.call(this, arg);
       }
     })
   });
