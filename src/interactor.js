@@ -1,26 +1,22 @@
-import Convergence from './convergence';
 import { $, $$ } from './utils/dom';
 import isInteractor from './utils/is-interactor';
 import extend from './utils/extend';
 import from from './utils/from';
 import { getAssertFor } from './utils/assert';
 import makeChainable from './utils/chainable';
-import meta, { get } from './utils/meta';
+import meta, { get, set } from './utils/meta';
+import { runAssertion, runCallback } from './utils/run';
 
+const {
+  now
+} = Date;
 const {
   assign,
   defineProperty,
   freeze
 } = Object;
 
-function withElement(fn) {
-  return function(element) {
-    if (!element && fn.length > 0) element = this.$element;
-    return fn.call(this, element);
-  };
-}
-
-export default class Interactor extends Convergence {
+export default class Interactor {
   static isInteractor = isInteractor;
 
   // default `document.body` scope is lazy for fake DOM enviroments
@@ -37,21 +33,22 @@ export default class Interactor extends Convergence {
         typeof options === 'function') {
       options = { scope: options };
 
-      // convergence timeout was provided
+    // a timeout was provided
     } else if (typeof options === 'number') {
       options = { timeout: options };
     }
-
-    // convergence super
-    super(options, previous);
 
     // gather options
     let {
       scope,
       parent,
       chain = false,
-      detached = true
+      detached = false,
+      timeout = 2000
     } = assign({}, get(previous), options);
+
+    let queue = (get(previous, 'queue') || [])
+      .concat(options.queue || []);
 
     let assert = assign({
       expected: true,
@@ -69,12 +66,14 @@ export default class Interactor extends Convergence {
     defineProperty(this, meta, {
       enumerable: false,
       configurable: true,
-      value: freeze(assign({
+      value: freeze({
         scope,
         parent,
         detached,
-        assert
-      }, get(this)))
+        timeout,
+        assert,
+        queue
+      })
     });
 
     defineProperty(this, 'assert', {
@@ -108,23 +107,84 @@ export default class Interactor extends Convergence {
     return $$(selector, this.$element);
   }
 
-  when(fn) {
-    let next = this.assert.validate();
-    return super.when.call(next, withElement(fn));
+  timeout(timeout) {
+    if (typeof timeout !== 'undefined') {
+      return set(this, { timeout });
+    } else {
+      return get(this, 'timeout');
+    }
   }
 
-  always(fn, timeout) {
-    let next = this.assert.validate();
-    return super.always.call(next, withElement(fn), timeout);
+  when(assertion) {
+    return set(this.assert.validate(), {
+      queue: [{ assertion }]
+    });
   }
 
-  do(fn) {
-    let next = this.assert.validate();
-    return super.do.call(next, withElement(fn));
+  always(assertion, timeout) {
+    return set(this.assert.validate(), {
+      queue: [{
+        always: true,
+        assertion,
+        timeout
+      }]
+    });
+  }
+
+  do(callback) {
+    return set(this.assert.validate(), {
+      queue: [{ callback }]
+    });
+  }
+
+  append(interactor) {
+    if (!isInteractor(interactor)) {
+      throw new Error(`expected an interactor instance, instead recieved "${interactor}"`);
+    }
+
+    return set(this.assert.validate(), {
+      queue: get(interactor, 'queue')
+    });
   }
 
   run() {
-    let next = this.assert.validate();
-    return super.run.call(next);
+    let { timeout, queue } = get(this.assert.validate());
+    let start = now();
+
+    let stats = {
+      start,
+      runs: 0,
+      end: start,
+      elapsed: 0,
+      value: undefined,
+      queue: [],
+      timeout
+    };
+
+    // reduce to a single promise that runs each item in the queue
+    return queue.reduce((promise, subject, i) => {
+      // the last subject will receive the remaining timeout
+      if (i === (queue.length - 1)) {
+        subject = assign({ last: true }, subject);
+      }
+
+      return promise.then(ret => {
+        /* istanbul ignore else: unnecessary */
+        if (subject.assertion) {
+          return runAssertion(this, subject, ret, stats);
+        } else if (subject.callback) {
+          return runCallback(this, subject, ret, stats);
+        }
+      });
+    }, Promise.resolve())
+      // always resolve with the stats object
+      .then(() => stats);
+  }
+
+  then() {
+    // resolve with the value of the last function in the queue
+    let promise = this.run().then(({ value }) => value);
+    // pass promise arguments onward
+    return promise.then.apply(promise, arguments);
   }
 }

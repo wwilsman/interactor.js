@@ -1,4 +1,3 @@
-import Convergence from '../convergence';
 import isInteractor from './is-interactor';
 import createAsserts from './assert';
 import meta, { set, get } from './meta';
@@ -12,14 +11,14 @@ const {
   hasOwnProperty
 } = Object;
 
-function checkForReservedPropertyNames(obj) {
-  const blacklist = [
-    '$', '$$', '$element', 'validate', 'remains', 'only', 'assert', meta,
-    ...getOwnPropertyNames(Convergence.prototype)
-  ];
+const propertyBlacklist = [
+  '$', '$$', '$element', 'only', 'assert', meta,
+  'timeout', 'when', 'always', 'do', 'append', 'run', 'then'
+];
 
+function checkForReservedPropertyNames(obj) {
   for (let key of getOwnPropertyNames(obj)) {
-    if (blacklist.includes(key)) {
+    if (propertyBlacklist.includes(key)) {
       throw new Error(`"${key}" is a reserved property name`);
     }
   }

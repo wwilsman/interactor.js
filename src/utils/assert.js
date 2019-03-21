@@ -1,4 +1,3 @@
-import Convergence from '../convergence';
 import meta, { get, set } from './meta';
 
 const {
@@ -26,7 +25,7 @@ function getAllAssertions(interactor) {
   let proto = interactor.constructor.prototype;
   let matchers = {};
 
-  while (proto && proto !== Convergence.prototype) {
+  while (proto && proto !== Object.prototype) {
     matchers = assign({}, proto.assert, matchers);
     proto = getPrototypeOf(proto);
   }

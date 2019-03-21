@@ -1,4 +1,4 @@
-import isConvergence from './is-convergence';
+import isInteractor from './is-interactor';
 import { when, always } from '../helpers/converge';
 
 const { now } = Date;
@@ -9,7 +9,7 @@ function getElapsedSince(start, timeout) {
 
   // we shouldn't continue beyond the timeout
   if (elapsed >= timeout) {
-    throw new Error(`convergence exceeded the ${timeout}ms timeout`);
+    throw new Error(`interactor exceeded the ${timeout}ms timeout`);
   }
 
   return elapsed;
@@ -28,6 +28,7 @@ function collectStats(accumulator, stats, ret) {
 
 export function runAssertion(context, subject, arg, stats) {
   let timeout = stats.timeout - getElapsedSince(stats.start, stats.timeout);
+  if (!arg && subject.assertion.length) arg = context.$element;
   let assertion = subject.assertion.bind(context, arg);
   let converge = subject.always ? always : when;
 
@@ -49,6 +50,7 @@ export function runAssertion(context, subject, arg, stats) {
 
 export function runCallback(context, subject, arg, stats) {
   let start = now();
+  if (!arg && subject.callback.length) arg = context.$element;
   let result = subject.callback.call(context, arg);
 
   let collectExecStats = value => {
@@ -61,8 +63,8 @@ export function runCallback(context, subject, arg, stats) {
     }, arg);
   };
 
-  // a convergence is called with the current remaining timeout
-  if (isConvergence(result)) {
+  // an interactor is called with the current remaining timeout
+  if (isInteractor(result)) {
     let timeout = stats.timeout - getElapsedSince(start, stats.timeout);
 
     if (!subject.last) {

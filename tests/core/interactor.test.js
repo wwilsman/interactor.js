@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { $, injectHtml } from '../helpers';
-import { Interactor, Convergence } from 'interactor.js';
+import { Interactor } from 'interactor.js';
 import { get } from '../../src/utils/meta';
 
 describe('Interactor', () => {
@@ -15,14 +15,525 @@ describe('Interactor', () => {
     expect(instance).toBeInstanceOf(Interactor);
   });
 
-  it('extends the convergence class', () => {
-    expect(instance).toBeInstanceOf(Convergence);
+  it('has a default timeout of 2000ms', () => {
+    expect(instance.timeout()).toBe(2000);
   });
 
-  it('can be created with a timeout', () => {
-    expect(instance.timeout()).toBe(2000);
-    instance = new Interactor(50);
-    expect(instance.timeout()).toBe(50);
+  it('can be created with a custom timeout', () => {
+    expect(new Interactor(50).timeout()).toBe(50);
+  });
+
+  it('is thennable', async () => {
+    expect(instance).toHaveProperty('then', expect.any(Function));
+
+    let value = await instance.do(() => 'hello');
+    expect(value).toBe('hello');
+
+    await expect(instance.do(() => {
+      throw new Error('catch me');
+    })).rejects.toThrow('catch me');
+  });
+
+  describe('setting a new timeout', () => {
+    let quick;
+
+    beforeEach(() => {
+      quick = instance.timeout(50);
+    });
+
+    it('creates a new instance', () => {
+      expect(quick).toBeInstanceOf(Interactor);
+      expect(quick).not.toBe(instance);
+    });
+
+    it('has a new timeout', () => {
+      expect(quick.timeout()).toBe(50);
+      expect(instance.timeout()).toBe(2000);
+    });
+  });
+
+  describe('adding assertions with `.when()`', () => {
+    let assertion;
+
+    beforeEach(() => {
+      assertion = instance.when(() => {});
+    });
+
+    it('creates a new instance', () => {
+      expect(assertion).toBeInstanceOf(Interactor);
+      expect(assertion).not.toBe(instance);
+    });
+
+    it('creates a new queue', () => {
+      expect(get(assertion, 'queue')).not.toBe(get(instance, 'queue'));
+      expect(get(assertion, 'queue')).toHaveLength(1);
+      expect(get(instance, 'queue')).toHaveLength(0);
+    });
+
+    it('adds the assertion to the new queue', () => {
+      let assert = () => {};
+      assertion = assertion.when(assert);
+      expect(get(assertion, 'queue')[1]).toHaveProperty('assertion', assert);
+    });
+  });
+
+  describe('adding assertions with `.always()`', () => {
+    let assertion;
+
+    beforeEach(() => {
+      assertion = instance.always(() => {});
+    });
+
+    it('creates a new instance', () => {
+      expect(assertion).toBeInstanceOf(Interactor);
+      expect(assertion).not.toBe(instance);
+    });
+
+    it('creates a new queue', () => {
+      expect(get(assertion, 'queue')).not.toBe(get(instance, 'queue'));
+      expect(get(assertion, 'queue')).toHaveLength(1);
+      expect(get(instance, 'queue')).toHaveLength(0);
+    });
+
+    it('adds to a new queue with an `always` flag and own timeout', () => {
+      let assert = () => {};
+      assertion = assertion.always(assert, 200);
+      expect(get(assertion, 'queue')[1]).toEqual({
+        assertion: assert,
+        always: true,
+        timeout: 200
+      });
+    });
+  });
+
+  describe('adding callbacks with `.do()`', () => {
+    let callback;
+
+    beforeEach(() => {
+      callback = instance.do(() => {});
+    });
+
+    it('creates a new instance', () => {
+      expect(callback).toBeInstanceOf(Interactor);
+      expect(callback).not.toBe(instance);
+    });
+
+    it('creates a new queue', () => {
+      expect(get(callback, 'queue')).not.toBe(get(instance, 'queue'));
+      expect(get(callback, 'queue')).toHaveLength(1);
+      expect(get(instance, 'queue')).toHaveLength(0);
+    });
+
+    it('adds to a new queue with a `callback` property', () => {
+      let fn = () => {};
+      callback = callback.do(fn);
+      expect(get(callback, 'queue')[1]).toHaveProperty('callback', fn);
+    });
+  });
+
+  describe('combining interactors with `.append()`', () => {
+    let combined;
+
+    beforeEach(() => {
+      combined = instance.append(
+        new Interactor().when(() => {})
+      );
+    });
+
+    it('creates a new instance', () => {
+      expect(combined).toBeInstanceOf(Interactor);
+      expect(combined).not.toBe(instance);
+    });
+
+    it('creates a new queue', () => {
+      expect(get(combined, 'queue')).not.toBe(get(instance, 'queue'));
+      expect(get(combined, 'queue')).toHaveLength(1);
+      expect(get(instance, 'queue')).toHaveLength(0);
+    });
+
+    it('combines the two queues', () => {
+      let fn = () => {};
+      combined = combined.append(new Interactor().do(fn));
+      expect(get(combined, 'queue')[1]).toHaveProperty('callback', fn);
+    });
+
+    it('throws when not an interactor instance', () => {
+      expect(() => instance.append({}))
+        .toThrow('expected an interactor instance, instead recieved "[object Object]"');
+    });
+  });
+
+  describe('running interactors', () => {
+    let timeouts, total;
+    let createTimeout = (...args) => {
+      timeouts.push(setTimeout(...args));
+    };
+
+    beforeEach(() => {
+      instance = new Interactor(100);
+      timeouts = [];
+      total = 0;
+    });
+
+    afterEach(() => {
+      timeouts.forEach((timeout) => {
+        clearTimeout(timeout);
+      });
+    });
+
+    it('returns a promise', () => {
+      expect(instance.run()).toBeInstanceOf(Promise);
+    });
+
+    it('should be fulfilled when there are no assertions', () => {
+      return expect(instance.run()).resolves.toBeDefined();
+    });
+
+    describe('after using `.when()`', () => {
+      let assertion;
+
+      beforeEach(() => {
+        assertion = instance.when(() => expect(total).toBe(5));
+      });
+
+      it('resolves after assertions are met', async () => {
+        let start = Date.now();
+
+        createTimeout(() => total = 5, 30);
+        await expect(assertion.run()).resolves.toBeDefined();
+
+        let elapsed = Date.now() - start;
+        expect(elapsed).toBeGreaterThanOrEqual(30);
+        expect(elapsed).toBeLessThan(100);
+      });
+
+      it('rejects when an assertion is not met', () => {
+        return expect(assertion.run()).rejects.toThrow();
+      });
+
+      it('retains the instance context', () => {
+        assertion = instance.when(function() {
+          expect(this).toBe(assertion);
+        });
+
+        return expect(assertion.run()).resolves.toBeDefined();
+      });
+
+      it('rejects with an error when using an async function', () => {
+        expect(instance.when(async () => {}).run()).rejects.toThrow(/async/);
+      });
+
+      it('rejects with an error when returning a promise', () => {
+        expect(instance.when(() => Promise.resolve()).run()).rejects.toThrow(/promise/);
+      });
+
+      describe('with additional chaining', () => {
+        beforeEach(() => {
+          assertion = assertion.when(() => expect(total).toBe(10));
+        });
+
+        it('resolves after at all assertions are met', async () => {
+          let start = Date.now();
+
+          createTimeout(() => total = 5, 30);
+          createTimeout(() => total = 10, 50);
+          await expect(assertion.run()).resolves.toBeDefined();
+
+          let elapsed = Date.now() - start;
+          expect(elapsed).toBeGreaterThanOrEqual(50);
+          expect(elapsed).toBeLessThan(100);
+        });
+
+        it('rejects if assertions are not met in order', () => {
+          createTimeout(() => total = 10, 30);
+          createTimeout(() => total = 5, 50);
+          return expect(assertion.run()).rejects.toThrow();
+        });
+      });
+    });
+
+    describe('after using `.always()`', () => {
+      let assertion;
+
+      beforeEach(() => {
+        total = 5;
+        assertion = instance.always(() => {
+          expect(total).toBe(5);
+        });
+      });
+
+      it('retains the instance context', () => {
+        assertion = instance.always(function() {
+          expect(this).toBe(assertion);
+        });
+
+        return expect(assertion.run()).resolves.toBeDefined();
+      });
+
+      it('resolves after the 100ms timeout', async () => {
+        let start = Date.now();
+        await expect(assertion.run()).resolves.toBeDefined();
+        expect(Date.now() - start).toBeGreaterThanOrEqual(100);
+      });
+
+      it('rejects when the assertion fails', async () => {
+        createTimeout(() => total = 10, 50);
+
+        let start = Date.now();
+        await expect(assertion.run()).rejects.toThrow();
+        expect(Date.now() - start).toBeLessThan(100);
+      });
+
+      it('rejects with an error when using an async function', () => {
+        expect(instance.always(async () => {}).run()).rejects.toThrow(/async/);
+      });
+
+      it('rejects with an error when returning a promise', () => {
+        expect(instance.always(() => Promise.resolve()).run()).rejects.toThrow(/promise/);
+      });
+
+      describe('with a timeout', () => {
+        beforeEach(() => {
+          assertion = instance.always(() => {
+            expect(total).toBe(5);
+          }, 50);
+        });
+
+        it('resolves after the 50ms timeout', async () => {
+          let start = Date.now();
+          await expect(assertion.run()).resolves.toBeDefined();
+          expect(Date.now() - start).toBeGreaterThanOrEqual(50);
+        });
+
+        it('rejects if the assertion fails within 50ms', async () => {
+          createTimeout(() => total = 10, 30);
+
+          let start = Date.now();
+          await expect(assertion.run()).rejects.toThrow();
+          expect(Date.now() - start).toBeLessThan(50);
+        });
+      });
+
+      describe('with additional chaining', () => {
+        beforeEach(() => {
+          assertion = assertion.do(() => {});
+        });
+
+        it('resolves after one-tenth the total timeout', async () => {
+          let start = Date.now();
+          await expect(assertion.timeout(1000).run()).resolves.toBeDefined();
+          expect(Date.now() - start).toBeGreaterThanOrEqual(100);
+        });
+
+        it('resolves after at minumum 20ms', async () => {
+          let start = Date.now();
+          await expect(assertion.run()).resolves.toBeDefined();
+          expect(Date.now() - start).toBeGreaterThanOrEqual(20);
+        });
+      });
+    });
+
+    describe('after using `.do()`', () => {
+      let assertion;
+
+      it('triggers the callback before resolving', () => {
+        assertion = instance
+          .when(() => expect(total).toBe(5))
+          .do(() => total * 100);
+
+        createTimeout(() => total = 5, 50);
+        return expect(assertion.run()).resolves.toHaveProperty('value', 500);
+      });
+
+      it('is not called when a previous assertion fails', async () => {
+        let called = false;
+
+        assertion = instance
+          .when(() => expect(total).toBe(5))
+          .do(() => called = true);
+
+        await expect(assertion.run()).rejects.toThrow();
+        expect(called).toBe(false);
+      });
+
+      it('retains the instance context', () => {
+        assertion = instance.do(function() {
+          expect(this).toBe(assertion);
+        });
+
+        return expect(assertion.run()).resolves.toBeDefined();
+      });
+
+      describe('and returning an interactor', () => {
+        beforeEach(() => {
+          // instance reference can be modified before running
+          assertion = instance.do(() => instance);
+        });
+
+        it('waits for the interactor to settle', async () => {
+          let start = Date.now();
+          let done = false;
+
+          instance = instance.when(() => done === true);
+          createTimeout(() => done = true, 50);
+
+          await expect(assertion.run()).resolves.toBeDefined();
+
+          let elapsed = Date.now() - start;
+          expect(elapsed).toBeGreaterThanOrEqual(50);
+          expect(elapsed).toBeLessThan(100);
+        });
+
+        it('rejects when the interactor does', async () => {
+          let start = Date.now();
+          let called = false;
+
+          instance = instance.when(() => false);
+          assertion = assertion.do(() => called = true);
+
+          await expect(assertion.timeout(50).run()).rejects.toThrow();
+          expect(Date.now() - start).toBeGreaterThanOrEqual(50);
+          expect(called).toBe(false);
+        });
+
+        it('gives the final `.always()` the remaining timeout', async () => {
+          let start = Date.now();
+
+          instance = instance.always(() => true, 200);
+          await expect(assertion.timeout(50).run()).resolves.toBeDefined();
+
+          let elapsed = Date.now() - start;
+          expect(elapsed).toBeGreaterThanOrEqual(50);
+          expect(elapsed).toBeLessThan(100);
+        });
+
+        it('curries the resolved value to the next function', () => {
+          instance = instance.do(() => 1);
+          assertion = assertion.when((val) => expect(val).toBe(1));
+
+          return expect(assertion.run()).resolves
+            .toMatchObject({
+              queue: expect.arrayContaining([
+                expect.objectContaining({ value: 1 })
+              ])
+            });
+        });
+
+        it('rejects after the exceeding the timeout', () => {
+          instance = instance.do(() => {
+            return new Promise((resolve) => {
+              createTimeout(resolve, 50);
+            });
+          });
+
+          return expect(assertion.timeout(50).run()).rejects
+            .toThrow('interactor exceeded the 50ms timeout');
+        });
+      });
+
+      describe('and returning a promise', () => {
+        let resolve, reject;
+
+        beforeEach(() => {
+          assertion = instance.do(() => {
+            // eslint-disable-next-line promise/param-names
+            return new Promise((res, rej) => {
+              [resolve, reject] = [res, rej];
+            });
+          });
+        });
+
+        it('waits for the promise to settle', async () => {
+          let start = Date.now();
+
+          createTimeout(() => resolve(), 50);
+          await expect(assertion.run()).resolves.toBeDefined();
+
+          let elapsed = Date.now() - start;
+          expect(elapsed).toBeGreaterThanOrEqual(50);
+          expect(elapsed).toBeLessThan(100);
+        });
+
+        it('rejects when the promise does', async () => {
+          let start = Date.now();
+
+          createTimeout(() => reject(new Error()), 50);
+          await expect(assertion.run()).rejects.toThrow();
+
+          let elapsed = Date.now() - start;
+          expect(elapsed).toBeGreaterThanOrEqual(50);
+          expect(elapsed).toBeLessThan(100);
+        });
+
+        it('curries the resolved value to the next function', () => {
+          assertion = assertion
+            .when((val) => expect(val).toBe(1));
+
+          createTimeout(() => resolve(1), 10);
+          return expect(assertion.run()).resolves
+            .toMatchObject({
+              queue: expect.arrayContaining([
+                expect.objectContaining({ value: 1 })
+              ])
+            });
+        });
+
+        it('rejects after the exceeding the timeout', () => {
+          createTimeout(() => resolve(), 60);
+          return expect(assertion.timeout(50).run()).rejects
+            .toThrow('interactor exceeded the 50ms timeout');
+        });
+      });
+    });
+
+    describe('after using `.append()`', () => {
+      it('runs methods from the other interactor', async () => {
+        let called = false;
+
+        let assertion = instance.when(() => expect(total).toBe(5));
+        assertion = assertion.append(instance.do(() => called = true));
+
+        createTimeout(() => total = 5, 50);
+        await expect(assertion.run()).resolves.toBeDefined();
+        expect(called).toBe(true);
+      });
+    });
+
+    describe('after using various chain methods', () => {
+      it('resolves with a combined stats object', async () => {
+        let assertion = instance
+          .when(() => expect(total).toBe(5))
+          .do(() => total = 10)
+          .always(() => expect(total).toBe(10))
+          .do(() => total * 5);
+
+        createTimeout(() => total = 5, 50);
+
+        let start = Date.now();
+        let stats = await assertion.run();
+        let end = Date.now();
+
+        expect(stats.start).toBeGreaterThanOrEqual(start);
+        expect(stats.end).toBeGreaterThanOrEqual(end);
+        expect(stats.elapsed).toBeGreaterThanOrEqual(70);
+        expect(stats.elapsed).toBeLessThan(100);
+        expect(stats.runs).toBeLessThanOrEqual(11);
+        expect(stats.timeout).toBe(100);
+        expect(stats.value).toBe(50);
+        expect(stats.queue).toHaveLength(4);
+      });
+
+      it('stores and calls the callbacks first-in-first-out', async () => {
+        let arr = [];
+
+        let assertion = instance
+          .do(() => arr.push('first'))
+          .do(() => arr.push('second'));
+
+        await expect(assertion.run()).resolves.toBeDefined();
+        expect(arr).toEqual(['first', 'second']);
+      });
+    });
   });
 
   describe('with a scope', () => {
@@ -74,7 +585,7 @@ describe('Interactor', () => {
       expect(() => scoped.$element).toThrow('unable to find "#not-scoped"');
     });
 
-    it('can access the scoped element from convergent methods', async () => {
+    it('can access the scoped element from instancent methods', async () => {
       let scoped = new Interactor('#scoped').timeout(50);
       let $scoped = $('#scoped');
 
@@ -144,20 +655,18 @@ describe('Interactor', () => {
 
       beforeEach(() => {
         TestInteractor = @Interactor.extend class {
-          nested = new Interactor('.test-p');
-
-          scoped = new Interactor({
+          nested = new Interactor({
             scope: '.test-p',
-            detached: false
+            detached: true
           });
 
-          action = new Interactor({
-            scope: '.test-p',
-            detached: false
-          }).do(function() {
-            let parentId = this.$element.parentNode.id;
-            expect(parentId).toBe('scoped');
-          });
+          scoped = new Interactor('.test-p');
+
+          action = new Interactor('.test-p')
+            .do(function() {
+              let parentId = this.$element.parentNode.id;
+              expect(parentId).toBe('scoped');
+            });
         };
       });
 
@@ -236,6 +745,37 @@ describe('Interactor', () => {
     });
   });
 
+  describe('the static scoped method', () => {
+    beforeEach(() => {
+      injectHtml(`
+        <div class="test-div"></div>
+      `);
+    });
+
+    it('creates a scoped interactor', () => {
+      let scoped = Interactor.scoped('.test-div');
+      expect(scoped).toBeInstanceOf(Interactor);
+      expect(scoped.$element).toBe($('.test-div'));
+    });
+
+    it('creates a custom interactor', () => {
+      let CustomInteractor = Interactor.from({});
+      let scoped = CustomInteractor.scoped('.test-div');
+      expect(scoped).toBeInstanceOf(CustomInteractor);
+      expect(scoped).toBeInstanceOf(Interactor);
+      expect(scoped.$element).toBe($('.test-div'));
+    });
+
+    it('is bound to the respective class', () => {
+      let CustomInteractor = Interactor.from({});
+      let custom = CustomInteractor.scoped;
+      let scoped = custom('.test-div');
+      expect(scoped).toBeInstanceOf(CustomInteractor);
+      expect(scoped).toBeInstanceOf(Interactor);
+      expect(scoped.$element).toBe($('.test-div'));
+    });
+  });
+
   describe('from an object', () => {
     let TestInteractor;
 
@@ -306,9 +846,8 @@ describe('Interactor', () => {
         '$',
         '$$',
         '$element',
-        'validate',
-        'remains',
-        'only'
+        'only',
+        'assert'
       ];
 
       for (let name of reserved) {

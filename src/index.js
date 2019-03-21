@@ -1,4 +1,3 @@
-import Convergence from './convergence';
 import Interactor from './interactor';
 import { wrap } from './utils/from';
 import createAsserts from './utils/assert';
@@ -36,6 +35,14 @@ const {
   defineProperties,
   entries
 } = Object;
+
+// some static properties defined here to avoid circular imports
+defineProperties(Interactor, {
+  // static bound scoped helper for subclasses
+  scoped: {
+    get() { return selector => scoped(selector, this); }
+  }
+});
 
 // property creators
 defineProperties(
@@ -92,7 +99,6 @@ defineProperties(Interactor.prototype, {
 
 export {
   Interactor,
-  Convergence,
   // property creators
   disabled,
   exists,
@@ -122,7 +128,6 @@ export { default as attribute } from './properties/attribute';
 export { default as property } from './properties/property';
 export { default as matches } from './properties/matches';
 export { default as collection } from './helpers/collection';
-export { default as isConvergence } from './utils/is-convergence';
 export { default as isInteractor } from './utils/is-interactor';
 export { when, always } from './helpers/converge';
 export { default } from './decorator';
