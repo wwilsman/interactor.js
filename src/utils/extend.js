@@ -35,7 +35,6 @@ export default function extend(classDescriptor) {
 
   // a class constructor was provided (legacy decorator syntax)
   } else if (typeof classDescriptor === 'function') {
-    console.warn(`Deprecated. Please upgrade to Stage 2 decorators.`);
     let constructor = classDescriptor;
 
     // make a pojo for `from`

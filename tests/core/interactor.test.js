@@ -933,7 +933,7 @@ describe('Interactor', () => {
       }
     });
 
-    describe('with a plain object or function', () => {
+    describe('with a plain object', () => {
       beforeEach(() => {
         let stub = (...args) => {
           (stub.calls = (stub.calls || [])).push(args);
@@ -950,24 +950,28 @@ describe('Interactor', () => {
       it('creates an interactor class', () => {
         let ObjInteractor = Interactor.extend({});
         expect(ObjInteractor.prototype).toBeInstanceOf(Interactor);
-        let FnInteractor = Interactor.extend(() => {});
-        expect(FnInteractor.prototype).toBeInstanceOf(Interactor);
       });
 
       it('raises a deprication warning', () => {
         Interactor.extend({});
         expect(console.warn.calls).toHaveLength(1);
         expect(console.warn.calls[0][0]).toMatch('Deprecated');
-        Interactor.extend(() => {});
-        expect(console.warn.calls).toHaveLength(2);
-        expect(console.warn.calls[1][0]).toMatch('Deprecated');
+      });
+    });
+
+    describe('with a function', () => {
+      it('creates an interactor class', () => {
+        let FnInteractor = Interactor.extend(() => {});
+        expect(FnInteractor.prototype).toBeInstanceOf(Interactor);
       });
     });
 
     describe('with anything else', () => {
-      expect(() => Interactor.extend('string')).toThrow('Invalid');
-      expect(() => Interactor.extend(42)).toThrow('Invalid');
-      expect(() => Interactor.extend(true)).toThrow('Invalid');
+      it('throws an error', () => {
+        expect(() => Interactor.extend('string')).toThrow('Invalid');
+        expect(() => Interactor.extend(42)).toThrow('Invalid');
+        expect(() => Interactor.extend(true)).toThrow('Invalid');
+      });
     });
   });
 });
