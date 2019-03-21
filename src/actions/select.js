@@ -10,9 +10,7 @@ export default function select(selector, option) {
   let options = [].concat(option);
 
   return scoped(selector)
-    .assert(function() {
-      let element = this.$element;
-
+    .assert(element => {
       if (!('options' in element)) {
         throw new Error('not a select element');
       } else if (options.length > 1 && !element.multiple) {

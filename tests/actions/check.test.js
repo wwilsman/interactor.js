@@ -101,13 +101,13 @@ describe('Interactor actions - check / uncheck', () => {
       static defaultScope = '.radiogroup';
 
       check1 = check('.radio-1');
-      check2 = check('.radio-2').assert(function() {
-        expect(this.$element.checked).toBe(true);
+      check2 = check('.radio-2').assert(element => {
+        expect(element.checked).toBe(true);
       });
 
       uncheck2 = uncheck('.radio-2');
-      uncheck1 = uncheck('.radio-1').assert(function() {
-        expect(this.$element.checked).toBe(false);
+      uncheck1 = uncheck('.radio-1').assert(element => {
+        expect(element.checked).toBe(false);
       });
     }
 

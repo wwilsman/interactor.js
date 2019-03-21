@@ -74,10 +74,21 @@ function validate(interactor) {
   return !remains ? next : next.always(assertion, remains);
 }
 
-function assert(validate) {
+function assert(assertion) {
   let { validations } = get(this, 'assert');
-  validations = validations.concat({ validate });
-  return set(this, 'assert', { validations });
+
+  return set(this, 'assert', {
+    validations: validations.concat({
+      validate() {
+        return assertion.call(
+          this,
+          assertion.length
+            ? this.$element
+            : undefined
+        );
+      }
+    })
+  });
 }
 
 const assertProto = {

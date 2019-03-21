@@ -73,9 +73,7 @@ export default function type(selector, string, options = {}) {
   }
 
   return scoped(selector)
-    .assert(function() {
-      let element = this.$element;
-
+    .assert(element => {
       if (inputReg.test(element.tagName)) {
         if (element.disabled) throw new Error('disabled');
       } else if (!element.isContentEditable) {

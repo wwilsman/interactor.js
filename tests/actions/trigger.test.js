@@ -55,8 +55,8 @@ describe('Interactor actions - trigger', () => {
 
       myEvent = foo => trigger('myevent', { foo });
       fooEvent = trigger('.child-div', 'myevent', { foo: true })
-        .assert(function() {
-          expect(this.$element.classList.contains('child-div')).toBe(true);
+        .assert(element => {
+          expect(element.classList.contains('child-div')).toBe(true);
         });
     }
 

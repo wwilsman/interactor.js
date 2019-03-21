@@ -51,8 +51,8 @@ describe('Interactor actions - blur', () => {
 
         blur = blur('input');
         blurField = blur();
-        blurInput = blur('input').assert(function() {
-          expect(this.$element).not.toBe(document.activeElement);
+        blurInput = blur('input').assert(element => {
+          expect(element).not.toBe(document.activeElement);
         });
       };
     });

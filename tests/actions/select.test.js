@@ -64,8 +64,8 @@ describe('Interactor actions - select', () => {
       TestInteractor = @Interactor.extend class {
         static defaultScope = 'fieldset';
         select = option => select('select', option);
-        selectYes = select('select', 'yes').assert(function() {
-          expect(this.$element.value).toBe('1');
+        selectYes = select('select', 'yes').assert(element => {
+          expect(element.value).toBe('1');
         });
       };
     });

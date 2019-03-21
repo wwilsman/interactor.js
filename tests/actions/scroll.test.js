@@ -109,8 +109,8 @@ describe('Interactor actions - scroll', () => {
         static defaultScope = '#container';
 
         scroll = top => scroll('#content', { top });
-        scroll10 = scroll({ top: 10 }).assert(function() {
-          expect(this.$element.scrollTop).toEqual(10);
+        scroll10 = scroll({ top: 10 }).assert(element => {
+          expect(element.scrollTop).toEqual(10);
         });
       };
     });

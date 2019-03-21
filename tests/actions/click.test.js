@@ -57,8 +57,8 @@ describe('Interactor actions - click', () => {
 
         click = click('a');
         clickDiv = click();
-        clickBtn = click('button').assert(function() {
-          expect(this.$element.disabled).toBe(true);
+        clickBtn = click('button').assert(element => {
+          expect(element.disabled).toBe(true);
         });
       };
     });

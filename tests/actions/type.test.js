@@ -259,8 +259,8 @@ describe('Interactor actions - type', () => {
       static defaultScope = '.input';
 
       withCtrl = val => type(val, { ctrlKey: true });
-      typeit = type('it').assert(function() {
-        expect(this.$element.value).toBe('it');
+      typeit = type('it').assert(element => {
+        expect(element.value).toBe('it');
       });
     }
 

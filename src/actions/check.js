@@ -1,9 +1,7 @@
 import scoped from '../helpers/scoped';
 import { dispatch } from './trigger';
 
-function isCheckboxOrRadio() {
-  let element = this.$element;
-
+function isCheckboxOrRadio(element) {
   if (element.tagName.toLowerCase() !== 'input') {
     throw new Error('not an input element');
   } else if (element.type !== 'checkbox' && element.type !== 'radio') {
