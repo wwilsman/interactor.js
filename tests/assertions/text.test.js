@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml } from '../helpers';
-import { Interactor, text } from 'interactor.js';
+import interactor, { Interactor, text } from 'interactor.js';
 
 describe('Interactor assertions - text', () => {
   beforeEach(() => {
@@ -45,7 +45,7 @@ describe('Interactor assertions - text', () => {
   });
 
   describe('with a custom property', () => {
-    @Interactor.extend class ParagraphInteractor {
+    @interactor class ParagraphInteractor {
       static defaultScope = 'p';
       text = text('span');
     }

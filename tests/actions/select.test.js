@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml, testDOMEvent } from '../helpers';
-import { Interactor, select } from 'interactor.js';
+import interactor, { Interactor, select } from 'interactor.js';
 
 describe('Interactor actions - select', () => {
   beforeEach(() => {
@@ -61,7 +61,7 @@ describe('Interactor actions - select', () => {
     let TestInteractor;
 
     beforeEach(() => {
-      TestInteractor = @Interactor.extend class {
+      TestInteractor = @interactor class {
         static defaultScope = 'fieldset';
         select = option => select('select', option);
         selectYes = select('select', 'yes').assert(element => {

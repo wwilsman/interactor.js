@@ -2,7 +2,7 @@ import expect from 'expect';
 
 import { injectHtml } from '../helpers';
 
-import {
+import interactor, {
   Interactor,
   scrollable,
   scrollableX,
@@ -36,7 +36,7 @@ describe('Interactor properties - scrollable', () => {
   });
 
   describe('with the property creator', () => {
-    @Interactor.extend class ContainerInteractor {
+    @interactor class ContainerInteractor {
       static defaultScope = '#container';
       contentScrollableX = scrollableX('#content');
       contentScrollableY = scrollableY('#content');

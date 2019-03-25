@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml } from '../helpers';
-import { Interactor, value } from 'interactor.js';
+import interactor, { Interactor, value } from 'interactor.js';
 
 describe('Interactor properties - value', () => {
   beforeEach(() => {
@@ -21,7 +21,7 @@ describe('Interactor properties - value', () => {
   });
 
   describe('with the property creator', () => {
-    @Interactor.extend class FieldInteractor {
+    @interactor class FieldInteractor {
       static defaultScope = 'fieldset';
       value = value('input');
     }

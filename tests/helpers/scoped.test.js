@@ -1,10 +1,10 @@
 import expect from 'expect';
 
 import { injectHtml } from '../helpers';
-import { Interactor, scoped } from 'interactor.js';
+import interactor, { Interactor, scoped } from 'interactor.js';
 
 describe('Interactor helpers - scoped', () => {
-  @Interactor.extend class PInteractor {
+  @interactor class PInteractor {
     static defaultScope = '.test-p';
     get a() { return this.$element.innerText === 'A'; }
     get b() { return this.$element.innerText === 'B'; }
@@ -43,7 +43,7 @@ describe('Interactor helpers - scoped', () => {
   });
 
   describe('the property creator', () => {
-    @Interactor.extend class ScopedInteractor {
+    @interactor class ScopedInteractor {
       def = scoped('.test-p');
       props = scoped('.test-p', { foo: true });
       p = scoped('.test-p', PInteractor);

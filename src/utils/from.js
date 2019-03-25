@@ -1,3 +1,4 @@
+import Interactor from '../interactor';
 import isInteractor from './is-interactor';
 import createAsserts from './assert';
 import meta, { set, get } from './meta';
@@ -89,7 +90,11 @@ export default function from(properties) {
     ...ownProps
   } = properties;
 
-  class CustomInteractor extends this {};
+  let Parent = this.prototype instanceof Interactor
+    ? this.prototype.constructor
+    : Interactor;
+
+  class CustomInteractor extends Parent {};
 
   // define properties from descriptors
   defineProperties(

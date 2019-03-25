@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml, testDOMEvent } from '../helpers';
-import { Interactor, click } from 'interactor.js';
+import interactor, { Interactor, click } from 'interactor.js';
 
 describe('Interactor actions - click', () => {
   beforeEach(() => {
@@ -52,7 +52,7 @@ describe('Interactor actions - click', () => {
     let TestInteractor;
 
     beforeEach(() => {
-      TestInteractor = @Interactor.extend class {
+      TestInteractor = @interactor class {
         static defaultScope = '.test-div';
 
         click = click('a');

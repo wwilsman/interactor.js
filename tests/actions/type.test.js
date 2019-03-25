@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml, testDOMEvent } from '../helpers';
-import { Interactor, type } from 'interactor.js';
+import interactor, { Interactor, type } from 'interactor.js';
 
 describe('Interactor actions - type', () => {
   beforeEach(() => {
@@ -255,7 +255,7 @@ describe('Interactor actions - type', () => {
   });
 
   describe('with the action creator', () => {
-    @Interactor.extend class InputInteractor {
+    @interactor class InputInteractor {
       static defaultScope = '.input';
 
       withCtrl = val => type(val, { ctrlKey: true });

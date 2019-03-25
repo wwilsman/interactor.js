@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml, testDOMEvent } from '../helpers';
-import { Interactor, check, uncheck } from 'interactor.js';
+import interactor, { Interactor, check, uncheck } from 'interactor.js';
 
 describe('Interactor actions - check / uncheck', () => {
   beforeEach(() => {
@@ -97,7 +97,7 @@ describe('Interactor actions - check / uncheck', () => {
   });
 
   describe('with the action creator', () => {
-    @Interactor.extend class RadioGroupInteractor {
+    @interactor class RadioGroupInteractor {
       static defaultScope = '.radiogroup';
 
       check1 = check('.radio-1');

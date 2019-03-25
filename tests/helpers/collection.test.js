@@ -1,15 +1,15 @@
 import expect from 'expect';
 
 import { $, injectHtml, testDOMEvent } from '../helpers';
-import { Interactor, collection, text, click } from 'interactor.js';
+import interactor, { collection, text, click } from 'interactor.js';
 
 describe('Interactor helpers - collection', () => {
-  @Interactor.extend class ItemInteractor {
+  @interactor class ItemInteractor {
     content = text('.test-p');
     click = click('button');
   }
 
-  @Interactor.extend class CollectionInteractor {
+  @interactor class CollectionInteractor {
     static defaultScope = 'ul';
     simple = collection('.test-item');
 

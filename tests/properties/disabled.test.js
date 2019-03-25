@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml } from '../helpers';
-import { Interactor, disabled } from 'interactor.js';
+import interactor, { Interactor, disabled } from 'interactor.js';
 
 describe('Interactor properties - disabled', () => {
   beforeEach(() => {
@@ -32,7 +32,7 @@ describe('Interactor properties - disabled', () => {
   describe('with the property creator', () => {
     let field;
 
-    @Interactor.extend class FieldInteractor {
+    @interactor class FieldInteractor {
       static defaultScope = 'fieldset';
       disabled = disabled('input');
     }

@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml } from '../helpers';
-import { Interactor, attribute } from 'interactor.js';
+import interactor, { Interactor, attribute } from 'interactor.js';
 
 describe('Interactor properties - attribute', () => {
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('Interactor properties - attribute', () => {
   });
 
   describe('with the property creator', () => {
-    @Interactor.extend class DivInteractor {
+    @interactor class DivInteractor {
       static defaultScope = '.foobar';
       foo = attribute('data-foo');
       bar = attribute('span', 'data-bar');

@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml } from '../helpers';
-import { Interactor, exists } from 'interactor.js';
+import interactor, { Interactor, exists } from 'interactor.js';
 
 describe('Interactor assertions - exists', () => {
   beforeEach(() => {
@@ -45,7 +45,7 @@ describe('Interactor assertions - exists', () => {
   });
 
   describe('with a custom property', () => {
-    @Interactor.extend class DivInteractor {
+    @interactor class DivInteractor {
       static defaultScope = '.exists';
       exists = exists('.not-exists');
     }

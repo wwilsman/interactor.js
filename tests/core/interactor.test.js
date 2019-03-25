@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { $, injectHtml } from '../helpers';
-import { Interactor } from 'interactor.js';
+import interactor, { Interactor } from 'interactor.js';
 import { get } from '../../src/utils/meta';
 
 describe('Interactor', () => {
@@ -26,7 +26,7 @@ describe('Interactor', () => {
   it('is thennable', async () => {
     expect(instance).toHaveProperty('then', expect.any(Function));
 
-    let test = false
+    let test = false;
     await instance.do(() => test = true);
     expect(test).toBe(true);
 
@@ -408,6 +408,20 @@ describe('Interactor', () => {
           expect(elapsed).toBeLessThan(100);
         });
 
+        it('does not give `.always()` the remaining timeout when it is not last', async () => {
+          let start = Date.now();
+          let called = false;
+
+          instance = instance.always(() => true, 50);
+          assertion = assertion.do(() => called = true);
+          await expect(assertion.timeout(100).run()).resolves.toBeDefined();
+
+          let elapsed = Date.now() - start;
+          expect(elapsed).toBeGreaterThanOrEqual(50);
+          expect(elapsed).toBeLessThan(100);
+          expect(called).toBe(true);
+        });
+
         it('rejects after the exceeding the timeout', () => {
           instance = instance.do(() => {
             return new Promise((resolve) => {
@@ -630,7 +644,7 @@ describe('Interactor', () => {
       let TestInteractor;
 
       beforeEach(() => {
-        TestInteractor = @Interactor.extend class {
+        TestInteractor = @interactor class TestInteractor {
           nested = new Interactor({
             scope: '.test-p',
             detached: true
@@ -835,11 +849,11 @@ describe('Interactor', () => {
     });
   });
 
-  describe('using the extend decorator', () => {
+  describe('using the decorator', () => {
     let TestInteractor;
 
     beforeEach(() => {
-      TestInteractor = @Interactor.extend class TestInteractor {
+      TestInteractor = @interactor class TestInteractor {
         static defaultScope = '.test';
 
         foo = 'bar';
@@ -884,7 +898,7 @@ describe('Interactor', () => {
     });
 
     it('extends the interactor class from the origin class', () => {
-      let ExtendedInteractor = @TestInteractor.extend class { bar = 'baz' };
+      let ExtendedInteractor = @interactor class extends TestInteractor { bar = 'baz' };
       expect(ExtendedInteractor.prototype).toHaveProperty('bar', 'baz');
       expect(ExtendedInteractor.prototype).toBeInstanceOf(TestInteractor);
     });
@@ -898,56 +912,32 @@ describe('Interactor', () => {
         'run',
         'then',
         'append',
-        'only'
+        '$',
+        '$$',
+        '$element',
+        'only',
+        'assert'
       ];
 
       for (let name of reserved) {
         it(`throws an error for \`${name}\``, () => {
-          expect(() => @Interactor.extend class { [name] = '' })
+          expect(() => @interactor class { [name] = '' })
             .toThrow(`"${name}" is a reserved property name`);
         });
       }
     });
 
-    describe('with a plain object', () => {
-      beforeEach(() => {
-        let stub = (...args) => {
-          (stub.calls = (stub.calls || [])).push(args);
-        };
-
-        stub.og = console.warn;
-        console.warn = stub;
-      });
-
-      afterEach(() => {
-        console.warn = console.warn.og;
-      });
-
-      it('creates an interactor class', () => {
-        let ObjInteractor = Interactor.extend({});
-        expect(ObjInteractor.prototype).toBeInstanceOf(Interactor);
-      });
-
-      it('raises a deprication warning', () => {
-        Interactor.extend({});
-        expect(console.warn.calls).toHaveLength(1);
-        expect(console.warn.calls[0][0]).toMatch('Deprecated');
-      });
+    it('creates an interactor class using the legacy syntax', () => {
+      let FnInteractor = interactor(() => {});
+      expect(FnInteractor.prototype).toBeInstanceOf(Interactor);
     });
 
-    describe('with a function', () => {
-      it('creates an interactor class', () => {
-        let FnInteractor = Interactor.extend(() => {});
-        expect(FnInteractor.prototype).toBeInstanceOf(Interactor);
-      });
-    });
-
-    describe('with anything else', () => {
-      it('throws an error', () => {
-        expect(() => Interactor.extend('string')).toThrow('Invalid');
-        expect(() => Interactor.extend(42)).toThrow('Invalid');
-        expect(() => Interactor.extend(true)).toThrow('Invalid');
-      });
+    it('throws an error for any other argument', () => {
+      expect(() => interactor({})).toThrow('Invalid');
+      expect(() => interactor([])).toThrow('Invalid');
+      expect(() => interactor('string')).toThrow('Invalid');
+      expect(() => interactor(42)).toThrow('Invalid');
+      expect(() => interactor(true)).toThrow('Invalid');
     });
   });
 });

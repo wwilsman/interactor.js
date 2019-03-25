@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml } from '../helpers';
-import { Interactor, property } from 'interactor.js';
+import interactor, { Interactor, property } from 'interactor.js';
 
 describe('Interactor properties - property', () => {
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('Interactor properties - property', () => {
   });
 
   describe('with the property creator', () => {
-    @Interactor.extend class DivInteractor {
+    @interactor class DivInteractor {
       static defaultScope = '.box';
       width = property('clientWidth');
       childWidth = property('div', 'clientWidth');

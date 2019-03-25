@@ -1,5 +1,5 @@
 import Interactor from './interactor';
-import { wrap } from './utils/from';
+import from, { wrap } from './utils/from';
 import createAsserts from './utils/assert';
 
 // property creators
@@ -41,6 +41,11 @@ defineProperties(Interactor, {
   // static bound scoped helper for subclasses
   scoped: {
     get() { return selector => scoped(selector, this); }
+  },
+
+  // bound from utility for subclasses
+  from: {
+    get() { return from.bind(this); }
   }
 });
 
@@ -99,6 +104,7 @@ defineProperties(Interactor.prototype, {
 
 export {
   Interactor,
+  from,
   // property creators
   disabled,
   exists,

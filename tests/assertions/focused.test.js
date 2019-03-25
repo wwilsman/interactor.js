@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml } from '../helpers';
-import { Interactor, focused } from 'interactor.js';
+import interactor, { Interactor, focused } from 'interactor.js';
 
 describe('Interactor assertions - focused', () => {
   beforeEach(() => {
@@ -45,7 +45,7 @@ describe('Interactor assertions - focused', () => {
   });
 
   describe('with a custom property', () => {
-    @Interactor.extend class FieldInteractor {
+    @interactor class FieldInteractor {
       static defaultScope = 'fieldset';
       focused = focused('input');
     }

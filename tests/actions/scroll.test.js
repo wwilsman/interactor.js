@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml, testDOMEvent } from '../helpers';
-import { Interactor, scroll } from 'interactor.js';
+import interactor, { Interactor, scroll } from 'interactor.js';
 
 describe('Interactor actions - scroll', () => {
   beforeEach(() => {
@@ -105,7 +105,7 @@ describe('Interactor actions - scroll', () => {
     let TestInteractor;
 
     beforeEach(() => {
-      TestInteractor = @Interactor.extend class {
+      TestInteractor = @interactor class {
         static defaultScope = '#container';
 
         scroll = top => scroll('#content', { top });

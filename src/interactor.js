@@ -1,7 +1,5 @@
 import { $, $$ } from './utils/dom';
 import isInteractor from './utils/is-interactor';
-import extend from './utils/extend';
-import from from './utils/from';
 import { getAssertFor } from './utils/assert';
 import makeChainable from './utils/chainable';
 import meta, { get, set } from './utils/meta';
@@ -21,10 +19,6 @@ export default class Interactor {
 
   // default `document.body` scope is lazy for fake DOM enviroments
   static get defaultScope() { return document.body; }
-
-  // ensure these are always bound to their class
-  static get extend() { return extend.bind(this); }
-  static get from() { return from.bind(this); }
 
   constructor(options = {}, previous = {}) {
     // a scope selector, element, or function was given

@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml } from '../helpers';
-import { Interactor, matches } from 'interactor.js';
+import interactor, { Interactor, matches } from 'interactor.js';
 
 describe('Interactor properties - matches', () => {
   beforeEach(() => {
@@ -28,7 +28,7 @@ describe('Interactor properties - matches', () => {
   });
 
   describe('with the property creator', () => {
-    @Interactor.extend class DivInteractor {
+    @interactor class DivInteractor {
       static defaultScope = '.foo';
       isFoo = matches('div.foo');
       isBar = matches('span', 'span.bar');

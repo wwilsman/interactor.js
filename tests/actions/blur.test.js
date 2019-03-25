@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml, testDOMEvent } from '../helpers';
-import { Interactor, blur } from 'interactor.js';
+import interactor, { Interactor, blur } from 'interactor.js';
 
 describe('Interactor actions - blur', () => {
   beforeEach(() => {
@@ -46,7 +46,7 @@ describe('Interactor actions - blur', () => {
     let TestInteractor;
 
     beforeEach(() => {
-      TestInteractor = @Interactor.extend class {
+      TestInteractor = @interactor class {
         static defaultScope = 'fieldset';
 
         blur = blur('input');

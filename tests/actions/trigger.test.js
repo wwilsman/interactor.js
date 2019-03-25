@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml, testDOMEvent } from '../helpers';
-import { Interactor, trigger } from 'interactor.js';
+import interactor, { Interactor, trigger } from 'interactor.js';
 
 describe('Interactor actions - trigger', () => {
   beforeEach(() => {
@@ -50,7 +50,7 @@ describe('Interactor actions - trigger', () => {
   });
 
   describe('with the action creator', () => {
-    @Interactor.extend class DivInteractor {
+    @interactor class DivInteractor {
       static defaultScope = '.test-div';
 
       myEvent = foo => trigger('myevent', { foo });
