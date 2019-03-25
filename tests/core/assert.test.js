@@ -24,6 +24,10 @@ describe('Interactor assertions', () => {
           result,
           message: () => `${n} is ${result ? '' : 'not '}even`
         };
+      },
+
+      throws: () => {
+        expect(pass).toBe(true);
       }
     };
   }
@@ -42,6 +46,7 @@ describe('Interactor assertions', () => {
     expect(instance.assert).toHaveProperty('failing', expect.any(Function));
     expect(instance.assert).toHaveProperty('finished', expect.any(Function));
     expect(instance.assert).toHaveProperty('even', expect.any(Function));
+    expect(instance.assert).toHaveProperty('throws', expect.any(Function));
   });
 
   describe('making assertions', () => {
@@ -70,6 +75,10 @@ describe('Interactor assertions', () => {
     it('accepts arguments to validate', async () => {
       await expect(instance.assert.even(2)).resolves.toBeUndefined();
       await expect(instance.assert.even(3)).rejects.toThrow('3 is not even');
+    });
+
+    it('bubbles error messages', async () => {
+      await expect(instance.assert.throws()).rejects.toThrow('expect(received).toBe(expected)');
     });
 
     it('rejects when an async function is used', async () => {
@@ -102,6 +111,11 @@ describe('Interactor assertions', () => {
     it('accepts arguments to validate', async () => {
       await expect(instance.assert.not.even(3)).resolves.toBeUndefined();
       await expect(instance.assert.not.even(2)).rejects.toThrow('2 is even');
+    });
+
+    it('has a default error message when nothing is returned', async () => {
+      pass = true;
+      await expect(instance.assert.not.throws()).rejects.toThrow('`throws` did not throw an error');
     });
   });
 

@@ -57,7 +57,9 @@ function validate(interactor) {
       }
 
       if (!message) {
-        message = () => `\`${name}\` returned ${result}`;
+        message = (typeof result === 'undefined' && !expected)
+          ? () => `\`${name}\` did not throw an error`
+          : () => `\`${name}\` returned ${result}`;
       }
 
       let pass = typeof result === 'undefined' || !!result;
