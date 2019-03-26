@@ -5,6 +5,18 @@ const {
 } = Object;
 
 export default function scoped(selector, properties) {
+  if (!properties && selector && typeof selector !== 'string') {
+    let proto = getPrototypeOf(selector);
+
+    /* istanbul ignore else: unnecessary */
+    if (proto === Interactor ||
+        proto instanceof Interactor ||
+        proto === Object.prototype) {
+      properties = selector;
+      selector = null;
+    }
+  }
+
   let proto = properties && getPrototypeOf(properties);
   let ScopedInteractor = Interactor;
 

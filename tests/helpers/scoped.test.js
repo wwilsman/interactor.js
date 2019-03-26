@@ -70,4 +70,26 @@ describe('Interactor helpers - scoped', () => {
       expect(new ScopedInteractor('#scoped').p).toHaveProperty('b', true);
     });
   });
+
+  describe('using scoped directly', () => {
+    it('creates an instance of a given interactor class', () => {
+      let test = scoped(PInteractor);
+      expect(test).toBeInstanceOf(PInteractor);
+
+      test = scoped('.test-p', PInteractor);
+      expect(test).toBeInstanceOf(PInteractor);
+      expect(test.$element.innerText).toBe('A');
+    });
+
+    it('creates an interactor with the given properties', () => {
+      let test = scoped({ foo: true });
+      expect(test).toBeInstanceOf(Interactor);
+      expect(test.foo).toBe(true);
+
+      test = scoped('.test-p', { foo: true });
+      expect(test).toBeInstanceOf(Interactor);
+      expect(test.$element.innerText).toBe('A');
+      expect(test.foo).toBe(true);
+    });
+  });
 });
