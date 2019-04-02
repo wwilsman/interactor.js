@@ -41,20 +41,24 @@ export default class Interactor {
       timeout = 2000
     } = assign({}, get(previous), options);
 
+    // intereactor queue
     let queue = (get(previous, 'queue') || [])
       .concat(options.queue || []);
 
-    let assert = assign({
-      expected: true,
-      format: 'Failed validating %s: %e',
-      remains: false,
-      validations: []
-    }, (
-      options.assert !== null &&
-        get(previous, 'assert')
-    ), (
-      options.assert
-    ));
+    // assert options
+    let assert = freeze(
+      assign({
+        expected: true,
+        format: 'Failed validating %s: %e',
+        remains: false,
+        validations: []
+      }, (
+        options.assert !== null &&
+          get(previous, 'assert')
+      ), (
+        options.assert
+      ))
+    );
 
     // define meta properties for this instance
     defineProperty(this, meta, {
