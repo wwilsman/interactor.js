@@ -1,5 +1,5 @@
 import scoped from '../helpers/scoped';
-import { dispatch } from './trigger';
+import dispatch from '../utils/dispatch';
 
 function isCheckboxOrRadio(element) {
   if (element.tagName.toLowerCase() !== 'input') {

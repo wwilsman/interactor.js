@@ -1,5 +1,5 @@
 import scoped from '../helpers/scoped';
-import { dispatch } from './trigger';
+import dispatch from '../utils/dispatch';
 
 export default function select(selector, option) {
   if (arguments.length === 1) {
