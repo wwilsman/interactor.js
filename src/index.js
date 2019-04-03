@@ -19,6 +19,9 @@ import focus from './actions/focus';
 import scroll from './actions/scroll';
 import select from './actions/select';
 import trigger from './actions/trigger';
+import keydown from './actions/keydown';
+import keyup from './actions/keyup';
+import press from './actions/press';
 import type from './actions/type';
 
 // helper methods
@@ -77,6 +80,9 @@ defineProperties(
     check,
     click,
     focus,
+    keydown,
+    keyup,
+    press,
     scroll,
     select,
     trigger,
@@ -120,6 +126,9 @@ export {
   check,
   click,
   focus,
+  keydown,
+  keyup,
+  press,
   scroll,
   select,
   trigger,

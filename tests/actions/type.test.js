@@ -118,82 +118,53 @@ describe('Interactor actions - type', () => {
       expect(Date.now() - start).toBeGreaterThanOrEqual(100);
     });
 
-    it('can activate and deactivate the alt key', async () => {
-      let test = testDOMEvent('.input', 'input');
-      let input = new Interactor('.input');
+    // better to generate these rather than copy-paste
+    [ { name: 'alt', key: 'Alt' },
+      { name: 'ctrl', key: 'Control' },
+      { name: 'meta', key: 'Meta' },
+      { name: 'shift', key: 'Shift' }
+    ].forEach(({ name, key }) => {
+      it(`types with the ${name} key down`, async () => {
+        let test = testDOMEvent('.input', 'input');
+        let input = new Interactor('.input');
 
-      await expect(input.type('{alt}x')).resolves.toBeUndefined();
-      expect(input.$element.value).toBe('x');
-      expect(test.event).toHaveProperty('altKey', true);
+        await expect(
+          input.keydown(key).type('x')
+        ).resolves.toBeUndefined();
 
-      await expect(input.type('{alt}y{alt}z')).resolves.toBeUndefined();
-      expect(input.$element.value).toBe('xyz');
-      expect(test.event).toHaveProperty('altKey', false);
+        expect(input.$element.value).toBe('x');
+        expect(test.event).toHaveProperty(`${name}Key`, true);
+
+        await expect(
+          input
+            .keydown(key).type('y')
+            .keyup(key).type('z')
+        ).resolves.toBeUndefined();
+
+        expect(input.$element.value).toBe('xyz');
+        expect(test.event).toHaveProperty(`${name}Key`, false);
+      });
     });
 
-    it('can activate and deactivate the ctrl key', async () => {
-      let test = testDOMEvent('.input', 'input');
+    it('can type within a range', async () => {
       let input = new Interactor('.input');
+      await input.type('helorld');
 
-      await expect(input.type('{ctrl}x')).resolves.toBeUndefined();
-      expect(input.$element.value).toBe('x');
-      expect(test.event).toHaveProperty('ctrlKey', true);
+      await expect(input.type('lo w', { range: 3 })).resolves.toBeUndefined();
+      expect(input.$element.value).toBe('hello world');
 
-      await expect(input.type('{ctrl}y{ctrl}z')).resolves.toBeUndefined();
-      expect(input.$element.value).toBe('xyz');
-      expect(test.event).toHaveProperty('ctrlKey', false);
+      await expect(input.type('HELLO', { range: [0, 5] })).resolves.toBeUndefined();
+      expect(input.$element.value).toBe('HELLO world');
     });
 
-    it('can activate and deactivate the meta key', async () => {
-      let test = testDOMEvent('.input', 'input');
-      let input = new Interactor('.input');
-
-      await expect(input.type('{cmd}x')).resolves.toBeUndefined();
-      expect(input.$element.value).toBe('x');
-      expect(test.event).toHaveProperty('metaKey', true);
-
-      await expect(input.type('{cmd}y{cmd}z')).resolves.toBeUndefined();
-      expect(input.$element.value).toBe('xyz');
-      expect(test.event).toHaveProperty('metaKey', false);
-    });
-
-    it('can activate and deactivate the shift key', async () => {
-      let test = testDOMEvent('.input', 'input');
-      let input = new Interactor('.input');
-
-      await expect(input.type('{shift}x')).resolves.toBeUndefined();
-      expect(input.$element.value).toBe('x');
-      expect(test.event).toHaveProperty('shiftKey', true);
-
-      await expect(input.type('{shift}y{shift}z')).resolves.toBeUndefined();
-      expect(input.$element.value).toBe('xyz');
-      expect(test.event).toHaveProperty('shiftKey', false);
-    });
-
-    it('can remove characters with backspace', async () => {
-      let input = new Interactor('.input');
-      await expect(input.type('helli{backspace}o')).resolves.toBeUndefined();
-      expect(input.$element.value).toBe('hello');
-
-      let editable = new Interactor('.editable');
-      await expect(editable.type('work{backspace}ld')).resolves.toBeUndefined();
-      expect(editable.$element.textContent).toBe('world');
-    });
-
-    it('can repeat non-printable keys', async () => {
-      let input = new Interactor('.input');
-      await expect(input.type('hello{backspace:5}world')).resolves.toBeUndefined();
-      expect(input.$element.value).toBe('world');
-    });
-
-    it('can trigger a beforeinput event', async () => {
+    it('triggers a beforeinput event', async () => {
       let val = [];
 
       let before = testDOMEvent('.input', 'beforeinput', e => val[0] = e.target.value);
       let inp = testDOMEvent('.input', 'input', e => val[1] = e.target.value);
 
       let input = new Interactor('.input');
-      await expect(input.type('a', { beforeinput: true })).resolves.toBeUndefined();
+      await expect(input.type('a')).resolves.toBeUndefined();
 
       expect(val[0]).toBe('');
       expect(before.result).toBe(true);
@@ -206,7 +177,7 @@ describe('Interactor actions - type', () => {
       let inp = testDOMEvent('.input', 'input');
 
       let input = new Interactor('.input');
-      await expect(input.type('a', { beforeinput: true })).resolves.toBeUndefined();
+      await expect(input.type('a')).resolves.toBeUndefined();
 
       expect(before.result).toBe(true);
       expect(inp.result).toBe(false);
@@ -224,7 +195,7 @@ describe('Interactor actions - type', () => {
       expect(n).toBe(1);
     });
 
-    it('sends a space character with the space key', async () => {
+    it('sends a space code with the space character', async () => {
       let inp = testDOMEvent('.input', 'input');
 
       let input = new Interactor('.input');
@@ -232,25 +203,8 @@ describe('Interactor actions - type', () => {
 
       expect(input.$element.value).toBe(' ');
       expect(inp.result).toBe(true);
-      expect(inp.event).toHaveProperty('key', 'Space');
+      expect(inp.event).toHaveProperty('code', 'Space');
       expect(inp.event).toHaveProperty('charCode', 32);
-    });
-
-    it('does not send a keypress event for non-printable keys', async () => {
-      let down = testDOMEvent('.input', 'keydown');
-      let press = testDOMEvent('.input', 'keypress');
-      let inp = testDOMEvent('.input', 'input');
-      let up = testDOMEvent('.input', 'keyup');
-
-      let input = new Interactor('.input');
-      await expect(input.type('{up}')).resolves.toBeUndefined();
-
-      expect(input.$element.value).toBe('');
-      expect(down.result).toBe(true);
-      expect(press.result).toBe(false);
-      expect(inp.result).toBe(false);
-      expect(up.result).toBe(true);
-      expect(up.event).toHaveProperty('key', 'ArrowUp');
     });
   });
 
@@ -258,7 +212,7 @@ describe('Interactor actions - type', () => {
     @interactor class InputInteractor {
       static defaultScope = '.input';
 
-      withCtrl = val => type(val, { ctrlKey: true });
+      type = val => type(val, { change: true });
       typeit = type('it').assert(element => {
         expect(element.value).toBe('it');
       });
@@ -267,11 +221,10 @@ describe('Interactor actions - type', () => {
     let input = new InputInteractor();
 
     it('types into the element', async () => {
-      let test = testDOMEvent('.input', 'input');
-      await expect(input.withCtrl('hello world')).resolves.toBeUndefined();
+      let test = testDOMEvent('.input', 'change');
+      await expect(input.type('hello world')).resolves.toBeUndefined();
       expect(input.$element.value).toBe('hello world');
       expect(test.result).toBe(true);
-      expect(test.event).toHaveProperty('ctrlKey', true);
     });
 
     it('can chain other interactor methods', async () => {
@@ -288,15 +241,14 @@ describe('Interactor actions - type', () => {
     });
 
     it('eventually types into the element', async () => {
-      let test = testDOMEvent('.input', 'input');
+      let test = testDOMEvent('.input', 'change');
 
       await expect(
-        type('.input', 'ayo', { altKey: true })
+        type('.input', 'ayo', { change: true })
       ).resolves.toBeUndefined();
 
       expect(test.$element.value).toBe('ayo');
       expect(test.result).toBe(true);
-      expect(test.event).toHaveProperty('altKey', true);
     });
   });
 });

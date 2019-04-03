@@ -43,7 +43,9 @@ export function wrap(from) {
     if (!isInteractor(result)) {
       return result;
     } else if (get(result, 'queue').length > 0) {
-      return this.do(() => set(result, { parent: this }));
+      return this.do(function() {
+        return set(result, { parent: this });
+      });
     } else {
       return set(result, { parent: this, chain: true });
     }
