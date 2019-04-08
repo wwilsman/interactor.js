@@ -1,11 +1,11 @@
 references:
   defaults: &defaults
-    working_directory: ~/interactors
+    working_directory: ~/interactor.js
     docker:
       - image: circleci/node:10-browsers
 
   cache_key: &cache_key
-    interactors-v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
+    v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
 
   attach_workspace: &attach_workspace
     attach_workspace:
@@ -31,7 +31,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - interactors
+            - interactor.js
             - .ssh
 
   lint:
@@ -52,7 +52,7 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - interactors/dist
+            - interactor.js/dist
 
   test:
     <<: *defaults

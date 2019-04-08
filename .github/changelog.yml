@@ -1,4 +1,0 @@
-filename: CHANGELOG.md
-include:
-  - /^src\//
-  - package.json
