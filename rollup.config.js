@@ -7,7 +7,7 @@ export default {
   output: [{
     format: 'umd',
     exports: 'named',
-    name: 'BigTest.Interactor',
+    name: 'InteractorJS',
     file: pkg.main
   }, {
     format: 'es',
