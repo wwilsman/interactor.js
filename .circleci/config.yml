@@ -72,10 +72,8 @@ jobs:
             echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
             .circleci/release
       - run:
-          name: Tag
-          command: |
-            git tag $(node -p "\`v\${require('./package.json').version}\`")
-            git push --tags
+          name: Push Tags
+          command: git push --tags
 
 workflows:
   version: 2

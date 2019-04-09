@@ -11,7 +11,8 @@
     "build": "rollup --config",
     "lint": "eslint --ignore-path .gitignore ./",
     "start": "karma start",
-    "test": "yarn start --single-run"
+    "test": "yarn start --single-run",
+    "postpublish": ".circleci/tag"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
