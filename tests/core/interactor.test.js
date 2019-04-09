@@ -835,6 +835,7 @@ describe('Interactor', () => {
         'append',
         '$',
         '$$',
+        '$dom',
         '$element',
         'only',
         'assert'
@@ -914,6 +915,7 @@ describe('Interactor', () => {
         'append',
         '$',
         '$$',
+        '$dom',
         '$element',
         'only',
         'assert'

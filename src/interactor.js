@@ -17,9 +17,6 @@ const {
 export default class Interactor {
   static isInteractor = isInteractor;
 
-  // default `document.body` scope is lazy for fake DOM enviroments
-  static get defaultScope() { return document.body; }
-
   constructor(options = {}, previous = {}) {
     // a scope selector, element, or function was given
     if (typeof options === 'string' ||
@@ -74,6 +71,7 @@ export default class Interactor {
       })
     });
 
+    // build assert object for this instance
     defineProperty(this, 'assert', {
       enumerable: false,
       configurable: true,
@@ -87,14 +85,20 @@ export default class Interactor {
     }
   }
 
+  get $dom() {
+    // lazy for virtual DOMs
+    return window;
+  }
+
   get $element() {
     let { scope, parent, detached } = get(this);
     let nested = !detached && parent;
 
-    scope = typeof scope === 'function' ? scope() : scope;
-    scope = scope || (!nested && this.constructor.defaultScope);
+    // evaluate scope or set to default when not nested
+    scope = (typeof scope === 'function' ? scope() : scope) ||
+      (!nested && (this.constructor.defaultScope || this.$dom.document.body));
 
-    return $(scope, nested ? parent.$element : undefined);
+    return $(scope, nested ? parent.$element : this.$dom.document);
   }
 
   $(selector) {

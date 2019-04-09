@@ -2,8 +2,8 @@ import scoped from '../helpers/scoped';
 
 /* istanbul ignore next: the document always has focus during tests so this
  * function is never encountered */
-function isFramed() {
-  return window.self !== window.top && window.frameElement;
+function isFramed({ self, top, frameElement }) {
+  return self !== top && frameElement;
 }
 
 export default function focus(selector) {
@@ -12,16 +12,16 @@ export default function focus(selector) {
     .assert.focusable()
     .assert.f('Failed to focus %s: %e')
   // invoke the native DOM method
-    .do(element => {
+    .do(function(element) {
       // if no document focus and in an iframe, try to steal focus
       /* istanbul ignore next: document always has focus during tests */
-      if (!document.hasFocus() && isFramed()) {
-        window.frameElement.focus();
+      if (!this.$dom.document.hasFocus() && isFramed(this.$dom)) {
+        this.$dom.frameElement.focus();
       }
 
       // document does not have focus
       /* istanbul ignore if: document always has focus during tests */
-      if (!document.hasFocus()) {
+      if (!this.$dom.document.hasFocus()) {
         throw new Error('the document is not focusable');
       }
 

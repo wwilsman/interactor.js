@@ -1,4 +1,10 @@
-export function $(selector, $ctx = document) {
+function isElement(obj) {
+  // safe way to check `instanceof Element` when Element can be in a virtual DOM
+  return obj && 'ownerDocument' in obj && 'defaultView' in obj.ownerDocument &&
+    obj instanceof obj.ownerDocument.defaultView.Element;
+}
+
+export function $(selector, $ctx) {
   let $node = null;
 
   /* istanbul ignore if: sanity check */
@@ -15,7 +21,7 @@ export function $(selector, $ctx = document) {
     }
 
   // if an element was given, return it
-  } else if (selector instanceof Element) {
+  } else if (isElement(selector)) {
     return selector;
 
   // if the selector is falsy, return the context element
@@ -53,5 +59,5 @@ export function $$(selector, $ctx) {
 
   // only return elements
   /* istanbul ignore next: sanity check */
-  return nodes.filter($node => $node instanceof Element);
+  return nodes.filter(isElement);
 }
