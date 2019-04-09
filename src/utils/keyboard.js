@@ -3,7 +3,6 @@ import keyDefinitions from './keydefs';
 import { get } from './meta';
 
 const { assign } = Object;
-const { isArray } = Array;
 const K = Symbol('keyboard');
 
 function getTopParent(instance) {
@@ -17,7 +16,7 @@ function getTopParent(instance) {
 export function keyboard(instance, setters) {
   let top = getTopParent(instance);
 
-  return top[K] = assign({
+  return (top[K] = assign({
     pressed: [],
     modifiers: {
       altKey: false,
@@ -29,7 +28,7 @@ export function keyboard(instance, setters) {
     top[K]
   ), (
     setters
-  ));
+  )));
 }
 
 export function getKeyDescr(key, modifiers) {
@@ -64,7 +63,7 @@ const modifiersMap = {
   'Control': 'ctrlKey',
   'Meta': 'metaKey',
   'Shift': 'shiftKey'
-}
+};
 
 export function setModifier(key, value, modifiers) {
   let mod = modifiersMap[key];
