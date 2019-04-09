@@ -1,6 +1,5 @@
 import scoped from '../helpers/scoped';
 import dispatch from '../utils/dispatch';
-import { get, set } from '../utils/meta';
 
 import {
   keyboard,
