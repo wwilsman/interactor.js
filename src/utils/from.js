@@ -13,7 +13,7 @@ const {
 } = Object;
 
 const propertyBlacklist = [
-  '$', '$$', '$element', 'only', 'assert', meta,
+  '$', '$$', '$dom', '$element', 'only', 'assert', meta,
   'timeout', 'when', 'always', 'do', 'append', 'run', 'then'
 ];
 

@@ -1,5 +1,8 @@
-import { $ } from '../src/utils/dom';
-export { $ } from '../src/utils/dom';
+import { $ as $find } from '../src/utils/dom';
+
+export function $(selector, ctx) {
+  return $find(selector, ctx || document);
+}
 
 export function injectHtml(html) {
   let $container = document.getElementById('test');
