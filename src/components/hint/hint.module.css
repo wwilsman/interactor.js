@@ -1,0 +1,45 @@
+.hint {
+  background: #FAF9FC;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-left-width: 0.25rem;
+  padding: 1.25rem 2rem 1.25rem 3.75rem;
+  margin-bottom: 1.825rem;
+  border-radius: 0.25rem;
+  position: relative;
+  font-size: 0.9em;
+
+  *:last-child {
+    margin-bottom: 0;
+  }
+
+  svg {
+    font-size: 1.5rem;
+    position: absolute;
+    top: 1.25rem;
+    left: 1rem;
+  }
+
+  &.info {
+    border-left-color: #4070FF;
+
+    svg {
+      color: #4070FF;
+    }
+  }
+
+  &.warning {
+    border-left-color: #FF9030;
+
+    svg {
+      color: #FF9030;
+    }
+  }
+
+  &.danger {
+    border-left-color: #FF0000;
+
+    svg {
+      color: #FF0000;
+    }
+  }
+}

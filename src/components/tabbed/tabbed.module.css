@@ -1,0 +1,26 @@
+.tab-list {
+  list-style: none;
+  background: #F7F5F9;
+  color: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: none;
+  border-top-left-radius: 0.2rem;
+  border-top-right-radius: 0.2rem;
+  font-size: 0.75rem;
+  padding: 0 0.5em;
+  margin: 0;
+
+  li {
+    cursor: pointer;
+    display: inline-block;
+    padding: 0.25em 0.5em;
+
+    &:hover {
+      color: black;
+    }
+
+    &.is-active {
+      color: #F0DB50;
+    }
+  }
+}

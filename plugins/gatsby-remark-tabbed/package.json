@@ -1,0 +1,10 @@
+{
+  "name": "gatsby-remark-tabbed",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "unist-util-visit": "^1.4.0"
+  }
+}
