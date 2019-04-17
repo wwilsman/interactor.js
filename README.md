@@ -1,5 +1,7 @@
 <p align="center">
-  <img alt="interactor.js" width="600px" src="https://raw.githubusercontent.com/wwilsman/interactor.js/master/logo.svg"/>
+  <a href="https://interactorjs.io">
+    <img alt="interactor.js" width="600px" src="https://raw.githubusercontent.com/wwilsman/interactor.js/master/logo.svg?sanitize=true"/>
+  </a>
 </p>
 
 <p align="center">
