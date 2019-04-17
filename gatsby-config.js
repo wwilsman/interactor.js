@@ -69,6 +69,12 @@ module.exports = {
         chunkSize: 10000,
         queries
       }
+    },
+    {
+      resolve: 'gatsby-plugin-google-analytics',
+      options: {
+        trackingId: process.env.GOOGLE_ANALYTICS_TRACKING_ID
+      }
     }
     // 'gatsby-plugin-offline',
   ]
