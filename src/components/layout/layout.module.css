@@ -1,8 +1,23 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
+html,
+body,
+body > div {
+  height: 100%;
+}
+
+body > div > div {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .layout {
+  flex: 1;
   display: flex;
   justify-content: flex-start;
   position: relative;
@@ -51,12 +66,12 @@
     }
 
     code {
-      font-family: 'Operator Mono', 'Fira Code', monospace;
+      font-family: "Operator Mono", "Fira Code", monospace;
     }
 
     li > code,
     p > code {
-      background: #F7F5F9;
+      background: #f7f5f9;
       border: 1px solid rgba(0, 0, 0, 0.1);
       padding: 0.1em 0.5em;
       border-radius: 0.1em;
@@ -80,7 +95,7 @@
     }
 
     a {
-      color: #F0DB50;
+      color: #f0db50;
     }
 
     li {
