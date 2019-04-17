@@ -2,7 +2,9 @@ const visit = require('unist-util-visit');
 
 module.exports = ({ markdownAST }) => {
   visit(markdownAST, 'paragraph', (node, index, parent) => {
-    if (node.children.length === 1 && node.children[0].type === 'link') {
+    if (parent.type === 'root' &&
+        node.children.length === 1 &&
+        node.children[0].type === 'link') {
       let link = node.children[0];
 
       node.type = 'html';
