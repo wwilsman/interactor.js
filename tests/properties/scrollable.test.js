@@ -35,6 +35,8 @@ describe('Interactor properties - scrollable', () => {
     });
 
     describe('and the default assertion', () => {
+      let test = new Interactor().timeout(50);
+
       it('resolves when passing', async () => {
         await expect(container.assert.scrollableX()).resolves.toBeUndefined();
         await expect(container.assert.scrollableY()).resolves.toBeUndefined();
@@ -44,6 +46,15 @@ describe('Interactor properties - scrollable', () => {
         await expect(content.assert.not.scrollable()).resolves.toBeUndefined();
       });
 
+      it('resolves when passing with a selector', async () => {
+        await expect(test.assert.scrollableX('#container')).resolves.toBeUndefined();
+        await expect(test.assert.scrollableY('#container')).resolves.toBeUndefined();
+        await expect(test.assert.scrollable('#container')).resolves.toBeUndefined();
+        await expect(test.assert.not.scrollableX('#content')).resolves.toBeUndefined();
+        await expect(test.assert.not.scrollableY('#content')).resolves.toBeUndefined();
+        await expect(test.assert.not.scrollable('#content')).resolves.toBeUndefined();
+      });
+
       it('rejects with an error when failing', async () => {
         await expect(container.assert.not.scrollableX()).rejects.toThrow('has overflow-x');
         await expect(container.assert.not.scrollableY()).rejects.toThrow('has overflow-y');
@@ -51,6 +62,15 @@ describe('Interactor properties - scrollable', () => {
         await expect(content.assert.scrollableX()).rejects.toThrow('has no overflow-x');
         await expect(content.assert.scrollableY()).rejects.toThrow('has no overflow-y');
         await expect(content.assert.scrollable()).rejects.toThrow('has no overflow');
+      });
+
+      it('rejects with an error when failing with a selector', async () => {
+        await expect(test.assert.not.scrollableX('#container')).rejects.toThrow('has overflow-x');
+        await expect(test.assert.not.scrollableY('#container')).rejects.toThrow('has overflow-y');
+        await expect(test.assert.not.scrollable('#container')).rejects.toThrow('has overflow');
+        await expect(test.assert.scrollableX('#content')).rejects.toThrow('has no overflow-x');
+        await expect(test.assert.scrollableY('#content')).rejects.toThrow('has no overflow-y');
+        await expect(test.assert.scrollable('#content')).rejects.toThrow('has no overflow');
       });
     });
   });

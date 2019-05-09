@@ -28,6 +28,7 @@ describe('Interactor properties - focusable', () => {
     });
 
     describe('and the default assertion', () => {
+      let field = new Interactor('fieldset').timeout(50);
       let input = new Interactor('input').timeout(50);
       let span = new Interactor('span').timeout(50);
 
@@ -41,14 +42,34 @@ describe('Interactor properties - focusable', () => {
         await expect(span.assert.focusable()).resolves.toBeUndefined();
       });
 
-      it('rejects with an error when failing', async () => {
-        await expect(input.assert.not.focusable()).rejects.toThrow('focusable');
+      it('resolves when passing with a selector', async () => {
+        await expect(field.assert.focusable('input')).resolves.toBeUndefined();
         input.$element.tabIndex = -1;
-        await expect(input.assert.focusable()).rejects.toThrow('not focusable, tabindex');
+        await expect(field.assert.not.focusable('input')).resolves.toBeUndefined();
 
-        await expect(span.assert.focusable()).rejects.toThrow('not focusable, tabindex');
+        await expect(field.assert.not.focusable('span')).resolves.toBeUndefined();
         span.$element.tabIndex = 0;
-        await expect(span.assert.not.focusable()).rejects.toThrow('focusable');
+        await expect(field.assert.focusable('span')).resolves.toBeUndefined();
+      });
+
+      it('rejects with an error when failing', async () => {
+        await expect(input.assert.not.focusable()).rejects.toThrow('is focusable');
+        input.$element.tabIndex = -1;
+        await expect(input.assert.focusable()).rejects.toThrow('is not focusable, tabindex');
+
+        await expect(span.assert.focusable()).rejects.toThrow('is not focusable, tabindex');
+        span.$element.tabIndex = 0;
+        await expect(span.assert.not.focusable()).rejects.toThrow('is focusable');
+      });
+
+      it('rejects with an error when failing with a selector', async () => {
+        await expect(field.assert.not.focusable('input')).rejects.toThrow('"input" is focusable');
+        input.$element.tabIndex = -1;
+        await expect(field.assert.focusable('input')).rejects.toThrow('"input" is not focusable, tabindex');
+
+        await expect(field.assert.focusable('span')).rejects.toThrow('"span" is not focusable, tabindex');
+        span.$element.tabIndex = 0;
+        await expect(field.assert.not.focusable('span')).rejects.toThrow('"span" is focusable');
       });
     });
   });

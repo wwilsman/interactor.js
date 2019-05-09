@@ -7,11 +7,11 @@ function elementMatches($el, selector) {
   }
 }
 
-export default function matches(selector, match) {
-  if (typeof match === 'undefined') {
-    match = selector;
-    selector = null;
-  }
+export function args(a) {
+  return a.length <= 1 ? [undefined, a[0]] : a;
+}
 
+export default function matches() {
+  let [selector, match] = args(arguments);
   return elementMatches(this.$(selector), match);
 }

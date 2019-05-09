@@ -1,7 +1,9 @@
 import Interactor from '../interactor';
+import scoped from '../helpers/scoped';
 import isInteractor from './is-interactor';
 import createAsserts from './assert';
 import meta, { set, get } from './meta';
+import { sel } from './string';
 
 const {
   assign,
@@ -92,10 +94,21 @@ function toInteractorAssertion(name, from) {
       }
     };
   } else if (get(from, 'matcher')) {
-    let { matcher } = from[meta];
+    let { matcher, selector } = from[meta];
 
     return function(...args) {
-      return matcher.call(this, this[name], ...args);
+      let s, ctx;
+
+      // allow an optional leading selector
+      if (selector && args.length >= matcher.length) {
+        [s, ...args] = args;
+        ctx = set(scoped(s), { parent: this, chain: true });
+      }
+
+      ctx = ctx || this;
+      let actual = from.get.call(ctx);
+      let { result, message } = matcher.call(ctx, actual, ...args);
+      return { result, message: sel(s, message) };
     };
   } else {
     return null;

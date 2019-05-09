@@ -8,8 +8,8 @@ export default function focusable(selector) {
       result: actual,
       message: () => (
         actual
-          ? 'focusable'
-          : 'not focusable, tabindex must be greater than -1'
+          ? '%s is focusable'
+          : '%s is not focusable, tabindex must be greater than -1'
       )
     })
   );

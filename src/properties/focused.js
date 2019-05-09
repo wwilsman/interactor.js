@@ -10,7 +10,7 @@ export default function focused(selector) {
     actual => ({
       result: actual,
       message: () => (
-        `${actual ? '' : 'not '}focused`
+        `%s ${actual ? 'is' : 'is not'} focused`
       )
     })
   );

@@ -7,7 +7,7 @@ export default function disabled(selector) {
     actual => ({
       result: actual,
       message: () => (
-        `${actual ? '' : 'not '}disabled`
+        `%s ${actual ? 'is' : 'is not'} disabled`
       )
     })
   );

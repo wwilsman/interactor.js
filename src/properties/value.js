@@ -8,8 +8,8 @@ export default function value(selector) {
       result: actual === expected,
       message: () => (
         actual === expected
-          ? `value is "${expected}"`
-          : `value is "${actual}" but expected "${expected}"`
+          ? `%s value is "${expected}"`
+          : `%s value is "${actual}" but expected "${expected}"`
       )
     })
   );

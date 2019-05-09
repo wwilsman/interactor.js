@@ -20,15 +20,29 @@ describe('Interactor properties - value', () => {
     });
 
     describe('and the default assertion', () => {
+      let field = new Interactor('fieldset').timeout(50);
+
       it('resolves when passing', async () => {
         await expect(input.assert.value('hello world')).resolves.toBeUndefined();
         await expect(input.assert.not.value('HELLO')).resolves.toBeUndefined();
+      });
+
+      it('resolves when passing with a selector', async () => {
+        await expect(field.assert.value('input', 'hello world')).resolves.toBeUndefined();
+        await expect(field.assert.not.value('input', 'HELLO')).resolves.toBeUndefined();
       });
 
       it('rejects with an error when failing', async () => {
         await expect(input.assert.value('hallo worldo'))
           .rejects.toThrow('value is "hello world" but expected "hallo worldo"');
         await expect(input.assert.not.value('hello world'))
+          .rejects.toThrow('value is "hello world"');
+      });
+
+      it('rejects with an error when failing with a selector', async () => {
+        await expect(field.assert.value('input', 'hallo worldo'))
+          .rejects.toThrow('value is "hello world" but expected "hallo worldo"');
+        await expect(field.assert.not.value('input', 'hello world'))
           .rejects.toThrow('value is "hello world"');
       });
     });

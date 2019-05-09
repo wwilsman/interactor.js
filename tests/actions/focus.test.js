@@ -34,7 +34,7 @@ describe('Interactor actions - focus', () => {
     it('eventually throws an error when focusing a non-focusable element', async () => {
       let test = testDOMEvent('span', 'focus');
       let input = new Interactor('span').timeout(50);
-      await expect(input.focus()).rejects.toThrow('Failed to focus "span": not focusable');
+      await expect(input.focus()).rejects.toThrow('Failed to focus "span": is not focusable');
       expect(test.result).toBe(false);
     });
   });

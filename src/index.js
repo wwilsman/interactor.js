@@ -35,7 +35,9 @@ import matches from './helpers/matches';
 import * as assertions from './assertions';
 
 const {
-  defineProperties
+  assign,
+  defineProperties,
+  entries
 } = Object;
 
 // some static properties defined here to avoid circular imports
@@ -53,15 +55,23 @@ defineProperties(Interactor, {
 
 const builtIn = toInteractorProperties({
   // properties
-  disabled: disabled(),
-  exists: exists(),
-  focusable: focusable(),
-  focused: focused(),
-  scrollable: scrollable(),
-  scrollableX: scrollableX(),
-  scrollableY: scrollableY(),
-  text: text(),
-  value: value(),
+  ...(entries({
+    disabled,
+    exists,
+    focusable,
+    focused,
+    scrollable,
+    scrollableX,
+    scrollableY,
+    text,
+    value
+  }).reduce((acc, [key, creator]) => {
+    let { [meta]: m, ...descr } = creator();
+    // default property assertions may be given a selector
+    // (handled when assertions are created from computed matchers)
+    assign(descr, { [meta]: { ...m, selector: true } });
+    return assign(acc, { [key]: descr });
+  }, {})),
   // interactions
   blur,
   check,

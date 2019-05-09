@@ -15,7 +15,7 @@ export function scrollableX(selector) {
     actual => ({
       result: actual,
       message: () => (
-        `${actual ? 'has' : 'has no'} overflow-x`
+        `%s ${actual ? 'has' : 'has no'} overflow-x`
       )
     })
   );
@@ -28,7 +28,7 @@ export function scrollableY(selector) {
     actual => ({
       result: actual,
       message: () => (
-        `${actual ? 'has' : 'has no'} overflow-y`
+        `%s ${actual ? 'has' : 'has no'} overflow-y`
       )
     })
   );
@@ -43,7 +43,7 @@ export default function scrollable(selector) {
     actual => ({
       result: actual,
       message: () => (
-        `${actual ? 'has' : 'has no'} overflow`
+        `%s ${actual ? 'has' : 'has no'} overflow`
       )
     })
   );

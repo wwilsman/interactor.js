@@ -1,17 +1,20 @@
-import method from '../helpers/attribute';
+import method, { args } from '../helpers/attribute';
+import { sel } from '../utils/string';
 
-export function validate(attr) {
+export function validate(selector, attr) {
   return (actual, expected) => ({
     result: actual === expected,
-    message: () => (
+    message: sel(selector, () => (
       actual === expected
-        ? `"${attr}" is "${expected}"`
-        : `"${attr}" is "${actual}" but expected "${expected}"`
-    )
+        ? `%s "${attr}" is "${expected}"`
+        : `%s "${attr}" is "${actual}" but expected "${expected}"`
+    ))
   });
 }
 
-export default function attribute(attr, value) {
-  let actual = method.call(this, attr);
-  return validate(attr)(actual, value);
+export default function attribute(...a) {
+  let value = a.pop();
+  let [selector, attr] = args(a);
+  let actual = method.call(this, selector, attr);
+  return validate(selector, attr)(actual, value);
 };
