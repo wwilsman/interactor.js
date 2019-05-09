@@ -6,9 +6,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Added
+
+- Auto-defined assertions based on interactor properties
+- `assert.scoped()` method to replace assertion selectors
+
 ### Changed
 
 - Remove global environment references to better support virtual DOMs
+
+### Fixed
+
+- Nested assertions not appending upwards
 
 ## [1.0.1] - 2019-04-23
 
