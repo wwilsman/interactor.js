@@ -9,15 +9,42 @@ function hasOverflowY(element) {
 }
 
 export function scrollableX(selector) {
-  return computed(selector, hasOverflowX);
+  return computed(
+    selector,
+    hasOverflowX,
+    actual => ({
+      result: actual,
+      message: () => (
+        `${actual ? 'has' : 'has no'} overflow-x`
+      )
+    })
+  );
 }
 
 export function scrollableY(selector) {
-  return computed(selector, hasOverflowY);
+  return computed(
+    selector,
+    hasOverflowY,
+    actual => ({
+      result: actual,
+      message: () => (
+        `${actual ? 'has' : 'has no'} overflow-y`
+      )
+    })
+  );
 }
 
 export default function scrollable(selector) {
-  return computed(selector, element => (
-    hasOverflowX(element) || hasOverflowY(element)
-  ));
+  return computed(
+    selector,
+    element => (
+      hasOverflowX(element) || hasOverflowY(element)
+    ),
+    actual => ({
+      result: actual,
+      message: () => (
+        `${actual ? 'has' : 'has no'} overflow`
+      )
+    })
+  );
 }

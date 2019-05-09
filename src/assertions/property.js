@@ -1,28 +1,21 @@
 import method from '../helpers/property';
-import { q } from '../utils/string';
 
-export default function property(selector, prop, value) {
-  if (!value) {
-    value = prop;
-    prop = selector;
-    selector = null;
-  }
+function q(value) {
+  return typeof value === 'string' ? `"${value}"` : value;
+}
 
-  let actual = method.call(
-    selector ? this.scoped(selector) : this,
-    prop
-  );
-
-  let result = actual === value;
-
-  return {
-    result,
+export function validate(prop) {
+  return (actual, expected) => ({
+    result: actual === expected,
     message: () => (
-      (selector ? `"${selector}" property ` : '') + (
-        result
-          ? q`${prop} is ${value}`
-          : q`${prop} is ${actual} not ${value}`
-      )
+      actual === expected
+        ? `"${prop}" is ${q(expected)}`
+        : `"${prop}" is ${q(actual)} but expected ${q(expected)}`
     )
-  };
+  });
+}
+
+export default function property(prop, value) {
+  let actual = method.call(this, prop);
+  return validate(prop)(actual, value);
 };
