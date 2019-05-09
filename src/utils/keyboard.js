@@ -2,7 +2,12 @@ import dispatch from './dispatch';
 import keyDefinitions from './keydefs';
 import { get } from './meta';
 
-const { assign } = Object;
+const {
+  assign,
+  defineProperty,
+  getOwnPropertyDescriptor
+} = Object;
+
 const K = Symbol('keyboard');
 
 function getTopParent(instance) {
@@ -92,6 +97,12 @@ export function inputText(element, text, options, range) {
   // input events only happen on input elements
   if (!isInput && !element.isContentEditable) return;
 
+  // React has a custom property descriptor for the `value` property of
+  // input elements which dictates when events bubble. To work around this,
+  // we cache any custom value property descriptor and reapply it later
+  let descr = isInput && getOwnPropertyDescriptor(element, 'value');
+  if (descr) delete element.value;
+
   if (!cancelled) {
     cancelled = !dispatch(element, 'beforeinput', opts);
   }
@@ -120,5 +131,10 @@ export function inputText(element, text, options, range) {
     dispatch(element, 'input', assign({
       cancelable: false
     }, opts));
+
+    // restore artificial value property descriptor
+    if (descr) {
+      defineProperty(element, 'value', descr);
+    }
   }
 }

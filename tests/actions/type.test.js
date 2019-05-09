@@ -206,6 +206,28 @@ describe('Interactor actions - type', () => {
       expect(inp.event).toHaveProperty('code', 'Space');
       expect(inp.event).toHaveProperty('charCode', 32);
     });
+
+    it('temporarily removes custom value descriptors', async () => {
+      let input = new Interactor('.input');
+      let triggered = false;
+
+      let { get } = Object.getOwnPropertyDescriptor(
+        input.$element.constructor.prototype,
+        'value'
+      );
+
+      Object.defineProperty(input.$element, 'value', {
+        enumerable: true,
+        configurable: true,
+        set: () => triggered = true,
+        get: () => 'F'
+      });
+
+      await expect(input.type('A')).resolves.toBeUndefined();
+      expect(input.$element.value).toBe('F');
+      expect(get.call(input.$element)).toBe('A');
+      expect(triggered).toBe(false);
+    });
   });
 
   describe('with the action creator', () => {
