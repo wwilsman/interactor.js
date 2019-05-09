@@ -1,22 +1,15 @@
 import method from '../helpers/matches';
 
-export default function matches(selector, match) {
-  if (!match) {
-    match = selector;
-    selector = null;
-  }
-
-  let result = method.call(
-    selector ? this.scoped(selector) : this,
-    match
-  );
-
-  return {
-    result,
+export function validate(match) {
+  return actual => ({
+    result: actual,
     message: () => (
-      (selector ? `"${selector}" ` : '') + (
-        `is ${result ? '' : 'not '}"${match}"`
-      )
+      `${actual ? 'matches' : 'does not match'} "${match}"`
     )
-  };
+  });
+}
+
+export default function matches(match) {
+  let actual = method.call(this, match);
+  return validate(match)(actual);
 };
