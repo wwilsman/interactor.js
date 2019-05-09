@@ -27,6 +27,11 @@ function getAllAssertions(interactor) {
 
   while (proto && proto !== Object.prototype) {
     matchers = assign({}, proto.assert, matchers);
+
+    if (proto.assert[meta]) {
+      matchers[meta] = assign({}, proto.assert[meta], matchers[meta]);
+    }
+
     proto = getPrototypeOf(proto);
   }
 
@@ -117,30 +122,41 @@ const assertProto = {
 };
 
 export function getAssertFor(interactor) {
-  return freeze(
-    defineProperties(
-      assign(
-        assert.bind(interactor),
-        getAllAssertions(interactor),
-        { [meta]: interactor }
-      ),
-      getOwnPropertyDescriptors(
-        assertProto
-      )
-    )
+  let { [meta]: proto, ...assertions } = getAllAssertions(interactor);
+
+  return defineProperties(
+    assign(assert.bind(interactor), assertions, { [meta]: interactor }),
+    assign({}, proto, getOwnPropertyDescriptors(assertProto))
   );
 }
 
 export default function createAsserts(matchers) {
   return freeze(
     entries(matchers).reduce((assertions, [name, validate]) => {
-      return assign(assertions, {
-        [name](...args) {
-          let { validations, expected } = get(this[meta], 'assert');
-          validations = validations.concat({ name, args, expected, validate });
-          return set(this[meta], 'assert', { validations, expected: true });
-        }
-      });
+      /* istanbul ignore else: sanity check */
+      if (typeof validate === 'function') {
+        return assign(assertions, {
+          [name](...args) {
+            let { validations, expected } = get(this[meta], 'assert');
+            validations = validations.concat({ name, args, expected, validate });
+            return set(this[meta], 'assert', { validations, expected: true });
+          }
+        });
+      } else if ('get' in validate || 'value' in validate) {
+        return assign(assertions, {
+          [meta]: {
+            ...assertions[meta],
+            [name]: assign({
+              configurable: true,
+              enumerable: true
+            }, 'value' in validate && {
+              writable: true
+            }, validate)
+          }
+        });
+      } else {
+        return assertions;
+      }
     }, {})
   );
 }

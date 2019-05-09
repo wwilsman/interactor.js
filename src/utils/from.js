@@ -33,7 +33,7 @@ function isPropertyDescriptor(obj) {
      hasOwnProperty.call(obj, 'value'));
 }
 
-export function wrap(from) {
+function wrap(from) {
   return function() {
     let result = typeof from === 'function'
       ? from.apply(this, arguments)
@@ -55,12 +55,7 @@ export function wrap(from) {
 function toInteractorDescriptor(from) {
   // already a property descriptor
   if (isPropertyDescriptor(from)) {
-    // simple values may still need to be transformed
-    if ('value' in from) {
-      return toInteractorDescriptor(from.value);
-    } else {
-      return from;
-    }
+    return from;
 
   // nested interactors get parent references
   } else if (isInteractor(from)) {
@@ -83,6 +78,52 @@ function toInteractorDescriptor(from) {
   }
 }
 
+function toInteractorAssertion(name, from) {
+  if (isInteractor(from) && !get(from, 'queue').length) {
+    return {
+      get() {
+        return this[meta][name].assert;
+      }
+    };
+  } else if (get(from, 'collection')) {
+    return {
+      value(...args) {
+        return this[meta][name](...args).assert;
+      }
+    };
+  } else if (get(from, 'matcher')) {
+    let { matcher } = from[meta];
+
+    return function(...args) {
+      return matcher.call(this, this[name], ...args);
+    };
+  } else {
+    return null;
+  }
+}
+
+export function toInteractorProperties(properties) {
+  return entries(getOwnPropertyDescriptors(
+    checkForReservedPropertyNames(properties)
+  )).reduce((props, [key, descr]) => {
+    // allow raw descriptors
+    /* istanbul ignore next: sanity check */
+    descr = 'value' in descr ? descr.value : descr;
+
+    // check for attached assertions
+    if (descr[meta]) {
+      let assertion = toInteractorAssertion(key, descr);
+      if (assertion) assign(props.assertions, { [key]: assertion });
+      if (!isInteractor(descr)) delete descr[meta];
+    }
+
+    // create interactor descriptor
+    assign(props.descriptors, { [key]: toInteractorDescriptor(descr) });
+
+    return props;
+  }, { descriptors: {}, assertions: {} });
+}
+
 export default function from(properties) {
   let {
     static: {
@@ -92,6 +133,7 @@ export default function from(properties) {
     ...ownProps
   } = properties;
 
+  let props = toInteractorProperties(ownProps);
   let Parent = this.prototype instanceof Interactor
     ? this.prototype.constructor
     : Interactor;
@@ -101,12 +143,7 @@ export default function from(properties) {
   // define properties from descriptors
   defineProperties(
     CustomInteractor.prototype,
-    checkForReservedPropertyNames(
-      entries(getOwnPropertyDescriptors(ownProps))
-        .reduce((acc, [key, descr]) => assign(acc, {
-          [key]: toInteractorDescriptor(descr)
-        }), {})
-    )
+    props.descriptors
   );
 
   // define static properties
@@ -118,7 +155,10 @@ export default function from(properties) {
   // define assertions
   defineProperties(CustomInteractor.prototype, {
     assert: {
-      value: createAsserts(assertions)
+      value: createAsserts({
+        ...props.assertions,
+        ...assertions
+      })
     }
   });
 
