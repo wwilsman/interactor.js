@@ -2,6 +2,7 @@ import expect from 'expect';
 
 import { injectHtml } from '../helpers';
 import interactor, { Interactor, scoped } from 'interactor.js';
+import { get } from '../../src/utils/meta';
 
 describe('Interactor helpers - scoped', () => {
   @interactor class PInteractor {
@@ -69,6 +70,23 @@ describe('Interactor helpers - scoped', () => {
       expect(new ScopedInteractor('#scoped').p).toHaveProperty('a', false);
       expect(new ScopedInteractor('#scoped').p).toHaveProperty('b', true);
     });
+
+    describe('and nested assertions', () => {
+      it('returns a parent instance from nested assertions', () => {
+        expect(new ScopedInteractor().p.assert.text('A'))
+          .toBeInstanceOf(ScopedInteractor);
+        expect(new ScopedInteractor().assert.p.text('A'))
+          .toBeInstanceOf(ScopedInteractor);
+      });
+
+      it('can chain nested assertions', async () => {
+        await expect(
+          new ScopedInteractor('#scoped')
+            .p.assert.not.text('A')
+            .assert.p.text('B')
+        ).resolves.toBeUndefined();
+      });
+    });
   });
 
   describe('using scoped directly', () => {
@@ -90,6 +108,41 @@ describe('Interactor helpers - scoped', () => {
       expect(test).toBeInstanceOf(Interactor);
       expect(test.$element.innerText).toBe('A');
       expect(test.foo).toBe(true);
+    });
+  });
+
+  describe('with an assertion', () => {
+    let test = new Interactor().timeout(50);
+
+    it('is scoped to a specific element', async () => {
+      await expect(
+        test.assert.scoped('#scoped').text('B')
+      ).resolves.toBeUndefined();
+    });
+
+    it('throw an error with the proper scope', async () => {
+      await expect(
+        test.assert.scoped('#scoped').not.text('B')
+      ).rejects.toThrow('"#scoped" assertion failed: text is "B"');
+    });
+
+    it('can be chained with the parent interactor', async () => {
+      let next = new Interactor('#scoped');
+      expect(get(next, 'assert').validations).toHaveLength(0);
+
+      next = next.trigger('event')
+        .assert.scoped('.test-p').text('B');
+
+      expect(get(next, 'assert').validations).toHaveLength(1);
+      expect(get(next, 'queue')).toHaveLength(1);
+
+      next = next.trigger('event')
+        .assert.attribute('id', 'scoped');
+
+      expect(get(next, 'assert').validations).toHaveLength(1);
+      expect(get(next, 'queue')).toHaveLength(3);
+
+      await expect(next).resolves.toBeUndefined();
     });
   });
 });
