@@ -25,6 +25,8 @@ function collectStats(accumulator, stats) {
 }
 
 export function runAssertion(context, subject, stats) {
+  context = subject.ctx || context;
+
   let timeout = stats.timeout - getElapsedSince(stats.start, stats.timeout);
   let arg = subject.assertion.length ? context.$element : undefined;
   let assertion = subject.assertion.bind(context, arg);
@@ -47,6 +49,8 @@ export function runAssertion(context, subject, stats) {
 }
 
 export function runCallback(context, subject, stats) {
+  context = subject.ctx || context;
+
   let start = now();
   let arg = subject.callback.length ? context.$element : undefined;
   let result = subject.callback.call(context, arg);

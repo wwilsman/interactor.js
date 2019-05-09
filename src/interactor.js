@@ -200,9 +200,9 @@ export default class Interactor {
       return promise.then(() => {
         /* istanbul ignore else: unnecessary */
         if (subject.assertion) {
-          return runAssertion(this, subject, stats);
+          return runAssertion(next, subject, stats);
         } else if (subject.callback) {
-          return runCallback(this, subject, stats);
+          return runCallback(next, subject, stats);
         }
       });
     }, Promise.resolve());
