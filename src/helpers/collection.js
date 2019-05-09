@@ -1,4 +1,5 @@
 import Interactor from '../interactor';
+import meta from '../utils/meta';
 
 const {
   getPrototypeOf
@@ -31,16 +32,22 @@ export default function collection(selector, properties) {
     };
   }
 
-  return function(...args) {
-    if (args.length) {
-      return new ItemInteractor({
-        scope: () => scope.apply(this, args),
-        detached: false
-      });
-    } else {
-      return this.$$(scope.call(this)).map(item => {
-        return new ItemInteractor(item);
-      });
+  return {
+    [meta]: {
+      collection: true
+    },
+    value(...args) {
+      if (args.length) {
+        return new ItemInteractor({
+          scope: () => scope.apply(this, args),
+          parent: this,
+          chain: true
+        });
+      } else {
+        return this.$$(scope.call(this)).map(item => {
+          return new ItemInteractor(item);
+        });
+      }
     }
   };
 }

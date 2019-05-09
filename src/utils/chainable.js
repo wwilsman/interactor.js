@@ -1,3 +1,4 @@
+import isInteractor from './is-interactor';
 import { get, set } from './meta';
 
 const {
@@ -14,21 +15,25 @@ function isSameType(a, b) {
 
 function chainable(fn) {
   return function(...args) {
+    // assertions hold the interactor in meta
+    let isInstance = isInteractor(this);
+    let interactor = isInstance ? this : get(this);
+
     // use an instance with no chaining to prevent upwards reflection
-    let results = fn.apply(this.only(), args);
+    let results = fn.apply(isInstance ? this.only() : this, args);
 
-    // chain new children and correct parent chaining
-    if (isSameType(this, get(results, 'parent'))) {
-      results = set(results, { parent: this, chain: true });
-    }
+    if (isInteractor(results)) {
+      let parent = get(results, 'parent');
 
-    // when the instance is the same type as it's parent it always
-    // enters the above branch, which is safe, but we still need it to
-    // enter the branch below; so no `else` branch is necessary
+      // chain new children and correct parent chaining
+      if (isSameType(interactor, parent) && get(interactor, 'parent') !== parent) {
+        results = set(results, { parent: interactor, chain: true });
+      }
 
-    // roll up the parent chain with append
-    if (isSameType(this, results)) {
-      results = get(this, 'parent').append(results);
+      // roll up the parent chain with append
+      if (isSameType(interactor, results)) {
+        results = get(interactor, 'parent').append(results);
+      }
     }
 
     return results;
@@ -48,6 +53,24 @@ function getAllDescriptors(instance) {
   return descr;
 }
 
+function chainAssert(assert) {
+  return defineProperties(assert, entries(
+    getOwnPropertyDescriptors(assert)
+  ).reduce((acc, [key, descriptor]) => {
+    let { value } = descriptor;
+
+    if (typeof value === 'function' && key !== 'scoped') {
+      return assign(acc, {
+        [key]: assign(descriptor, {
+          value: chainable(value)
+        })
+      });
+    } else {
+      return acc;
+    }
+  }, {}));
+}
+
 export default function makeChainable(instance) {
   defineProperties(
     instance,
@@ -64,8 +87,12 @@ export default function makeChainable(instance) {
         }
 
         // make methods and getters chainable
-        /* istanbul ignore else: unnecessary */
-        if (typeof value === 'function') {
+        /* istanbul ignore else: sanity check */
+        if (key === 'assert') {
+          assign(descriptor, {
+            value: chainAssert(value)
+          });
+        } else if (typeof value === 'function') {
           assign(descriptor, {
             value: chainable(value)
           });
@@ -73,6 +100,8 @@ export default function makeChainable(instance) {
           assign(descriptor, {
             get: chainable(get)
           });
+        } else {
+          return acc;
         }
 
         return assign(acc, {
