@@ -32,7 +32,7 @@ describe('Interactor properties - attribute', () => {
       bar = attribute('span', 'data-bar');
     }
 
-    let div = new DivInteractor();
+    let div = new DivInteractor().timeout(50);
 
     it('returns the value of the specified attribute', () => {
       expect(div).toHaveProperty('foo', 'bar');
@@ -40,6 +40,27 @@ describe('Interactor properties - attribute', () => {
 
     it('returns the value of the specified element attribute', () => {
       expect(div).toHaveProperty('bar', 'baz');
+    });
+
+    describe('and the auto-defined assertion', () => {
+      it('has an auto-defined assertion', () => {
+        expect(div.assert).toHaveProperty('foo', expect.any(Function));
+        expect(div.assert).toHaveProperty('bar', expect.any(Function));
+      });
+
+      it('resolves when passing', async () => {
+        await expect(div.assert.foo('bar')).resolves.toBeUndefined();
+        await expect(div.assert.bar('baz')).resolves.toBeUndefined();
+        await expect(div.assert.not.foo('baz')).resolves.toBeUndefined();
+        await expect(div.assert.not.bar('foo')).resolves.toBeUndefined();
+      });
+
+      it('rejects with an error when failing', async () => {
+        await expect(div.assert.foo('baz'))
+          .rejects.toThrow('"data-foo" is "bar" but expected "baz"');
+        await expect(div.assert.not.bar('baz'))
+          .rejects.toThrow('"data-bar" is "baz"');
+      });
     });
   });
 });

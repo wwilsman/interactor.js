@@ -166,7 +166,7 @@ describe('Interactor assertions', () => {
   describe('formatting error messages', () => {
     it('has a default format', async () => {
       await expect(instance.assert.passing())
-        .rejects.toThrow('Failed validating CustomInteractor: `passing` returned false');
+        .rejects.toThrow('CustomInteractor assertion failed: `passing` returned false');
     });
 
     it('can specify a custom format', async () => {
@@ -184,7 +184,7 @@ describe('Interactor assertions', () => {
           .assert.f('%s Error: %e')
           .assert.validate()
           .assert.passing()
-      ).rejects.toThrow('Failed validating CustomInteractor: `passing` returned false');
+      ).rejects.toThrow('CustomInteractor assertion failed: `passing` returned false');
     });
   });
 
