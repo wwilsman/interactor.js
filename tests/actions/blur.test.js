@@ -37,7 +37,7 @@ describe('Interactor actions - blur', () => {
     it('eventually throws an error when blurring a non-focused element', async () => {
       let test = testDOMEvent('input', 'blur');
       let input = new Interactor('input').timeout(50);
-      await expect(input.blur()).rejects.toThrow('Failed to blur "input": not focused');
+      await expect(input.blur()).rejects.toThrow('Failed to blur "input": is not focused');
       expect(test.result).toBe(false);
     });
   });

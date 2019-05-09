@@ -1,15 +1,17 @@
-import method from '../helpers/matches';
+import method, { args } from '../helpers/matches';
+import { sel } from '../utils/string';
 
-export function validate(match) {
+export function validate(selector, match) {
   return actual => ({
     result: actual,
-    message: () => (
-      `${actual ? 'matches' : 'does not match'} "${match}"`
-    )
+    message: sel(selector, () => (
+      `%s ${actual ? 'matches' : 'does not match'} "${match}"`
+    ))
   });
 }
 
-export default function matches(match) {
-  let actual = method.call(this, match);
-  return validate(match)(actual);
+export default function matches() {
+  let [selector, match] = args(arguments);
+  let actual = method.call(this, selector, match);
+  return validate(selector, match)(actual);
 };

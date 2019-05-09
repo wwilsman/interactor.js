@@ -12,7 +12,7 @@ export default function exists(selector) {
     actual => ({
       result: actual,
       message: () => (
-        actual ? 'exists' : 'does not exist'
+        actual ? '%s exists' : '%s does not exist'
       )
     })
   );

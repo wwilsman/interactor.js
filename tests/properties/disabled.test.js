@@ -25,16 +25,30 @@ describe('Interactor properties - disabled', () => {
     });
 
     describe('and the default assertion', () => {
+      let field = new Interactor('fieldset').timeout(50);
+
       it('resolves when passing', async () => {
         await expect(input.assert.disabled()).resolves.toBeUndefined();
         input.$element.disabled = false;
         await expect(input.assert.not.disabled()).resolves.toBeUndefined();
       });
 
-      it('rejects with an error when failing', async () => {
-        await expect(input.assert.not.disabled()).rejects.toThrow('disabled');
+      it('resolves when passing with a selector', async () => {
+        await expect(field.assert.disabled('input')).resolves.toBeUndefined();
         input.$element.disabled = false;
-        await expect(input.assert.disabled()).rejects.toThrow('not disabled');
+        await expect(field.assert.not.disabled('input')).resolves.toBeUndefined();
+      });
+
+      it('rejects with an error when failing', async () => {
+        await expect(input.assert.not.disabled()).rejects.toThrow('is disabled');
+        input.$element.disabled = false;
+        await expect(input.assert.disabled()).rejects.toThrow('is not disabled');
+      });
+
+      it('rejects with an error when failing with a selector', async () => {
+        await expect(field.assert.not.disabled('input')).rejects.toThrow('"input" is disabled');
+        input.$element.disabled = false;
+        await expect(field.assert.disabled('input')).rejects.toThrow('"input" is not disabled');
       });
     });
   });

@@ -25,11 +25,23 @@ describe('Interactor properties - text', () => {
         await expect(p.assert.not.text('WORLD')).resolves.toBeUndefined();
       });
 
+      it('resolves when passing with a selector', async () => {
+        await expect(p.assert.text('span', 'WORLD')).resolves.toBeUndefined();
+        await expect(p.assert.not.text('span', 'Hello WORLD!')).resolves.toBeUndefined();
+      });
+
       it('rejects with an error when failing', async () => {
         await expect(p.assert.text('hello world'))
           .rejects.toThrow('text is "Hello WORLD!" but expected "hello world"');
         await expect(p.assert.not.text('Hello WORLD!'))
           .rejects.toThrow('text is "Hello WORLD!"');
+      });
+
+      it('rejects with an error when failing with a selector', async () => {
+        await expect(p.assert.text('span', 'world'))
+          .rejects.toThrow('text is "WORLD" but expected "world"');
+        await expect(p.assert.not.text('span', 'WORLD'))
+          .rejects.toThrow('text is "WORLD"');
       });
     });
   });

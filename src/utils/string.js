@@ -1,9 +1,11 @@
-export function q(strings, ...values) {
-  return strings.reduce((str, string, i) => {
-    return str + string + (
-      typeof values[i] === 'string'
-        ? `"${values[i]}"`
-        : values[i]
-    );
-  }, '');
+export function sel(selector, message) {
+  return () => message()
+    .replace('%s', selector ? `"${selector}"` : '')
+    .trim();
+}
+
+export function q(value) {
+  return typeof value === 'string'
+    ? `"${value}"`
+    : value;
 }
