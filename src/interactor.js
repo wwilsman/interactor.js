@@ -144,13 +144,40 @@ export default class Interactor {
       throw new Error(`expected an interactor instance, instead recieved "${interactor}"`);
     }
 
-    return set(this.assert.validate(), {
-      queue: get(interactor, 'queue')
-    });
+    let { assert, queue } = get(interactor);
+    let next = this;
+
+    if (queue.length) {
+      next = set(next.assert.validate(), {
+        // provide context to appended queue items
+        queue: queue.map(item => ({
+          ctx: interactor,
+          ...item
+        }))
+      });
+    }
+
+    if (assert.validations.length) {
+      let { validations } = get(next, 'assert');
+
+      next = set(next, 'assert', {
+        expected: assert.expected,
+        validations: validations.concat(
+          // provide context to appended validations
+          assert.validations.map(matcher => ({
+            ctx: interactor,
+            ...matcher
+          }))
+        )
+      });
+    }
+
+    return next;
   }
 
   run() {
-    let { timeout, queue } = get(this.assert.validate());
+    let next = this.assert.validate();
+    let { timeout, queue } = get(next);
     let start = now();
 
     let stats = {
