@@ -1,6 +1,7 @@
 import Interactor from './interactor';
 import from, { toInteractorProperties } from './utils/from';
 import createAsserts from './utils/assert';
+import meta, { set } from './utils/meta';
 
 // property creators
 import disabled from './properties/disabled';
@@ -93,6 +94,16 @@ defineProperties(Interactor.prototype, {
     value: createAsserts({
       ...builtIn.assertions,
       ...assertions,
+
+      // defined here to avoid circular imports
+      scoped: {
+        value(...args) {
+          return set(scoped(...args), {
+            parent: this[meta],
+            chain: true
+          }).assert;
+        }
+      }
     })
   }
 });
