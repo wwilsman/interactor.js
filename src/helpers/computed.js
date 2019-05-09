@@ -1,5 +1,8 @@
-export default function computed(selector, getter) {
-  if (arguments.length === 1) {
+import meta from '../utils/meta';
+
+export default function computed(selector, getter, matcher) {
+  if (selector && typeof selector !== 'string') {
+    matcher = getter;
     getter = selector;
     selector = null;
   }
@@ -8,6 +11,10 @@ export default function computed(selector, getter) {
     enumerable: false,
     configurable: false,
 
+    // auto-define an assertion
+    [meta]: { matcher },
+
+    // computed getter
     get() {
       return getter.call(this, (
         selector ? this.$(selector) : (
