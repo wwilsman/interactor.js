@@ -1,5 +1,5 @@
 import Interactor from './interactor';
-import from, { wrap } from './utils/from';
+import from, { toInteractorProperties } from './utils/from';
 import createAsserts from './utils/assert';
 
 // property creators
@@ -34,9 +34,7 @@ import matches from './helpers/matches';
 import * as assertions from './assertions';
 
 const {
-  assign,
-  defineProperties,
-  entries
+  defineProperties
 } = Object;
 
 // some static properties defined here to avoid circular imports
@@ -52,59 +50,50 @@ defineProperties(Interactor, {
   }
 });
 
-// property creators
-defineProperties(
-  Interactor.prototype,
-  entries({
-    disabled,
-    exists,
-    focusable,
-    focused,
-    scrollable,
-    scrollableX,
-    scrollableY,
-    text,
-    value
-  }).reduce((descriptors, [name, creator]) => {
-    return assign(descriptors, {
-      [name]: creator()
-    });
-  }, {})
-);
+const builtIn = toInteractorProperties({
+  // properties
+  disabled: disabled(),
+  exists: exists(),
+  focusable: focusable(),
+  focused: focused(),
+  scrollable: scrollable(),
+  scrollableX: scrollableX(),
+  scrollableY: scrollableY(),
+  text: text(),
+  value: value(),
+  // interactions
+  blur,
+  check,
+  click,
+  focus,
+  keydown,
+  keyup,
+  press,
+  scroll,
+  select,
+  trigger,
+  type,
+  uncheck,
+  // helpers
+  scoped,
+  attribute,
+  property,
+  matches
+});
 
-// interactions / methods
+// built-in methods & properties
 defineProperties(
   Interactor.prototype,
-  entries({
-    blur,
-    check,
-    click,
-    focus,
-    keydown,
-    keyup,
-    press,
-    scroll,
-    select,
-    trigger,
-    type,
-    uncheck,
-    scoped,
-    attribute,
-    property,
-    matches
-  }).reduce((descriptors, [name, method]) => {
-    return assign(descriptors, {
-      [name]: {
-        value: wrap(method)
-      }
-    });
-  }, {})
+  builtIn.descriptors
 );
 
 // assertions
 defineProperties(Interactor.prototype, {
   assert: {
-    value: createAsserts(assertions)
+    value: createAsserts({
+      ...builtIn.assertions,
+      ...assertions,
+    })
   }
 });
 
