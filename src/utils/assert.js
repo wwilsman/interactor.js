@@ -47,11 +47,11 @@ function validate(interactor) {
 
   function assertion() {
     return validations.reduce((ret, matcher) => {
-      let { name, validate, args, expected } = matcher;
+      let { name, validate, args, expected, ctx = this } = matcher;
       let result, message;
 
       try {
-        result = validate.apply(this, args);
+        result = validate.apply(ctx, args);
       } catch (e) {
         result = false;
         message = () => e.message;
@@ -72,7 +72,7 @@ function validate(interactor) {
       if (pass !== expected) {
         throw new Error(
           format
-            .replace('%s', getScopeName(this))
+            .replace('%s', getScopeName(ctx))
             .replace('%e', message())
         );
       }
@@ -103,6 +103,7 @@ function assert(assertion) {
 const assertProto = {
   get not() {
     let next = set(this[meta], 'assert', { expected: false });
+    next = set(next, { chain: !!get(next, 'parent') });
     return next.assert;
   },
 
