@@ -46,7 +46,7 @@ export default class Interactor {
     let assert = freeze(
       assign({
         expected: true,
-        format: 'Failed validating %s: %e',
+        format: '%s assertion failed: %e',
         remains: false,
         validations: []
       }, (
