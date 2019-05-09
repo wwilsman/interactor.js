@@ -34,7 +34,7 @@ describe('Interactor properties - matches', () => {
       isBar = matches('span', 'span.bar');
     }
 
-    let div = new DivInteractor();
+    let div = new DivInteractor().timeout(50);
 
     it('returns true when matching', () => {
       expect(div).toHaveProperty('isFoo', true);
@@ -42,6 +42,23 @@ describe('Interactor properties - matches', () => {
 
     it('returns true when the specified element matches', () => {
       expect(div).toHaveProperty('isBar', true);
+    });
+
+    describe('and the auto-defined assertion', () => {
+      it('has an auto-defined assertion', () => {
+        expect(div.assert).toHaveProperty('isFoo', expect.any(Function));
+        expect(div.assert).toHaveProperty('isBar', expect.any(Function));
+      });
+
+      it('resolves when passing', async () => {
+        await expect(div.assert.isFoo()).resolves.toBeUndefined();
+        await expect(div.assert.isBar()).resolves.toBeUndefined();
+      });
+
+      it('rejects when failing', async () => {
+        await expect(div.assert.not.isFoo()).rejects.toThrow('matches "div.foo"');
+        await expect(div.assert.not.isBar()).rejects.toThrow('matches "span.bar"');
+      });
     });
   });
 });

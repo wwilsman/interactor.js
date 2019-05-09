@@ -20,25 +20,9 @@ describe('Interactor assertions - attribute', () => {
 
     it('rejects with an error when failing', async () => {
       await expect(div.assert.attribute('data-foo', 'baz'))
-        .rejects.toThrow('"data-foo" is "bar" not "baz"');
+        .rejects.toThrow('"data-foo" is "bar" but expected "baz"');
       await expect(div.assert.not.attribute('data-foo', 'bar'))
         .rejects.toThrow('"data-foo" is "bar"');
-    });
-
-    describe('and a selector', () => {
-      let test = new Interactor().timeout(50);
-
-      it('resolves when passing', async () => {
-        await expect(test.assert.attribute('.foobar', 'data-foo', 'bar')).resolves.toBeUndefined();
-        await expect(test.assert.not.attribute('.foobar', 'data-bar', 'baz')).resolves.toBeUndefined();
-      });
-
-      it('rejects with an error when failing', async () => {
-        await expect(test.assert.attribute('.foobar', 'data-foo', 'baz'))
-          .rejects.toThrow('".foobar" attribute "data-foo" is "bar" not "baz"');
-        await expect(test.assert.not.attribute('.foobar', 'data-foo', 'bar'))
-          .rejects.toThrow('".foobar" attribute "data-foo" is "bar"');
-      });
     });
   });
 });

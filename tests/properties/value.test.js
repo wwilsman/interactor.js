@@ -13,10 +13,24 @@ describe('Interactor properties - value', () => {
   });
 
   describe('with the default property', () => {
-    let input = new Interactor('input');
+    let input = new Interactor('input').timeout(50);
 
     it('returns the value of the element', () => {
       expect(input).toHaveProperty('value', 'hello world');
+    });
+
+    describe('and the default assertion', () => {
+      it('resolves when passing', async () => {
+        await expect(input.assert.value('hello world')).resolves.toBeUndefined();
+        await expect(input.assert.not.value('HELLO')).resolves.toBeUndefined();
+      });
+
+      it('rejects with an error when failing', async () => {
+        await expect(input.assert.value('hallo worldo'))
+          .rejects.toThrow('value is "hello world" but expected "hallo worldo"');
+        await expect(input.assert.not.value('hello world'))
+          .rejects.toThrow('value is "hello world"');
+      });
     });
   });
 
@@ -24,12 +38,45 @@ describe('Interactor properties - value', () => {
     @interactor class FieldInteractor {
       static defaultScope = 'fieldset';
       value = value('input');
+      foo = value('input');
     }
 
-    let field = new FieldInteractor();
+    let field = new FieldInteractor().timeout(50);
 
     it('returns the value of the specified element', () => {
       expect(field).toHaveProperty('value', 'hello world');
+    });
+
+    describe('and the default assertion', () => {
+      it('resolves when passing', async () => {
+        await expect(field.assert.value('hello world')).resolves.toBeUndefined();
+        await expect(field.assert.not.value('HELLO')).resolves.toBeUndefined();
+      });
+
+      it('rejects with an error when failing', async () => {
+        await expect(field.assert.value('hallo worldo'))
+          .rejects.toThrow('value is "hello world" but expected "hallo worldo"');
+        await expect(field.assert.not.value('hello world'))
+          .rejects.toThrow('value is "hello world"');
+      });
+    });
+
+    describe('and the auto-defined assertion', () => {
+      it('has an auto-defined assertion', () => {
+        expect(field.assert).toHaveProperty('foo', expect.any(Function));
+      });
+
+      it('resolves when passing', async () => {
+        await expect(field.assert.foo('hello world')).resolves.toBeUndefined();
+        await expect(field.assert.not.foo('HELLO')).resolves.toBeUndefined();
+      });
+
+      it('rejects with an error when failing', async () => {
+        await expect(field.assert.foo('hallo worldo'))
+          .rejects.toThrow('value is "hello world" but expected "hallo worldo"');
+        await expect(field.assert.not.foo('hello world'))
+          .rejects.toThrow('value is "hello world"');
+      });
     });
   });
 });

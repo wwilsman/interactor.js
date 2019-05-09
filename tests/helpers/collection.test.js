@@ -98,6 +98,16 @@ describe('Interactor helpers - collection', () => {
     expect(test.items(0).click()).toBeInstanceOf(CollectionInteractor);
   });
 
+  it('has nested collection assertions', async () => {
+    await expect(test.items(0).assert.matches('.a')).resolves.toBeUndefined();
+    await expect(test.assert.items(0).matches('.a')).resolves.toBeUndefined();
+  });
+
+  it('returns new parent instances from collection assertions', () => {
+    expect(test.items(0).assert.matches('.a')).toBeInstanceOf(CollectionInteractor);
+    expect(test.assert.items(0).matches('.a')).toBeInstanceOf(CollectionInteractor);
+  });
+
   it('returns own instances from collection methods after calling #only', () => {
     expect(test.byClassName('a').only()).toBeInstanceOf(ItemInteractor);
     expect(test.byClassName('a').only().click()).toBeInstanceOf(ItemInteractor);
