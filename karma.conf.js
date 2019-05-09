@@ -2,7 +2,7 @@ module.exports = (config) => {
   config.set({
     frameworks: ['mocha'],
     reporters: ['mocha', 'coverage'],
-    browsers: ['Chrome'],
+    browsers: ['ChromeHeadless'],
 
     files: [
       { pattern: 'tests/index.js', watched: false }
