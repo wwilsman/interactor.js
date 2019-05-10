@@ -103,9 +103,19 @@ describe('Interactor helpers - collection', () => {
     await expect(test.assert.items(0).matches('.a')).resolves.toBeUndefined();
   });
 
+  it('has a nested count assertion when given no arguments', async () => {
+    await expect(test.assert.items().count(4)).resolves.toBeUndefined();
+    await expect(test.assert.items().not.count(5)).resolves.toBeUndefined();
+    await expect(test.assert.items().count(5))
+      .rejects.toThrow('found 4 ".test-item" elements but expected 5');
+    await expect(test.assert.items().not.count(4))
+      .rejects.toThrow('found 4 ".test-item" elements');
+  });
+
   it('returns new parent instances from collection assertions', () => {
     expect(test.items(0).assert.matches('.a')).toBeInstanceOf(CollectionInteractor);
     expect(test.assert.items(0).matches('.a')).toBeInstanceOf(CollectionInteractor);
+    expect(test.assert.items().count(4)).toBeInstanceOf(CollectionInteractor);
   });
 
   it('returns own instances from collection methods after calling #only', () => {
