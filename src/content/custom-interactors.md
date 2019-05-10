@@ -61,10 +61,8 @@ describe('logging in', () => {
       .email.blur();
       // the error might appear milliseconds after blurring, so
       // let's take advantage of interactor's async assertions
-      .assert(() => {
-        expect(loginForm.email.hasError).toBe(true);
-        expect(loginForm.email.errorMessage).toBe('Invalid email address');
-      });
+      .assert.email.hasError()
+      .assert.email.errorMessage('Invalid email address');
   });
 
   it('can successfully login', async () => {
@@ -72,8 +70,8 @@ describe('logging in', () => {
       .email.type('email@domain.tld')
       .password.type('CorrectHorseBatteryStaple')
       .submit()
+      // assert that a user logged in asynchronously
       .assert(() => {
-        // user created during test setup
         expect(user.loggedIn).toBe(true);
       });
   });
@@ -92,16 +90,88 @@ acceptance tests.
 
 ## Custom assertions
 
-Assertions can be added to custom interactors using the static `assertions`
-property. An assertion can be a function that throws an error or returns a
-boolean value. To control the error message, return an object consisting of the
-result of the validation and a message function called when an assertion
-fails. This is especially recommended when negating custom assertions, otherwise
-a generic error message will be thrown.
+Custom properties created using the [built-in property creators](/properties/)
+automatically create custom assertions as well.
+
+In the example above, we defined a few custom interactor properties for the
+field interactor. Then in our tests, we asserted against those properties both
+by referencing the property, and by using the auto-defined assertion.
+
+``` javascript
+import interactor, {
+  matches,
+  text
+} from 'interactor.js';
+
+@interactor class FieldInteractor {
+  label = text('.label');
+  hasError = matches('.has-error');
+  errorMessage = text('.error-message');
+}
+
+// ...
+
+// use any assertion library
+expect(field.label).toBe('Password');
+expect(field.hasError).toBe(true);
+expect(field.errorMessage).toBe('Incorrect password');
+
+// or use interactor's async assertions
+await field
+  .assert.label('Password')
+  .assert.hasError()
+  .assert.errorMessage('Incorrect password');
+```
+
+Nested assertions work the same way as nested actions and return the top-most
+parent interactor. Like other assertions, they are also grouped with neighboring
+assertions until an action is called.
+
+``` javascript
+import interactor, {
+  collection
+  property,
+  scoped
+} from 'interactor.js';
+
+@interactor class FormInteractor {
+  name = scoped('input');
+
+  options = collection('[type=radio]', {
+    checked: property('checked')
+  });
+
+  submit = scoped('submit');
+}
+
+// ...
+
+new FormInteractor()
+  // the following assertions are grouped together
+  .assert.name.value('Name Namerson')
+  .assert.options(2).checked()
+  .assert.submit.not.disabled()
+  // assertion after actions are grouped separately
+  .submit.click()
+  .assert.submit.matches('.loading')
+  .assert.submit.disabled()
+```
+
+### Advanced assertions
+
+Assertions can also be added to custom interactors using the static `assertions`
+property. An assertion defined this way can be a function that throws an error
+or returns a boolean value. To control the error message, return an object
+consisting of the result of the validation and a message function called when an
+assertion fails. This is especially recommended when negating custom assertions,
+otherwise a generic error message will be thrown.
 
 <!-- tabbed: field-interactor.js -->
 ``` javascript
-import interactor, { matches, text } from 'interactor.js';
+import interactor, {
+  matches,
+  text
+} from 'interactor.js';
 
 @interactor class FieldInteractor {
   static assertions = {
