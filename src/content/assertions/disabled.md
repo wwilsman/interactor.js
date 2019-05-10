@@ -8,9 +8,8 @@ title: Disabled
 
 The `disabled()` assertion mirrors the corresponding [interactor
 property](/properties/disabled) and asserts that an element is disabled. If the
-optional selector is omitted, and the corresponding property has been redefined,
-the new property will be used to assert against. When a selector is provided, a
-new scoped interactor is created to perform the assertion.
+corresponding property has been redefined, a new assertion is defined which does
+not accept a selector.
 
 ``` javascript
 // with a scoped selector
@@ -21,12 +20,12 @@ await new Interactor('.signup-form')
 await new Interactor('.signup-form .submit')
   .assert.disabled()
 
-// when the corrisponding property is overridden
+// when the corresponding property is overridden
 @interactor class FieldInteractor {
   disabled = matches('.is-disabled')
 }
 
-// if given a selector, the default behavior would be used
+// the scoped selector argument is no longer available
 await new FieldInteractor('.email-field')
   .assert.disabled()
 ```

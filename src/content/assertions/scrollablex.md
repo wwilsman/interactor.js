@@ -8,10 +8,8 @@ title: ScrollableX
 
 The `scrollableX()` assertion mirrors the corresponding [interactor
 property](/properties/scrollablex) and asserts that an element is scrollable in
-the horizontal direction. If the optional selector is omitted, and the
-corresponding property has been redefined, the new property will be used to
-assert against. When a selector is provided, a new scoped interactor is created
-to perform the assertion.
+the horizontal direction. If the corresponding property has been redefined, a
+new assertion is defined which does not accept a selector.
 
 ``` javascript
 // with a scoped selector
@@ -22,12 +20,12 @@ await new Interactor('.page')
 await new Interactor('.has-overflow-x')
   .assert.scrollableX()
 
-// when the corrisponding property is overridden
+// when the corresponding property is overridden
 @interactor class PageInteractor {
   scrollableX = scrollableX('.content')
 }
 
-// if given a selector, the default behavior would be used
+// the scoped selector argument is no longer available
 await new PageInteractor('.data-page')
   .assert.scrollableX()
 ```

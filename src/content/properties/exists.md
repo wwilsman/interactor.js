@@ -12,7 +12,7 @@ new Interactor('#bar').exists //=> false
 ```
 
 The property creator can be used with custom interactors to reflect the
-existance of a nested element.
+existance of a nested element, and to make assertions against.
 
 ``` javascript
 import interactor, { exists } from 'interactor.js';
@@ -23,4 +23,7 @@ import interactor, { exists } from 'interactor.js';
 
 new CardInteractor('.info-card').hasCTA //=> false
 new CardInteractor('.action-card').hasCTA //=> true
+
+await new CardInteractor('.info-card')
+ .assert.not.hasCTA()
 ```

@@ -9,10 +9,8 @@ title: Text
 
 The `text()` assertion mirrors the corresponding [interactor
 property](/properties/text) and asserts that an element's innerText property is
-equal to the specified string. If the optional selector is omitted, and the
-corresponding property has been redefined, the new property will be used to
-assert against. When a selector is provided, a new scoped interactor is created
-to perform the assertion.
+equal to the specified string. If the corresponding property has been redefined,
+a new assertion is defined which does not accept a selector.
 
 ``` javascript
 // with a scoped selector
@@ -23,12 +21,12 @@ await new Interactor('.email-field')
 await new Interactor('.title')
   .assert.text('Welcome!')
 
-// when the corrisponding property is overridden
+// when the corresponding property is overridden
 @interactor class FieldInteractor {
   text = text('label')
 }
 
-// if given a selector, the default behavior would be used
+// the scoped selector argument is no longer available
 await new FieldInteractor('.name-field')
   .assert.text('Full Name')
 ```

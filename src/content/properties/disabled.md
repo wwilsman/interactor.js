@@ -14,7 +14,7 @@ new Interactor('#bar').disabled //=> true
 ```
 
 The property creator can be used with custom interactors to reflect the value of
-a nested element.
+a nested element, and to make assertions against.
 
 ``` javascript
 import interactor, { disabled } from 'interactor.js';
@@ -28,4 +28,7 @@ import interactor, { disabled } from 'interactor.js';
 // </fieldset>
 
 new FieldInteractor('#field').disabled //=> true
+
+await new FieldInteractor('#field')
+  .assert.disabled()
 ```

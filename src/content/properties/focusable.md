@@ -14,7 +14,7 @@ new Interactor('.content').focusable //=> false
 ```
 
 The property creator can be used with custom interactors to reflect whether a
-nested element is focusable or not.
+nested element is focusable or not, and to make assertions against.
 
 ``` javascript
 import interactor, { focusable } from 'interactor.js';
@@ -24,4 +24,7 @@ import interactor, { focusable } from 'interactor.js';
 }
 
 new FieldInteractor('.field').focusable //=> true
+
+await new FieldInteractor('.field')
+  .assert.focusable()
 ```

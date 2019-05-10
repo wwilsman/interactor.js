@@ -15,7 +15,7 @@ new Interactor('p').text //=> "HELLO WORLD!"
 ```
 
 The property creator can be used with custom interactors to retrieve a nested
-element's text.
+element's text, and to make assertions against.
 
 ``` javascript
 import interactor, { text } from 'interactor.js';
@@ -25,4 +25,7 @@ import interactor, { text } from 'interactor.js';
 }
 
 new FieldInteractor('.email').label //=> "Email Address:"
+
+await new FieldInteractor('.email')
+  .assert.label('Email Address:')
 ```

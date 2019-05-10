@@ -36,7 +36,7 @@ email.matches('.foobar', '[data-foo]') //=> Error: unable to find ".foobar"
 The `matches()` property creator can be used with custom interactors to create a
 lazy getter property that returns true or false if the element matches the
 selector or not. When no selector is provided, it matches on the interactor's
-element.
+element. It also automatically defines a matching assert method.
 
 ``` javascript
 import interactor, { matches } from 'interactor.js';
@@ -48,4 +48,8 @@ import interactor, { matches } from 'interactor.js';
 
 new FieldInteractor('.email-field').hasErrors //=> true
 new FieldInteractor('.pass-field').isEmail //=> false
+
+await new FieldInteractor('.pass-field')
+  .assert.not.hasErrors()
+  .assert.not.isEmail()
 ```
