@@ -34,7 +34,8 @@ loginForm.attribute('.foobar', 'data-foo') //=> Error: unable to find ".foobar"
 
 The `attribute()` property creator can be used with custom interactors to create
 a lazy getter property that returns the attribute of the specified element. When
-no selector is provided, it returns the attribute of the interactor's element.
+no selector is provided, it returns the attribute of the interactor's
+element. It also automatically defines a matching assert method.
 
 ``` javascript
 import interactor, { attribute } from 'interactor.js';
@@ -46,4 +47,8 @@ import interactor, { attribute } from 'interactor.js';
 
 new FieldInteractor('.pass-field').name //=> "pass"
 new FieldInteractor('.pass-field').type //=> "password"
+
+await new FieldInteractor('.pass-field')
+  .assert.name('pass')
+  .assert.not.type('text')
 ```

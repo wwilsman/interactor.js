@@ -12,7 +12,7 @@ new Interactor('input').value //=> "ayyoo"
 ```
 
 The property creator can be used with custom interactors to retrieve a nested
-input's value.
+input's value, and to make assertions against.
 
 ``` javascript
 import interactor, { value } from 'interactor.js';
@@ -22,4 +22,7 @@ import interactor, { value } from 'interactor.js';
 }
 
 new FieldInteractor('.email').value //=> "email@domain.tld"
+
+await new FieldInteractor('.email')
+  .assert.value('email@domain.tld')
 ```

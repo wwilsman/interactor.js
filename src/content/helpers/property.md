@@ -34,7 +34,8 @@ loginForm.property('.foobar', 'dataset') //=> Error: unable to find ".foobar"
 
 The `property()` property creator can be used with custom interactors to create
 a lazy getter property that returns a property of the specified element. When no
-selector is provided, it returns a property of the interactor's element.
+selector is provided, it returns a property of the interactor's element. It also
+automatically defines a matching assert method.
 
 ``` javascript
 import interactor, { property } from 'interactor.js';
@@ -44,6 +45,10 @@ import interactor, { property } from 'interactor.js';
   disabled = property('.submit', 'disabled')
 }
 
-new FieldInteractor('.login-form').noValidate //=> false
-new FieldInteractor('.login-form').disabled //=> true
+new FormInteractor('.login-form').noValidate //=> false
+new FormInteractor('.login-form').disabled //=> true
+
+await new FormInteractor('.login-form')
+  .assert.not.noValidate()
+  .assert.disabled()
 ```

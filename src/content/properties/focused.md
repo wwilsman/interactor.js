@@ -12,7 +12,7 @@ new Interactor('.email').focused //=> false
 ```
 
 The property creator can be used with custom interactors to reflect whether a
-nested element is has focus or not.
+nested element has focus or not, and to make assertions against.
 
 ``` javascript
 import interactor, { focused } from 'interactor.js';
@@ -22,4 +22,7 @@ import interactor, { focused } from 'interactor.js';
 }
 
 new FieldInteractor('.field').focused //=> true/false
+
+await new FieldInteractor('.field')
+  .assert.not.focused()
 ```

@@ -17,7 +17,7 @@ new Interactor('.content').scrollable // => false
 ```
 
 The property creator can be used with custom interactors to reflect whether a
-nested element is scrollable or not.
+nested element is scrollable or not, and to make assertions against.
 
 ``` javascript
 import interactor, { scrollable } from 'interactor.js';
@@ -27,4 +27,7 @@ import interactor, { scrollable } from 'interactor.js';
 }
 
 new PageInteractor('.home').scrollable //=> true/false
+
+await new PageInteractor('.home')
+  .assert.scrollable()
 ```

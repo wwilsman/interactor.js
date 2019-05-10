@@ -27,7 +27,7 @@ list.count('li') === 3
 
 The `count()` property creator can be used with custom interactors to create a
 lazy getter property that returns the number of elements found using the
-provided selector.
+provided selector. It also automatically defines a matching assert method.
 
 ``` javascript
 import interactor, { count } from 'interactor.js';
@@ -37,4 +37,7 @@ import interactor, { count } from 'interactor.js';
 }
 
 new ListInteractor('.list').length //=> 3
+
+await new ListInteractor('.list')
+  .assert.length(3)
 ```
