@@ -21,8 +21,7 @@ await new Interactor('.form').click('.submit');
 ```
 
 <!-- hint: warning -->
-The `click()` method will first assert that the element can be focused and is
-not disabled.
+The `click()` method will first assert that the element is not disabled.
 <!-- endhint -->
 
 ## Action
@@ -48,6 +47,5 @@ await new FormInteractor('.form').submit();
 ```
 
 <!-- hint: warning -->
-The `click()` action will first assert that the element can be focused and is
-not disabled.
+The `click()` action will first assert that the element is not disabled.
 <!-- endhint -->
