@@ -28,6 +28,7 @@ import type from './actions/type';
 // helper methods
 import scoped from './helpers/scoped';
 import attribute from './helpers/attribute';
+import count from './helpers/count';
 import property from './helpers/property';
 import matches from './helpers/matches';
 
@@ -88,6 +89,7 @@ const builtIn = toInteractorProperties({
   // helpers
   scoped,
   attribute,
+  count,
   property,
   matches
 });
@@ -150,6 +152,7 @@ export {
 
 // other exports
 export { default as attribute } from './properties/attribute';
+export { default as count } from './properties/count';
 export { default as property } from './properties/property';
 export { default as matches } from './properties/matches';
 export { default as collection } from './helpers/collection';

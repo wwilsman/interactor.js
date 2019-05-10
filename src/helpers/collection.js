@@ -33,9 +33,6 @@ export default function collection(selector, properties) {
   }
 
   return {
-    [meta]: {
-      collection: true
-    },
     value(...args) {
       if (args.length) {
         return new ItemInteractor({
@@ -48,6 +45,11 @@ export default function collection(selector, properties) {
           return new ItemInteractor(item);
         });
       }
+    },
+
+    [meta]: {
+      collection: true,
+      scope
     }
   };
 }

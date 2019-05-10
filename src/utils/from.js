@@ -1,5 +1,6 @@
 import Interactor from '../interactor';
 import scoped from '../helpers/scoped';
+import count from '../assertions/count';
 import isInteractor from './is-interactor';
 import createAsserts from './assert';
 import meta, { set, get } from './meta';
@@ -81,21 +82,55 @@ function toInteractorDescriptor(from) {
 }
 
 function toInteractorAssertion(name, from) {
+  // handle nested interactors
   if (isInteractor(from) && !get(from, 'queue').length) {
     return {
       get() {
         return this[meta][name].assert;
       }
     };
+
+  // collection functions
   } else if (get(from, 'collection')) {
+    let { scope } = from[meta];
+
     return {
       value(...args) {
-        return this[meta][name](...args).assert;
+        // given no arguments, return a single assertion method
+        if (!args.length) {
+          let ctx = this[meta];
+
+          let validate = function(expected) {
+            return count.call(this, scope.call(this), expected);
+          };
+
+          let assert = {
+            get not() {
+              ctx = set(ctx, 'assert', { expected: false });
+              return assert;
+            },
+
+            count: (...args) => {
+              let { validations, expected } = get(ctx, 'assert');
+              validations = validations.concat({ args, expected, validate });
+              return set(ctx, 'assert', { validations, expected: true });
+            }
+          };
+
+          return assert;
+
+        // return a collection item's assertions
+        } else {
+          return this[meta][name](...args).assert;
+        }
       }
     };
+
+  // computed property with a matcher
   } else if (get(from, 'matcher')) {
     let { matcher, selector } = from[meta];
 
+    // wrap computed matchers to preload with their computed value
     return function(...args) {
       let s, ctx;
 
@@ -110,6 +145,8 @@ function toInteractorAssertion(name, from) {
       let { result, message } = matcher.call(ctx, actual, ...args);
       return { result, message: sel(s, message) };
     };
+
+  // do nothing
   } else {
     return null;
   }

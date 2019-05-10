@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 - Auto-defined assertions based on interactor properties
 - `assert.scoped()` method to replace assertion selectors
+- `count` method, assertion, and property creator
+- Nesting collections in an assert returns a `count` assertion based on the
+  collection scope
 
 ### Changed
 
