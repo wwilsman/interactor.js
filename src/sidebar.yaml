@@ -51,6 +51,7 @@
     - slug: "/assertions/not/"
     - slug: "/assertions/validate/"
     - slug: "/assertions/remains/"
+    - slug: "/assertions/scoped/"
     - slug: "/assertions/f/"
 
   - slug: "/helpers/"

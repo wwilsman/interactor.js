@@ -28,4 +28,5 @@ overridden.
 - [Not](/assertions/not)
 - [Validate](/assertions/validate)
 - [Remains](/assertions/remains)
+- [Scoped](/assertions/scoped)
 - [F](/assertions/f)
