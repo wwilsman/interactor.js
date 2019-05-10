@@ -31,13 +31,6 @@ describe('Interactor actions - click', () => {
       expect(test.result).toBe(true);
     });
 
-    it('eventually throws an error when clicking a non-clickable element', async () => {
-      let test = testDOMEvent('.test-div', 'click');
-      let div = new Interactor('.test-div').timeout(50);
-      await expect(div.click()).rejects.toThrow('Failed to click ".test-div": is not focusable');
-      expect(test.result).toBe(false);
-    });
-
     it('eventually throws an error when clicking a disabled element', async () => {
       let test = testDOMEvent('button', 'click');
       let button = new Interactor('button').timeout(50);
@@ -71,7 +64,6 @@ describe('Interactor actions - click', () => {
 
     it('clicks the root element when unspecified', async () => {
       let test = testDOMEvent('.test-div', 'click');
-      test.$element.tabIndex = 0;
       await new TestInteractor().clickDiv();
       expect(test.result).toBe(true);
     });
