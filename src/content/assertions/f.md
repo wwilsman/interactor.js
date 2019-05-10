@@ -23,7 +23,6 @@ For example, the below code is how the `click()` action is implemented:
 function click(selector) {
   return scoped(selector)
   // perform clickable validation
-    .assert.focusable()
     .assert.not.disabled()
     .assert.f('Failed to click %s: %e')
   // invoke the native DOM method
@@ -33,8 +32,5 @@ function click(selector) {
 }
 ```
 
-In the example above, the thrown error message might be one of the following
-possible messages:
-
-- `Failed to click "button": disabled`
-- `Failed to click CustomInteractor: not focusable, tabindex must be greater than -1`
+In the example above, the thrown error message might look like:<br/>
+`Failed to click "button": is disabled`.
