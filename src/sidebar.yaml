@@ -37,6 +37,7 @@
   - slug: "/assertions/"
     items:
     - slug: "/assertions/attribute/"
+    - slug: "/assertions/count/"
     - slug: "/assertions/disabled/"
     - slug: "/assertions/exists/"
     - slug: "/assertions/focusable/"
@@ -59,8 +60,9 @@
     - slug: "/helpers/dollar/"
     - slug: "/helpers/dollardollar/"
     - slug: "/helpers/attribute/"
-    - slug: "/helpers/computed/"
     - slug: "/helpers/collection/"
+    - slug: "/helpers/computed/"
+    - slug: "/helpers/count/"
     - slug: "/helpers/matches/"
     - slug: "/helpers/property/"
     - slug: "/helpers/scoped/"

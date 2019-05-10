@@ -9,6 +9,7 @@ that return information about the DOM element. All built-in assertions can be
 overridden for custom interactors.
 
 - [Attribute](/assertions/attribute)
+- [Count](/assertions/count)
 - [Disabled](/assertions/disabled)
 - [Exists](/assertions/exists)
 - [Focusable](/assertions/focusable)

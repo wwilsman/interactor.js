@@ -24,6 +24,9 @@ expected to return a valid selector used to find a single scoped element. When
 no argument is given, the returned selector should match multiple elements to be
 used in the resulting interactor array.
 
+When used nested within an `assert`, the returned assert chain contains a
+[`count` assertion](/assertions/count) scoped to the collection selector.
+
 ``` javascript
 import interactor, { collection } from 'interactor.js';
 
@@ -43,6 +46,7 @@ import interactor, { collection } from 'interactor.js';
 await new FormInteractor()
   .fields('email').type('email@domain.tld')
   .fields('password').type('CorrectHorseBatteryStaple')
+  .assert.choices.items().count(3)
   .choices.items(2).check()
   .click('.submit')
 ```
