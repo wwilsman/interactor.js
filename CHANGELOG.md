@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Changed
+
+- `click` action no longer checks if element is focusable
+
 ## [1.1.0] - 2019-04-10
 
 ### Added
