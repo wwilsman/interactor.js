@@ -65,6 +65,10 @@ body > div > div {
       padding-top: 2rem;
     }
 
+    h3 {
+      margin-top: 3rem;
+    }
+
     code {
       font-family: "Operator Mono", "Fira Code", monospace;
     }
