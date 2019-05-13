@@ -11,9 +11,11 @@
       }
     }],
     ["@babel/proposal-decorators", {
-      "decoratorsBeforeExport": true
+      "legacy": true
     }],
-    "@babel/proposal-class-properties",
+    ["@babel/proposal-class-properties", {
+      "loose": true
+    }],
     "istanbul"
   ]
 }
