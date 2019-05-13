@@ -2,6 +2,7 @@ import from from './utils/from';
 
 const {
   assign,
+  entries,
   getOwnPropertyDescriptors
 } = Object;
 
@@ -39,9 +40,14 @@ export default function interactor(classDescriptor) {
 
     // make a pojo for `from`
     return from.call(constructor, assign(
-      // own properties
-      new constructor(),
-      // prototype properties
+      // get own property initializers
+      entries(getOwnPropertyDescriptors(new constructor()))
+        .reduce((acc, [key, descr]) => {
+          return ('value' in descr && descr.enumerable)
+            ? assign(acc, { [key]: descr.value })
+            : acc;
+        }, {}),
+      // prototype properties (omitting the constructor)
       omit(getOwnPropertyDescriptors(constructor.prototype), 'constructor'),
       // static properties (name is usually non-enumerable)
       { static: assign({ name: constructor.name }, constructor) }
