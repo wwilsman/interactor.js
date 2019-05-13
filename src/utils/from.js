@@ -4,7 +4,7 @@ import count from '../assertions/count';
 import isInteractor from './is-interactor';
 import createAsserts from './assert';
 import meta, { set, get } from './meta';
-import { sel } from './string';
+import { sel, q } from './string';
 
 const {
   assign,
@@ -127,8 +127,17 @@ function toInteractorAssertion(name, from) {
     };
 
   // computed property with a matcher
-  } else if (get(from, 'matcher')) {
-    let { matcher, selector } = from[meta];
+  } else if (get(from, 'matcher') || 'get' in from) {
+    let { matcher, selector } = from[meta] || {};
+
+    if (!matcher) {
+      matcher = (actual, expected) => ({
+        result: actual === expected,
+        message: () => actual === expected
+          ? `\`${name}\` is ${q(expected)}`
+          : `\`${name}\` is ${q(actual)} but expected ${q(expected)}`
+      });
+    }
 
     // wrap computed matchers to preload with their computed value
     return function(...args) {
@@ -160,8 +169,8 @@ export function toInteractorProperties(properties) {
     /* istanbul ignore next: sanity check */
     descr = 'value' in descr ? descr.value : descr;
 
-    // check for attached assertions
-    if (descr[meta]) {
+    // check for attached assertions or computed getters
+    if (descr[meta] || (isPropertyDescriptor(descr) && 'get' in descr)) {
       let assertion = toInteractorAssertion(key, descr);
       if (assertion) assign(props.assertions, { [key]: assertion });
       if (!isInteractor(descr)) delete descr[meta];

@@ -30,6 +30,10 @@ describe('Interactor assertions', () => {
         expect(pass).toBe(true);
       }
     };
+
+    get computed() {
+      return 'hello world';
+    }
   }
 
   beforeEach(() => {
@@ -49,16 +53,25 @@ describe('Interactor assertions', () => {
     expect(instance.assert).toHaveProperty('throws', expect.any(Function));
   });
 
+  it('has computed property assertions', () => {
+    expect(instance.assert).toHaveProperty('computed', expect.any(Function));
+  });
+
   describe('making assertions', () => {
     it('resolves when passing', async () => {
       await expect(instance.assert(() => expect(pass).toBeNull()))
         .resolves.toBeUndefined();
+
       pass = true;
       await expect(instance.assert.passing()).resolves.toBeUndefined();
       await expect(instance.assert.finished()).resolves.toBeUndefined();
+
       pass = false;
       await expect(instance.assert.failing()).resolves.toBeUndefined();
       await expect(instance.assert.finished()).resolves.toBeUndefined();
+
+      await expect(instance.assert.computed('hello world'))
+        .resolves.toBeUndefined();
     });
 
     it('rejects when failing', async () => {
@@ -66,6 +79,8 @@ describe('Interactor assertions', () => {
         .rejects.toThrow('expect(received).not.toBeNull()');
       await expect(instance.assert.passing()).rejects.toThrow('`passing` returned false');
       await expect(instance.assert.failing()).rejects.toThrow('`failing` returned false');
+      await expect(instance.assert.computed(20))
+        .rejects.toThrow('`computed` is "hello world" but expected 20');
     });
 
     it('rejects with a custom message when specified', async () => {
