@@ -131,7 +131,7 @@ export default function Sidebar({ location, open, onClose }) {
                 className={style.link}
                 target="blank"
               >
-                <Icon name="github" />
+                <Icon name="github" title="GitHub" />
               </a>
             </div>
           </aside>
