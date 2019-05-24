@@ -16,34 +16,32 @@ import {
   MdMenu
 } from 'react-icons/md';
 
-const MdIcons = {
-  MdChevronRight,
-  MdExpandMore,
-  MdHelpOutline,
-  MdInfo,
-  MdError,
-  MdWarning,
-  MdDanger: MdError,
-  MdToc,
-  MdSearch,
-  MdArrowBack,
-  MdArrowForward,
-  MdClear,
-  MdMenu
-};
+import {
+  FaGithub
+} from 'react-icons/fa';
 
-function camelize(string) {
-  return string
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, w => w.toUpperCase())
-    .replace(/\s+|-/g, '');
-}
+const Icons = {
+  'chevron-right': MdChevronRight,
+  'expand-more': MdExpandMore,
+  'help-outline': MdHelpOutline,
+  'info': MdInfo,
+  'error': MdError,
+  'warning': MdWarning,
+  'danger': MdError,
+  'toc': MdToc,
+  'search': MdSearch,
+  'arrow-back': MdArrowBack,
+  'arrow-forward': MdArrowForward,
+  'clear': MdClear,
+  'menu': MdMenu,
+  'github': FaGithub
+};
 
 Icon.propTypes = {
   name: PropTypes.string.isRequired
 };
 
 export default function Icon({ name }) {
-  let iconName = camelize(`md-${name}`);
-  let MdIcon = MdIcons[iconName] || MdHelpOutline;
+  let MdIcon = Icons[name] || MdHelpOutline;
   return <MdIcon/>;
 }
