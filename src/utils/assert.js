@@ -11,13 +11,16 @@ const {
 
 function getScopeName(interactor) {
   let { scope, parent, detached } = get(interactor);
+  let { defaultScope, name } = interactor.constructor;
 
-  if (typeof scope === 'string') {
-    return `"${scope}"`;
-  } else if (scope == null && parent && !detached) {
+  if (scope == null && parent && !detached) {
     return getScopeName(parent);
+  } else if (typeof scope === 'string') {
+    return `"${scope}"`;
+  } else if (typeof defaultScope === 'string') {
+    return `"${defaultScope}"`;
   } else {
-    return interactor.constructor.name;
+    return name;
   }
 }
 
