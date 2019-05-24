@@ -41,7 +41,7 @@ Icon.propTypes = {
   name: PropTypes.string.isRequired
 };
 
-export default function Icon({ name }) {
-  let MdIcon = Icons[name] || MdHelpOutline;
-  return <MdIcon/>;
+export default function Icon({ name, ...props }) {
+  let Icon = Icons[name] || MdHelpOutline;
+  return <Icon {...props} />;
 }
