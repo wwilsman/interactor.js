@@ -125,6 +125,14 @@ export default function Sidebar({ location, open, onClose }) {
                   </ul>
                 </Fragment>
               ))}
+
+              <a
+                href="https://github.com/wwilsman/interactor.js"
+                className={style.link}
+                target="blank"
+              >
+                <Icon name="github" />
+              </a>
             </div>
           </aside>
 
