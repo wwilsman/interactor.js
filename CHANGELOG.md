@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Fixed
+
+- Assert error message fallback to defaultScope when no specific scope
+
 ## [1.3.0] - 2019-05-20
 
 ### Added

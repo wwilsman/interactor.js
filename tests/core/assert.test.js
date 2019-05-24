@@ -130,7 +130,8 @@ describe('Interactor assertions', () => {
 
     it('has a default error message when nothing is returned', async () => {
       pass = true;
-      await expect(instance.assert.not.throws()).rejects.toThrow('`throws` did not throw an error');
+      await expect(instance.assert.not.throws())
+        .rejects.toThrow('`throws` did not throw an error');
     });
   });
 
@@ -200,6 +201,18 @@ describe('Interactor assertions', () => {
           .assert.validate()
           .assert.passing()
       ).rejects.toThrow('CustomInteractor assertion failed: `passing` returned false');
+    });
+
+    it('uses a specified scope', async () => {
+      instance = new CustomInteractor('#scoped').timeout(50);
+      await expect(instance.assert.passing())
+        .rejects.toThrow('"#scoped" assertion failed');
+    });
+
+    it('uses a default scope with no specified scoped', async () => {
+      CustomInteractor.defaultScope = '#default';
+      await expect(instance.assert.passing())
+        .rejects.toThrow('"#default" assertion failed');
     });
   });
 
