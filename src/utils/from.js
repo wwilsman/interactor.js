@@ -11,6 +11,7 @@ const {
   entries,
   getOwnPropertyDescriptors,
   getOwnPropertyNames,
+  getPrototypeOf,
   hasOwnProperty
 } = Object;
 
@@ -150,8 +151,20 @@ function toInteractorAssertion(name, from) {
 
       ctx = ctx || this;
       let actual = from.get.call(ctx);
-      let { result, message } = matcher.call(ctx, actual, ...args);
-      return { result, message: sel(s, message) };
+
+      // allow custom computed assertions
+      let ret = (args.length === 1 && typeof args[0] === 'function')
+        ? args[0].call(ctx, actual)
+        : matcher.call(ctx, actual, ...args);
+
+      if (!!ret && getPrototypeOf(ret) === Object.prototype) {
+        return {
+          result: ret.result,
+          message: sel(s, ret.message)
+        };
+      }
+
+      return ret;
     };
 
   // do nothing

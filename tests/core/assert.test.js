@@ -92,6 +92,21 @@ describe('Interactor assertions', () => {
       await expect(instance.assert.even(3)).rejects.toThrow('3 is not even');
     });
 
+    it('accepts a matcher function for computed property assertions', async () => {
+      await expect(instance.assert.computed(str => {
+        return str === 'foobar';
+      })).rejects.toThrow('returned false');
+      await expect(instance.assert.computed(str => {
+        expect(str).toEqual('foobar');
+      })).rejects.toThrow('expect(received).toEqual(expected)');
+      await expect(instance.assert.computed(str => {
+        expect(str).toEqual('hello world');
+      })).resolves.toBeUndefined();
+      await expect(instance.assert.computed(str => {
+        return str === 'hello world';
+      })).resolves.toBeUndefined();
+    });
+
     it('bubbles error messages', async () => {
       await expect(instance.assert.throws()).rejects.toThrow('expect(received).toBe(expected)');
     });
