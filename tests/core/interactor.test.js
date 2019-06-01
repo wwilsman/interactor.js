@@ -590,6 +590,17 @@ describe('Interactor', () => {
       })).resolves.toBeUndefined();
     });
 
+    it('eventually throws an error when the scoped element cannot be found', async () => {
+      let scoped = new Interactor('#not-found').timeout(50);
+      let now = Date.now();
+
+      await expect(scoped.when($element => {
+        expect($element).toBeDefined();
+      })).rejects.toThrow('unable to find "#not-found"');
+
+      expect(Date.now() - now).toBeGreaterThanOrEqual(50);
+    });
+
     describe('finding elements within the scope', () => {
       it('can find a single DOM element within the scope', () => {
         expect(new Interactor().$('.test-p').innerText).toBe('A');
