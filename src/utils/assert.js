@@ -56,7 +56,7 @@ function validate(interactor) {
       try {
         result = validate.apply(ctx, args);
       } catch (e) {
-        result = false;
+        result = !!e[meta] && !expected;
         message = () => e.message;
       }
 

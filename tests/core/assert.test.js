@@ -133,6 +133,15 @@ describe('Interactor assertions', () => {
       await expect(instance.assert.not.throws())
         .rejects.toThrow('`throws` did not throw an error');
     });
+
+    it('always rejects when specific errors occur', async () => {
+      await expect(
+        instance.assert.not.disabled('#not-found')
+      ).rejects.toThrow('unable to find "#not-found"');
+      await expect(
+        instance.assert.not.disabled('!wrong')
+      ).rejects.toThrow('"!wrong" is not a valid selector');
+    });
   });
 
   describe('chaining assertions', () => {
