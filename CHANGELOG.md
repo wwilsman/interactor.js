@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ### Fixed
 
+- Undefined or null properties causing errors
 - `assert.not` assertions resolving when an element does not exist
 - `$element` argument being eagerly computed
 - Non-enumerable static properties not being carried over

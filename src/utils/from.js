@@ -169,7 +169,7 @@ export function toInteractorProperties(properties) {
     descr = 'value' in descr ? descr.value : descr;
 
     // check for attached assertions or computed getters
-    if (descr[meta] || (isPropertyDescriptor(descr) && 'get' in descr)) {
+    if ((descr && descr[meta]) || (isPropertyDescriptor(descr) && 'get' in descr)) {
       let assertion = toInteractorAssertion(key, descr);
       if (assertion) assign(props.assertions, { [key]: assertion });
       if (!isInteractor(descr)) delete descr[meta];
