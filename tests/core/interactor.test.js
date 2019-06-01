@@ -791,6 +791,8 @@ describe('Interactor', () => {
         },
 
         foo: 'bar',
+        undef: undefined,
+        nil: null,
 
         get getter() {
           return 'got';
@@ -819,7 +821,8 @@ describe('Interactor', () => {
 
     it('creates an interactor class with the provided properties', () => {
       expect(TestInteractor.prototype).toHaveProperty('foo', 'bar');
-      expect(TestInteractor.prototype).toHaveProperty('getter', 'got');
+      expect(TestInteractor.prototype).toHaveProperty('undef', undefined);
+      expect(TestInteractor.prototype).toHaveProperty('nil', null);
       expect(TestInteractor.prototype).toHaveProperty('func', expect.any(Function));
     });
 
@@ -881,6 +884,8 @@ describe('Interactor', () => {
         static fn() {}
 
         foo = 'bar';
+        undef = undefined;
+        nil = null;
 
         get getter() {
           return 'got';
@@ -909,6 +914,8 @@ describe('Interactor', () => {
 
     it('extends the interactor class with the provided properties', () => {
       expect(TestInteractor.prototype).toHaveProperty('foo', 'bar');
+      expect(TestInteractor.prototype).toHaveProperty('undef', undefined);
+      expect(TestInteractor.prototype).toHaveProperty('nil', null);
       expect(TestInteractor.prototype).toHaveProperty('getter', 'got');
     });
 
