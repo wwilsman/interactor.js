@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ### Fixed
 
+- `$element` argument being eagerly computed
 - Non-enumerable static properties not being carried over
 - Incorrect parent class when extending from custom interactors
 

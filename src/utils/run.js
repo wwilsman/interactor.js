@@ -28,9 +28,11 @@ export function runAssertion(context, subject, stats) {
   context = subject.ctx || context;
 
   let timeout = stats.timeout - getElapsedSince(stats.start, stats.timeout);
-  let arg = subject.assertion.length ? context.$element : undefined;
-  let assertion = subject.assertion.bind(context, arg);
   let converge = subject.always ? always : when;
+
+  let assertion = subject.assertion.length
+    ? () => subject.assertion.call(context, context.$element)
+    : subject.assertion.bind(context);
 
   // always defaults to one-tenth or the remaining timeout
   if (subject.always) {
@@ -52,8 +54,9 @@ export function runCallback(context, subject, stats) {
   context = subject.ctx || context;
 
   let start = now();
-  let arg = subject.callback.length ? context.$element : undefined;
-  let result = subject.callback.call(context, arg);
+  let result = subject.callback.length
+    ? subject.callback.call(context, context.$element)
+    : subject.callback.call(context);
 
   let collectExecStats = value => {
     return collectStats(stats, {
