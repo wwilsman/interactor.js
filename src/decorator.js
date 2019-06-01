@@ -1,8 +1,10 @@
+import Interactor from './interactor';
 import from from './utils/from';
 
 const {
   assign,
   entries,
+  getPrototypeOf,
   getOwnPropertyDescriptors
 } = Object;
 
@@ -11,14 +13,23 @@ function omit(obj, key) {
   return rest;
 }
 
+function parent(klass) {
+  if (klass.prototype instanceof Interactor) {
+    return getPrototypeOf(klass);
+  } else {
+    return Interactor;
+  }
+}
+
 export default function interactor(classDescriptor) {
+  /* istanbul ignore if: only encountered with stage-2 decorators */
   if (classDescriptor.kind === 'class') {
     let { kind, elements } = classDescriptor;
 
     return {
       kind,
       finisher: constructor => from.call(
-        constructor,
+        parent(constructor),
         // collect all element descriptors and own properties
         elements.reduce((acc, el) => assign({
           [el.key]: el.placement === 'own'
@@ -39,7 +50,7 @@ export default function interactor(classDescriptor) {
     let constructor = classDescriptor;
 
     // make a pojo for `from`
-    return from.call(constructor, assign(
+    return from.call(parent(constructor), assign(
       // get own property initializers
       entries(getOwnPropertyDescriptors(new constructor()))
         .reduce((acc, [key, descr]) => {
