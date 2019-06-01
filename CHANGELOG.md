@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Added
+
+- Ability to provide a custom matcher function to computed property assertions
+
 ### Fixed
 
 - Undefined or null properties causing errors
