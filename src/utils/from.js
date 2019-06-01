@@ -203,16 +203,21 @@ export default function from(properties) {
   // define static properties
   defineProperties(
     CustomInteractor,
-    getOwnPropertyDescriptors(staticProps)
+    entries(staticProps).reduce((acc, [name, value]) => {
+      value = !isPropertyDescriptor(value) ? { value } : value;
+      return assign(acc, { [name]: value });
+    }, {})
   );
 
   // define assertions
   defineProperties(CustomInteractor.prototype, {
     assert: {
-      value: createAsserts({
-        ...props.assertions,
-        ...assertions
-      })
+      value: createAsserts(assign(
+        props.assertions,
+        isPropertyDescriptor(assertions)
+          ? assertions.value
+          : assertions
+      ))
     }
   });
 

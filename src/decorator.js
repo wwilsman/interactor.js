@@ -8,9 +8,10 @@ const {
   getOwnPropertyDescriptors
 } = Object;
 
-function omit(obj, key) {
-  let { [key]: _, ...rest } = obj;
-  return rest;
+function omit(obj, keys) {
+  return entries(obj).reduce((o, [k, v]) => {
+    return !keys.includes(k) ? assign(o, { [k]: v }) : o;
+  }, {});
 }
 
 function parent(klass) {
@@ -36,11 +37,8 @@ export default function interactor(classDescriptor) {
             ? el.initializer()
             : el.descriptor
         }, acc), {
-          // include static properties
-          static: assign({
-            // name is usually non-enumerable
-            name: constructor.name
-          }, constructor)
+          // include static properties (omitting the prototype and length properties)
+          static: omit(getOwnPropertyDescriptors(constructor), ['prototype', 'length'])
         })
       )
     };
@@ -59,9 +57,9 @@ export default function interactor(classDescriptor) {
             : acc;
         }, {}),
       // prototype properties (omitting the constructor)
-      omit(getOwnPropertyDescriptors(constructor.prototype), 'constructor'),
-      // static properties (name is usually non-enumerable)
-      { static: assign({ name: constructor.name }, constructor) }
+      omit(getOwnPropertyDescriptors(constructor.prototype), ['constructor']),
+      // static properties (omitting the prototype and length properties)
+      { static: omit(getOwnPropertyDescriptors(constructor), ['prototype', 'length']) }
     ));
 
   // catch everything else with a generic error

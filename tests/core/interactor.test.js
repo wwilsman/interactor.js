@@ -773,7 +773,10 @@ describe('Interactor', () => {
       TestInteractor = Interactor.from({
         static: {
           name: 'TestInteractor',
-          defaultScope: '.test'
+          defaultScope: '.test',
+          test: 'hello world',
+          get get() { return this.test; },
+          fn() {}
         },
 
         foo: 'bar',
@@ -798,6 +801,9 @@ describe('Interactor', () => {
     it('uses properties from the `static` key for static members', () => {
       expect(TestInteractor.name).toEqual('TestInteractor');
       expect(TestInteractor.defaultScope).toEqual('.test');
+      expect(TestInteractor.test).toEqual('hello world');
+      expect(TestInteractor.get).toEqual('hello world');
+      expect(TestInteractor.fn).toEqual(expect.any(Function));
     });
 
     it('creates an interactor class with the provided properties', () => {
@@ -859,6 +865,9 @@ describe('Interactor', () => {
     beforeEach(() => {
       TestInteractor = @interactor class TestInteractor {
         static defaultScope = '.test';
+        static test = 'hello world';
+        static get get() { return this.test; }
+        static fn() {}
 
         foo = 'bar';
 
@@ -882,6 +891,9 @@ describe('Interactor', () => {
     it('uses properties from the `static` key for static members', () => {
       expect(TestInteractor.name).toEqual('TestInteractor');
       expect(TestInteractor.defaultScope).toEqual('.test');
+      expect(TestInteractor.test).toEqual('hello world');
+      expect(TestInteractor.get).toEqual('hello world');
+      expect(TestInteractor.fn).toEqual(expect.any(Function));
     });
 
     it('extends the interactor class with the provided properties', () => {
