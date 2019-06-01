@@ -1,4 +1,3 @@
-import Interactor from '../interactor';
 import scoped from '../helpers/scoped';
 import count from '../assertions/count';
 import isInteractor from './is-interactor';
@@ -193,11 +192,7 @@ export default function from(properties) {
   } = properties;
 
   let props = toInteractorProperties(ownProps);
-  let Parent = this.prototype instanceof Interactor
-    ? this.prototype.constructor
-    : Interactor;
-
-  class CustomInteractor extends Parent {};
+  class CustomInteractor extends this {};
 
   // define properties from descriptors
   defineProperties(
