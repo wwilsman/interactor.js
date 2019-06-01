@@ -107,13 +107,18 @@ describe('Interactor assertions', () => {
       await expect(instance.assert.not.passing()).resolves.toBeUndefined();
       await expect(instance.assert.not.failing()).resolves.toBeUndefined();
       await expect(instance.assert.not.finished()).resolves.toBeUndefined();
+      await expect(instance.assert.not.computed(20)).resolves.toBeUndefined();
     });
 
     it('rejects when failing', async () => {
       pass = true;
       await expect(instance.assert.not.passing()).rejects.toThrow('`passing` returned true');
+
       pass = false;
       await expect(instance.assert.not.failing()).rejects.toThrow('`failing` returned true');
+
+      await expect(instance.assert.not.computed('hello world'))
+        .rejects.toThrow('`computed` is "hello world"');
     });
 
     it('rejects with a custom message when specified', async () => {
