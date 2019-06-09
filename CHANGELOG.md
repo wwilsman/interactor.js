@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ### Added
 
 - Ability to provide a custom matcher function to computed property assertions
+- Ability for computed property assertions to assert truthyness when no
+  arguments are provided
 
 ### Fixed
 
