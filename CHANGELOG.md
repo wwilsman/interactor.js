@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Fixed
+
+- `from` POJO getters being evaluated instead of transferred to the custom
+  interactor class
+
 ## [1.4.0] - 2019-06-09
 
 ### Added
