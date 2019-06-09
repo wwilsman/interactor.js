@@ -32,7 +32,7 @@ describe('Interactor assertions', () => {
     };
 
     get computed() {
-      return 'hello world';
+      return 'Hello World!';
     }
 
     get truthy() {
@@ -75,8 +75,8 @@ describe('Interactor assertions', () => {
       await expect(instance.assert.failing()).resolves.toBeUndefined();
       await expect(instance.assert.finished()).resolves.toBeUndefined();
 
-      await expect(instance.assert.computed('hello world'))
-        .resolves.toBeUndefined();
+      await expect(instance.assert.computed('Hello World!')).resolves.toBeUndefined();
+      await expect(instance.assert.computed(/hello/i)).resolves.toBeUndefined();
       await expect(instance.assert.truthy()).resolves.toBeUndefined();
     });
 
@@ -86,7 +86,9 @@ describe('Interactor assertions', () => {
       await expect(instance.assert.passing()).rejects.toThrow('`passing` returned false');
       await expect(instance.assert.failing()).rejects.toThrow('`failing` returned false');
       await expect(instance.assert.computed(20))
-        .rejects.toThrow('`computed` is "hello world" but expected 20');
+        .rejects.toThrow('`computed` is "Hello World!" but expected 20');
+      await expect(instance.assert.computed(/foo/))
+        .rejects.toThrow('`computed` is "Hello World!" but expected /foo/');
     });
 
     it('rejects with a custom message when specified', async () => {
@@ -106,10 +108,10 @@ describe('Interactor assertions', () => {
         expect(str).toEqual('foobar');
       })).rejects.toThrow('expect(received).toEqual(expected)');
       await expect(instance.assert.computed(str => {
-        expect(str).toEqual('hello world');
+        expect(str).toEqual('Hello World!');
       })).resolves.toBeUndefined();
       await expect(instance.assert.computed(str => {
-        return str === 'hello world';
+        return str === 'Hello World!';
       })).resolves.toBeUndefined();
     });
 
@@ -138,8 +140,8 @@ describe('Interactor assertions', () => {
       pass = false;
       await expect(instance.assert.not.failing()).rejects.toThrow('`failing` returned true');
 
-      await expect(instance.assert.not.computed('hello world'))
-        .rejects.toThrow('`computed` is "hello world"');
+      await expect(instance.assert.not.computed('Hello World!'))
+        .rejects.toThrow('`computed` is "Hello World!"');
 
       await expect(instance.assert.not.truthy()).rejects.toThrow('`truthy` is true');
     });

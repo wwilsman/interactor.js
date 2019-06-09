@@ -133,7 +133,15 @@ function toInteractorAssertion(name, from) {
     if (!matcher) {
       matcher = (...args) => {
         let [actual, expected] = args;
-        let result = args.length === 1 ? !!actual : actual === expected;
+        let result = !!actual;
+
+        if (args.length > 1) {
+          if (typeof actual === 'string' && expected instanceof RegExp) {
+            result = expected.test(actual);
+          } else {
+            result = actual === expected;
+          }
+        }
 
         return {
           result,
