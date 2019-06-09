@@ -88,7 +88,6 @@ export function isBackOrDel(key) {
   return key === 'Backspace' || key === 'Delete';
 }
 
-// TODO: implement range and delete
 export function inputText(element, text, options, range) {
   let opts = text ? assign({ charCode: text.charCodeAt(0) }, options) : options;
   let cancelled = !dispatch(element, 'keypress', opts);
