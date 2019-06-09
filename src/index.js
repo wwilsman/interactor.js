@@ -4,6 +4,7 @@ import createAsserts from './utils/assert';
 import meta, { set } from './utils/meta';
 
 // property creators
+import checked from './properties/checked';
 import disabled from './properties/disabled';
 import exists from './properties/exists';
 import focusable from './properties/focusable';
@@ -57,6 +58,7 @@ defineProperties(Interactor, {
 const builtIn = toInteractorProperties({
   // properties
   ...(entries({
+    checked,
     disabled,
     exists,
     focusable,
@@ -124,6 +126,7 @@ export {
   Interactor,
   from,
   // property creators
+  checked,
   disabled,
   exists,
   focusable,

@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
   arguments are provided
 - Ability for computed property assertions to accept regular expressions
 - Displaying computed selectors in assertion errors
+- `checked` property and property creator
 
 ### Fixed
 
