@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.4.1] - 2019-06-09
+
 ### Fixed
 
 - `from` POJO getters being evaluated instead of transferred to the custom
