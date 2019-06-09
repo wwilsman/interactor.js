@@ -9,6 +9,7 @@ import disabled from './properties/disabled';
 import exists from './properties/exists';
 import focusable from './properties/focusable';
 import focused from './properties/focused';
+import selected from './properties/selected';
 import scrollable, { scrollableX, scrollableY } from './properties/scrollable';
 import text from './properties/text';
 import value from './properties/value';
@@ -63,6 +64,7 @@ const builtIn = toInteractorProperties({
     exists,
     focusable,
     focused,
+    selected,
     scrollable,
     scrollableX,
     scrollableY,
@@ -131,6 +133,7 @@ export {
   exists,
   focusable,
   focused,
+  selected,
   scrollable,
   scrollableX,
   scrollableY,
