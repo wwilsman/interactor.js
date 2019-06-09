@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.4.0] - 2019-06-09
+
 ### Added
 
 - Ability to provide a custom matcher function to computed property assertions
