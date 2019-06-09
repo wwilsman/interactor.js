@@ -131,12 +131,17 @@ function toInteractorAssertion(name, from) {
     let { matcher, selector } = from[meta] || {};
 
     if (!matcher) {
-      matcher = (actual, expected) => ({
-        result: actual === expected,
-        message: () => actual === expected
-          ? `\`${name}\` is ${q(expected)}`
-          : `\`${name}\` is ${q(actual)} but expected ${q(expected)}`
-      });
+      matcher = (...args) => {
+        let [actual, expected] = args;
+        let result = args.length === 1 ? !!actual : actual === expected;
+
+        return {
+          result,
+          message: () => result
+            ? `\`${name}\` is ${q(actual)}`
+            : `\`${name}\` is ${q(actual)} but expected ${q(expected)}`
+        };
+      };
     }
 
     // wrap computed matchers to preload with their computed value
@@ -150,12 +155,11 @@ function toInteractorAssertion(name, from) {
       }
 
       ctx = ctx || this;
-      let actual = from.get.call(ctx);
 
       // allow custom computed assertions
       let ret = (args.length === 1 && typeof args[0] === 'function')
-        ? args[0].call(ctx, actual)
-        : matcher.call(ctx, actual, ...args);
+        ? args[0].call(ctx, ctx[name])
+        : matcher.call(ctx, ctx[name], ...args);
 
       if (!!ret && getPrototypeOf(ret) === Object.prototype) {
         return {

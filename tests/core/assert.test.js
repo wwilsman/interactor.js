@@ -34,6 +34,10 @@ describe('Interactor assertions', () => {
     get computed() {
       return 'hello world';
     }
+
+    get truthy() {
+      return true;
+    }
   }
 
   beforeEach(() => {
@@ -55,6 +59,7 @@ describe('Interactor assertions', () => {
 
   it('has computed property assertions', () => {
     expect(instance.assert).toHaveProperty('computed', expect.any(Function));
+    expect(instance.assert).toHaveProperty('truthy', expect.any(Function));
   });
 
   describe('making assertions', () => {
@@ -72,6 +77,7 @@ describe('Interactor assertions', () => {
 
       await expect(instance.assert.computed('hello world'))
         .resolves.toBeUndefined();
+      await expect(instance.assert.truthy()).resolves.toBeUndefined();
     });
 
     it('rejects when failing', async () => {
@@ -134,6 +140,8 @@ describe('Interactor assertions', () => {
 
       await expect(instance.assert.not.computed('hello world'))
         .rejects.toThrow('`computed` is "hello world"');
+
+      await expect(instance.assert.not.truthy()).rejects.toThrow('`truthy` is true');
     });
 
     it('rejects with a custom message when specified', async () => {
