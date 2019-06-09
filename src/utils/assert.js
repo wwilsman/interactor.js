@@ -15,7 +15,11 @@ function getScopeName(interactor) {
 
   if (scope == null && parent && !detached) {
     return getScopeName(parent);
-  } else if (typeof scope === 'string') {
+  } else if (typeof scope === 'function') {
+    scope = scope();
+  }
+
+  if (typeof scope === 'string') {
     return `"${scope}"`;
   } else if (typeof defaultScope === 'string') {
     return `"${defaultScope}"`;

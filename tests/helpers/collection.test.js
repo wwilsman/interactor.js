@@ -118,6 +118,11 @@ describe('Interactor helpers - collection', () => {
     expect(test.assert.items().count(4)).toBeInstanceOf(CollectionInteractor);
   });
 
+  it('throws scoped assertion errors for computed selectors', async () => {
+    await expect(test.assert.byClassName('a').matches('.b'))
+      .rejects.toThrow('".a" assertion failed');
+  });
+
   it('returns own instances from collection methods after calling #only', () => {
     expect(test.byClassName('a').only()).toBeInstanceOf(ItemInteractor);
     expect(test.byClassName('a').only().click()).toBeInstanceOf(ItemInteractor);
