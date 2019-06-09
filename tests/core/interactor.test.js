@@ -795,7 +795,7 @@ describe('Interactor', () => {
         nil: null,
 
         get getter() {
-          return 'got';
+          return this.getgot;
         },
 
         func() {},
@@ -804,6 +804,12 @@ describe('Interactor', () => {
           enumerable: false,
           configurable: false,
           value: () => {}
+        },
+
+        getgot: {
+          enumerable: false,
+          configurable: false,
+          get: () => 'got'
         },
 
         nested: new Interactor(),
@@ -823,11 +829,13 @@ describe('Interactor', () => {
       expect(TestInteractor.prototype).toHaveProperty('foo', 'bar');
       expect(TestInteractor.prototype).toHaveProperty('undef', undefined);
       expect(TestInteractor.prototype).toHaveProperty('nil', null);
+      expect(TestInteractor.prototype).toHaveProperty('getter', 'got');
       expect(TestInteractor.prototype).toHaveProperty('func', expect.any(Function));
     });
 
     it('creates an interactor class using property descriptors', () => {
       expect(TestInteractor.prototype).toHaveProperty('descr', expect.any(Function));
+      expect(TestInteractor.prototype).toHaveProperty('getgot', 'got');
     });
 
     it('creates an interactor class with nested interactors', () => {
@@ -888,7 +896,7 @@ describe('Interactor', () => {
         nil = null;
 
         get getter() {
-          return 'got';
+          return this.getgot;
         }
 
         func() {}
@@ -897,6 +905,12 @@ describe('Interactor', () => {
           enumerable: false,
           configurable: false,
           value: () => {}
+        }
+
+        getgot = {
+          enumerable: false,
+          configurable: false,
+          get: () => 'got'
         }
 
         nested = new Interactor();
@@ -917,10 +931,12 @@ describe('Interactor', () => {
       expect(TestInteractor.prototype).toHaveProperty('undef', undefined);
       expect(TestInteractor.prototype).toHaveProperty('nil', null);
       expect(TestInteractor.prototype).toHaveProperty('getter', 'got');
+      expect(TestInteractor.prototype).toHaveProperty('func', expect.any(Function));
     });
 
     it('extends the interactor class using property descriptors', () => {
       expect(TestInteractor.prototype).toHaveProperty('test', expect.any(Function));
+      expect(TestInteractor.prototype).toHaveProperty('getgot', 'got');
     });
 
     it('extends the interactor class with nested interactors', () => {

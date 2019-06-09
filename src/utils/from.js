@@ -189,6 +189,8 @@ export function toInteractorProperties(properties) {
   return entries(getOwnPropertyDescriptors(
     checkForReservedPropertyNames(properties)
   )).reduce((props, [key, descr]) => {
+    if (key === 'static') return props;
+
     // allow raw descriptors
     /* istanbul ignore next: sanity check */
     descr = 'value' in descr ? descr.value : descr;
@@ -208,15 +210,9 @@ export function toInteractorProperties(properties) {
 }
 
 export default function from(properties) {
-  let {
-    static: {
-      assertions = {},
-      ...staticProps
-    } = {},
-    ...ownProps
-  } = properties;
-
-  let props = toInteractorProperties(ownProps);
+  let { assertions = {} } = properties.static || {};
+  let staticProps = getOwnPropertyDescriptors(properties.static || {});
+  let props = toInteractorProperties(properties);
   class CustomInteractor extends this {};
 
   // define properties from descriptors
@@ -229,7 +225,9 @@ export default function from(properties) {
   defineProperties(
     CustomInteractor,
     entries(staticProps).reduce((acc, [name, value]) => {
-      value = !isPropertyDescriptor(value) ? { value } : value;
+      if (name === 'assertions') return acc;
+      if (!isPropertyDescriptor(value)) value = { value };
+      if (isPropertyDescriptor(value.value)) ({ value } = value);
       return assign(acc, { [name]: value });
     }, {})
   );
