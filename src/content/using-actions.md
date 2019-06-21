@@ -17,7 +17,7 @@ await focus('.password').type('CorrectHorseBatteryStaple').blur();
 await click('.submit').timeout(500);
 ```
 
-Built-in actions that ship with interactor.js can be found [here](actions/index).
+Built-in actions that ship with interactor.js can be found [here](/actions).
 
 <!-- hint: danger -->
 Actions return interactors, and each interactor has it's own timeout. Always
@@ -29,7 +29,7 @@ succinct.
 ## Custom actions
 
 Creating custom actions is as easy as returning interactors from your own
-functions. A [`scoped()`](helpers/scoped) helper is even provided if you
+functions. A [`scoped()`](/helpers/scoped) helper is even provided if you
 prefer not to use the new keyword inside of custom actions.
 
 ``` javascript

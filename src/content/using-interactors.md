@@ -55,7 +55,7 @@ await new Interactor('.signup-form')
 Other actions have their own built-in validations, such as `focus()` ensuring
 that the element is focusable, and `blur()` ensuring that the element first has
 focus. To see which validations occur for an action, check out each actions
-corresponding [API section](actions/index).
+corresponding [API section](/actions).
 
 ## Reading DOM state
 
