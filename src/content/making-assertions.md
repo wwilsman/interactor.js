@@ -22,7 +22,7 @@ it('is a disabled card component', async () => {
 });
 ```
 
-Built-in assertions can be found [here](assertions).
+Built-in assertions can be found [here](/assertions).
 
 ## Negating assertions
 

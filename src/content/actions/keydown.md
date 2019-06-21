@@ -21,7 +21,7 @@ instance of the interactor with the action added to it's queue.
 After a key is pressed, subsequent calls with the same key will have `repeat`
 set to true. If a key is a modifier key such as `Shift`, `Meta`, `Control`, or
 `Alt`, subsequent keys will be sent with that modifier. To release the modifier
-key, use [`keyup`](actions/keyup).
+key, use [`keyup`](/actions/keyup).
 
 The `range` option can be provided to insert characters at an index, or
 remove/replace characters between indices.

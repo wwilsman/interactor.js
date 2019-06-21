@@ -79,8 +79,8 @@ describe('logging in', () => {
 ```
 <!-- endtabbed -->
 
-Built-in property creators can be found [here](/properties/), and built-in
-actions can be found [here](/actions/).
+Built-in property creators can be found [here](/properties), and built-in
+actions can be found [here](/actions).
 
 <!-- hint: info -->
 It's **highly** recommended that you build custom component interactors for unit
@@ -90,7 +90,7 @@ acceptance tests.
 
 ## Custom assertions
 
-Custom properties created using the [built-in property creators](/properties/)
+Custom properties created using the [built-in property creators](/properties)
 automatically create custom assertions as well.
 
 In the example above, we defined a few custom interactor properties for the
@@ -260,7 +260,7 @@ const LoginInteractor = Interactor.from({
 ```
 
 New interactor instances can also be created using a static `scoped` method, or
-by passing an custom interactor class to the [`scoped`](helpers/scoped)
+by passing an custom interactor class to the [`scoped`](/helpers/scoped)
 helper.
 
 ``` javascript
