@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.4.2] - 2019-06-24
+
 ### Fixed
 
 - Export `computed` helper
