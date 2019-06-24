@@ -162,6 +162,7 @@ export { default as count } from './properties/count';
 export { default as property } from './properties/property';
 export { default as matches } from './properties/matches';
 export { default as collection } from './helpers/collection';
+export { default as computed } from './helpers/computed';
 export { default as isInteractor } from './utils/is-interactor';
 export { when, always } from './helpers/converge';
 export { default } from './decorator';
