@@ -9,6 +9,7 @@ nested properties can be created using property creators, which return getter
 descriptors for the property. All built-in property getters can be overridden
 for custom interactors.
 
+- [Checked](/properties/checked)
 - [Disabled](/properties/disabled)
 - [Exists](/properties/exists)
 - [Focusable](/properties/focusable)
