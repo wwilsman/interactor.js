@@ -1,6 +1,7 @@
 import Interactor from './interactor';
 import from, { toInteractorProperties } from './utils/from';
-import createAsserts from './utils/assert';
+import createAsserts, { getAssertFor } from './utils/assert';
+import { chainAssert } from './utils/chainable';
 import meta, { set } from './utils/meta';
 
 // property creators
@@ -114,10 +115,8 @@ defineProperties(Interactor.prototype, {
       // defined here to avoid circular imports
       scoped: {
         value(...args) {
-          return set(scoped(...args), {
-            parent: this[meta],
-            chain: true
-          }).assert;
+          let next = set(scoped(...args), { parent: this[meta] });
+          return chainAssert(getAssertFor(next));
         }
       }
     })

@@ -71,17 +71,17 @@ export default class Interactor {
       })
     });
 
-    // build assert object for this instance
-    defineProperty(this, 'assert', {
-      enumerable: false,
-      configurable: true,
-      value: getAssertFor(this)
-    });
-
-    // given a parent, make all methods and getters return
-    // parent-chainable instances of themselves
     if (parent && chain) {
+      // given a parent, make all methods and getters return
+      // parent-chainable instances of themselves
       makeChainable(this);
+    } else {
+      // build assert object for top level instances
+      defineProperty(this, 'assert', {
+        enumerable: false,
+        configurable: true,
+        value: getAssertFor(this)
+      });
     }
   }
 

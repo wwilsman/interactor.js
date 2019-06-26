@@ -73,8 +73,6 @@ describe('Interactor helpers - scoped', () => {
 
     describe('and nested assertions', () => {
       it('returns a parent instance from nested assertions', () => {
-        expect(new ScopedInteractor().p.assert.text('A'))
-          .toBeInstanceOf(ScopedInteractor);
         expect(new ScopedInteractor().assert.p.text('A'))
           .toBeInstanceOf(ScopedInteractor);
       });
@@ -82,7 +80,7 @@ describe('Interactor helpers - scoped', () => {
       it('can chain nested assertions', async () => {
         await expect(
           new ScopedInteractor('#scoped')
-            .p.assert.not.text('A')
+            .assert.p.not.text('A')
             .assert.p.text('B')
         ).resolves.toBeUndefined();
       });
