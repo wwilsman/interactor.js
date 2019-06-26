@@ -70,6 +70,20 @@ describe('Interactor assertions', () => {
     expect(instance.assert).toHaveProperty('length', expect.any(Function));
   });
 
+  it('cannot use nested assertions without .only()', async () => {
+    @interactor class NestedInteractor { nested = instance }
+    let test = new NestedInteractor();
+
+    expect(test.assert).toHaveProperty('nested', expect.any(Function));
+    expect(test.assert.nested).toHaveProperty('passing', expect.any(Function));
+    expect(test.nested.assert).toBeUndefined();
+    expect(test.nested.only().assert).toHaveProperty('passing', expect.any(Function));
+
+    pass = true;
+    expect(test.assert.nested.passing()).toBeInstanceOf(NestedInteractor);
+    await expect(test.assert.nested.passing()).resolves.toBeUndefined();
+  });
+
   describe('making assertions', () => {
     it('resolves when passing', async () => {
       await expect(instance.assert(() => expect(pass).toBeNull()))

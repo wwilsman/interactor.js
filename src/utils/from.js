@@ -1,7 +1,8 @@
 import scoped from '../helpers/scoped';
 import count from '../assertions/count';
 import isInteractor from './is-interactor';
-import createAsserts from './assert';
+import createAsserts, { getAssertFor } from './assert';
+import { chainAssert } from './chainable';
 import meta, { set, get } from './meta';
 import { sel, q } from './string';
 
@@ -86,7 +87,8 @@ function toInteractorAssertion(name, from) {
   if (isInteractor(from) && !get(from, 'queue').length) {
     return {
       get() {
-        return this[meta][name].assert;
+        let assert = getAssertFor(this[meta][name]);
+        return chainAssert(assert);
       }
     };
 
@@ -98,8 +100,8 @@ function toInteractorAssertion(name, from) {
       value(...args) {
         // given no arguments, return a single assertion method
         if (!args.length) {
-          let parent = get(this[meta], 'parent');
-          let ctx = set(this[meta], { chain: !!parent });
+          let ctx = this[meta];
+          let parent = get(ctx, 'parent');
 
           let validate = function(expected) {
             return count.call(this, scope.call(this), expected);
@@ -123,7 +125,8 @@ function toInteractorAssertion(name, from) {
 
         // return a collection item's assertions
         } else {
-          return this[meta][name](...args).assert;
+          let assert = getAssertFor(this[meta][name](...args));
+          return chainAssert(assert);
         }
       }
     };

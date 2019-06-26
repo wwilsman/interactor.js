@@ -99,7 +99,6 @@ describe('Interactor helpers - collection', () => {
   });
 
   it('has nested collection assertions', async () => {
-    await expect(test.items(0).assert.matches('.a')).resolves.toBeUndefined();
     await expect(test.assert.items(0).matches('.a')).resolves.toBeUndefined();
   });
 
@@ -113,7 +112,6 @@ describe('Interactor helpers - collection', () => {
   });
 
   it('returns new parent instances from collection assertions', () => {
-    expect(test.items(0).assert.matches('.a')).toBeInstanceOf(CollectionInteractor);
     expect(test.assert.items(0).matches('.a')).toBeInstanceOf(CollectionInteractor);
     expect(test.assert.items().count(4)).toBeInstanceOf(CollectionInteractor);
   });
@@ -122,9 +120,8 @@ describe('Interactor helpers - collection', () => {
     @interactor class DeepInteractor { test = test }
     let deep = new DeepInteractor();
 
-    expect(deep.test.items(0).assert.matches('.a')).toBeInstanceOf(DeepInteractor);
-    expect(deep.test.assert.items(0).matches('.a')).toBeInstanceOf(DeepInteractor);
-    expect(deep.test.assert.items().count(4)).toBeInstanceOf(DeepInteractor);
+    expect(deep.assert.test.items(0).matches('.a')).toBeInstanceOf(DeepInteractor);
+    expect(deep.assert.test.items().count(4)).toBeInstanceOf(DeepInteractor);
   });
 
   it('throws scoped assertion errors for computed selectors', async () => {

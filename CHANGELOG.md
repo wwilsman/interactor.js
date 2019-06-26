@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 - Ability to define assertions with matching built-in names
 - `check` and `uncheck` actions not sending click event
 - `uncheck` working with radio buttons
+- `assert` should be top-level only
 
 ## [1.4.2] - 2019-06-24
 

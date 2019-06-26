@@ -53,7 +53,7 @@ function getAllDescriptors(instance) {
   return descr;
 }
 
-function chainAssert(assert) {
+export function chainAssert(assert) {
   return defineProperties(assert, entries(
     getOwnPropertyDescriptors(assert)
   ).reduce((acc, [key, descriptor]) => {
@@ -79,6 +79,13 @@ export default function makeChainable(instance) {
       .reduce((acc, [key, descriptor]) => {
         let { value, get } = descriptor;
 
+        // remove assert from nested interactors
+        if (key === 'assert') {
+          return assign(acc, {
+            [key]: { value: undefined }
+          });
+        }
+
         // do not include the constructor, element getter, or other
         // non-configurable descriptors
         if (key === 'constructor' || key === '$element' ||
@@ -88,25 +95,15 @@ export default function makeChainable(instance) {
 
         // make methods and getters chainable
         /* istanbul ignore else: sanity check */
-        if (key === 'assert') {
-          assign(descriptor, {
-            value: chainAssert(value)
-          });
-        } else if (typeof value === 'function') {
-          assign(descriptor, {
-            value: chainable(value)
-          });
+        if (typeof value === 'function') {
+          assign(descriptor, { value: chainable(value) });
         } else if (typeof get === 'function') {
-          assign(descriptor, {
-            get: chainable(get)
-          });
+          assign(descriptor, { get: chainable(get) });
         } else {
           return acc;
         }
 
-        return assign(acc, {
-          [key]: descriptor
-        });
+        return assign(acc, { [key]: descriptor });
       }, {
         // provide method for breaking the chain
         only: {

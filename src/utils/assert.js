@@ -1,4 +1,5 @@
 import meta, { get, set } from './meta';
+import { chainAssert } from './chainable';
 
 const {
   assign,
@@ -109,9 +110,8 @@ function assert(assertion) {
 
 const assertProto = {
   get not() {
-    let next = set(this[meta], 'assert', { expected: false });
-    next = set(next, { chain: !!get(next, 'parent') });
-    return next.assert;
+    let assert = getAssertFor(set(this[meta], 'assert', { expected: false }));
+    return get(this[meta], 'parent') ? chainAssert(assert) : assert;
   },
 
   f(format) {
