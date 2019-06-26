@@ -28,7 +28,10 @@ describe('Interactor assertions', () => {
 
       throws: () => {
         expect(pass).toBe(true);
-      }
+      },
+
+      name: () => true,
+      length: () => true
     };
 
     get computed() {
@@ -60,6 +63,11 @@ describe('Interactor assertions', () => {
   it('has computed property assertions', () => {
     expect(instance.assert).toHaveProperty('computed', expect.any(Function));
     expect(instance.assert).toHaveProperty('truthy', expect.any(Function));
+  });
+
+  it('has assertions with built-in names', () => {
+    expect(instance.assert).toHaveProperty('name', expect.any(Function));
+    expect(instance.assert).toHaveProperty('length', expect.any(Function));
   });
 
   describe('making assertions', () => {

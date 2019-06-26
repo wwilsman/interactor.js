@@ -133,8 +133,12 @@ export function getAssertFor(interactor) {
   let { [meta]: proto, ...assertions } = getAllAssertions(interactor);
 
   return defineProperties(
-    assign(assert.bind(interactor), assertions, { [meta]: interactor }),
-    assign({}, proto, getOwnPropertyDescriptors(assertProto))
+    assert.bind(interactor),
+    entries(assertions).reduce((props, [name, value]) => assign({
+      [name]: { value, configurable: true }
+    }, props), assign({
+      [meta]: { value: interactor }
+    }, proto, getOwnPropertyDescriptors(assertProto)))
   );
 }
 

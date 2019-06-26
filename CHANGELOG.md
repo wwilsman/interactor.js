@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 ### Fixed
 
 - Collection count assertion not returning topmost parent
+- Ability to define assertions with matching built-in names
 
 ## [1.4.2] - 2019-06-24
 
