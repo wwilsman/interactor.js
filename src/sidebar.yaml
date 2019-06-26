@@ -32,6 +32,7 @@
     - slug: "/properties/scrollable/"
     - slug: "/properties/scrollablex/"
     - slug: "/properties/scrollabley/"
+    - slug: "/properties/selected/"
     - slug: "/properties/text/"
     - slug: "/properties/value/"
 
