@@ -10,7 +10,7 @@ describe('Interactor actions - check / uncheck', () => {
       <input class="checkbox" type="checkbox"/>
       <fieldset class="radiogroup">
         <input class="radio-1" name="group" type="radio"/>
-        <input class="radio-2" name="group" type="radio" checked="true"/>
+        <input class="radio-2" name="group" type="radio" checked/>
       </fieldset>
     `);
   });
@@ -24,6 +24,7 @@ describe('Interactor actions - check / uncheck', () => {
     });
 
     it('eventually checks the element', async () => {
+      let click = testDOMEvent('.checkbox', 'click');
       let input = testDOMEvent('.checkbox', 'input');
       let change = testDOMEvent('.checkbox', 'change');
 
@@ -31,11 +32,13 @@ describe('Interactor actions - check / uncheck', () => {
       await expect(checkbox.check()).resolves.toBeUndefined();
 
       expect(checkbox.$element.checked).toBe(true);
+      expect(click.result).toBe(true);
       expect(input.result).toBe(true);
       expect(change.result).toBe(true);
     });
 
     it('eventually unchecks the element', async () => {
+      let click = testDOMEvent('.checkbox', 'click');
       let input = testDOMEvent('.checkbox', 'input');
       let change = testDOMEvent('.checkbox', 'change');
 
@@ -44,11 +47,13 @@ describe('Interactor actions - check / uncheck', () => {
       await expect(checkbox.uncheck()).resolves.toBeUndefined();
 
       expect(checkbox.$element.checked).toBe(false);
+      expect(click.result).toBe(true);
       expect(input.result).toBe(true);
       expect(change.result).toBe(true);
     });
 
     it('eventually checks a nested element', async () => {
+      let click = testDOMEvent('.radio-1', 'click');
       let input = testDOMEvent('.radio-1', 'input');
       let change = testDOMEvent('.radio-1', 'change');
 
@@ -59,17 +64,9 @@ describe('Interactor actions - check / uncheck', () => {
 
       expect(group.$('.radio-1').checked).toBe(true);
       expect(group.$('.radio-2').checked).toBe(false);
+      expect(click.result).toBe(true);
       expect(input.result).toBe(true);
       expect(change.result).toBe(true);
-    });
-
-    it('eventually throws an error when (un)checking a non-input element', async () => {
-      let group = new Interactor('.radiogroup').timeout(50);
-
-      await expect(group.check()).rejects
-        .toThrow('Failed to check ".radiogroup": not an input element');
-      await expect(group.uncheck()).rejects
-        .toThrow('Failed to uncheck ".radiogroup": not an input element');
     });
 
     it('eventually throws an error when (un)checking a non-checkable element', async () => {
@@ -78,7 +75,7 @@ describe('Interactor actions - check / uncheck', () => {
       await expect(input.check()).rejects
         .toThrow('Failed to check ".input": not a checkbox or radio button');
       await expect(input.uncheck()).rejects
-        .toThrow('Failed to uncheck ".input": not a checkbox or radio button');
+        .toThrow('Failed to uncheck ".input": not a checkbox');
     });
 
     it('eventually throws an error when (un)checking a disabled element', async () => {
@@ -86,58 +83,69 @@ describe('Interactor actions - check / uncheck', () => {
       checkbox.$element.disabled = true;
 
       await expect(checkbox.check()).rejects
-        .toThrow('Failed to check ".checkbox": disabled');
+        .toThrow('Failed to check ".checkbox": is disabled');
       expect(checkbox.$element.checked).toBe(false);
 
       checkbox.$element.checked = true;
       await expect(checkbox.uncheck()).rejects
-        .toThrow('Failed to uncheck ".checkbox": disabled');
+        .toThrow('Failed to uncheck ".checkbox": is disabled');
       expect(checkbox.$element.checked).toBe(true);
+    });
+
+    it('eventually throws an error when (un)checking an (un)checked element', async () => {
+      let checkbox = new Interactor('.checkbox').timeout(50);
+
+      await expect(checkbox.uncheck()).rejects
+        .toThrow('Failed to uncheck ".checkbox": is not checked');
+
+      checkbox.$element.checked = true;
+      await expect(checkbox.check()).rejects
+        .toThrow('Failed to check ".checkbox": is checked');
     });
   });
 
   describe('with the action creator', () => {
-    @interactor class RadioGroupInteractor {
-      static defaultScope = '.radiogroup';
-
-      check1 = check('.radio-1');
-      check2 = check('.radio-2').assert(element => {
+    @interactor class CheckInteractor {
+      checkRadio = check('.radio-1');
+      checkRadioAssert = check('.radio-1').assert(element => {
         expect(element.checked).toBe(true);
       });
 
-      uncheck2 = uncheck('.radio-2');
-      uncheck1 = uncheck('.radio-1').assert(element => {
+      uncheckBox = uncheck('.checkbox');
+      uncheckBoxAssert = uncheck('.checkbox').assert(element => {
         expect(element.checked).toBe(false);
       });
     }
 
-    let group = new RadioGroupInteractor();
+    let test = new CheckInteractor();
 
     it('checks the specified element', async () => {
-      let test = testDOMEvent('.radio-1', 'change');
-      await expect(group.check1()).resolves.toBeUndefined();
-      expect(test.$element.checked).toBe(true);
-      expect(test.result).toBe(true);
+      let change = testDOMEvent('.radio-1', 'change');
+      await expect(test.checkRadio()).resolves.toBeUndefined();
+      expect(change.$element.checked).toBe(true);
+      expect(change.result).toBe(true);
     });
 
     it('unchecks the specified element', async () => {
-      let test = testDOMEvent('.radio-2', 'change');
-      await expect(group.uncheck2()).resolves.toBeUndefined();
-      expect(test.$element.checked).toBe(false);
-      expect(test.result).toBe(true);
+      let change = testDOMEvent('.checkbox', 'change');
+      change.$element.checked = true;
+      await expect(test.uncheckBox()).resolves.toBeUndefined();
+      expect(change.$element.checked).toBe(false);
+      expect(change.result).toBe(true);
     });
 
     it('can chain other interactor methods', async () => {
-      let test1 = testDOMEvent('.radio-1', 'change');
-      let test2 = testDOMEvent('.radio-2', 'change');
+      let changeRadio = testDOMEvent('.radio-1', 'change');
+      let changeBox = testDOMEvent('.checkbox', 'change');
 
-      await expect(group.uncheck1()).resolves.toBeUndefined();
-      expect(test1.$element.checked).toBe(false);
-      expect(test1.result).toBe(true);
+      await expect(test.checkRadio()).resolves.toBeUndefined();
+      expect(changeRadio.$element.checked).toBe(true);
+      expect(changeRadio.result).toBe(true);
 
-      await expect(group.check2()).resolves.toBeUndefined();
-      expect(test2.$element.checked).toBe(true);
-      expect(test2.result).toBe(true);
+      changeBox.$element.checked = true;
+      await expect(test.uncheckBoxAssert()).resolves.toBeUndefined();
+      expect(changeBox.$element.checked).toBe(false);
+      expect(changeBox.result).toBe(true);
     });
   });
 
@@ -148,17 +156,20 @@ describe('Interactor actions - check / uncheck', () => {
     });
 
     it('eventually checks the element', async () => {
+      let click = testDOMEvent('.checkbox', 'click');
       let input = testDOMEvent('.checkbox', 'input');
       let change = testDOMEvent('.checkbox', 'change');
 
       await expect(check('.checkbox')).resolves.toBeUndefined();
 
       expect(input.$element.checked).toBe(true);
+      expect(click.result).toBe(true);
       expect(input.result).toBe(true);
       expect(change.result).toBe(true);
     });
 
     it('eventually unchecks the element', async () => {
+      let click = testDOMEvent('.checkbox', 'click');
       let input = testDOMEvent('.checkbox', 'input');
       let change = testDOMEvent('.checkbox', 'change');
 
@@ -166,6 +177,7 @@ describe('Interactor actions - check / uncheck', () => {
       await expect(uncheck('.checkbox')).resolves.toBeUndefined();
 
       expect(input.$element.checked).toBe(false);
+      expect(click.result).toBe(true);
       expect(input.result).toBe(true);
       expect(change.result).toBe(true);
     });
