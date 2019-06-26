@@ -98,7 +98,8 @@ function toInteractorAssertion(name, from) {
       value(...args) {
         // given no arguments, return a single assertion method
         if (!args.length) {
-          let ctx = this[meta];
+          let parent = get(this[meta], 'parent');
+          let ctx = set(this[meta], { chain: !!parent });
 
           let validate = function(expected) {
             return count.call(this, scope.call(this), expected);
@@ -110,10 +111,11 @@ function toInteractorAssertion(name, from) {
               return assert;
             },
 
-            count: (...args) => {
+            count(...args) {
               let { validations, expected } = get(ctx, 'assert');
               validations = validations.concat({ args, expected, validate });
-              return set(ctx, 'assert', { validations, expected: true });
+              ctx = set(ctx, 'assert', { validations, expected: true });
+              return parent ? parent.append(ctx) : ctx;
             }
           };
 

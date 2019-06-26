@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Fixed
+
+- Collection count assertion not returning topmost parent
+
 ## [1.4.2] - 2019-06-24
 
 ### Fixed
