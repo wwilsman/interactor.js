@@ -125,7 +125,8 @@ await field
 
 Nested assertions work the same way as nested actions and return the top-most
 parent interactor. Like other assertions, they are also grouped with neighboring
-assertions until an action is called.
+assertions until an action is called. Assertions can only be started at the top
+level interactor; nested interactors do not contain an `assert` property.
 
 ``` javascript
 import interactor, {
@@ -155,6 +156,26 @@ new FormInteractor()
   .submit.click()
   .assert.submit.matches('.loading')
   .assert.submit.disabled()
+```
+
+All built-in assertions, and assertions auto-defined from custom properties, can
+be passed a custom matcher function which is given the result of the property as
+it's only argument. Assertions that test properties which return strings can
+also be passed a regular expression to test against. Providing no arguments to
+an assertion will assert the property's truthiness.
+
+``` javascript
+// asserting with a custom matcher
+await new FormInteractor()
+  .assert.options().count(len => len > 1 && len <= 3)
+
+// asserting against a regexp
+await new FormInteractor()
+  .assert.name.value(/namerson/i);
+
+// asserting truthiness
+await new FormInteractor()
+  .assert.submit.disabled();
 ```
 
 ### Advanced assertions

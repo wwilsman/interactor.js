@@ -22,6 +22,26 @@ it('is a disabled card component', async () => {
 });
 ```
 
+All built-in assertions, and assertions auto-defined from custom properties, can
+be passed a custom matcher function which is given the result of the property as
+it's only argument. Assertions that test properties which return strings can
+also be passed a regular expression to test against. Providing no arguments to
+an assertion will assert the property's truthiness.
+
+``` javascript
+// asserting with a custom matcher
+await new Interactor('.intro')
+  .assert.text(content => content.length <= 100);
+
+// asserting against a regexp
+await new Interactor('.heading')
+  .assert.text(/welcome/i);
+
+// asserting truthiness
+await new Interactor('.checkbox')
+  .assert.checked();
+```
+
 Built-in assertions can be found [here](/assertions).
 
 ## Negating assertions
