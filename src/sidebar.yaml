@@ -24,6 +24,7 @@
 
   - slug: "/properties/"
     items:
+    - slug: "/properties/checked/"
     - slug: "/properties/disabled/"
     - slug: "/properties/exists/"
     - slug: "/properties/focusable/"
