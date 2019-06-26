@@ -17,5 +17,6 @@ for custom interactors.
 - [Scrollable](/properties/scrollable)
 - [ScrollableX](/properties/scrollablex)
 - [ScrollableY](/properties/scrollabley)
+- [Selected](/properties/selected)
 - [Text](/properties/text)
 - [Value](/properties/value)
