@@ -798,7 +798,9 @@ describe('Interactor', () => {
           return this.getgot;
         },
 
-        func() {},
+        func() {
+          return new Interactor().do(() => {});
+        },
 
         descr: {
           enumerable: false,
@@ -844,6 +846,11 @@ describe('Interactor', () => {
 
     it('creates an interactor class with interactor actions', () => {
       expect(TestInteractor.prototype).toHaveProperty('action', expect.any(Function));
+    });
+
+    it('returns the topmost interactor from interactor actions', () => {
+      expect(new TestInteractor().func()).toBeInstanceOf(TestInteractor);
+      expect(new TestInteractor().action()).toBeInstanceOf(TestInteractor);
     });
 
     it('creates an interactor class from the origin class', () => {
@@ -899,7 +906,9 @@ describe('Interactor', () => {
           return this.getgot;
         }
 
-        func() {}
+        func() {
+          return new Interactor().do(() => {});
+        }
 
         test = {
           enumerable: false,
@@ -945,6 +954,11 @@ describe('Interactor', () => {
 
     it('extends the interactor class with interactor actions', () => {
       expect(TestInteractor.prototype).toHaveProperty('action', expect.any(Function));
+    });
+
+    it('returns the topmost interactor from interactor actions', () => {
+      expect(new TestInteractor().func()).toBeInstanceOf(TestInteractor);
+      expect(new TestInteractor().action()).toBeInstanceOf(TestInteractor);
     });
 
     it('extends the interactor class from the origin class', () => {

@@ -59,7 +59,12 @@ function wrap(from) {
 function toInteractorDescriptor(from) {
   // already a property descriptor
   if (isPropertyDescriptor(from)) {
-    return from;
+    // function descriptors still get wrapped
+    if ('value' in from && typeof from.value === 'function') {
+      return { value: wrap(from.value) };
+    } else {
+      return from;
+    }
 
   // nested interactors get parent references
   } else if (isInteractor(from)) {
