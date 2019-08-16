@@ -3,7 +3,9 @@
     "mocha": true
   },
   "rules": {
-    "no-return-assign": 0,
-    "no-unused-expressions": 0
+    "array-bracket-spacing": "off",
+    "lines-between-class-members": "off",
+    "no-return-assign": "off",
+    "no-unused-expressions": "off"
   }
 }
