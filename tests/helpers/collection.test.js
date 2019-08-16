@@ -136,7 +136,13 @@ describe('Interactor helpers - collection', () => {
 
   it('lazily throws an error when the element does not exist', () => {
     let item = test.items(99);
+
     expect(() => item.$element)
       .toThrow('unable to find ".test-item" at index 99');
+  });
+
+  it('throws negated assertion errors when the element does not exist', async () => {
+    await expect(test.assert.items(99).not.disabled())
+      .rejects.toThrow('unable to find ".test-item" at index 99');
   });
 });

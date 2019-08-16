@@ -1,5 +1,3 @@
-import error from './error';
-
 function isElement(obj) {
   // safe way to check `instanceof Element` when Element can be in a virtual DOM
   return obj && 'ownerDocument' in obj && 'defaultView' in obj.ownerDocument &&
@@ -11,7 +9,7 @@ export function $(selector, $ctx) {
 
   /* istanbul ignore if: sanity check */
   if (!$ctx || typeof $ctx.querySelector !== 'function') {
-    throw error('unable to use the current context');
+    throw new Error('unable to use the current context');
   }
 
   /* istanbul ignore else: unnecessary */
@@ -19,7 +17,7 @@ export function $(selector, $ctx) {
     try {
       $node = $ctx.querySelector(selector);
     } catch (e) {
-      throw error(`"${selector}" is not a valid selector`, SyntaxError);
+      throw new SyntaxError(`"${selector}" is not a valid selector`);
     }
 
   // if an element was given, return it
@@ -32,7 +30,7 @@ export function $(selector, $ctx) {
   }
 
   if (!$node) {
-    throw error(`unable to find "${selector}"`);
+    throw new Error(`unable to find "${selector}"`);
   }
 
   return $node;
@@ -43,7 +41,7 @@ export function $$(selector, $ctx) {
 
   /* istanbul ignore if: sanity check */
   if (!$ctx || typeof $ctx.querySelectorAll !== 'function') {
-    throw error('unable to use the current context');
+    throw new Error('unable to use the current context');
   }
 
   /* istanbul ignore else: unnecessary */
@@ -51,7 +49,7 @@ export function $$(selector, $ctx) {
     try {
       nodes = [].slice.call($ctx.querySelectorAll(selector));
     } catch (e) {
-      throw error(`"${selector}" is not a valid selector`, SyntaxError);
+      throw new SyntaxError(`"${selector}" is not a valid selector`);
     }
 
   // given an iterable, assume it contains nodes

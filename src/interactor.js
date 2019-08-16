@@ -94,11 +94,17 @@ export default class Interactor {
     let { scope, parent, detached } = get(this);
     let nested = !detached && parent;
 
-    // evaluate scope or set to default when not nested
-    scope = (typeof scope === 'function' ? scope() : scope) ||
-      (!nested && (this.constructor.defaultScope || this.$dom.document.body));
+    try {
+      // evaluate scope or set to default when not nested
+      scope = (typeof scope === 'function' ? scope() : scope) ||
+        (!nested && (this.constructor.defaultScope || this.$dom.document.body));
 
-    return $(scope, nested ? parent.$element : this.$dom.document);
+      return $(scope, nested ? parent.$element : this.$dom.document);
+    } catch (err) {
+      // allow errors from scope functions to bubble through negated assertions
+      err[meta] = true;
+      throw err;
+    }
   }
 
   $(selector) {
