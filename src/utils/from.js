@@ -56,34 +56,39 @@ function wrap(from) {
   };
 }
 
+function descr({ value, get } = {}) {
+  let d = { configurable: true, enumerable: false };
+  return get ? assign(d, { get }) : assign(d, { value, writable: true });
+}
+
 function toInteractorDescriptor(from) {
   // already a property descriptor
   if (isPropertyDescriptor(from)) {
     // function descriptors still get wrapped
     if ('value' in from && typeof from.value === 'function') {
-      return { value: wrap(from.value) };
+      return descr({ value: wrap(from.value) });
     } else {
-      return from;
+      return descr(from);
     }
 
   // nested interactors get parent references
   } else if (isInteractor(from)) {
     // action interactors are functions
     if (get(from, 'queue').length > 0) {
-      return { value: wrap(from) };
+      return descr({ value: wrap(from) });
 
     // all other interactors are getters
     } else {
-      return { get: wrap(from) };
+      return descr({ get: wrap(from) });
     }
 
   // wrap functions in case they return interactors
   } else if (typeof from === 'function') {
-    return { value: wrap(from) };
+    return descr({ value: wrap(from) });
 
   // preserve all other values
   } else {
-    return { value: from };
+    return descr({ value: from });
   }
 }
 

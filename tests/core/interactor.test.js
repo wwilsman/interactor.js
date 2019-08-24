@@ -855,10 +855,12 @@ describe('Interactor', () => {
 
     it('creates an interactor class from the origin class', () => {
       let ExtendedInteractor = TestInteractor.from({
-        bar: { enumerable: false, configurable: false, get: () => 'baz' }
+        bar: { enumerable: false, configurable: false, get: () => 'baz' },
+        click: 'clack'
       });
 
       expect(new ExtendedInteractor()).toHaveProperty('bar', 'baz');
+      expect(new ExtendedInteractor()).toHaveProperty('click', 'clack');
       expect(new ExtendedInteractor()).toBeInstanceOf(TestInteractor);
     });
 
@@ -964,9 +966,11 @@ describe('Interactor', () => {
     it('extends the interactor class from the origin class', () => {
       @interactor class ExtendedInteractor extends TestInteractor {
         bar = { enumerable: false, configurable: false, get: () => 'baz' };
+        click = 'clack';
       }
 
       expect(new ExtendedInteractor()).toHaveProperty('bar', 'baz');
+      expect(new ExtendedInteractor()).toHaveProperty('click', 'clack');
       expect(new ExtendedInteractor()).toBeInstanceOf(TestInteractor);
     });
 
