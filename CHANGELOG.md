@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [1.5.0] - 2019-09-15
+
+### Added
+
+- Regex matchers for value, text, and attribute assertions
+- Assertion message functions receive the value of assertion results
+
 ## [1.4.6] - 2019-08-23
 
 ### Fixed
