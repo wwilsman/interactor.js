@@ -1,13 +1,13 @@
 import method, { args } from '../helpers/attribute';
-import { sel } from '../utils/string';
+import { sel, q, eq } from '../utils/string';
 
 export function validate(selector, attr) {
   return (actual, expected) => ({
-    result: actual === expected,
-    message: sel(selector, () => (
-      actual === expected
-        ? `%s "${attr}" is "${expected}"`
-        : `%s "${attr}" is "${actual}" but expected "${expected}"`
+    result: eq(actual, expected),
+    message: sel(selector, result => (
+      result
+        ? `%s "${attr}" is ${q(expected)}`
+        : `%s "${attr}" is ${q(actual)} but expected ${q(expected)}`
     ))
   });
 }
