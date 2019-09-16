@@ -4,7 +4,7 @@ import isInteractor from './is-interactor';
 import createAsserts, { getAssertFor } from './assert';
 import { chainAssert } from './chainable';
 import meta, { set, get } from './meta';
-import { sel, q } from './string';
+import { sel, q, eq } from './string';
 
 const {
   assign,
@@ -151,11 +151,7 @@ function toInteractorAssertion(name, from) {
         let result = !!actual;
 
         if (args.length > 1) {
-          if (typeof actual === 'string' && expected instanceof RegExp) {
-            result = expected.test(actual);
-          } else {
-            result = actual === expected;
-          }
+          result = eq(actual, expected);
         }
 
         return {
