@@ -81,7 +81,7 @@ function validate(interactor) {
         throw new Error(
           format
             .replace('%s', getScopeName(ctx))
-            .replace('%e', message())
+            .replace('%e', message(result))
         );
       }
 
