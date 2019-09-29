@@ -66,6 +66,7 @@ module.exports = (config) => {
     plugins: [
       'karma-chrome-launcher',
       'karma-coverage',
+      'karma-jsdom-launcher',
       'karma-junit-reporter',
       'karma-mocha',
       'karma-mocha-reporter',
