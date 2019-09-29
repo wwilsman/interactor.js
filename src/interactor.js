@@ -91,7 +91,7 @@ export default class Interactor {
   }
 
   get $dom() {
-    // lazy for virtual DOMs
+    // lazy for virtual and remote DOMs
     return window;
   }
 
