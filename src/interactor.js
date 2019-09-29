@@ -17,6 +17,11 @@ const {
 export default class Interactor {
   static isInteractor = isInteractor;
 
+  // defined as a getter for proper inheritance
+  static get suppressLayoutEngineWarning() {
+    return true;
+  }
+
   constructor(options = {}, previous = {}) {
     // a scope selector, element, or function was given
     if (typeof options === 'string' ||
