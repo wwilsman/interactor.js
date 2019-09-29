@@ -1,5 +1,6 @@
 function isElement(obj) {
-  // safe way to check `instanceof Element` when Element can be in a virtual DOM
+  // safe way to look up the owner document and check `instanceof Element` when
+  // Element can be part of a remote or virtual DOM
   return obj && 'ownerDocument' in obj && 'defaultView' in obj.ownerDocument &&
     obj instanceof obj.ownerDocument.defaultView.Element;
 }
@@ -60,4 +61,20 @@ export function $$(selector, $ctx) {
   // only return elements
   /* istanbul ignore next: sanity check */
   return nodes.filter(isElement);
+}
+
+export function hasLayoutEngine(caseMsg) {
+  let { result } = hasLayoutEngine;
+
+  if (result == null) {
+    result = !this.$dom.navigator.userAgent.includes('jsdom');
+    hasLayoutEngine.result = result;
+  }
+
+  if (!this.constructor.suppressLayoutEngineWarning && !result) {
+    const disableMsg = 'You can disable this warning by setting `Interactor.suppressLayoutEngineWarning = true`';
+    console.warn(`No layout engine detected. ${caseMsg}. ${disableMsg}.`);
+  }
+
+  return result;
 }
