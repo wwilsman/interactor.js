@@ -1,4 +1,42 @@
 const { now } = Date;
+const { assign } = Object;
+
+function dedupLogging() {
+  let og = {
+    log: console.log,
+    info: console.info,
+    warn: console.warn,
+    error: console.error
+  };
+
+  let cache = {
+    log: [],
+    info: [],
+    warn: [],
+    error: []
+  };
+
+  let unique = key => (...args) => {
+    if (!cache[key].some(e => (
+      args.length === e.length &&
+        args.every((a, i) => a === e[i])
+    ))) {
+      og[key].apply(console, args);
+      cache[key].push(args);
+    }
+  };
+
+  assign(console, {
+    log: unique('log'),
+    info: unique('info'),
+    warn: unique('warn'),
+    error: unique('error')
+  });
+
+  return () => {
+    assign(console, og);
+  };
+}
 
 function convergeOn(assertion, timeout, always) {
   let start = now();
@@ -17,6 +55,8 @@ function convergeOn(assertion, timeout, always) {
   };
 
   return new Promise((resolve, reject) => {
+    let restoreLogging = dedupLogging();
+
     (function loop() {
       // track stats
       stats.runs += 1;
@@ -53,6 +93,7 @@ function convergeOn(assertion, timeout, always) {
           stats.end = now();
           stats.elapsed = stats.end - start;
           stats.value = results;
+          restoreLogging();
           resolve(stats);
         }
       } catch (error) {
@@ -62,6 +103,7 @@ function convergeOn(assertion, timeout, always) {
         if (!bail && !always && doLoop) {
           setTimeout(loop, interval);
         } else if (bail || always || !doLoop) {
+          restoreLogging();
           reject(error);
         }
       }
