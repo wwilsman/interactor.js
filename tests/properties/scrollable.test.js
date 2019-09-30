@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import { injectHtml } from '../helpers';
+import { injectHtml, skipForJsdom } from '../helpers';
 
 import interactor, {
   Interactor,
@@ -9,7 +9,8 @@ import interactor, {
   scrollableY
 } from 'interactor.js';
 
-describe('Interactor properties - scrollable', () => {
+// CSS layout is not supported in jsdom; there is no concept of overflow and everything is scrollable
+describe('Interactor properties - scrollable', skipForJsdom(() => {
   beforeEach(() => {
     injectHtml(`
       <div id="container" style="width:100px;height:100px;">
@@ -134,4 +135,4 @@ describe('Interactor properties - scrollable', () => {
       });
     });
   });
-});
+}));
