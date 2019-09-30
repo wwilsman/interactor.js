@@ -7,8 +7,8 @@ import { get } from '../../src/utils/meta';
 describe('Interactor helpers - scoped', () => {
   @interactor class PInteractor {
     static defaultScope = '.test-p';
-    get a() { return this.$element.innerText === 'A'; }
-    get b() { return this.$element.innerText === 'B'; }
+    get a() { return this.$element.textContent === 'A'; }
+    get b() { return this.$element.textContent === 'B'; }
   }
 
   beforeEach(() => {
@@ -24,7 +24,7 @@ describe('Interactor helpers - scoped', () => {
     it('returns a new, nested, scoped interactor', () => {
       let test = new Interactor('#scoped').scoped('.test-p');
       expect(test).toBeInstanceOf(Interactor);
-      expect(test.$element.innerText).toBe('B');
+      expect(test.$element.textContent).toBe('B');
     });
 
     it('uses defined properties for the scoped interactor', () => {
@@ -52,16 +52,16 @@ describe('Interactor helpers - scoped', () => {
 
     it('scopes with an interactor class by default', () => {
       expect(new ScopedInteractor().def).toBeInstanceOf(Interactor);
-      expect(new ScopedInteractor().def.$element.innerText).toBe('A');
+      expect(new ScopedInteractor().def.$element.textContent).toBe('A');
       expect(new ScopedInteractor('#scoped').def).toBeInstanceOf(Interactor);
-      expect(new ScopedInteractor('#scoped').def.$element.innerText).toBe('B');
+      expect(new ScopedInteractor('#scoped').def.$element.textContent).toBe('B');
     });
 
     it('can scope with custom properties', () => {
       expect(new ScopedInteractor().props).toHaveProperty('foo', true);
-      expect(new ScopedInteractor().props.$element.innerText).toBe('A');
+      expect(new ScopedInteractor().props.$element.textContent).toBe('A');
       expect(new ScopedInteractor('#scoped').props).toHaveProperty('foo', true);
-      expect(new ScopedInteractor('#scoped').props.$element.innerText).toBe('B');
+      expect(new ScopedInteractor('#scoped').props.$element.textContent).toBe('B');
     });
 
     it('can scope with a custom interactor class', () => {
@@ -94,7 +94,7 @@ describe('Interactor helpers - scoped', () => {
 
       test = scoped('.test-p', PInteractor);
       expect(test).toBeInstanceOf(PInteractor);
-      expect(test.$element.innerText).toBe('A');
+      expect(test.$element.textContent).toBe('A');
     });
 
     it('creates an interactor with the given properties', () => {
@@ -104,7 +104,7 @@ describe('Interactor helpers - scoped', () => {
 
       test = scoped('.test-p', { foo: true });
       expect(test).toBeInstanceOf(Interactor);
-      expect(test.$element.innerText).toBe('A');
+      expect(test.$element.textContent).toBe('A');
       expect(test.foo).toBe(true);
     });
   });
@@ -114,14 +114,14 @@ describe('Interactor helpers - scoped', () => {
 
     it('is scoped to a specific element', async () => {
       await expect(
-        test.assert.scoped('#scoped').text('B')
+        test.assert.scoped('#scoped').text(/B/)
       ).resolves.toBeUndefined();
     });
 
     it('throw an error with the proper scope', async () => {
       await expect(
-        test.assert.scoped('#scoped').not.text('B')
-      ).rejects.toThrow('"#scoped" assertion failed: text is "B"');
+        test.assert.scoped('#scoped').not.text(/B/)
+      ).rejects.toThrow('"#scoped" assertion failed: text is /B/');
     });
 
     it('can be chained with the parent interactor', async () => {

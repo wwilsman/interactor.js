@@ -603,12 +603,12 @@ describe('Interactor', () => {
 
     describe('finding elements within the scope', () => {
       it('can find a single DOM element within the scope', () => {
-        expect(new Interactor().$('.test-p').innerText).toBe('A');
-        expect(new Interactor('#scoped').$('.test-p').innerText).toBe('B');
+        expect(new Interactor().$('.test-p').textContent).toBe('A');
+        expect(new Interactor('#scoped').$('.test-p').textContent).toBe('B');
       });
 
       it('returns the root element when no selector is given', () => {
-        expect(new Interactor('.test-p').$().innerText).toBe('A');
+        expect(new Interactor('.test-p').$().textContent).toBe('A');
       });
 
       it('throws when finding a single element that does not exist', () => {
@@ -673,8 +673,8 @@ describe('Interactor', () => {
 
       it('has the correct scope', () => {
         let test = new TestInteractor('#scoped');
-        expect(test.nested.$element.innerText).toBe('A');
-        expect(test.scoped.$element.innerText).toBe('B');
+        expect(test.nested.$element.textContent).toBe('A');
+        expect(test.scoped.$element.textContent).toBe('B');
       });
 
       it('creates a method when the interactor has actions', async () => {
