@@ -1,9 +1,10 @@
 import expect from 'expect';
 
-import { injectHtml } from '../helpers';
+import { injectHtml, skipForJsdom } from '../helpers';
 import { Interactor } from 'interactor.js';
 
-describe('Interactor assertions - property', () => {
+// CSS layout is not supported in jsdom, which these specific tests test against
+describe('Interactor assertions - property', skipForJsdom(() => {
   beforeEach(() => {
     injectHtml(`
       <div class="float" style="border:10px solid;"></div>
@@ -38,4 +39,4 @@ describe('Interactor assertions - property', () => {
         .rejects.toThrow('".float" "tagName" is "DIV"');
     });
   });
-});
+}));
