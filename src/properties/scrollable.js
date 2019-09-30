@@ -1,11 +1,14 @@
 import computed from '../helpers/computed';
+import { hasLayoutEngine } from '../utils/dom';
 
 function hasOverflowX(element) {
-  return element.scrollWidth > element.clientWidth;
+  return !hasLayoutEngine.call(this, 'Overflow as the result of CSS cannot be calculated') ||
+    element.scrollWidth > element.clientWidth;
 }
 
 function hasOverflowY(element) {
-  return element.scrollHeight > element.clientHeight;
+  return !hasLayoutEngine.call(this, 'Overflow as the result of CSS cannot be calculated') ||
+    element.scrollHeight > element.clientHeight;
 }
 
 export function scrollableX(selector) {
@@ -37,9 +40,10 @@ export function scrollableY(selector) {
 export default function scrollable(selector) {
   return computed(
     selector,
-    element => (
-      hasOverflowX(element) || hasOverflowY(element)
-    ),
+    function(element) {
+      return hasOverflowX.call(this, element) ||
+        hasOverflowY.call(this, element);
+    },
     actual => ({
       result: actual,
       message: () => (
