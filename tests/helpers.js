@@ -1,4 +1,9 @@
+import Interactor from '../src/interactor';
 import { $ as $find } from '../src/utils/dom';
+
+// this file is always required in tests where the warning would be noisy in
+// certain scenarios; suppress it by default and relevant tests can unset
+Interactor.supressLayoutEngineWarning = true;
 
 export function $(selector, ctx) {
   return $find(selector, ctx || document);
@@ -36,4 +41,22 @@ export function testDOMEvent(selector, event, callback = () => {}) {
   // };
 
   return test;
+}
+
+export function skipForJsdom(callback) {
+  let { result } = skipForJsdom;
+
+  if (result == null) {
+    result = navigator.userAgent.includes('jsdom');
+    skipForJsdom.result = result;
+  }
+
+  return result ? function() {
+    if (!this.skip) {
+      before(function() { this.skip(); });
+      callback.call(this);
+    } else {
+      this.skip();
+    }
+  } : callback;
 }
