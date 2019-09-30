@@ -66,6 +66,18 @@ jobs:
       - store_artifacts:
           path: ./junit
 
+  test-jsdom:
+    <<: *defaults
+    steps:
+      - *attach_workspace
+      - run:
+          name: Run jsdom tests
+          command: yarn test --browsers jsdom --junit
+      - store_test_results:
+          path: ./junit
+      - store_artifacts:
+          path: ./junit
+
   deploy:
     <<: *defaults
     steps:
@@ -93,11 +105,15 @@ workflows:
       - test:
           requires:
             - install
+      - test-jsdom:
+          requires:
+            - install
       - deploy:
           requires:
             - lint
             - build
             - test
+            - test-jsdom
           filters:
             branches:
               only: master
