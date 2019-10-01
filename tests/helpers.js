@@ -43,20 +43,37 @@ export function testDOMEvent(selector, event, callback = () => {}) {
   return test;
 }
 
-export function skipForJsdom(callback) {
-  let { result } = skipForJsdom;
+function isJsdom() {
+  let { result } = isJsdom;
 
   if (result == null) {
     result = navigator.userAgent.includes('jsdom');
-    skipForJsdom.result = result;
+    isJsdom.result = result;
   }
 
-  return result ? function() {
-    if (!this.skip) {
-      before(function() { this.skip(); });
-      callback.call(this);
-    } else {
-      this.skip();
-    }
-  } : callback;
+  return result;
 }
+
+describe.jsdom = (name, suite) => {
+  return describe(`[jsdom only] ${name}`, isJsdom() ? suite : undefined);
+};
+
+describe.skip.jsdom = (name, suite) => {
+  if (isJsdom()) {
+    return describe.skip(`[skipped in jsdom] ${name}`, suite);
+  } else {
+    return describe(name, suite);
+  }
+};
+
+it.jsdom = (name, test) => {
+  return it(`[jsdom only] ${name}`, isJsdom() ? test : undefined);
+};
+
+it.skip.jsdom = (name, test) => {
+  if (isJsdom()) {
+    return it.skip(`[skipped in jsdom] ${name}`, test);
+  } else {
+    return it(name, test);
+  }
+};

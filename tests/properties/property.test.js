@@ -1,10 +1,10 @@
 import expect from 'expect';
 
-import { injectHtml, skipForJsdom } from '../helpers';
+import { injectHtml } from '../helpers';
 import interactor, { Interactor, property } from 'interactor.js';
 
 // CSS layout is not supported in jsdom, which these specific tests test against
-describe('Interactor properties - property', skipForJsdom(() => {
+describe.skip.jsdom('Interactor properties - property', () => {
   beforeEach(() => {
     injectHtml(`
       <div class="box" style="width:100px;height:100px">
@@ -64,4 +64,4 @@ describe('Interactor properties - property', skipForJsdom(() => {
       });
     });
   });
-}));
+});

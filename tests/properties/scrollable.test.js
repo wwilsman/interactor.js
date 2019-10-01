@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import { injectHtml, skipForJsdom } from '../helpers';
+import { injectHtml } from '../helpers';
 
 import interactor, {
   Interactor,
@@ -9,8 +9,7 @@ import interactor, {
   scrollableY
 } from 'interactor.js';
 
-// CSS layout is not supported in jsdom; there is no concept of overflow and everything is scrollable
-describe('Interactor properties - scrollable', skipForJsdom(() => {
+describe('Interactor properties - scrollable', () => {
   beforeEach(() => {
     injectHtml(`
       <div id="container" style="width:100px;height:100px;">
@@ -29,7 +28,8 @@ describe('Interactor properties - scrollable', skipForJsdom(() => {
       expect(container).toHaveProperty('scrollable', true);
     });
 
-    it('returns false when the element is not scrollable', () => {
+    // CSS layout is not supported in jsdom; there is no concept of overflow and everything is scrollable
+    it.skip.jsdom('returns false when the element is not scrollable', () => {
       expect(content).toHaveProperty('scrollableX', false);
       expect(content).toHaveProperty('scrollableY', false);
       expect(content).toHaveProperty('scrollable', false);
@@ -42,6 +42,9 @@ describe('Interactor properties - scrollable', skipForJsdom(() => {
         await expect(container.assert.scrollableX()).resolves.toBeUndefined();
         await expect(container.assert.scrollableY()).resolves.toBeUndefined();
         await expect(container.assert.scrollable()).resolves.toBeUndefined();
+      });
+
+      it.skip.jsdom('negated, resolves when passing', async () => {
         await expect(content.assert.not.scrollableX()).resolves.toBeUndefined();
         await expect(content.assert.not.scrollableY()).resolves.toBeUndefined();
         await expect(content.assert.not.scrollable()).resolves.toBeUndefined();
@@ -51,27 +54,36 @@ describe('Interactor properties - scrollable', skipForJsdom(() => {
         await expect(test.assert.scrollableX('#container')).resolves.toBeUndefined();
         await expect(test.assert.scrollableY('#container')).resolves.toBeUndefined();
         await expect(test.assert.scrollable('#container')).resolves.toBeUndefined();
+      });
+
+      it.skip.jsdom('negated, resolves when passing with a selector', async () => {
         await expect(test.assert.not.scrollableX('#content')).resolves.toBeUndefined();
         await expect(test.assert.not.scrollableY('#content')).resolves.toBeUndefined();
         await expect(test.assert.not.scrollable('#content')).resolves.toBeUndefined();
       });
 
-      it('rejects with an error when failing', async () => {
-        await expect(container.assert.not.scrollableX()).rejects.toThrow('has overflow-x');
-        await expect(container.assert.not.scrollableY()).rejects.toThrow('has overflow-y');
-        await expect(container.assert.not.scrollable()).rejects.toThrow('has overflow');
+      it.skip.jsdom('rejects with an error when failing', async () => {
         await expect(content.assert.scrollableX()).rejects.toThrow('has no overflow-x');
         await expect(content.assert.scrollableY()).rejects.toThrow('has no overflow-y');
         await expect(content.assert.scrollable()).rejects.toThrow('has no overflow');
       });
 
-      it('rejects with an error when failing with a selector', async () => {
-        await expect(test.assert.not.scrollableX('#container')).rejects.toThrow('has overflow-x');
-        await expect(test.assert.not.scrollableY('#container')).rejects.toThrow('has overflow-y');
-        await expect(test.assert.not.scrollable('#container')).rejects.toThrow('has overflow');
+      it('negated, rejects with an error when failing', async () => {
+        await expect(container.assert.not.scrollableX()).rejects.toThrow('has overflow-x');
+        await expect(container.assert.not.scrollableY()).rejects.toThrow('has overflow-y');
+        await expect(container.assert.not.scrollable()).rejects.toThrow('has overflow');
+      });
+
+      it.skip.jsdom('rejects with an error when failing with a selector', async () => {
         await expect(test.assert.scrollableX('#content')).rejects.toThrow('has no overflow-x');
         await expect(test.assert.scrollableY('#content')).rejects.toThrow('has no overflow-y');
         await expect(test.assert.scrollable('#content')).rejects.toThrow('has no overflow');
+      });
+
+      it('negated, rejects with an error when failing with a selector', async () => {
+        await expect(test.assert.not.scrollableX('#container')).rejects.toThrow('has overflow-x');
+        await expect(test.assert.not.scrollableY('#container')).rejects.toThrow('has overflow-y');
+        await expect(test.assert.not.scrollable('#container')).rejects.toThrow('has overflow');
       });
     });
   });
@@ -95,20 +107,20 @@ describe('Interactor properties - scrollable', skipForJsdom(() => {
       expect(container).toHaveProperty('containerScrollable', true);
     });
 
-    it('returns false when the specified element is not scrollable', () => {
+    it.skip.jsdom('returns false when the specified element is not scrollable', () => {
       expect(container).toHaveProperty('scrollableX', false);
       expect(container).toHaveProperty('scrollableY', false);
       expect(container).toHaveProperty('scrollable', false);
     });
 
     describe('and the default assertion', () => {
-      it('resolves when passing', async () => {
+      it.skip.jsdom('resolves when passing', async () => {
         await expect(container.assert.not.scrollableX()).resolves.toBeUndefined();
         await expect(container.assert.not.scrollableY()).resolves.toBeUndefined();
         await expect(container.assert.not.scrollable()).resolves.toBeUndefined();
       });
 
-      it('rejects with an error when failing', async () => {
+      it.skip.jsdom('rejects with an error when failing', async () => {
         await expect(container.assert.scrollableX()).rejects.toThrow('has no overflow-x');
         await expect(container.assert.scrollableY()).rejects.toThrow('has no overflow-y');
         await expect(container.assert.scrollable()).rejects.toThrow('has no overflow');
@@ -135,4 +147,4 @@ describe('Interactor properties - scrollable', skipForJsdom(() => {
       });
     });
   });
-}));
+});
