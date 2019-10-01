@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import { injectHtml, testDOMEvent, skipForJsdom } from '../helpers';
+import { injectHtml, testDOMEvent } from '../helpers';
 import interactor, { Interactor, scroll } from 'interactor.js';
 
 describe('Interactor actions - scroll', () => {
@@ -82,7 +82,7 @@ describe('Interactor actions - scroll', () => {
     });
 
     // CSS layout is not supported in jsdom; there is no concept of overflow and everything is scrollable
-    it('eventually throws an error when scrolling a non-scrollable element', skipForJsdom(async () => {
+    it.skip.jsdom('eventually throws an error when scrolling a non-scrollable element', async () => {
       let test = testDOMEvent('#content', 'scroll');
       let content = new Interactor('#content').timeout(50);
       await expect(content.scroll({ top: 10 })).rejects
@@ -94,7 +94,7 @@ describe('Interactor actions - scroll', () => {
       expect(test.result).toBe(false);
       expect(test.$element.scrollTop).toBe(0);
       expect(test.$element.scrollLeft).toBe(0);
-    }));
+    });
 
     it('immediately throws an error when no direction is provided', () => {
       let container = new Interactor('#container');
@@ -135,12 +135,12 @@ describe('Interactor actions - scroll', () => {
     });
 
     // CSS layout is not supported in jsdom; there is no concept of overflow and everything is scrollable
-    it('eventually throws when the specified element is not scrollable', skipForJsdom(async () => {
+    it.skip.jsdom('eventually throws when the specified element is not scrollable', async () => {
       let test = testDOMEvent('#content', 'scroll');
       let container = new TestInteractor().timeout(50);
       await expect(container.scroll(10)).rejects.toThrow('no overflow-y');
       expect(test.result).toBe(false);
-    }));
+    });
   });
 
   describe('using the action directly', () => {

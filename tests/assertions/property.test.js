@@ -1,10 +1,9 @@
 import expect from 'expect';
 
-import { injectHtml, skipForJsdom } from '../helpers';
+import { injectHtml } from '../helpers';
 import { Interactor } from 'interactor.js';
 
-// CSS layout is not supported in jsdom, which these specific tests test against
-describe('Interactor assertions - property', skipForJsdom(() => {
+describe('Interactor assertions - property', () => {
   beforeEach(() => {
     injectHtml(`
       <div class="float" style="border:10px solid;"></div>
@@ -16,27 +15,27 @@ describe('Interactor assertions - property', skipForJsdom(() => {
     let test = new Interactor().timeout(50);
 
     it('resolves when passing', async () => {
-      await expect(div.assert.property('clientLeft', 10)).resolves.toBeUndefined();
-      await expect(div.assert.not.property('clientLeft', 15)).resolves.toBeUndefined();
+      await expect(div.assert.property('className', 'float')).resolves.toBeUndefined();
+      await expect(div.assert.not.property('className', 'foo')).resolves.toBeUndefined();
     });
 
     it('resolves when passing with a selector', async () => {
-      await expect(test.assert.property('.float', 'clientLeft', 10)).resolves.toBeUndefined();
-      await expect(test.assert.not.property('.float', 'clientLeft', 15)).resolves.toBeUndefined();
+      await expect(test.assert.property('.float', 'className', 'float')).resolves.toBeUndefined();
+      await expect(test.assert.not.property('.float', 'className', 'foo')).resolves.toBeUndefined();
     });
 
     it('rejects with an error when failing', async () => {
-      await expect(div.assert.property('clientLeft', 15))
-        .rejects.toThrow('"clientLeft" is 10 but expected 15');
+      await expect(div.assert.property('className', 'div'))
+        .rejects.toThrow('"className" is "float" but expected "div"');
       await expect(div.assert.not.property('tagName', 'DIV'))
         .rejects.toThrow('"tagName" is "DIV"');
     });
 
     it('rejects with an error when failing with a selector', async () => {
-      await expect(test.assert.property('.float', 'clientLeft', 15))
-        .rejects.toThrow('".float" "clientLeft" is 10 but expected 15');
+      await expect(test.assert.property('.float', 'className', 'div'))
+        .rejects.toThrow('".float" "className" is "float" but expected "div"');
       await expect(test.assert.not.property('.float', 'tagName', 'DIV'))
         .rejects.toThrow('".float" "tagName" is "DIV"');
     });
   });
-}));
+});

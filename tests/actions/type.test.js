@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import { injectHtml, testDOMEvent, skipForJsdom } from '../helpers';
+import { injectHtml, testDOMEvent } from '../helpers';
 import interactor, { Interactor, type } from 'interactor.js';
 
 describe('Interactor actions - type', () => {
@@ -52,7 +52,7 @@ describe('Interactor actions - type', () => {
     });
 
     // content-editable is not supported in jsdom
-    it('can type into contenteditable elements', skipForJsdom(async () => {
+    it.skip.jsdom('can type into contenteditable elements', async () => {
       let down = testDOMEvent('.editable', 'keydown');
       let press = testDOMEvent('.editable', 'keypress');
       let input = testDOMEvent('.editable', 'input');
@@ -66,7 +66,7 @@ describe('Interactor actions - type', () => {
       expect(press.result).toBe(true);
       expect(input.result).toBe(true);
       expect(up.result).toBe(true);
-    }));
+    });
 
     it('throws an error on disabled inputs', async () => {
       let input = new Interactor('.input').timeout(50);
