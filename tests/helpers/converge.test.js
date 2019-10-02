@@ -1,5 +1,6 @@
 import expect from 'expect';
 import { when, always } from 'interactor.js';
+import { mockConsole } from '../helpers';
 
 describe('Interactor utils - when', () => {
   let total, test, timeout;
@@ -33,25 +34,6 @@ describe('Interactor utils - when', () => {
     let elapsed = Date.now() - start;
     expect(elapsed).toBeGreaterThanOrEqual(30);
     expect(elapsed).toBeLessThan(50);
-  });
-
-  it('retried logs are suppressed', async () => {
-    let og = console.log;
-    let logs = [];
-
-    console.log = (...args) => logs.push(args);
-    timeout = setTimeout(() => total = 5, 30);
-
-    await expect(when(() => {
-      console.log('total is %s', total);
-      expect(total).toBe(5);
-    }, 50)).resolves.toBeDefined();
-
-    expect(logs).toHaveLength(2);
-    expect(logs[0]).toEqual(['total is %s', 0]);
-    expect(logs[1]).toEqual(['total is %s', 5]);
-
-    console.log = og;
   });
 
   it('rejects when the assertion does not pass within the timeout', async () => {
@@ -98,6 +80,23 @@ describe('Interactor utils - when', () => {
     expect(stats.always).toBe(false);
     expect(stats.timeout).toBe(2000);
     expect(stats.value).toBe(500);
+  });
+
+  describe('logging', () => {
+    let logs = mockConsole('log');
+
+    it('retried logs are suppressed', async () => {
+      timeout = setTimeout(() => total = 5, 50);
+
+      await expect(when(() => {
+        console.log('total is %s', total);
+        expect(total).toBe(5);
+      }, 100)).resolves.toBeDefined();
+
+      expect(logs).toHaveLength(2);
+      expect(logs[0]).toEqual(['total is %s', 0]);
+      expect(logs[1]).toEqual(['total is %s', 5]);
+    });
   });
 
   describe('when the assertion returns `false`', () => {

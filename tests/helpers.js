@@ -1,9 +1,9 @@
-import Interactor from '../src/interactor';
+import { Interactor } from '../src';
 import { $ as $find } from '../src/utils/dom';
 
 // this file is always required in tests where the warning would be noisy in
 // certain scenarios; suppress it by default and relevant tests can unset
-Interactor.supressLayoutEngineWarning = true;
+Interactor.suppressLayoutEngineWarning = true;
 
 export function $(selector, ctx) {
   return $find(selector, ctx || document);
@@ -54,8 +54,40 @@ function isJsdom() {
   return result;
 }
 
+export function toggleLayoutEngineWarning() {
+  before(() => {
+    // this is the default, was enabled for testing
+    Interactor.suppressLayoutEngineWarning = null;
+  });
+
+  after(() => {
+    // suppress for other tests
+    Interactor.suppressLayoutEngineWarning = true;
+  });
+}
+
+export function mockConsole(method) {
+  let og = console[method];
+  let logs = [];
+
+  beforeEach(() => {
+    console[method] = (...args) => logs.push(args);
+    logs.length = 0;
+  });
+
+  afterEach(() => {
+    console.log = og;
+  });
+
+  return logs;
+}
+
 describe.jsdom = (name, suite) => {
-  return describe(`[jsdom only] ${name}`, isJsdom() ? suite : undefined);
+  if (isJsdom()) {
+    return describe(`[jsdom only] ${name}`, suite);
+  } else {
+    return describe.skip(`[jsdom only] ${name}`);
+  }
 };
 
 describe.skip.jsdom = (name, suite) => {
@@ -67,7 +99,11 @@ describe.skip.jsdom = (name, suite) => {
 };
 
 it.jsdom = (name, test) => {
-  return it(`[jsdom only] ${name}`, isJsdom() ? test : undefined);
+  if (isJsdom()) {
+    return it(`[jsdom only] ${name}`, test);
+  } else {
+    return it.skip(`[jsdom only] ${name}`);
+  }
 };
 
 it.skip.jsdom = (name, test) => {
