@@ -63,6 +63,19 @@ export function $$(selector, $ctx) {
   return nodes.filter(isElement);
 }
 
+export function suppressLayoutEngineWarning(bool) {
+  Object.defineProperty(this, 'suppressLayoutEngineWarning', {
+    configurable: true,
+    set: suppressLayoutEngineWarning,
+    get() {
+      return (bool != null) ? bool : (
+        Object.getPrototypeOf(this)
+          .constructor.suppressLayoutEngineWarning
+      );
+    }
+  });
+}
+
 export function hasLayoutEngine(caseMsg) {
   let { result } = hasLayoutEngine;
 
