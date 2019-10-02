@@ -1,6 +1,7 @@
 import Interactor from './interactor';
 import from, { toInteractorProperties } from './utils/from';
 import createAsserts, { getAssertFor } from './utils/assert';
+import { suppressLayoutEngineWarning } from './utils/dom';
 import { chainAssert } from './utils/chainable';
 import meta, { set } from './utils/meta';
 
@@ -56,6 +57,9 @@ defineProperties(Interactor, {
     get() { return from.bind(this); }
   }
 });
+
+// default static property to false by invoking the setter
+suppressLayoutEngineWarning.call(Interactor);
 
 const builtIn = toInteractorProperties({
   // properties
