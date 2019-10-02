@@ -11,7 +11,11 @@ references:
     attach_workspace:
       at: ~/
 
-version: 2.0
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@1.0.5
+
 jobs:
   install:
     <<: *defaults
@@ -63,8 +67,8 @@ jobs:
           command: yarn test:coverage --junit
       - store_test_results:
           path: ./junit
-      - store_artifacts:
-          path: ./junit
+      - codecov/upload:
+          file: coverage/**/*.json
 
   test-jsdom:
     <<: *defaults
@@ -75,8 +79,8 @@ jobs:
           command: yarn test:jsdom:coverage --junit
       - store_test_results:
           path: ./junit
-      - store_artifacts:
-          path: ./junit
+      - codecov/upload:
+          file: coverage/**/*.json
 
   deploy:
     <<: *defaults
