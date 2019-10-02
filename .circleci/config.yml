@@ -60,7 +60,7 @@ jobs:
       - *attach_workspace
       - run:
           name: Run tests
-          command: yarn test --coverage --junit
+          command: yarn test:coverage --junit
       - store_test_results:
           path: ./junit
       - store_artifacts:
@@ -72,7 +72,7 @@ jobs:
       - *attach_workspace
       - run:
           name: Run jsdom tests
-          command: yarn test --browsers jsdom --junit
+          command: yarn test:jsdom:coverage --junit
       - store_test_results:
           path: ./junit
       - store_artifacts:

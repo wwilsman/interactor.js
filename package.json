@@ -15,6 +15,9 @@
     "lint": "eslint --ignore-path .gitignore ./",
     "start": "karma start",
     "test": "yarn start --single-run",
+    "test:jsdom": "yarn test --browsers jsdom",
+    "test:coverage": "yarn test --coverage json",
+    "test:jsdom:coverage": "yarn test:jsdom --coverage json",
     "postpublish": ".circleci/tag"
   },
   "devDependencies": {
