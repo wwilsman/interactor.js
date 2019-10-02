@@ -1,6 +1,6 @@
 import expect from 'expect';
 
-import { injectHtml } from '../helpers';
+import { injectHtml, mockConsole, toggleLayoutEngineWarning } from '../helpers';
 import { Interactor } from 'interactor.js';
 
 describe('Interactor assertions - property', () => {
@@ -36,6 +36,36 @@ describe('Interactor assertions - property', () => {
         .rejects.toThrow('".float" "className" is "float" but expected "div"');
       await expect(test.assert.not.property('.float', 'tagName', 'DIV'))
         .rejects.toThrow('".float" "tagName" is "DIV"');
+    });
+
+    describe.jsdom('without a layout engine', () => {
+      let logs = mockConsole('warn');
+      toggleLayoutEngineWarning();
+
+      [ 'clientTop',
+        'clientLeft',
+        'clientWidth',
+        'clientHeight',
+        'scrollTop',
+        'scrollLeft',
+        'scrollWidth',
+        'scrollHeight'
+      ].forEach(prop => {
+        it(`warns about the missing layout engine for \`${prop}\``, async () => {
+          await test.assert.property(prop, 0);
+
+          expect(logs[0][0]).toBe(
+            'No layout engine detected. ' +
+              `Properties effected by the result of CSS cannot be calculated (${prop}). ` +
+              'You can disable this warning by setting `Interactor.suppressLayoutEngineWarning = true`.'
+          );
+        });
+      });
+
+      it('does not warn about the missing layout engine for other properties', async () => {
+        await test.assert.property('className', '');
+        expect(logs).toHaveLength(0);
+      });
     });
   });
 });

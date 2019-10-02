@@ -1,6 +1,10 @@
 import expect from 'expect';
 
-import { injectHtml } from '../helpers';
+import {
+  injectHtml,
+  mockConsole,
+  toggleLayoutEngineWarning
+} from '../helpers';
 
 import interactor, {
   Interactor,
@@ -33,6 +37,23 @@ describe('Interactor properties - scrollable', () => {
       expect(content).toHaveProperty('scrollableX', false);
       expect(content).toHaveProperty('scrollableY', false);
       expect(content).toHaveProperty('scrollable', false);
+    });
+
+    describe.jsdom('without a layout engine', () => {
+      let logs = mockConsole('warn');
+      toggleLayoutEngineWarning();
+
+      ['scrollableX', 'scrollableY', 'scrollable'].forEach(scrollable => {
+        it(`warns about the missing layout engine for \`${scrollable}\``, () => {
+          expect(container).toHaveProperty(scrollable, true);
+
+          expect(logs[0][0]).toBe(
+            'No layout engine detected. ' +
+              'Overflow as the result of CSS cannot be calculated. ' +
+              'You can disable this warning by setting `Interactor.suppressLayoutEngineWarning = true`.'
+          );
+        });
+      });
     });
 
     describe('and the default assertion', () => {
@@ -111,6 +132,23 @@ describe('Interactor properties - scrollable', () => {
       expect(container).toHaveProperty('scrollableX', false);
       expect(container).toHaveProperty('scrollableY', false);
       expect(container).toHaveProperty('scrollable', false);
+    });
+
+    describe.jsdom('without a layout engine', () => {
+      let logs = mockConsole('warn');
+      toggleLayoutEngineWarning();
+
+      ['scrollableX', 'scrollableY', 'scrollable'].forEach(scrollable => {
+        it(`warns about the missing layout engine for \`${scrollable}\``, () => {
+          expect(container).toHaveProperty(scrollable, true);
+
+          expect(logs[0][0]).toBe(
+            'No layout engine detected. ' +
+              'Overflow as the result of CSS cannot be calculated. ' +
+              'You can disable this warning by setting `Interactor.suppressLayoutEngineWarning = true`.'
+          );
+        });
+      });
     });
 
     describe('and the default assertion', () => {

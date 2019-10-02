@@ -1,26 +1,44 @@
 import expect from 'expect';
 
-import { injectHtml } from '../helpers';
+import { injectHtml, mockConsole, toggleLayoutEngineWarning } from '../helpers';
 import interactor, { Interactor, text } from 'interactor.js';
 
-// CSS layout is not supported in jsdom, which these specific tests test against
-describe.skip.jsdom('Interactor properties - text', () => {
+describe('Interactor properties - text', () => {
   beforeEach(() => {
     injectHtml(`
-      <p>
-        Hello <span style="text-transform:uppercase">world</span>!
-      </p>
+      <p>Hello <span style="text-transform:uppercase">world</span>!</p>
     `);
   });
 
   describe('with the default property', () => {
     let p = new Interactor('p').timeout(50);
 
-    it('returns the styled inner text', () => {
+    it.skip.jsdom('returns the styled inner text', () => {
       expect(p).toHaveProperty('text', 'Hello WORLD!');
     });
 
-    describe('and the default assertion', () => {
+    it.jsdom('returns the text content', () => {
+      expect(p).toHaveProperty('text', 'Hello world!');
+    });
+
+    describe.jsdom('without a layout engine', () => {
+      let logs = mockConsole('warn');
+      toggleLayoutEngineWarning();
+
+      it('warns about the missing layout engine', () => {
+        expect(p).toHaveProperty('text', 'Hello world!');
+
+        expect(logs[0][0]).toBe(
+          'No layout engine detected. ' +
+            'The appearance of text as a result of CSS cannot be determined ' +
+            '(such as pseudo content and text transformations). ' +
+            'You can disable this warning by setting `Interactor.suppressLayoutEngineWarning = true`.'
+        );
+      });
+    });
+
+    // CSS layout is not supported in jsdom, which these specific tests test against
+    describe.skip.jsdom('and the default assertion', () => {
       it('resolves when passing', async () => {
         await expect(p.assert.text('Hello WORLD!')).resolves.toBeUndefined();
         await expect(p.assert.text(/world/i)).resolves.toBeUndefined();
@@ -68,11 +86,27 @@ describe.skip.jsdom('Interactor properties - text', () => {
 
     let p = new ParagraphInteractor().timeout(50);
 
-    it('returns the inner text of the specified element', () => {
+    it.skip.jsdom('returns the inner text of the specified element', () => {
       expect(p).toHaveProperty('text', 'WORLD');
     });
 
-    describe('and the default assertion', () => {
+    describe.jsdom('without a layout engine', () => {
+      let logs = mockConsole('warn');
+      toggleLayoutEngineWarning();
+
+      it('warns about the missing layout engine', () => {
+        expect(p).toHaveProperty('text', 'world');
+
+        expect(logs[0][0]).toBe(
+          'No layout engine detected. ' +
+            'The appearance of text as a result of CSS cannot be determined ' +
+            '(such as pseudo content and text transformations). ' +
+            'You can disable this warning by setting `Interactor.suppressLayoutEngineWarning = true`.'
+        );
+      });
+    });
+
+    describe.skip.jsdom('and the default assertion', () => {
       it('resolves when passing', async () => {
         await expect(p.assert.text('WORLD')).resolves.toBeUndefined();
         await expect(p.assert.text(/world/i)).resolves.toBeUndefined();
@@ -92,7 +126,7 @@ describe.skip.jsdom('Interactor properties - text', () => {
       });
     });
 
-    describe('and the auto-defined assertion', () => {
+    describe.skip.jsdom('and the auto-defined assertion', () => {
       it('has an auto-defined assertion', () => {
         expect(p.assert).toHaveProperty('foo', expect.any(Function));
       });
