@@ -35,6 +35,25 @@ describe('Interactor utils - when', () => {
     expect(elapsed).toBeLessThan(50);
   });
 
+  it('retried logs are suppressed', async () => {
+    let og = console.log;
+    let logs = [];
+
+    console.log = (...args) => logs.push(args);
+    timeout = setTimeout(() => total = 5, 30);
+
+    await expect(when(() => {
+      console.log('total is %s', total);
+      expect(total).toBe(5);
+    }, 50)).resolves.toBeDefined();
+
+    expect(logs).toHaveLength(2);
+    expect(logs[0]).toEqual(['total is %s', 0]);
+    expect(logs[1]).toEqual(['total is %s', 5]);
+
+    console.log = og;
+  });
+
   it('rejects when the assertion does not pass within the timeout', async () => {
     let start = Date.now();
     await expect(test(5)).rejects.toThrow('expect(received).toBe(expected)');
