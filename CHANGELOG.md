@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Added
+
+- Fallback to `textContent` for `text` property in virtual DOMs
+- Fallback to `true` for `scrollable` properties in virtual DOMs
+- Warn when accessing properties that rely on a layout engine
+- Inheritable static boolean for suppressing the layout engine warning
+- Dedup logs during convergent loops
+
 ## [1.5.0] - 2019-09-15
 
 ### Added
