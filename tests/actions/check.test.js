@@ -71,11 +71,14 @@ describe('Interactor actions - check / uncheck', () => {
 
     it('eventually throws an error when (un)checking a non-checkable element', async () => {
       let input = new Interactor('.input').timeout(50);
+      let radio = new Interactor('.radio-2').timeout(50);
 
       await expect(input.check()).rejects
         .toThrow('Failed to check ".input": not a checkbox or radio button');
       await expect(input.uncheck()).rejects
         .toThrow('Failed to uncheck ".input": not a checkbox');
+      await expect(radio.uncheck()).rejects
+        .toThrow('Failed to uncheck ".radio-2": radio buttons cannot be unchecked');
     });
 
     it('eventually throws an error when (un)checking a disabled element', async () => {
