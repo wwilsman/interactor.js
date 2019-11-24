@@ -13,7 +13,7 @@
   "scripts": {
     "build": "rollup --config",
     "lint": "eslint --ignore-path .gitignore ./",
-    "start": "karma start",
+    "start": "NODE_ENV=test karma start",
     "test": "yarn start --single-run",
     "test:jsdom": "yarn test --browsers jsdom",
     "test:coverage": "yarn test --coverage json",

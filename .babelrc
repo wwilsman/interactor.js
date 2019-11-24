@@ -15,7 +15,13 @@
     }],
     ["@babel/proposal-class-properties", {
       "loose": true
-    }],
-    "istanbul"
-  ]
+    }]
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        "istanbul"
+      ]
+    }
+  }
 }
