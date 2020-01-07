@@ -20,7 +20,7 @@
     }
 
     &.is-active {
-      color: #F0DB50;
+      color: black;
     }
   }
 }

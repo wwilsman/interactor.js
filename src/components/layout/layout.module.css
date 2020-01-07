@@ -99,7 +99,11 @@ body > div > div {
     }
 
     a {
-      color: #f0db50;
+      color: black;
+
+      svg {
+        color: #f0db50;
+      }
     }
 
     li {
