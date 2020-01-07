@@ -21,7 +21,7 @@
 
     &:hover {
       border-color: #F0DB50;
-      color: #F0DB50;
+      color: black;
 
       svg {
         color: #F0DB50;
