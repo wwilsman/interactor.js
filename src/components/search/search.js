@@ -64,7 +64,7 @@ const SearchBox = connectSearchBox(({
 ));
 
 function Hit(onClick) {
-  // eslint-disable-next-line
+  /* eslint-disable react/prop-types, react/display-name */
   return ({ hit }) => {
     return (
       <Link to={hit.slug} onClick={onClick}>
@@ -76,6 +76,7 @@ function Hit(onClick) {
       </Link>
     );
   };
+  /* eslint-enable react/prop-types, react/display-name */
 }
 
 Search.propTypes = {
