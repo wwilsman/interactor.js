@@ -6014,7 +6014,7 @@ has-yarn@^2.1.0:
   resolved "https://registry.yarnpkg.com/has-yarn/-/has-yarn-2.1.0.tgz#137e11354a7b5bf11aa5cb649cf0c6f3ff2b2e77"
   integrity sha512-UqBRqi4ju7T+TqGNdqAO0PaSVGsDGJUBQvk9eUWNGRY1CFGDzYhLWoM7JQEemnlvVcv/YEmc2wNW8BC24EnUsw==
 
-has@^1.0.0, has@^1.0.1, has@^1.0.3:
+has@^1.0.0, has@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/has/-/has-1.0.3.tgz#722d7cbfc1f6aa8241f16dd814e011e1f41e8796"
   integrity sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==
@@ -6056,6 +6056,18 @@ hast-to-hyperscript@^5.0.0:
     style-to-object "^0.2.1"
     unist-util-is "^2.0.0"
     web-namespaces "^1.1.2"
+
+hast-to-hyperscript@^8.0.0:
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/hast-to-hyperscript/-/hast-to-hyperscript-8.1.1.tgz#081e5a98d961ab46277a844f97dfe8dae05a8479"
+  integrity sha512-IsVTowDrvX4n+Nt+zP0VLQmh/ddVtnFSLUv1gb/706ovL2VgFdnE5ior2fDHSp1Bc0E5GidF2ax+PMjd+TW7gA==
+  dependencies:
+    comma-separated-tokens "^1.0.0"
+    property-information "^5.3.0"
+    space-separated-tokens "^1.0.0"
+    style-to-object "^0.3.0"
+    unist-util-is "^4.0.0"
+    web-namespaces "^1.0.0"
 
 hast-util-from-parse5@^4.0.2:
   version "4.0.2"
@@ -9869,6 +9881,13 @@ property-information@^4.0.0:
   dependencies:
     xtend "^4.0.1"
 
+property-information@^5.3.0:
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/property-information/-/property-information-5.5.0.tgz#4dc075d493061a82e2b7d096f406e076ed859943"
+  integrity sha512-RgEbCx2HLa1chNgvChcx+rrCWD0ctBmGSE0M7lVm1yyv4UbvbrWoXp/BkVLZefzjrRBGW8/Js6uh/BnlHXFyjA==
+  dependencies:
+    xtend "^4.0.0"
+
 protocols@^1.1.0, protocols@^1.4.0:
   version "1.4.7"
   resolved "https://registry.yarnpkg.com/protocols/-/protocols-1.4.7.tgz#95f788a4f0e979b291ffefcf5636ad113d037d32"
@@ -10466,14 +10485,13 @@ regjsparser@^0.6.0:
   dependencies:
     jsesc "~0.5.0"
 
-rehype-react@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/rehype-react/-/rehype-react-3.1.0.tgz#bdd4b66ff24bd68e57c2f2e716607b3029c9e63e"
-  integrity sha512-7SiLiqNudSGkvhrePkdKqdUvngZqzG+PJhdR5EeIFELz2j2ek4aO5DHbxUXYvaZfqUiBDO2Aeq1OROUmxmu+Vg==
+rehype-react@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/rehype-react/-/rehype-react-5.0.1.tgz#6934c90101a140328fffe22b9569b86cdeac1d73"
+  integrity sha512-vv/uqHROopaPimIw6Ip4Mx5+YySLClC7pSFJSW3QkwVYvguqbm5N+Cu4yJgt6nvDmOsP66GnQtDlU+tI6bhigQ==
   dependencies:
     "@mapbox/hast-util-table-cell-style" "^0.1.3"
-    has "^1.0.1"
-    hast-to-hyperscript "^5.0.0"
+    hast-to-hyperscript "^8.0.0"
 
 remark-parse@^6.0.0, remark-parse@^6.0.3:
   version "6.0.3"
@@ -11640,6 +11658,13 @@ style-to-object@^0.2.1:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/style-to-object/-/style-to-object-0.2.3.tgz#afcf42bc03846b1e311880c55632a26ad2780bcb"
   integrity sha512-1d/k4EY2N7jVLOqf2j04dTc37TPOv/hHxZmvpg8Pdh8UYydxeu/C1W1U4vD8alzf5V2Gt7rLsmkr4dxAlDm9ng==
+  dependencies:
+    inline-style-parser "0.1.1"
+
+style-to-object@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/style-to-object/-/style-to-object-0.3.0.tgz#b1b790d205991cc783801967214979ee19a76e46"
+  integrity sha512-CzFnRRXhzWIdItT3OmF8SQfWyahHhjq3HwcMNCNLn+N7klOOqPjMeG/4JSu77D7ypZdGvSzvkrbyeTMizz2VrA==
   dependencies:
     inline-style-parser "0.1.1"
 
