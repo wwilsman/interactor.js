@@ -1,0 +1,12 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  target-branch: master
+  directory: /
+  schedule:
+    interval: daily
+- package-ecosystem: npm
+  target-branch: www
+  directory: /
+  schedule:
+    interval: daily
