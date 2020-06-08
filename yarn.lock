@@ -779,12 +779,12 @@
     core-js-pure "^3.0.0"
     regenerator-runtime "^0.13.2"
 
-"@babel/runtime@^7.1.2", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.4", "@babel/runtime@^7.7.6":
-  version "7.8.3"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.8.3.tgz#0811944f73a6c926bb2ad35e918dcc1bfab279f1"
-  integrity sha512-fVHx1rzEmwB130VTkLnxR+HmxcTjGzH12LYQcFFoBwakMd3aOMD4OsRN7tGG/UOYE2ektgFrS8uACAoRk1CY0w==
+"@babel/runtime@^7.1.2", "@babel/runtime@^7.10.2", "@babel/runtime@^7.4.5", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.3", "@babel/runtime@^7.7.2", "@babel/runtime@^7.7.4", "@babel/runtime@^7.7.6":
+  version "7.10.2"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.10.2.tgz#d103f21f2602497d38348a32e008637d506db839"
+  integrity sha512-6sF3uQw2ivImfVIl62RZ7MXhO2tap69WeWK57vAaimT6AZbE4FbqjdEJIN1UqoD6wI6B+1n9UiagafH1sxjOtg==
   dependencies:
-    regenerator-runtime "^0.13.2"
+    regenerator-runtime "^0.13.4"
 
 "@babel/template@^7.8.3":
   version "7.8.3"
@@ -5241,12 +5241,12 @@ gatsby-plugin-algolia@^0.3.0:
     gatsby-cli "^1.1.58"
     lodash.chunk "^4.2.0"
 
-gatsby-plugin-catch-links@^2.0.13:
-  version "2.1.24"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-catch-links/-/gatsby-plugin-catch-links-2.1.24.tgz#fc936eeaffc078445ef358773a57b8110c916136"
-  integrity sha512-Wh9U46/2IGF59pJdzjHrXB/c6EjP/NmVoDgRyc+Zrjir26JX2MRewMtEPJl43k17iZ1mzSgXbN2BimI13rAZ7Q==
+gatsby-plugin-catch-links@^2.3.4:
+  version "2.3.4"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-catch-links/-/gatsby-plugin-catch-links-2.3.4.tgz#e834c8ba59a77d5af372cc17b76fb5a44e1e8425"
+  integrity sha512-O0zPqfz8qmfn9/LgSMVpvPqgWrckTFha46hMH9grPQ4GVNKmaaDm7RzE9pI/qTxxD0b8EkKHDaF2JM2BeDkVcw==
   dependencies:
-    "@babel/runtime" "^7.7.6"
+    "@babel/runtime" "^7.10.2"
     escape-string-regexp "^1.0.5"
 
 gatsby-plugin-google-analytics@^2.0.18:
@@ -10358,6 +10358,11 @@ regenerator-runtime@^0.13.1, regenerator-runtime@^0.13.2:
   version "0.13.3"
   resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.3.tgz#7cf6a77d8f5c6f60eb73c5fc1955b2ceb01e6bf5"
   integrity sha512-naKIZz2GQ8JWh///G7L3X6LaQUAMp2lvb1rvwwsURe/VXwD6VMfr+/1NuNw3ag8v2kY1aQ/go5SNn79O9JU7yw==
+
+regenerator-runtime@^0.13.4:
+  version "0.13.5"
+  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.5.tgz#d878a1d094b4306d10b9096484b33ebd55e26697"
+  integrity sha512-ZS5w8CpKFinUzOwW3c83oPeVXoNsrLsaCoLtJvAClH135j/R77RuymhiSErhm2lKcwSCIpmvIWSbDkIfAqKQlA==
 
 regenerator-transform@^0.14.0:
   version "0.14.1"

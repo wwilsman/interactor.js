@@ -18,7 +18,7 @@
     "gatsby": "^2.3.16",
     "gatsby-image": "^2.0.37",
     "gatsby-plugin-algolia": "^0.3.0",
-    "gatsby-plugin-catch-links": "^2.0.13",
+    "gatsby-plugin-catch-links": "^2.3.4",
     "gatsby-plugin-google-analytics": "^2.0.18",
     "gatsby-plugin-offline": "^2.0.25",
     "gatsby-plugin-percy": "^0.1.3",
