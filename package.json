@@ -22,7 +22,7 @@
     "gatsby-plugin-google-analytics": "^2.3.4",
     "gatsby-plugin-offline": "^2.0.25",
     "gatsby-plugin-percy": "^0.1.3",
-    "gatsby-plugin-postcss": "^2.0.7",
+    "gatsby-plugin-postcss": "^2.3.4",
     "gatsby-plugin-react-helmet": "^3.0.12",
     "gatsby-plugin-typography": "^2.2.13",
     "gatsby-remark-autolink-headers": "^2.0.16",
