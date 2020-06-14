@@ -37,7 +37,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "expect": "^24.8.0",
     "jsdom": "^15.1.1",
-    "karma": "^4.2.0",
+    "karma": "^5.1.0",
     "karma-chrome-launcher": "^3.1.0",
     "karma-coverage": "^1.1.2",
     "karma-jsdom-launcher": "^8.0.0",
