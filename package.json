@@ -11,7 +11,7 @@
     "lint": "eslint --ignore-path .gitignore ./"
   },
   "dependencies": {
-    "algoliasearch": "^3.32.1",
+    "algoliasearch": "^4.3.0",
     "autoprefixer": "^9.8.0",
     "classnames": "^2.2.6",
     "dotenv": "^7.0.0",
