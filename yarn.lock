@@ -4103,9 +4103,9 @@ karma-coverage@^1.1.2:
     source-map "^0.5.1"
 
 karma-jsdom-launcher@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/karma-jsdom-launcher/-/karma-jsdom-launcher-8.0.0.tgz#1116c685a7a9a42cda552cad148183fcce194811"
-  integrity sha512-+DUPffAmf4D/jXkbk5WXAeT3KKRtbMJcJ1LNXKdxyTtqEbGUrhk3xoKkggZQi3ATEaDCdyzwV/THPpD8wqBtLw==
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/karma-jsdom-launcher/-/karma-jsdom-launcher-8.0.2.tgz#c0c9d1187f4802f8d5ac69ef66a0502602db256a"
+  integrity sha512-jxO+Nf9U/XNSnHXrNpxBbbMyeYuvJH1V++bRdZv20vJ9pvaLuQ6LFNIgn4hA1WAVmzMsvW9j0P2Q2hTLMWcSvw==
 
 karma-junit-reporter@^1.2.0:
   version "1.2.0"
