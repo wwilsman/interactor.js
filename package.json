@@ -39,7 +39,7 @@
     "jsdom": "^15.1.1",
     "karma": "^5.1.0",
     "karma-chrome-launcher": "^3.1.0",
-    "karma-coverage": "^1.1.2",
+    "karma-coverage": "^2.0.2",
     "karma-jsdom-launcher": "^8.0.0",
     "karma-junit-reporter": "^1.2.0",
     "karma-mocha": "^2.0.1",
