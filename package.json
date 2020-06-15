@@ -31,7 +31,7 @@
     "gatsby-source-filesystem": "^2.3.11",
     "gatsby-transformer-remark": "^2.8.15",
     "precss": "^4.0.0",
-    "prism-themes": "^1.1.0",
+    "prism-themes": "^1.4.0",
     "prismjs": "^1.16.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
