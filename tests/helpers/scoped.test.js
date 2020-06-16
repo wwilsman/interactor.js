@@ -1,7 +1,7 @@
 import expect from 'expect';
 
 import { injectHtml } from '../helpers';
-import interactor, { Interactor, scoped } from 'interactor.js';
+import interactor, { Interactor, scoped, text } from 'interactor.js';
 import { get } from '../../src/utils/meta';
 
 describe('Interactor helpers - scoped', () => {
@@ -141,6 +141,24 @@ describe('Interactor helpers - scoped', () => {
       expect(get(next, 'queue')).toHaveLength(3);
 
       await expect(next).resolves.toBeUndefined();
+    });
+  });
+
+  describe('with custom interactors', () => {
+    @interactor class FooInteractor {
+      bar = text('.test-p');
+    }
+
+    @interactor class TestInteractor {
+      foo = scoped('#test', FooInteractor.from({
+        baz: text('#scoped .test-p')
+      }));
+    }
+
+    it('correctly inherits properties', async () => {
+      let test = new TestInteractor();
+      expect(test.foo.bar).toEqual('A');
+      expect(test.foo.baz).toEqual('B');
     });
   });
 });
