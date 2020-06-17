@@ -33,23 +33,23 @@ export default function TOC({ content }) {
   return (
     <aside className={style.toc}>
       {content && (
-         <>
-           <button
-             className={style.tocToggle}
-             onClick={() => setOpen(!isOpen)}
-           >
-             <Icon name="toc"/>
-           </button>
+        <>
+          <button
+            className={style.tocToggle}
+            onClick={() => setOpen(!isOpen)}
+          >
+            <Icon name="toc"/>
+          </button>
 
-           <div ref={ref} className={cx('tocModal', { isOpen })}>
-             <div className={style.tocHeader}>
-               <Icon name="toc"/>
-               <span>Contents</span>
-             </div>
+          <div ref={ref} className={cx('tocModal', { isOpen })}>
+            <div className={style.tocHeader}>
+              <Icon name="toc"/>
+              <span>Contents</span>
+            </div>
 
-             <div dangerouslySetInnerHTML={{ __html: content }}/>
-           </div>
-         </>
+            <div dangerouslySetInnerHTML={{ __html: content }}/>
+          </div>
+        </>
       )}
     </aside>
   );
