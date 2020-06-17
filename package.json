@@ -46,8 +46,8 @@
   "devDependencies": {
     "@percy/agent": "^0.26.9",
     "babel-eslint": "^10.1.0",
-    "eslint": "^5.16.0",
-    "eslint-config-standard": "^12.0.0",
+    "eslint": "^7.2.0",
+    "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.21.2",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.1.1",
