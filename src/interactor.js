@@ -1,7 +1,9 @@
-import m from './meta';
 import InteractorAssert from './assert';
+import extend from './extend';
+import error from './error';
 import query from './dom';
 import when from './when';
+import m from './meta';
 
 import {
   assign,
@@ -30,11 +32,15 @@ export default function Interactor(selector) {
   });
 }
 
-// Default interactor options
 defineProperties(Interactor, {
+  // Default interactor options
   name: { value: '' },
   selector: { value: '' },
-  timeout: { value: 2000 }
+  timeout: { value: 2000 },
+
+  // Static methods
+  extend: { value: extend },
+  error: { value: error }
 });
 
 defineProperties(Interactor.prototype, {
