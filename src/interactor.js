@@ -1,9 +1,11 @@
 import m from './meta';
+import InteractorAssert from './assert';
 import query from './dom';
 import when from './when';
 
 import {
   assign,
+  defineProperty,
   defineProperties
 } from './utils';
 
@@ -20,6 +22,11 @@ export default function Interactor(selector) {
     selector: selector ?? this.constructor.selector,
     interval: 10,
     queue: []
+  });
+
+  defineProperty(this, 'assert', {
+    value: InteractorAssert(this),
+    enumerable: false
   });
 }
 
