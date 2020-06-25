@@ -92,24 +92,26 @@ export default function InteractorAssert(inst, expected = true) {
 
   // do not apply these properties to negated instances
   if (expected) {
-    // lazily create a negated instance
-    defineProperty(assert, 'not', {
-      get: () => InteractorAssert(inst, false)
-    });
+    defineProperties(assert, {
+      // lazily create a negated instance
+      not: {
+        get: () => InteractorAssert(inst, false)
+      },
 
-    // persist previous assertions once passing
-    defineProperty(assert, 'remains', {
-      value: function remains(ms = 500) {
-        return m.new(inst, 'queue', q => {
-          if (q[q.length - 1]?.type !== 'assert') {
-            throw error('no previous assertion to persist');
-          }
+      // persist previous assertions once passing
+      remains: {
+        value: function remains(ms = 500) {
+          return m.new(inst, 'queue', q => {
+            if (q[q.length - 1]?.type !== 'assert') {
+              throw error('no previous assertion to persist');
+            }
 
-          return q.concat({
-            type: 'assert',
-            remains: ms
+            return q.concat({
+              type: 'assert',
+              remains: ms
+            });
           });
-        });
+        }
       }
     });
   }
