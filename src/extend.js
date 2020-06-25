@@ -43,6 +43,18 @@ function wrapd({ get, value }, key) {
   };
 }
 
+// Used to ignore reserved assert properties
+function filterAsserts(fn) {
+  return (d, k) => {
+    if (['remains', 'not'].includes(k)) {
+      console.warn(`\`${k}\` is a reserved assertion property and will be ignored`);
+      return;
+    }
+
+    return fn ? fn(d, k) : d;
+  };
+}
+
 // Returns a custom interactor creator using the provided methods, properties, assertions, and
 // options. Methods and interactors are wrapped to facilitate parent-child relationships. Assertions
 // and interactors are also saved to a copy of the inherited assert function's prototype to be used
@@ -89,12 +101,14 @@ export default function extend(properties = {}) {
           value: m.set(function() {
             return assert.apply(this, arguments);
           }, {
-            fns: assign(create(m.get(assert, 'fns') || null), assertions),
-            children: mapPropertyDescriptors(properties, ({ value }) => {
-              // only interactors without actions become children
+            fns: create(m.get(assert, 'fns') || null, (
+              mapPropertyDescriptors(assertions, filterAsserts())
+            )),
+            children: mapPropertyDescriptors(properties, filterAsserts(({ value }) => {
               let queue = m.get(value, 'queue');
+              // only interactors without actions become children
               if (queue && !queue.length) return value;
-            })
+            }))
           })
         }
       }))
