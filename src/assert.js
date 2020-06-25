@@ -10,15 +10,14 @@ import {
 
 // Builds a assert context around assertion functions and child interactors. This context is used
 // for named asserts and allows reusing existing and shared asseriton functions.
-function context(inst) {
+function context(inst, expected) {
   let { fns, children } = m.get(inst.constructor.prototype.assert);
 
   let ctx = defineProperties(
     // bind all custom assertions to the context
     mapPropertyDescriptors(fns, ({ value: fn }) => function() {
       try {
-        fn.apply(ctx, arguments);
-      } catch (error) {
+        fn.apply(ctx, [expected].concat(arguments));
         // ensure interactor errors retain the right context before bubbling
         if (error.name === 'InteractorError' && !error.ctx) {
           throw assign(error, { ctx: inst });
@@ -36,6 +35,13 @@ function context(inst) {
     })
   );
 
+  if (expected) {
+    // lazily create a negated context
+    defineProperty(ctx, 'not', {
+      get: () => context(inst, false)
+    });
+  }
+
   return ctx;
 }
 
@@ -51,7 +57,7 @@ export default function InteractorAssert(inst, expected = true) {
     // assertion functions are bound to an assert context and the current expected result
     mapPropertyDescriptors(fns, ({ value: fn }) => ({
       value: (...args) => passert.call(inst, function() {
-        fn.call(context(this), expected, ...args);
+        fn.apply(context(this, expected), [expected].concat(args));
       })
     })),
     // child interactors create child assert references
