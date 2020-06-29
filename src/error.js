@@ -87,10 +87,14 @@ defineProperties(InteractorError.prototype, {
 
   // format the message with an interactor instance
   format: {
-    value() {
+    value(message = '%{e}') {
       return defineProperties(this, {
         message: {
-          value: format(this.raw, this.ctx, this.result)
+          value: format(
+            message.replace('%{e}', this.raw),
+            this.ctx,
+            this.result
+          )
         }
       });
     }

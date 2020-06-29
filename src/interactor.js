@@ -118,6 +118,17 @@ defineProperties(Interactor.prototype, {
   // Adds an error handler to the next interactor instance's queue.
   catch: {
     value: function(handler) {
+      if (typeof handler === 'string') {
+        let message = handler;
+        handler = err => {
+          if (err.name === 'InteractorError') {
+            throw err.format(message);
+          } else {
+            throw err;
+          }
+        };
+      }
+
       return m.new(this, 'queue', q => {
         return q.concat({
           type: 'catch',
