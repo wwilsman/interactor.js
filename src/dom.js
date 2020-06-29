@@ -1,5 +1,17 @@
 import m from './meta';
 import error from './error';
+import { assign } from './utils';
+
+export function dispatch($el, name, {
+  bubbles = true,
+  cancelable = true,
+  ...options
+}) {
+  return $el.dispatchEvent(assign(
+    new Event(name, { bubbles, cancelable }),
+    options
+  ));
+}
 
 // Query the DOM and return one or more elements. Multiple elements are only returned when the
 // second argument is true. The first argument may be a string selector, interactor selector, or
