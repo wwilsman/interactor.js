@@ -13,6 +13,7 @@ const {
   defineProperty,
   defineProperties,
   freeze,
+  getOwnPropertyDescriptor,
   getOwnPropertyDescriptors,
   getPrototypeOf,
   keys
@@ -25,6 +26,7 @@ export {
   defineProperty,
   defineProperties,
   freeze,
+  getOwnPropertyDescriptor,
   now,
   random,
   round
