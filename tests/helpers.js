@@ -23,7 +23,7 @@ export function e(name, message) {
 }
 
 assign(assert, {
-  typeof(subj, expected, err) {
+  typeOf(subj, expected, err) {
     let actual = typeof subj;
 
     return assert.equal(actual, expected, err || (
@@ -31,6 +31,26 @@ assign(assert, {
         operator: 'typeof',
         expected,
         actual
+      })
+    ));
+  },
+
+  instanceOf(subj, expected, err) {
+    return assert(subj instanceof expected, err || (
+      new assert.AssertionError({
+        operator: 'instanceof',
+        actual: subj,
+        expected
+      })
+    ));
+  },
+
+  notInstanceOf(subj, expected, err) {
+    return assert(!(subj instanceof expected), err || (
+      new assert.AssertionError({
+        operator: '!instanceof',
+        actual: subj,
+        expected
       })
     ));
   }

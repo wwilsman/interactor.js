@@ -3,17 +3,17 @@ import Interactor from 'interactor.js';
 
 describe('Interactor', () => {
   it('can be used with or without the new keyword', () => {
-    assert(new Interactor() instanceof Interactor);
-    assert(Interactor() instanceof Interactor);
+    assert.instanceOf(new Interactor(), Interactor);
+    assert.instanceOf(Interactor(), Interactor);
   });
 
   it('has a static .error() method', () => {
-    assert.typeof(Interactor.error, 'function');
+    assert.typeOf(Interactor.error, 'function');
   });
 
   it('has an inheritable static .extend() method', () => {
-    assert.typeof(Interactor.extend, 'function');
-    assert.typeof(Interactor.extend().extend, 'function');
+    assert.typeOf(Interactor.extend, 'function');
+    assert.typeOf(Interactor.extend().extend, 'function');
   });
 
   describe('$([selector])', () => {
@@ -189,7 +189,7 @@ describe('Interactor', () => {
       it('sets a new interactor timeout', () => {
         let next = interactor.timeout(1000);
         assert.notEqual(next, interactor);
-        assert(next instanceof Interactor);
+        assert.instanceOf(next, Interactor);
         assert.equal(next.timeout(), 1000);
       });
     });
@@ -209,24 +209,24 @@ describe('Interactor', () => {
 
     it('returns a new child interactor', () => {
       let next = Foo('.a').find('.b');
-      assert(!(next instanceof Foo));
-      assert(next instanceof Interactor);
-      assert(next.exec() instanceof Foo);
+      assert.notInstanceOf(next, Foo);
+      assert.instanceOf(next, Interactor);
+      assert.instanceOf(next.exec(), Foo);
     });
 
     describe('with an interactor selector', () => {
       it('returns a new child instance', () => {
         let next = Foo('.a').find(Bar('.b'));
-        assert(next instanceof Bar);
-        assert(next.exec() instanceof Foo);
+        assert.instanceOf(next, Bar);
+        assert.instanceOf(next.exec(), Foo);
       });
     });
 
     describe('with an interactor action', () => {
       it('returns an new instance of the topmost interactor', () => {
         let next = Foo('.a').find(Bar('.b').exec());
-        assert(next instanceof Foo);
-        assert(next.exec() instanceof Foo);
+        assert.instanceOf(next, Foo);
+        assert.instanceOf(next.exec(), Foo);
       });
 
       it('appends actions to the next queue', async () => {
@@ -278,7 +278,7 @@ describe('Interactor', () => {
         .catch(err => (caught = err))
         .exec(() => (called = true));
 
-      assert(caught instanceof Error);
+      assert.instanceOf(caught, Error);
       assert.equal(caught.message, 'test');
       assert.equal(called, true);
     });
