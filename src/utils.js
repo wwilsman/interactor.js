@@ -12,11 +12,11 @@ const {
   create,
   defineProperty,
   defineProperties,
+  entries,
   freeze,
   getOwnPropertyDescriptor,
   getOwnPropertyDescriptors,
-  getPrototypeOf,
-  keys
+  getPrototypeOf
 } = Object;
 
 // built-ins that are handy to import from one place
@@ -32,9 +32,22 @@ export {
   round
 };
 
-// Recurses through an object and its prototype to gather property descriptors and map over
-// them. Returning falsy from the map function will omit the entry from the resulting object.
-export function mapPropertyDescriptors(obj = {}, map) {
+// Maps an object's key value pairs to another object. Returning undefined or null from the map
+// function will omit the entry from the resulting object.
+export function map(obj, fn) {
+  return entries(obj).reduce((result, [k, v]) => {
+    let value = fn(v, k);
+
+    return value != null
+      ? assign(result, { [k]: value })
+      : result;
+  }, create(null));
+}
+
+// Recurses through an object and its prototype to gather property descriptors and map over them.
+export function mapPropertyDescriptors(obj, fn = d => d) {
+  if (!obj) return {};
+
   let descr = getOwnPropertyDescriptors(obj);
   let proto = getPrototypeOf(obj);
 
@@ -44,8 +57,5 @@ export function mapPropertyDescriptors(obj = {}, map) {
     proto = getPrototypeOf(proto);
   }
 
-  return keys(descr).reduce((p, k) => {
-    let d = map(descr[k], k);
-    return d ? assign(p, { [k]: d }) : p;
-  }, create(null));
+  return map(descr, fn);
 }
