@@ -74,16 +74,17 @@ describe('InteractorAssert', () => {
 
   it('defaults .remains to 500ms', async () => {
     let time = Date.now();
-    let delta = 0;
+    let delta;
 
     await assert.doesNotReject(
       Interactor()
+        .assert(() => (delta == null && (delta = 1)))
         .assert(() => (delta += Date.now() - time))
         .assert(() => (time = Date.now()))
         .assert.remains()
     );
 
-    assert(delta > 500 && delta < 520);
+    assert(delta > 500 && delta < 600);
   });
 
   it('throws when calling .remains without a previous assertion', () => {
