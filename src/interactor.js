@@ -6,10 +6,13 @@ import query from './dom';
 import when from './when';
 import m from './meta';
 
+import * as actions from './actions';
+
 import {
   assign,
   defineProperty,
-  defineProperties
+  defineProperties,
+  mapPropertyDescriptors
 } from './utils';
 
 // The base interactor class sets initial metadata and creates bound assert methods. When no
@@ -44,7 +47,9 @@ defineProperties(Interactor, {
   error: { value: error }
 });
 
-defineProperties(Interactor.prototype, {
+defineProperties(Interactor.prototype, assign((
+  mapPropertyDescriptors(actions)
+), {
   // Return a child element or the interactor element when no selector is provided.
   $: {
     value: function $(selector) {
@@ -214,4 +219,4 @@ defineProperties(Interactor.prototype, {
       return string;
     }
   }
-});
+}));
