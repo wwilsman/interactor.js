@@ -1,4 +1,5 @@
 import InteractorAssert from './assert';
+import Keyboard from './keyboard';
 import extend from './extend';
 import error from './error';
 import query from './dom';
@@ -22,13 +23,13 @@ export default function Interactor(selector) {
   m.set(this, {
     timeout: this.constructor.timeout,
     selector: selector ?? this.constructor.selector,
+    keyboard: Keyboard(),
     interval: 10,
     queue: []
   });
 
   defineProperty(this, 'assert', {
-    value: InteractorAssert(this),
-    enumerable: false
+    value: InteractorAssert(this)
   });
 }
 
