@@ -282,6 +282,36 @@ describe('Interactor', () => {
       assert.equal(caught.message, 'test');
       assert.equal(called, true);
     });
+
+    describe('with a string', () => {
+      it('formats thrown interactor errors', async () => {
+        let called = false;
+
+        await assert.rejects(
+          Interactor()
+            .exec(() => { throw Interactor.error('test'); })
+            .catch('there was an error: %{e}')
+            .exec(() => (called = true)),
+          e('InteractorError', 'there was an error: test')
+        );
+
+        assert.equal(called, false);
+      });
+
+      it('does not format other thrown errors', async () => {
+        let called = false;
+
+        await assert.rejects(
+          Interactor()
+            .exec(() => { throw new Error('test'); })
+            .catch('there was an error: %{e}')
+            .exec(() => (called = true)),
+          e('Error', 'test')
+        );
+
+        assert.equal(called, false);
+      });
+    });
   });
 
   describe('then()', () => {
