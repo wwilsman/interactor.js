@@ -1,4 +1,4 @@
-import { assert, e } from './helpers';
+import { assert, e } from 'tests/helpers';
 import Interactor from 'interactor.js';
 
 describe('InteractorAssert', () => {

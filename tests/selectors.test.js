@@ -1,4 +1,4 @@
-import { assert, e, fixture } from './helpers';
+import { assert, e, fixture } from 'tests/helpers';
 import Interactor, { t, x } from 'interactor.js';
 
 describe('Selectors', () => {

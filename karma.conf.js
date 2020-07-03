@@ -2,6 +2,7 @@ module.exports = function(config) {
   config.set({
     frameworks: ['mocha'],
     browsers: ['ChromeHeadless'],
+    singleRun: true,
 
     reporters: [
       'mocha',
@@ -11,11 +12,13 @@ module.exports = function(config) {
 
     files: [
       { pattern: 'src/index.js', watched: false },
+      { pattern: 'tests/helpers.js', watched: false },
       { pattern: 'tests/**/*.test.js', watched: false }
     ],
 
     preprocessors: {
       'src/index.js': ['rollup'],
+      'tests/helpers.js': ['rollupTestHelpers'],
       'tests/**/*.test.js': ['rollupTest']
     },
 
@@ -74,20 +77,14 @@ module.exports = function(config) {
     },
 
     customPreprocessors: {
-      rollupTest: {
+      rollupTestHelpers: {
         base: 'rollup',
         options: {
-          external: [
-            'interactor.js'
-          ],
-
           output: {
+            name: 'TestHelpers',
             format: 'iife',
-            name: 'Tests',
+            exports: 'named',
             sourcemap: 'inline',
-            globals: {
-              'interactor.js': 'Interactor'
-            },
             // fixes browserify's assert
             intro: `window.process = {
               nextTick: fn => setTimeout(fn, 0),
@@ -99,6 +96,26 @@ module.exports = function(config) {
           onwarn: message => {
             if (/circular dependency/i.test(message)) return;
             console.warn(message);
+          }
+        }
+      },
+
+      rollupTest: {
+        base: 'rollup',
+        options: {
+          external: [
+            'interactor.js',
+            'tests/helpers'
+          ],
+
+          output: {
+            name: 'Tests',
+            format: 'iife',
+            sourcemap: 'inline',
+            globals: {
+              'interactor.js': 'Interactor',
+              'tests/helpers': 'TestHelpers'
+            }
           }
         }
       }
