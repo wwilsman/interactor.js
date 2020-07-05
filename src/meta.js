@@ -40,18 +40,25 @@ const m = {
     });
   },
 
-  // Returns a new instance with copied and additional metadata. Setting the queue will set it on
-  // and return the topmost parent interactor via recursion. Given a function value, the instance
-  // queue will be concatenated into the parent queue before the function is called
-  new(inst, key, val) {
-    if (key === 'queue') {
-      let { parent, queue } = m.get(inst);
+  // Retrieve the topmost parent instance.
+  top(inst) {
+    let top = inst;
 
-      if (parent) {
-        return m.new(parent, key, q => (
-          val(q.concat(queue))
-        ));
-      }
+    while (m.get(top, 'parent')) {
+      top = m.get(top, 'parent');
+    }
+
+    return top;
+  },
+
+  // Returns a new instance with copied and additional metadata. Setting the queue will set it on
+  // and return the topmost parent interactor. Given a function value, the instance queue will be
+  // concatenated into the parent queue before the function is called.
+  new(inst, key, val) {
+    if (key === 'queue' && m.get(inst, 'parent')) {
+      return m.new(m.top(inst), key, q => (
+        val(q.concat(m.get(inst, 'queue')))
+      ));
     }
 
     return m.set((

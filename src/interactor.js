@@ -68,8 +68,8 @@ defineProperties(Interactor.prototype, assign((
   timeout: {
     value: function timeout(ms) {
       return ms
-        ? m.new(this, 'timeout', ms)
-        : m.get(this, 'timeout');
+        ? m.new(m.top(this), 'timeout', ms)
+        : m.get(m.top(this), 'timeout');
     }
   },
 

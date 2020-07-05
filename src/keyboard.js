@@ -35,14 +35,7 @@ defineProperties(Keyboard, {
   // Parse the event key with the topmost interactor's keyboard instance.
   parse: {
     value: function parse(inst, event, key) {
-      let top = inst;
-
-      while (m.get(top, 'parent')) {
-        top = m.get(top, 'parent');
-      }
-
-      return m.get(top, 'keyboard')
-        .parse(event, key);
+      return m.get(m.top(inst), 'keyboard').parse(event, key);
     }
   },
 
