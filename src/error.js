@@ -1,14 +1,13 @@
 import {
   create,
-  defineProperties,
-  defineProperty
+  defineProperties
 } from './utils';
 
 const regexDF = /%\{(.*?)\}/g; // regex directive format
 const regexES = /\s{2,}/g; // regex extra-spaces
 
 // Formats interactor error messages with specific directives.
-function format(message, inst, result) {
+function format(message, inst, expected) {
   return message
     // directive format: %{<directive> <arg>}
     .replace(regexDF, (_, f) => {
@@ -26,7 +25,7 @@ function format(message, inst, result) {
           return arg ? `${arg} within ${inst}` : inst.toString();
         // %{- <t>|<f>} -> use <t> when expecting a success, <f> otherwise
         case '-':
-          return arg.split('|')[result ? 1 : 0] || '';
+          return arg.split('|')[expected ? 0 : 1] || '';
         // remove unknown directives
         default:
           return '';
@@ -37,18 +36,16 @@ function format(message, inst, result) {
     .trim();
 }
 
-// Returns an interactor error. The message may contain directives according to the format function
-// above. If using a negative directive, the expectation should be provided as the second argument.
-export default function InteractorError(message, result) {
+// Returns an interactor error. The provided message is parsed by the above format function.
+export default function InteractorError(message) {
   if (!(this instanceof InteractorError)) {
-    return new InteractorError(message, result);
+    return new InteractorError(message);
   }
 
   Error.prototype.constructor.call(this, message);
 
   defineProperties(this, {
     raw: { value: message },
-    result: { value: result },
 
     // automatic formatting when a context is attached
     message: {
@@ -75,11 +72,11 @@ defineProperties(InteractorError.prototype, {
 
   // bind an interactor instance to this error when not already bound
   bind: {
-    value(ctx) {
+    value(ctx, expected) {
       return this.ctx ? this : (
-        defineProperty(this, 'ctx', {
-          configurable: true,
-          value: ctx
+        defineProperties(this, {
+          ctx: { value: ctx },
+          expected: { value: expected }
         })
       );
     }
@@ -93,7 +90,7 @@ defineProperties(InteractorError.prototype, {
           value: format(
             message.replace('%{e}', this.raw),
             this.ctx,
-            this.result
+            this.expected
           )
         }
       });

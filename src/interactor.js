@@ -214,7 +214,9 @@ defineProperties(Interactor.prototype, assign((
       let string = selector.toString();
 
       if (name) string += ` ${name}`;
-      if (parent) string += ` within ${parent}`;
+      if (parent && m.get(parent, 'selector')) {
+        string += ` within ${parent}`;
+      }
 
       return string;
     }

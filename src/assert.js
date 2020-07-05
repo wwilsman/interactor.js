@@ -9,33 +9,6 @@ import {
   mapPropertyDescriptors
 } from './utils';
 
-// Negate assertions, bind the assert context, and handle returned interactor errors.
-function wrap(ctx, fn, expected, boundargs = []) {
-  return function(...args) {
-    let ret;
-
-    // create a context when necessary
-    ctx = ctx || context(this, expected);
-
-    try {
-      ret = fn.apply(ctx, boundargs.concat(args));
-    } catch (e) {
-      // rethrow or swallow when negated
-      if (expected) throw e;
-      return;
-    }
-
-    // handle interactor errors
-    if (ret?.name === 'InteractorError' && ret.result !== expected) {
-      throw ret.bind(this);
-    }
-
-    if (!expected) {
-      throw error('expected assertion to fail but it passed');
-    }
-  };
-}
-
 // Builds an assert context around assertion functions and child interactors. This context is used
 // for named asserts and allows reusing existing and shared assertion functions.
 function context(inst, expected) {
@@ -45,7 +18,7 @@ function context(inst, expected) {
   defineProperties(ctx, assign(
     // bind all custom assertions to the context
     mapPropertyDescriptors(fns, ({ value: fn }) => ({
-      value: wrap(ctx, fn, expected)
+      value: wrapContext(ctx, fn, expected).bind(inst)
     })),
     // child interactors create assert context references
     mapPropertyDescriptors(children, ({ value }) => ({
@@ -60,11 +33,49 @@ function context(inst, expected) {
   if (expected || m.get(inst, 'parent')) {
     // lazily create a negated context
     defineProperty(ctx, 'not', {
-      get: () => context(inst, false)
+      get: () => context(inst, !expected)
     });
   }
 
   return ctx;
+}
+
+// Bind an assertion to a context, the expected result, and bind any thrown interactor error.
+function wrapContext(ctx, fn, expected, ...bound) {
+  return function(...args) {
+    try {
+      fn.apply(ctx || context(this, expected), (
+        [expected].concat(bound, args)
+      ));
+    } catch (err) {
+      if (err.name === 'InteractorError') {
+        err.bind(this, expected);
+      }
+
+      throw err;
+    }
+  };
+}
+
+// Bind an assertion to a context, bind any thrown interactor error, and throw when an error is
+// expected but not encountered.
+function wrapAssertion(fn, expected) {
+  return function(...args) {
+    try {
+      fn.apply(context(this, expected), args);
+    } catch (err) {
+      if (err.name === 'InteractorError') {
+        err.bind(this, expected);
+      }
+
+      if (expected) throw err;
+      return;
+    }
+
+    if (!expected) {
+      throw error('expected assertion to fail but it passed');
+    }
+  };
 }
 
 // Returns an instance of the interactor's assert function that contains additional assertion
@@ -75,14 +86,14 @@ export default function InteractorAssert(inst, expected = true) {
 
   let assert = defineProperties(function assert(fn) {
     // generic assertions are called with an assert context
-    return passert.call(inst, defineProperties(wrap(null, fn, expected), {
+    return passert.call(inst, defineProperties(wrapAssertion(fn, expected), {
       // used to determine invoking the interactor element
       length: { value: fn.length }
     }));
   }, assign(
     // assertion functions are bound to an assert context
     mapPropertyDescriptors(fns, ({ value: fn }) => ({
-      value: (...args) => passert.call(inst, wrap(null, fn, expected, args))
+      value: (...args) => passert.call(inst, wrapContext(null, fn, expected, ...args))
     })),
     // child interactors create child assert references
     mapPropertyDescriptors(children, ({ value: i }) => ({

@@ -9,7 +9,7 @@ describe('InteractorAssert', () => {
     );
   });
 
-  it('has propertiess that cannot be overridden', async () => {
+  it('has properties that cannot be overridden', async () => {
     let mock = msg => (mock.calls = (mock.calls || [])).push(msg);
     let warn = console.warn;
     console.warn = mock;
@@ -43,17 +43,17 @@ describe('InteractorAssert', () => {
       },
 
       assert: {
-        passing() {},
+        passing() {
+          throw new Error('is failing');
+        },
 
-        failing(expected) {
-          throw new Error('is passing');
-        }
+        failing() {}
       }
     });
 
     await assert.rejects(
       Test().assert.not.passing(),
-      e('InteractorError', 'expected assertion to fail but it passed')
+      e('Error', 'is failing')
     );
 
     await assert.doesNotReject(
@@ -94,15 +94,15 @@ describe('InteractorAssert', () => {
     );
   });
 
-  it('calls custom assertions with provided args', async () => {
+  it('calls custom assertions with the expected result and provided args', async () => {
     let Test = Interactor.extend({
       assert: {
-        passing(result) {
-          assert.equal(result, true);
+        passing(expected, bool) {
+          assert.equal(expected, bool);
         },
 
-        failing(result) {
-          assert.equal(result, false);
+        failing(expected, bool) {
+          assert.equal(expected, !bool);
         }
       }
     });
@@ -114,21 +114,27 @@ describe('InteractorAssert', () => {
     );
   });
 
-  it('handles formatting and throwing returned interactor errors', async () => {
+  it('handles formatting thrown interactor errors', async () => {
     let Test = Interactor.extend({
       interactor: {
         timeout: 50
       },
 
       assert: {
-        passing(result) {
-          return Interactor.error(
-            '%{@} is %{- failing|passing}',
-            result
-          );
+        passing(expected, bool) {
+          if (expected !== bool) {
+            throw Interactor.error('%{@} is %{- failing|passing}');
+          }
         }
       }
     });
+
+    await assert.rejects(
+      Test('foo').assert(() => {
+        throw Interactor.error('%{@} is %{- not} passing');
+      }),
+      e('InteractorError', 'foo is not passing')
+    );
 
     await assert.rejects(
       Test('foo').assert.passing(false),
@@ -144,15 +150,16 @@ describe('InteractorAssert', () => {
   it('provides assertions with a smart context', async () => {
     let Extended = Interactor.extend({
       assert: {
-        something() {
+        something(expected, inherited) {
           assert.typeOf(this.not, 'object');
           assert.typeOf(this.remains, 'undefined');
 
           assert.typeOf(this.something, 'function');
           assert.typeOf(this.not.something, 'function');
 
-          // passes when inherited, fails when not
-          assert.typeOf(this.passing, 'function');
+          assert.typeOf(this.passing, (
+            inherited ? 'function' : 'undefined'
+          ));
         }
       }
     });
@@ -168,12 +175,12 @@ describe('InteractorAssert', () => {
 
           assert.typeOf(this.something, 'function');
           assert.typeOf(this.not.something, 'function');
-          this.something();
+          this.something(true);
 
           assert.typeOf(this.child.something, 'function');
           assert.typeOf(this.not.child.something, 'function');
           assert.typeOf(this.child.not.something, 'function');
-          this.child.not.something();
+          this.child.not.something(false);
         }
       },
 
