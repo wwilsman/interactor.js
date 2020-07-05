@@ -7,6 +7,7 @@ import when from './when';
 import m from './meta';
 
 import * as actions from './actions';
+import * as assertions from './assertions';
 
 import {
   assign,
@@ -96,7 +97,7 @@ defineProperties(Interactor.prototype, assign((
 
   // Adds an assertion to the next interactor instance's queue.
   assert: {
-    value: function assert(assertion) {
+    value: m.set(function assert(assertion) {
       return m.new(this, 'queue', q => {
         return q.concat({
           type: 'assert',
@@ -105,7 +106,7 @@ defineProperties(Interactor.prototype, assign((
           ctx: this
         });
       });
-    }
+    }, 'fns', assertions)
   },
 
   // Adds a callback to the next interactor instance's queue.

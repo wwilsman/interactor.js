@@ -101,7 +101,7 @@ export default function extend(properties = {}) {
           value: m.set(function() {
             return assert.apply(this, arguments);
           }, {
-            fns: create(m.get(assert, 'fns') || null, (
+            fns: create(m.get(assert, 'fns'), (
               mapPropertyDescriptors(assertions, filterAsserts())
             )),
             children: mapPropertyDescriptors(properties, filterAsserts(({ value }) => {
