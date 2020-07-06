@@ -5,14 +5,13 @@ import getKeyDefinition from './keydefs';
 import {
   assign,
   defineProperty,
-  defineProperties,
   getOwnPropertyDescriptor
 } from './utils';
 
 // Keyboard class used to track pressed keys and modifiers for an interactor instance.
-export default function Keyboard(options) {
-  if (!(this instanceof Keyboard)) {
-    return new Keyboard(options);
+export default function InteractorKeyboard(options) {
+  if (!(this instanceof InteractorKeyboard)) {
+    return new InteractorKeyboard(options);
   }
 
   // assign pressed keys and modifiers
@@ -31,121 +30,111 @@ export default function Keyboard(options) {
 }
 
 // Static methods
-defineProperties(Keyboard, {
+assign(InteractorKeyboard, {
   // Parse the event key with the topmost interactor's keyboard instance.
-  parse: {
-    value: function parse(inst, event, key) {
-      return m.get(m.top(inst), 'keyboard').parse(event, key);
-    }
+  parse(inst, event, key) {
+    return m.get(m.top(inst), 'keyboard').parse(event, key);
   },
 
   // Assign a keyboard instance to an interactor.
-  assign: {
-    value: function assign(inst, interactor) {
-      return m.new(interactor, 'keyboard', inst);
-    }
+  assign(inst, interactor) {
+    return m.new(interactor, 'keyboard', inst);
   }
 });
 
 // Instance methods
-defineProperties(Keyboard.prototype, {
+assign(InteractorKeyboard.prototype, {
   // Retrieve a key definition and return it with a new keyboard instance when pressed keys or
   // modifiers change during keydown and keyup events.
-  parse: {
-    value: function parse(event, key) {
-      let { pressed, modifiers } = this;
-      let d = getKeyDefinition(key, modifiers);
-      let k = this;
+  parse(event, key) {
+    let { pressed, modifiers } = this;
+    let d = getKeyDefinition(key, modifiers);
+    let k = this;
 
-      if (event === 'keydown') {
-        d.event.repeat = pressed.includes(d.event.code);
+    if (event === 'keydown') {
+      d.event.repeat = pressed.includes(d.event.code);
 
-        k = new this.constructor({
-          pressed: d.event.repeat ? pressed : pressed.concat(d.event.code),
-          modifiers: this.modifier(d.event.key, true)
-        });
-      } else if (event === 'keyup') {
-        k = new this.constructor({
-          pressed: pressed.filter(c => c !== d.event.code),
-          modifiers: this.modifier(d.event.key, false)
-        });
-      }
-
-      return [k, d];
+      k = new this.constructor({
+        pressed: d.event.repeat ? pressed : pressed.concat(d.event.code),
+        modifiers: this.modifier(d.event.key, true)
+      });
+    } else if (event === 'keyup') {
+      k = new this.constructor({
+        pressed: pressed.filter(c => c !== d.event.code),
+        modifiers: this.modifier(d.event.key, false)
+      });
     }
+
+    return [k, d];
   },
 
   // Return a new modifiers object with the specified key activated or not. When the key is not a
   // modifier, the existing modifiers object is returned unmodified.
-  modifier: {
-    value: function modifier(key, active) {
-      let mod = ({
-        Alt: 'altKey',
-        Control: 'ctrlKey',
-        Meta: 'metaKey',
-        Shift: 'shiftKey'
-      })[key];
+  modifier(key, active) {
+    let mod = ({
+      Alt: 'altKey',
+      Control: 'ctrlKey',
+      Meta: 'metaKey',
+      Shift: 'shiftKey'
+    })[key];
 
-      return mod
-        ? assign({}, this.modifiers, { [mod]: active })
-        : this.modifiers;
-    }
+    return mod
+      ? assign({}, this.modifiers, { [mod]: active })
+      : this.modifiers;
   },
 
   // Insert a character into an element at the specified range. The second argument should be the
   // result of parsing a key with the instance parse method.
-  input: {
-    value: function input($el, { text: char, event }, range) {
-      let isInput = (/^(input|textarea)$/i).test($el.tagName);
+  input($el, { text: char, event }, range) {
+    let isInput = (/^(input|textarea)$/i).test($el.tagName);
 
-      // input events only happen on input elements
-      if (!isInput && !$el.isContentEditable) return;
+    // input events only happen on input elements
+    if (!isInput && !$el.isContentEditable) return;
 
-      // sometimes, the `value` property of input elements is modified by frameworks and will not
-      // reflect changes to this property; to work around this, we cache any custom value property
-      // descriptor and reapply it later
-      let descr = isInput && getOwnPropertyDescriptor($el, 'value');
-      if (descr) delete $el.value;
+    // sometimes, the `value` property of input elements is modified by frameworks and will not
+    // reflect changes to this property; to work around this, we cache any custom value property
+    // descriptor and reapply it later
+    let descr = isInput && getOwnPropertyDescriptor($el, 'value');
+    if (descr) delete $el.value;
 
-      // add the charCode to the event options
-      event = char ? assign({
-        charCode: char.charCodeAt(0)
-      }, event) : event;
+    // add the charCode to the event options
+    event = char ? assign({
+      charCode: char.charCodeAt(0)
+    }, event) : event;
 
-      // check if any event is cancelled
-      let cancelled = !(
-        dispatch($el, 'keypress', event) &&
-          dispatch($el, 'beforeinput', event)
-      );
+    // check if any event is cancelled
+    let cancelled = !(
+      dispatch($el, 'keypress', event) &&
+        dispatch($el, 'beforeinput', event)
+    );
 
-      if (!cancelled) {
-        let value = isInput ? $el.value : $el.textContent;
-        range = range || value.length;
+    if (!cancelled) {
+      let value = isInput ? $el.value : $el.textContent;
+      range = range || value.length;
 
-        // adjust the range if backspace or delete was pressed
-        if (typeof range === 'number') {
-          range = [
-            event.key === 'Backspace' ? range - 1 : range,
-            event.key === 'Delete' ? range + 1 : range
-          ];
-        }
-
-        // erase text encapsulated by the range
-        value = value.slice(0, range[0]) + char + (
-          value.slice(range[1] || range[0])
-        );
-
-        if (isInput) {
-          $el.value = value;
-        } else {
-          $el.textContent = value;
-        }
-
-        dispatch($el, 'input', assign({ cancelable: false }, event));
+      // adjust the range if backspace or delete was pressed
+      if (typeof range === 'number') {
+        range = [
+          event.key === 'Backspace' ? range - 1 : range,
+          event.key === 'Delete' ? range + 1 : range
+        ];
       }
 
-      // restore artificial value property descriptor
-      if (descr) defineProperty($el, 'value', descr);
+      // erase text encapsulated by the range
+      value = value.slice(0, range[0]) + char + (
+        value.slice(range[1] || range[0])
+      );
+
+      if (isInput) {
+        $el.value = value;
+      } else {
+        $el.textContent = value;
+      }
+
+      dispatch($el, 'input', assign({ cancelable: false }, event));
     }
+
+    // restore artificial value property descriptor
+    if (descr) defineProperty($el, 'value', descr);
   }
 });
