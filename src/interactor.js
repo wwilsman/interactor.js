@@ -6,7 +6,7 @@ import query from './dom';
 import when from './when';
 import m from './meta';
 
-import * as actions from './actions';
+import actions from './actions';
 import properties, { assertions } from './properties';
 
 import {

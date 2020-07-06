@@ -2,7 +2,7 @@ import m from './meta';
 import { assign, map } from './utils';
 
 import Interactor from './interactor';
-import * as actions from './actions';
+import actions from './actions';
 
 assign(exports, map(actions, action => {
   return function(...args) {

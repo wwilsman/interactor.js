@@ -1,4 +1,11 @@
-export { default as keydown } from './keydown';
-export { default as keyup } from './keyup';
-export { default as press } from './press';
-export { default as type } from './type';
+import keydown from './keydown';
+import keyup from './keyup';
+import press from './press';
+import type from './type';
+
+export default {
+  keydown,
+  keyup,
+  press,
+  type
+};
