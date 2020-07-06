@@ -9,33 +9,6 @@ describe('InteractorAssert', () => {
     );
   });
 
-  it('has properties that cannot be overridden', async () => {
-    let mock = msg => (mock.calls = (mock.calls || [])).push(msg);
-    let warn = console.warn;
-    console.warn = mock;
-
-    let Test = Interactor.extend({
-      assert: {
-        remains() { throw new Error('remains'); },
-        not() { throw new Error('not'); }
-      }
-    });
-
-    console.warn = warn;
-    assert.deepEqual(mock.calls, [
-      '`remains` is a reserved assertion property and will be ignored',
-      '`not` is a reserved assertion property and will be ignored'
-    ]);
-
-    await assert.doesNotReject(
-      Test()
-        .assert.not(() => {
-          throw new Error('assert not');
-        })
-        .assert.remains(10)
-    );
-  });
-
   it('can be negated with .not', async () => {
     let Test = Interactor.extend({
       interactor: {

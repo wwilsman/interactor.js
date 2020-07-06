@@ -1,4 +1,5 @@
 import m from './meta';
+import { createAssertion } from './assert';
 
 import {
   assign,
@@ -7,12 +8,25 @@ import {
   mapPropertyDescriptors
 } from './utils';
 
+// Used to ignore reserved properties
+const reserved = [
+  'interactor', '$', '$$',
+  'assert', 'remains', 'not',
+  'exec', 'catch', 'then'
+];
+
+function filterReserved(descr, name) {
+  if (reserved.includes(name)) {
+    console.warn(`\`${name}\` is a reserved property and will be ignored`);
+    return;
+  }
+
+  return descr;
+}
+
 // Wraps a property descriptor so that if a method or property returns an interactor, it is properly
 // associated with its parent interactor or its queue is appended to the parent queue.
-function wrapd({ get, value }, key) {
-  // disallow certain properties from being included
-  if (['assert', 'interactor'].includes(key)) return;
-
+function wrapProperty({ get, value }) {
   let fn = get || value;
 
   // guaranteed to be an interactor
@@ -43,18 +57,6 @@ function wrapd({ get, value }, key) {
   };
 }
 
-// Used to ignore reserved assert properties
-function filterAsserts(fn) {
-  return (d, k) => {
-    if (['remains', 'not'].includes(k)) {
-      console.warn(`\`${k}\` is a reserved assertion property and will be ignored`);
-      return;
-    }
-
-    return fn ? fn(d, k) : d;
-  };
-}
-
 // Returns a custom interactor creator using the provided methods, properties, assertions, and
 // options. Methods and interactors are wrapped to facilitate parent-child relationships. Assertions
 // and interactors are also saved to a copy of the inherited assert function's prototype to be used
@@ -63,12 +65,31 @@ function filterAsserts(fn) {
 // not be applied to the final interactor creator.
 export default function extend(properties = {}) {
   let Parent = this;
-  let assert = this.prototype.assert;
+  let options = properties.interactor;
 
-  // destructuring and rest causes getters to be invoked; these properties are disallowed in the
-  // property descriptor wrapping function above
-  let assertions = properties.assert || {};
-  let options = properties.interactor || {};
+  // extend parent assert with addition properties
+  let passert = Parent.prototype.assert;
+  let assertions = mapPropertyDescriptors(properties.assert, filterReserved);
+  let children = create(null);
+
+  // while mapping, collect additional assert properties
+  let props = mapPropertyDescriptors(properties, (descr, key) => {
+    // siliently ignore assert and interactor, but warn on other reserved properties
+    if (['assert', 'interactor'].includes(key) || !filterReserved(descr, key)) return;
+
+    // auto generate assertions based on getters when necessary
+    if (descr.get && !assertions[key]) {
+      assertions[key] = { value: createAssertion(key, descr.get) };
+    }
+
+    // action-less interactors become assert children
+    if (m.get(descr.value, 'queue')?.length === 0) {
+      children[key] = descr;
+    }
+
+    // make nested interactors parent-aware
+    return wrapProperty(descr);
+  });
 
   function Extended(selector) {
     if (!(this instanceof Extended)) {
@@ -80,35 +101,26 @@ export default function extend(properties = {}) {
 
   return defineProperties(Extended, {
     // define the custom interactor's options
-    name: { value: options.name ?? Parent.name },
-    selector: { value: options.selector ?? Parent.selector },
-    timeout: { value: options.timeout || Parent.timeout },
+    name: { value: options?.name ?? Parent.name },
+    selector: { value: options?.selector ?? Parent.selector },
+    timeout: { value: options?.timeout || Parent.timeout },
 
     // define inherited static methods
     extend: { value: extend },
 
     // extend the parent prototype
     prototype: {
-      value: create(Parent.prototype, assign((
-        // wrap properties to create parent-child relationships
-        mapPropertyDescriptors(properties, wrapd)
-      ), {
+      value: create(Parent.prototype, assign(props, {
         // correct the constructor
         constructor: { value: Extended },
 
         // copy the parent assert with additional functions and interactors
         assert: {
           value: m.set(function() {
-            return assert.apply(this, arguments);
+            return passert.apply(this, arguments);
           }, {
-            fns: create(m.get(assert, 'fns'), (
-              mapPropertyDescriptors(assertions, filterAsserts())
-            )),
-            children: mapPropertyDescriptors(properties, filterAsserts(({ value }) => {
-              let queue = m.get(value, 'queue');
-              // only interactors without actions become children
-              if (queue && !queue.length) return value;
-            }))
+            fns: create(m.get(passert, 'fns'), assertions),
+            children: create(m.get(passert, 'children') || null, children)
           })
         }
       }))

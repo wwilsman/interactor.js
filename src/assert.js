@@ -16,9 +16,9 @@ function context(inst, expected) {
   let ctx = create(null);
 
   defineProperties(ctx, assign(
-    // bind all custom assertions to the context
+    // lazily bind all custom assertions to the context
     mapPropertyDescriptors(fns, ({ value: fn }) => ({
-      value: wrapContext(ctx, fn, expected).bind(inst)
+      get: () => wrapContext(ctx, fn, expected).bind(inst)
     })),
     // child interactors create assert context references
     mapPropertyDescriptors(children, ({ value }) => ({
@@ -54,28 +54,44 @@ function wrapContext(ctx, fn, expected, ...bound) {
 
       throw err;
     }
+
+    return true;
   };
 }
 
-// Bind an assertion to a context, bind any thrown interactor error, and throw when an error is
-// expected but not encountered.
-function wrapAssertion(fn, expected) {
-  return function(...args) {
-    try {
-      fn.apply(context(this, expected), args);
-    } catch (err) {
-      if (err.name === 'InteractorError') {
-        err.bind(this, expected);
-      }
+// Returns an interactor assert function that automatically handles negation. The matcher function
+// should return an object with a message and a result. If the matcher accepts arguments, the first
+// argument is the element and all other arguments are forwarded from the assert invocation.
+export function assertion(...matchers) {
+  return function(expected, ...args) {
+    let [{ message, result }] = matchers.reduce((ret, fn) => {
+      return [fn.apply(this, ret.concat(args))];
+    }, []);
 
-      if (expected) throw err;
-      return;
-    }
-
-    if (!expected) {
-      throw error('expected assertion to fail but it passed');
+    if (result !== expected) {
+      throw error(message);
     }
   };
+}
+
+// Returns an auto-generated assertion. If an argument is supplied to the resulting assertion, it
+// will be compared with the value resulting from the property getter. With no argument, and when
+// the result is a boolean, the error message is reworded to be stateful.
+export function createAssertion(name, fn) {
+  return assertion(fn, (result, expected) => {
+    let message = `%{@} ${name} is "${result}"`;
+
+    if (expected != null) {
+      message += ` but expected %{- "${expected}"|it not to be}`;
+      result = result === expected;
+    } else if (typeof result === 'boolean') {
+      message = `%{@} is %{- not} ${name}`;
+    } else {
+      result = !!result;
+    }
+
+    return { message, result };
+  });
 }
 
 // Returns an instance of the interactor's assert function that contains additional assertion
@@ -85,8 +101,19 @@ export default function InteractorAssert(inst, expected = true) {
   let { fns, children } = m.get(passert);
 
   let assert = defineProperties(function assert(fn) {
-    // generic assertions are called with an assert context
-    return passert.call(inst, defineProperties(wrapAssertion(fn, expected), {
+    // generic assertions are called with an assert context and can be negated on error
+    return passert.call(inst, defineProperties(function() {
+      try {
+        fn.apply(context(this, expected), arguments);
+        if (expected) return;
+      } catch (err) {
+        if (err.name === 'InteractorError') err.bind(this, expected);
+        if (expected) throw err;
+        return;
+      }
+
+      throw error('expected assertion to fail but it passed');
+    }, {
       // used to determine invoking the interactor element
       length: { value: fn.length }
     }));

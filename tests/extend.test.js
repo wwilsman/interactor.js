@@ -53,6 +53,48 @@ describe('Interactor.extend', () => {
     assert.equal(typeof Test().assert.nested.something, 'undefined');
   });
 
+  it('has properties that cannot be overridden', async () => {
+    let mock = msg => (mock.calls = (mock.calls || [])).push(msg);
+    let warn = console.warn;
+    console.warn = mock;
+
+    let Test = Interactor.extend({
+      assert: {
+        interactor() { throw new Error('interactor'); },
+        assert() { throw new Error('assert'); },
+        remains() { throw new Error('remains'); },
+        not() { throw new Error('not'); }
+      },
+
+      $() { throw new Error('$'); },
+      $$() { throw new Error('$$'); },
+      exec() { throw new Error('exec'); },
+      catch() { throw new Error('catch'); },
+      then() { throw new Error('then'); }
+    });
+
+    console.warn = warn;
+    assert.deepEqual(mock.calls, [
+      '`interactor` is a reserved property and will be ignored',
+      '`assert` is a reserved property and will be ignored',
+      '`remains` is a reserved property and will be ignored',
+      '`not` is a reserved property and will be ignored',
+      '`$` is a reserved property and will be ignored',
+      '`$$` is a reserved property and will be ignored',
+      '`exec` is a reserved property and will be ignored',
+      '`catch` is a reserved property and will be ignored',
+      '`then` is a reserved property and will be ignored'
+    ]);
+
+    await assert.doesNotReject(
+      Test()
+        .assert.not(() => { throw new Error('assert not'); })
+        .assert.remains(10)
+        .exec()
+        .then()
+    );
+  });
+
   it('wraps nested interactors to return the topmost instance', () => {
     let Deep = Interactor.extend();
 
