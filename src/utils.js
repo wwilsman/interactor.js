@@ -45,7 +45,7 @@ export function map(obj, fn) {
 }
 
 // Recurses through an object and its prototype to gather property descriptors and map over them.
-export function mapPropertyDescriptors(obj, fn = d => d) {
+export function mapPropertyDescriptors(obj, fn) {
   if (!obj) return {};
 
   let descr = getOwnPropertyDescriptors(obj);
