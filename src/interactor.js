@@ -7,7 +7,7 @@ import when from './when';
 import m from './meta';
 
 import * as actions from './actions';
-import * as assertions from './assertions';
+import properties, { assertions } from './properties';
 
 import {
   assign,
@@ -47,6 +47,9 @@ defineProperties(Interactor, {
   extend: { value: extend },
   error: { value: error }
 });
+
+// define default properties
+defineProperties(Interactor.prototype, properties);
 
 defineProperties(Interactor.prototype, assign((
   mapPropertyDescriptors(actions)
