@@ -50,7 +50,7 @@ export default function InteractorError(message) {
     // automatic formatting when a context is attached
     message: {
       configurable: true,
-      get: () => (this.ctx && this.format()) || this.raw
+      get: () => (this.ctx && this.format().message) || this.raw
     }
   });
 }
