@@ -2,10 +2,12 @@ import { createAssertion } from '../assert';
 import { map } from '../utils';
 
 import * as disabled from './disabled';
+import * as focused from './focused';
 
 const assertions = {};
 const properties = {
-  disabled
+  disabled,
+  focused
 };
 
 // populated during default export creation
