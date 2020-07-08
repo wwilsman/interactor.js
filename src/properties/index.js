@@ -2,11 +2,13 @@ import { createAssertion } from '../assert';
 import { map } from '../utils';
 
 import * as disabled from './disabled';
+import * as focusable from './focusable';
 import * as focused from './focused';
 
 const assertions = {};
 const properties = {
   disabled,
+  focusable,
   focused
 };
 
