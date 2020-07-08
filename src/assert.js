@@ -11,14 +11,19 @@ import {
 
 // Builds an assert context around assertion functions and child interactors. This context is used
 // for named asserts and allows reusing existing and shared assertion functions.
-function context(inst, expected) {
+function context(inst, expected, skipNegation) {
   let { fns, children } = m.get(inst.constructor.prototype.assert);
 
   let ctx = create(null, assign(
     // ensure nested interactors return nested contexts within assertions
-    mapPropertyDescriptors(inst.constructor.prototype, ({ get, value }) => {
-      // leave raw values alone
-      if (!get && typeof value !== 'function') return { value };
+    mapPropertyDescriptors(inst.constructor.prototype, ({ get, value }, key) => {
+      if (!get && typeof value !== 'function') {
+        // leave raw values alone
+        return { value };
+      } else if (['timeout', 'exec', 'catch', 'then'].includes(key)) {
+        // core methods shouldn't be called within assertions
+        return { value: ctxError };
+      }
 
       return {
         [get ? 'get' : 'value']: function() {
@@ -28,12 +33,6 @@ function context(inst, expected) {
         }
       };
     }), {
-      // core methods shouldn't be called within assertions
-      timeout: { value: ctxError },
-      exec: { value: ctxError },
-      catch: { value: ctxError },
-      then: { value: ctxError },
-
       // assertions are wrapped in further contexts
       assert: {
         value: create(null, assign(
@@ -50,10 +49,10 @@ function context(inst, expected) {
     }
   ));
 
-  if (expected || m.get(inst, 'parent')) {
+  if (!skipNegation) {
     // lazily create a negated context
     defineProperty(ctx.assert, 'not', {
-      get: () => context(inst, !expected).assert
+      get: () => context(inst, !expected, true).assert
     });
   }
 
