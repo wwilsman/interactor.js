@@ -2,6 +2,12 @@ import { assert, e } from 'tests/helpers';
 import Interactor from 'interactor.js';
 
 describe('InteractorAssert', () => {
+  const Test = Interactor.extend({
+    interactor: {
+      timeout: 50
+    }
+  });
+
   it('is unique per interactor instance', () => {
     assert.notEqual(
       Interactor().assert,
@@ -10,11 +16,7 @@ describe('InteractorAssert', () => {
   });
 
   it('can be negated with .not', async () => {
-    let Test = Interactor.extend({
-      interactor: {
-        timeout: 50
-      },
-
+    let T = Test.extend({
       assert: {
         passing() {
           throw new Error('is failing');
@@ -25,21 +27,21 @@ describe('InteractorAssert', () => {
     });
 
     await assert.rejects(
-      Test().assert.not.passing(),
+      T().assert.not.passing(),
       e('Error', 'is failing')
     );
 
     await assert.doesNotReject(
-      Test().assert.not.failing()
+      T().assert.not.failing()
     );
 
     await assert.rejects(
-      Test().assert.not(() => {}),
+      T().assert.not(() => {}),
       e('InteractorError', 'expected assertion to fail but it passed')
     );
 
     await assert.doesNotReject(
-      Test().assert.not(() => {
+      T().assert.not(() => {
         throw Error('failed successfully');
       })
     );
@@ -50,7 +52,7 @@ describe('InteractorAssert', () => {
     let delta;
 
     await assert.doesNotReject(
-      Interactor()
+      Test()
         .assert(() => (delta == null && (delta = 1)))
         .assert(() => (delta += Date.now() - time))
         .assert(() => (time = Date.now()))
@@ -62,13 +64,13 @@ describe('InteractorAssert', () => {
 
   it('throws when calling .remains without a previous assertion', () => {
     assert.throws(
-      () => Interactor().assert.remains(10),
+      () => Test().assert.remains(10),
       e('InteractorError', 'no previous assertion to persist')
     );
   });
 
   it('calls custom assertions with the expected result and provided args', async () => {
-    let Test = Interactor.extend({
+    let T = Test.extend({
       assert: {
         passing(expected, bool) {
           assert.equal(expected, bool);
@@ -81,18 +83,14 @@ describe('InteractorAssert', () => {
     });
 
     await assert.doesNotReject(
-      Test()
+      T()
         .assert.passing(true)
         .assert.not.failing(true)
     );
   });
 
   it('handles formatting thrown interactor errors', async () => {
-    let Test = Interactor.extend({
-      interactor: {
-        timeout: 50
-      },
-
+    let T = Test.extend({
       assert: {
         passing(expected, bool) {
           if (expected !== bool) {
@@ -103,26 +101,26 @@ describe('InteractorAssert', () => {
     });
 
     await assert.rejects(
-      Test('foo').assert(() => {
+      T('foo').assert(() => {
         throw Interactor.error('%{@} is %{- not} passing');
       }),
       e('InteractorError', 'foo is not passing')
     );
 
     await assert.rejects(
-      Test('foo').assert.passing(false),
+      T('foo').assert.passing(false),
       e('InteractorError', 'foo is failing')
     );
 
     await assert.rejects(
-      Test('foo').assert.not.passing(true),
+      T('foo').assert.not.passing(true),
       e('InteractorError', 'foo is passing')
     );
   });
 
   describe('context', () => {
     it('throws an error when calling interactor methods', async () => {
-      let Test = Interactor.extend({
+      let T = Test.extend({
         assert: {
           foo() { this.timeout(); },
           bar() { this.exec(); },
@@ -136,16 +134,14 @@ describe('InteractorAssert', () => {
         'interactor methods should not be called within assertions'
       );
 
-      await assert.rejects(Test().assert.foo(), err);
-      await assert.rejects(Test().assert.bar(), err);
-      await assert.rejects(Test().assert.baz(), err);
-      await assert.rejects(Test().assert.qux(), err);
+      await assert.rejects(T().assert.foo(), err);
+      await assert.rejects(T().assert.bar(), err);
+      await assert.rejects(T().assert.baz(), err);
+      await assert.rejects(T().assert.qux(), err);
     });
 
     it('has access to inherited and shared assertions', async () => {
-      let Extended = Interactor.extend({
-        interactor: { timeout: 50 },
-
+      let Extended = Test.extend({
         assert: {
           foo(expected, inherited) {
             assert.typeOf(this.assert.bar, (
@@ -155,7 +151,7 @@ describe('InteractorAssert', () => {
         }
       });
 
-      let Test = Extended.extend({
+      let T = Extended.extend({
         assert: {
           bar() {
             assert.typeOf(this.assert.foo, 'function');
@@ -175,17 +171,17 @@ describe('InteractorAssert', () => {
       });
 
       await assert.rejects(
-        Test().assert.foo(false)
+        T().assert.foo(false)
       );
 
       await assert.doesNotReject(
-        Test()
+        T()
           .assert.foo(true)
           .assert.bar()
       );
 
       await assert.doesNotReject(
-        Test().assert(function() {
+        T().assert(function() {
           assert.typeOf(this.assert.foo, 'function');
           assert.typeOf(this.assert.not.foo, 'function');
           assert.typeOf(this.assert.bar, 'function');
