@@ -13,31 +13,56 @@ import {
 // for named asserts and allows reusing existing and shared assertion functions.
 function context(inst, expected) {
   let { fns, children } = m.get(inst.constructor.prototype.assert);
-  let ctx = create(null);
 
-  defineProperties(ctx, assign(
-    // lazily bind all custom assertions to the context
-    mapPropertyDescriptors(fns, ({ value: fn }) => ({
-      get: () => wrapContext(ctx, fn, expected).bind(inst)
-    })),
-    // child interactors create assert context references
-    mapPropertyDescriptors(children, ({ value }) => ({
-      get: () => context(m.new(value, 'parent', inst), expected)
-    })), {
-      // allow assertions access to the interactor element
-      $: { value: inst.$.bind(inst) },
-      $$: { value: inst.$$.bind(inst) }
+  let ctx = create(null, assign(
+    // ensure nested interactors return nested contexts within assertions
+    mapPropertyDescriptors(inst.constructor.prototype, ({ get, value }) => {
+      // leave raw values alone
+      if (!get && typeof value !== 'function') return { value };
+
+      return {
+        [get ? 'get' : 'value']: function() {
+          let ret = (get || value).apply(inst, arguments);
+          // if an interactor was returned, return its assert context
+          return m.get(ret, 'queue') ? context(ret, expected) : ret;
+        }
+      };
+    }), {
+      // core methods shouldn't be called within assertions
+      timeout: { value: ctxError },
+      exec: { value: ctxError },
+      catch: { value: ctxError },
+      then: { value: ctxError },
+
+      // assertions are wrapped in further contexts
+      assert: {
+        value: create(null, assign(
+          // lazily bind all custom assertions to the context
+          mapPropertyDescriptors(fns, ({ value: fn }) => ({
+            value: wrapContext(ctx, fn, expected).bind(inst)
+          })),
+          // child interactors create assert context references
+          mapPropertyDescriptors(children, ({ value }) => ({
+            get: () => context(m.new(value, 'parent', inst), expected).assert
+          }))
+        ))
+      }
     }
   ));
 
   if (expected || m.get(inst, 'parent')) {
     // lazily create a negated context
-    defineProperty(ctx, 'not', {
-      get: () => context(inst, !expected)
+    defineProperty(ctx.assert, 'not', {
+      get: () => context(inst, !expected).assert
     });
   }
 
   return ctx;
+}
+
+// Used to replace core methods within the assert context
+function ctxError() {
+  throw error('interactor methods should not be called within assertions');
 }
 
 // Bind an assertion to a context, the expected result, and bind any thrown interactor error.

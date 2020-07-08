@@ -51,7 +51,7 @@ describe('Assertions: disabled', () => {
 
       assert: {
         disabled(expected, ab) {
-          this[ab].disabled();
+          this[ab].assert.disabled();
         }
       },
 

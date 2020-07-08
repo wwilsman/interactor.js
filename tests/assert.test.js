@@ -120,62 +120,83 @@ describe('InteractorAssert', () => {
     );
   });
 
-  it('provides assertions with a smart context', async () => {
-    let Extended = Interactor.extend({
-      assert: {
-        something(expected, inherited) {
-          assert.typeOf(this.not, 'object');
-          assert.typeOf(this.remains, 'undefined');
-
-          assert.typeOf(this.something, 'function');
-          assert.typeOf(this.not.something, 'function');
-
-          assert.typeOf(this.passing, (
-            inherited ? 'function' : 'undefined'
-          ));
+  describe('context', () => {
+    it('throws an error when calling interactor methods', async () => {
+      let Test = Interactor.extend({
+        assert: {
+          foo() { this.timeout(); },
+          bar() { this.exec(); },
+          baz() { this.catch(); },
+          qux() { this.then(); }
         }
-      }
+      });
+
+      let err = e(
+        'InteractorError',
+        'interactor methods should not be called within assertions'
+      );
+
+      await assert.rejects(Test().assert.foo(), err);
+      await assert.rejects(Test().assert.bar(), err);
+      await assert.rejects(Test().assert.baz(), err);
+      await assert.rejects(Test().assert.qux(), err);
     });
 
-    let Test = Extended.extend({
-      assert: {
-        passing() {
-          assert.typeOf(this.not, 'object');
-          assert.typeOf(this.remains, 'undefined');
+    it('has access to inherited and shared assertions', async () => {
+      let Extended = Interactor.extend({
+        interactor: { timeout: 50 },
 
-          assert.typeOf(this.passing, 'function');
-          assert.typeOf(this.not.passing, 'function');
-
-          assert.typeOf(this.something, 'function');
-          assert.typeOf(this.not.something, 'function');
-          this.something(true);
-
-          assert.typeOf(this.child.something, 'function');
-          assert.typeOf(this.not.child.something, 'function');
-          assert.typeOf(this.child.not.something, 'function');
-          this.child.not.something(false);
+        assert: {
+          foo(expected, inherited) {
+            assert.typeOf(this.assert.bar, (
+              inherited ? 'function' : 'undefined'
+            ));
+          }
         }
-      },
+      });
 
-      child: Extended()
+      let Test = Extended.extend({
+        assert: {
+          bar() {
+            assert.typeOf(this.assert.foo, 'function');
+            assert.typeOf(this.assert.not.foo, 'function');
+            this.assert.foo(true);
+
+            assert.typeOf(this.assert.child.foo, 'function');
+            assert.typeOf(this.assert.not.child.foo, 'function');
+            assert.typeOf(this.assert.child.not.foo, 'function');
+            assert.typeOf(this.child.assert.foo, 'function');
+            assert.typeOf(this.child.assert.not.foo, 'function');
+            this.assert.child.not.foo(false);
+          }
+        },
+
+        child: Extended()
+      });
+
+      await assert.rejects(
+        Test().assert.foo(false)
+      );
+
+      await assert.doesNotReject(
+        Test()
+          .assert.foo(true)
+          .assert.bar()
+      );
+
+      await assert.doesNotReject(
+        Test().assert(function() {
+          assert.typeOf(this.assert.foo, 'function');
+          assert.typeOf(this.assert.not.foo, 'function');
+          assert.typeOf(this.assert.bar, 'function');
+          assert.typeOf(this.assert.not.bar, 'function');
+          assert.typeOf(this.assert.child.foo, 'function');
+          assert.typeOf(this.assert.not.child.foo, 'function');
+          assert.typeOf(this.assert.child.not.foo, 'function');
+          assert.typeOf(this.child.assert.foo, 'function');
+          assert.typeOf(this.child.assert.not.foo, 'function');
+        })
+      );
     });
-
-    await assert.doesNotReject(
-      Test().assert.passing()
-    );
-
-    await assert.doesNotReject(
-      Test().assert(function() {
-        assert.typeOf(this.not, 'object');
-        assert.typeOf(this.remains, 'undefined');
-        assert.typeOf(this.passing, 'function');
-        assert.typeOf(this.not.passing, 'function');
-        assert.typeOf(this.something, 'function');
-        assert.typeOf(this.not.something, 'function');
-        assert.typeOf(this.child.something, 'function');
-        assert.typeOf(this.not.child.something, 'function');
-        assert.typeOf(this.child.not.something, 'function');
-      })
-    );
   });
 });
