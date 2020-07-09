@@ -6,6 +6,7 @@ import * as disabled from './disabled';
 import * as exists from './exists';
 import * as focusable from './focusable';
 import * as focused from './focused';
+import * as selected from './selected';
 
 const assertions = {};
 const properties = {
@@ -13,7 +14,8 @@ const properties = {
   disabled,
   exists,
   focusable,
-  focused
+  focused,
+  selected
 };
 
 // populated during default export creation
