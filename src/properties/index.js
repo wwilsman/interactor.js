@@ -1,6 +1,7 @@
 import { createAssertion } from '../assert';
 import { map } from '../utils';
 
+import * as attribute from './attribute';
 import * as checked from './checked';
 import * as disabled from './disabled';
 import * as exists from './exists';
@@ -15,6 +16,7 @@ import * as value from './value';
 
 const assertions = {};
 const properties = {
+  attribute,
   checked,
   disabled,
   exists,
