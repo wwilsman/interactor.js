@@ -35,6 +35,7 @@ export { assertions };
 
 // export property descriptors and collect/create respective assertions
 export default map(properties, ({ computed, method, assert }, key) => {
+  /* istanbul ignore next: futureproof for property methods with an auto generated assertion */
   assertions[key] = assert || createAssertion(key, computed || method);
   // return a getter for computed properties or a method otherwise
   return computed ? { get: computed } : { value: method };

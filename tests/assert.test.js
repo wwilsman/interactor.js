@@ -226,6 +226,24 @@ describe('InteractorAssert', () => {
       await assert.rejects(T().assert.qux(), err);
     });
 
+    it('has access to interactor properties and getters', async () => {
+      let T = Test.extend({
+        assert: {
+          test() {
+            assert.equal(this.foo, 'bar');
+            assert.equal(this.bar, 'baz');
+          }
+        },
+
+        foo: 'bar',
+        get bar() { return 'baz'; }
+      });
+
+      await assert.doesNotReject(
+        T().assert.test()
+      );
+    });
+
     it('has access to inherited and shared assertions', async () => {
       let Extended = Test.extend({
         assert: {
