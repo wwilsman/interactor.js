@@ -53,13 +53,17 @@ describe('InteractorAssert', () => {
 
     await assert.doesNotReject(
       Test()
-        .assert(() => (delta == null && (delta = 1)))
+        .assert(() => (delta == null && (delta = 10)))
         .assert(() => (delta += Date.now() - time))
         .assert(() => (time = Date.now()))
         .assert.remains()
     );
 
-    assert(delta > 500 && delta < 600);
+    assert(delta > 500 && delta < 600, (
+      new assert.AssertionError({
+        message: `500 < ${delta} < 600`
+      })
+    ));
   });
 
   it('throws when calling .remains without a previous assertion', () => {
