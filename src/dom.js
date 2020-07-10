@@ -36,6 +36,10 @@ export default function query(sel, multiple) {
     selector ? $parent.querySelector(selector) : $parent
   );
 
+  if (!ret) {
+    throw error('could not find %{@}').bind(this);
+  }
+
   if (sq?.length) {
     throw error(
       'the provided interactor must not have queued actions'
@@ -57,7 +61,7 @@ export default function query(sel, multiple) {
 
   ret = multiple ? Array.from(ret) : ret;
 
-  if (multiple ? !ret.length : !ret) {
+  if (!multiple && !ret) {
     throw error(`could not find %{@ ${sel}}`).bind(this);
   }
 
