@@ -3,6 +3,7 @@ import { map } from '../utils';
 
 import * as attribute from './attribute';
 import * as checked from './checked';
+import * as count from './count';
 import * as disabled from './disabled';
 import * as exists from './exists';
 import * as focusable from './focusable';
@@ -19,6 +20,7 @@ const assertions = {};
 const properties = {
   attribute,
   checked,
+  count,
   disabled,
   exists,
   focusable,
