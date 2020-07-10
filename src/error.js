@@ -15,10 +15,6 @@ function format(message, inst, expected) {
       let directive = ~i ? f.substr(0, i) : f;
       let arg = ~i ? f.substr(i + 1) : '';
 
-      if (arg === 'undefined' || arg === 'null') {
-        arg = null;
-      }
-
       switch (directive) {
         // %{@ <sel>} -> friendly interactor name with optional child selector
         case '@':
