@@ -10,6 +10,7 @@ import * as scrollable from './scrollable';
 import * as scrollableX from './scrollable-x';
 import * as scrollableY from './scrollable-y';
 import * as selected from './selected';
+import * as text from './text';
 
 const assertions = {};
 const properties = {
@@ -21,7 +22,8 @@ const properties = {
   scrollable,
   scrollableX,
   scrollableY,
-  selected
+  selected,
+  text
 };
 
 // populated during default export creation
