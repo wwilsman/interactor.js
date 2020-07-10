@@ -6,6 +6,9 @@ import * as disabled from './disabled';
 import * as exists from './exists';
 import * as focusable from './focusable';
 import * as focused from './focused';
+import * as scrollable from './scrollable';
+import * as scrollableX from './scrollable-x';
+import * as scrollableY from './scrollable-y';
 import * as selected from './selected';
 
 const assertions = {};
@@ -15,6 +18,9 @@ const properties = {
   exists,
   focusable,
   focused,
+  scrollable,
+  scrollableX,
+  scrollableY,
   selected
 };
 
