@@ -122,6 +122,88 @@ describe('InteractorAssert', () => {
     );
   });
 
+  describe('getter assertions', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      get true() { return true; },
+      get false() { return false; },
+      get simple() { return 'foo'; },
+      get compound() { return `${this.simple}bar`; }
+    });
+
+    it('automatically creates custom assertions based on interactor getters', () => {
+      assert.equal(Test().true, true);
+      assert.equal(Test().false, false);
+      assert.equal(Test().simple, 'foo');
+      assert.equal(Test().compound, 'foobar');
+      assert.typeOf(Test().assert.true, 'function');
+      assert.typeOf(Test().assert.false, 'function');
+      assert.typeOf(Test().assert.simple, 'function');
+      assert.typeOf(Test().assert.compound, 'function');
+    });
+
+    it('can handle boolean getters', async () => {
+      await assert.doesNotReject(
+        Test('test')
+          .assert.true()
+          .assert.not.false()
+      );
+
+      await assert.rejects(
+        Test('test').assert.not.true(),
+        e('InteractorError', 'test is true')
+      );
+
+      await assert.rejects(
+        Test('test').assert.false(),
+        e('InteractorError', 'test is not false')
+      );
+    });
+
+    it('can handle matching strings or regular expressions', async () => {
+      await assert.doesNotReject(
+        Test('test')
+          .assert.simple('foo')
+          .assert.not.simple('bar')
+          .assert.compound(/bar$/)
+          .assert.not.compound(/^bar/)
+      );
+
+      await assert.rejects(
+        Test('test').assert.not.simple(),
+        e('InteractorError', 'test simple is "foo"')
+      );
+
+      await assert.rejects(
+        Test('test').assert.not.simple('foo'),
+        e('InteractorError', 'test simple is "foo" but expected it not to be')
+      );
+
+      await assert.rejects(
+        Test('test').assert.compound(/baz/),
+        e('InteractorError', 'test compound is "foobar" but expected "/baz/"')
+      );
+    });
+
+    it('can handle custom expectation functions', async () => {
+      await assert.doesNotReject(
+        Test('test')
+          .assert.false(f => !f)
+          .assert.compound(function(s) {
+            assert.equal(s, `${this.simple}bar`);
+          })
+      );
+
+      await assert.rejects(
+        Test().assert.true(() => { throw new Error('test'); }),
+        e('Error', 'test')
+      );
+    });
+  });
+
   describe('context', () => {
     it('throws an error when calling interactor methods', async () => {
       let T = Test.extend({

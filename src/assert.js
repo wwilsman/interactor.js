@@ -99,15 +99,26 @@ export function assertion(...matchers) {
 }
 
 // Returns an auto-generated assertion. If an argument is supplied to the resulting assertion, it
-// will be compared with the value resulting from the property getter. With no argument, and when
+// will be compared with the value resulting from the provided function. With no argument, and when
 // the result is a boolean, the error message is reworded to be stateful.
 export function createAssertion(name, fn) {
-  return assertion(fn, (result, expected) => {
+  return assertion(fn, function(result, expected) {
     let message = `%{@} ${name} is "${result}"`;
 
     if (expected != null) {
       message += ` but expected %{- "${expected}"|it not to be}`;
-      result = result === expected;
+
+      // allow regular expression comparisons to strings
+      if (typeof result === 'string' && expected instanceof RegExp) {
+        result = expected.test(result);
+      // allow custom comparisons
+      } else if (typeof expected === 'function') {
+        result = expected.call(this, result);
+        result = typeof result === 'undefined' || result;
+      // default to strict equality
+      } else {
+        result = result === expected;
+      }
     } else if (typeof result === 'boolean') {
       message = `%{@} is %{- not} ${name}`;
     } else {
