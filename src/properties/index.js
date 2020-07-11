@@ -8,6 +8,7 @@ import * as disabled from './disabled';
 import * as exists from './exists';
 import * as focusable from './focusable';
 import * as focused from './focused';
+import * as matches from './matches';
 import * as property from './property';
 import * as scrollable from './scrollable';
 import * as scrollableX from './scrollable-x';
@@ -25,6 +26,7 @@ const properties = {
   exists,
   focusable,
   focused,
+  matches,
   property,
   scrollable,
   scrollableX,
