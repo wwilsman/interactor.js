@@ -29,7 +29,7 @@ describe('Actions: click', () => {
     let event = listen('.btn-b', 'click');
 
     await assert.rejects(
-      click('.btn-b'),
+      click('.btn-b').timeout(50),
       e('InteractorError', '.btn-b is disabled')
     );
 
