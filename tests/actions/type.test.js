@@ -158,8 +158,8 @@ describe('Actions: type', () => {
         interactor: { selector: '.input' }
       });
 
-      assert.instanceOf(Interactor('.input').type('foo'), Interactor);
       assert.typeOf(Interactor('.input').type, 'function');
+      assert.instanceOf(Interactor('.input').type('foo'), Interactor);
 
       assert.typeOf(Test().type, 'function');
       assert.instanceOf(Test().type('bar'), Test);

@@ -49,8 +49,8 @@ describe('Actions: press', () => {
         interactor: { selector: '.input' }
       });
 
-      assert.instanceOf(Interactor('.input').press('a'), Interactor);
       assert.typeOf(Interactor('.input').press, 'function');
+      assert.instanceOf(Interactor('.input').press('a'), Interactor);
 
       assert.typeOf(Test().press, 'function');
       assert.instanceOf(Test().press('b'), Test);

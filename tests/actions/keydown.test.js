@@ -90,8 +90,8 @@ describe('Actions: keydown', () => {
         interactor: { selector: '.input' }
       });
 
-      assert.instanceOf(Interactor('.input').keydown('a'), Interactor);
       assert.typeOf(Interactor('.input').keydown, 'function');
+      assert.instanceOf(Interactor('.input').keydown('a'), Interactor);
 
       assert.typeOf(Test().keydown, 'function');
       assert.instanceOf(Test().keydown('b'), Test);
