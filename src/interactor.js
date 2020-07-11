@@ -93,7 +93,6 @@ assign(Interactor.prototype, actions, {
     return m.new(this, 'queue', q => {
       return q.concat({
         type: 'assert',
-        timeout: this.timeout(),
         fn: assertion,
         ctx: this
       });
@@ -163,10 +162,9 @@ assign(Interactor.prototype, actions, {
           : err;
       };
 
-      // track assertions and keep the current timeout up to date
+      // track assertions
       if (type === 'assert') {
         assertion = bind$(fn, assertion);
-        timeout = action.timeout;
       }
 
       // execute and clear assertions within a convergence
