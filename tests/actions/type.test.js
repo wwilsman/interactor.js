@@ -58,7 +58,11 @@ describe('Actions: type', () => {
 
     await type('.input', 'test', { delay: 50 });
 
-    assert(delta > 150 && delta < 200);
+    assert(delta > 150 && delta < 200, (
+      new assert.AssertionError({
+        message: `150 < ${delta} < 200`
+      })
+    ));
   });
 
   it('can trigger a change event for form elements', async () => {
