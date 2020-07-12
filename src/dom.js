@@ -2,6 +2,7 @@ import m from './meta';
 import error from './error';
 import { assign } from './utils';
 
+// Dispatch an arbitrary event on an element with bubbles and cancelable options defaulting to true.
 export function dispatch($el, name, {
   bubbles = true,
   cancelable = true,
@@ -13,12 +14,17 @@ export function dispatch($el, name, {
   ));
 }
 
+// Return an interactor instance's associated DOM object
+export function dom(inst) {
+  return inst.constructor.dom;
+}
+
 // Query the DOM and return one or more elements. Multiple elements are only returned when the
 // second argument is true. The first argument may be a string selector, interactor selector, or
 // selector function. Selector functions should return a single DOM element or an array of DOM
 // elements when the second argument is true. When no selector is provided, it returns the current
 // interactor instance's own element.
-export default function query(sel, multiple) {
+export function query(sel, multiple) {
   if (multiple && !sel) {
     throw error(
       'cannot query for multiple elements without a selector'
@@ -26,7 +32,7 @@ export default function query(sel, multiple) {
   }
 
   let { parent, selector } = m.get(this);
-  let $parent = parent ? parent.$() : document.body;
+  let $parent = parent ? parent.$() : dom(this).document.body;
 
   // was the provided selector an interactor selector?
   let sq = m.get(sel, 'queue');

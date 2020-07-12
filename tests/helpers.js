@@ -36,9 +36,9 @@ export function listen(selector, event, fn) {
   let $el = document.querySelector(selector);
   let results = { count: 0, $el };
 
-  $el.addEventListener(event, evt => {
+  $el.addEventListener(event, function(evt) {
     results.count++;
-    fn?.(evt);
+    fn?.call(this, evt);
   });
 
   return results;

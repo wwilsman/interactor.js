@@ -5,6 +5,7 @@ import {
   assign,
   create,
   defineProperties,
+  getOwnPropertyDescriptor,
   mapPropertyDescriptors
 } from './utils';
 
@@ -99,14 +100,15 @@ export default function extend(properties = {}) {
     Parent.call(this, selector);
   };
 
-  return defineProperties(Extended, {
+  defineProperties(Extended, {
     // define the custom interactor's options
     name: { value: options?.name ?? Parent.name },
     selector: { value: options?.selector ?? Parent.selector },
     timeout: { value: options?.timeout || Parent.timeout },
 
-    // define inherited static methods
-    extend: { value: extend },
+    // define inherited static properties
+    extend: getOwnPropertyDescriptor(Parent, 'extend'),
+    dom: getOwnPropertyDescriptor(Parent, 'dom'),
 
     // extend the parent prototype
     prototype: {
@@ -126,4 +128,11 @@ export default function extend(properties = {}) {
       }))
     }
   });
+
+  // define dom reference while extending
+  if (options?.dom) {
+    Extended.dom = options.dom;
+  }
+
+  return Extended;
 }

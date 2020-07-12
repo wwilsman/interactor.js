@@ -1,4 +1,4 @@
-import { assert, e, fixture } from 'tests/helpers';
+import { assert, e, fixture, listen } from 'tests/helpers';
 import Interactor from 'interactor.js';
 
 describe('Interactor', () => {
@@ -135,6 +135,48 @@ describe('Interactor', () => {
         assert.throws(
           () => Interactor('.a').$({}),
           e('InteractorError', 'unknown selector: [object Object]')
+        );
+      });
+    });
+
+    describe('with a custom DOM reference', () => {
+      const Frame = Interactor.extend();
+
+      beforeEach(done => {
+        fixture(`
+          <div class="div foo"></div>
+          <iframe
+            class="test-frame"
+            srcdoc="<div class='div bar'></div>"
+          ></iframe>
+        `);
+
+        listen('.test-frame', 'load', function() {
+          Frame.dom = this.contentWindow;
+          done();
+        });
+      });
+
+      it('works as expected', () => {
+        assert.equal(
+          Interactor('.div').$(),
+          document.querySelector('.div.foo')
+        );
+
+        assert.throws(
+          () => Interactor('.div.bar').$(),
+          e('InteractorError', 'could not find .div.bar')
+        );
+
+        assert.equal(
+          Frame('.div').$(),
+          document.querySelector('.test-frame')
+            .contentDocument.body.querySelector('.div.bar')
+        );
+
+        assert.throws(
+          () => Frame('.div.foo').$(),
+          e('InteractorError', 'could not find .div.foo')
         );
       });
     });
@@ -327,9 +369,9 @@ describe('Interactor', () => {
     it('starts executing the instance queue', async () => {
       let calls = 0;
       let interactor = Interactor()
-        .exec(() => calls++)
-        .assert(() => assert.equal(calls, 1))
-        .exec(() => calls++);
+          .exec(() => calls++)
+          .assert(() => assert.equal(calls, 1))
+          .exec(() => calls++);
 
       assert.equal(calls, 0);
       await assert.doesNotReject(interactor);

@@ -2,13 +2,15 @@ import InteractorKeyboard from './keyboard';
 import InteractorAssert from './assert';
 import InteractorError from './error';
 import extend from './extend';
-import query from './dom';
 import when from './when';
 import m from './meta';
 
 import actions from './actions';
 import properties, { assertions } from './properties';
 
+import {
+  query
+} from './dom';
 import {
   assign,
   defineProperty,
@@ -44,7 +46,21 @@ defineProperties(Interactor, {
 
   // Static methods
   error: { value: InteractorError },
-  extend: { value: extend }
+  extend: { value: extend },
+
+  // DOM association getter/setter
+  dom: {
+    configurable: true,
+    get: () => window,
+    set: function setDOM(win) {
+      defineProperty(this, 'dom', {
+        configurable: true,
+        get: typeof win === 'function'
+          ? win : () => win,
+        set: setDOM
+      });
+    }
+  }
 });
 
 // define default properties
