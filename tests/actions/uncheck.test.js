@@ -76,12 +76,12 @@ describe('Actions: uncheck', () => {
     assert.equal(dEvent.count, 0);
   });
 
-  it('can be called with other interactor contexts', async () => {
+  it('can be called with an interactor selector', async () => {
     let Test = Interactor.extend({
       foo: () => uncheck()
     });
 
-    let action = uncheck.call(Test('.check-a'));
+    let action = uncheck(Test('.check-a'));
     let event = listen('.check-a', 'click');
 
     assert.instanceOf(action, Test);

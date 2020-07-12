@@ -36,12 +36,12 @@ describe('Actions: click', () => {
     assert.equal(event.count, 0);
   });
 
-  it('can be called with other interactor contexts', async () => {
+  it('can be called with an interactor selector', async () => {
     let Test = Interactor.extend({
       foo: () => click()
     });
 
-    let action = click.call(Test('.btn-a'));
+    let action = click(Test('.btn-a'));
     let event = listen('.btn-a', 'click');
 
     assert.instanceOf(action, Test);

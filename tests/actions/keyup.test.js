@@ -21,12 +21,12 @@ describe('Actions: keyup', () => {
     assert.equal(event.count, 1);
   });
 
-  it('can be called with other interactor contexts', async () => {
+  it('can be called with an interactor selector', async () => {
     let Test = Interactor.extend({
       foo: () => keyup('', 'f')
     });
 
-    let action = keyup.call(Test('.input'), 'a');
+    let action = keyup(Test('.input'), 'a');
     let event = listen('.input', 'keyup');
 
     assert.instanceOf(action, Test);

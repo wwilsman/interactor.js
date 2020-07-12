@@ -4,13 +4,11 @@ import { assign, map } from './utils';
 import Interactor from './interactor';
 import actions from './actions';
 
+// turn action methods into interactor action creators
 assign(exports, map(actions, action => {
-  return function(...args) {
-    return action.apply((
-      m.get(this, 'queue') ? this
-        : Interactor(args.shift())
-    ), args);
-  };
+  return (selector, ...args) => action.apply((
+    m.get(selector, 'queue') ? selector : Interactor(selector)
+  ), args);
 }));
 
 export * from './selectors';

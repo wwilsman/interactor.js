@@ -59,12 +59,12 @@ describe('Actions: keydown', () => {
     assert.equal(dEvent.$el.innerText, '');
   });
 
-  it('can be called with other interactor contexts', async () => {
+  it('can be called with an interactor selector', async () => {
     let Test = Interactor.extend({
       foo: () => keydown('', 'f')
     });
 
-    let action = keydown.call(Test('.input'), 'a');
+    let action = keydown(Test('.input'), 'a');
     let event = listen('.input', 'keydown');
 
     assert.instanceOf(action, Test);

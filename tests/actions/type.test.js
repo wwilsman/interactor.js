@@ -138,12 +138,12 @@ describe('Actions: type', () => {
     assert.equal(event.$el.value, 'f');
   });
 
-  it('can be called with other interactor contexts', async () => {
+  it('can be called with an interactor selector', async () => {
     let Test = Interactor.extend({
       foo: () => type('', 'foo')
     });
 
-    let action = type.call(Test('.input'), 'aaa');
+    let action = type(Test('.input'), 'aaa');
     let event = listen('.input', 'input');
 
     assert.instanceOf(action, Test);
