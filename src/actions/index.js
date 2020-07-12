@@ -4,6 +4,7 @@ import keydown from './keydown';
 import keyup from './keyup';
 import press from './press';
 import type from './type';
+import uncheck from './uncheck';
 
 export default {
   check,
@@ -11,5 +12,6 @@ export default {
   keydown,
   keyup,
   press,
-  type
+  type,
+  uncheck
 };
