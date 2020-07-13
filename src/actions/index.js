@@ -5,6 +5,7 @@ import focus from './focus';
 import keydown from './keydown';
 import keyup from './keyup';
 import press from './press';
+import scroll from './scroll';
 import select from './select';
 import trigger from './trigger';
 import type from './type';
@@ -18,6 +19,7 @@ export default {
   keydown,
   keyup,
   press,
+  scroll,
   select,
   trigger,
   type,
