@@ -139,7 +139,7 @@ describe('Interactor', () => {
       });
     });
 
-    describe('with a custom DOM reference', () => {
+    describe('with other document roots', () => {
       const Frame = Interactor.extend();
 
       beforeEach(done => {
@@ -157,7 +157,7 @@ describe('Interactor', () => {
         });
       });
 
-      it('works as expected', () => {
+      it('works with alternate dom references', () => {
         assert.equal(
           Interactor('.div').$(),
           document.querySelector('.div.foo')
@@ -177,6 +177,31 @@ describe('Interactor', () => {
         assert.throws(
           () => Frame('.div.foo').$(),
           e('InteractorError', 'could not find .div.foo')
+        );
+      });
+
+      it('automatically searches within nested documents', () => {
+        assert.equal(
+          Interactor('.test-frame').$('.div.bar'),
+          document.querySelector('.test-frame')
+            .contentDocument.body.querySelector('.div.bar')
+        );
+      });
+
+      it('throws an error when a nested document is not accessible', async () => {
+        fixture(`
+          <iframe
+            sandbox
+            class="test-frame"
+            srcdoc="<div class='div bar'></div>"
+          ></iframe>
+        `);
+
+        await new Promise(r => listen('.test-frame', 'load', r));
+
+        assert.throws(
+          () => Interactor('.test-frame').$('.div.bar'),
+          e('InteractorError', '.test-frame is inaccessible, possibly due to CORS')
         );
       });
     });
