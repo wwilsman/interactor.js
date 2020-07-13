@@ -1,3 +1,4 @@
+import blur from './blur';
 import check from './check';
 import click from './click';
 import focus from './focus';
@@ -10,6 +11,7 @@ import type from './type';
 import uncheck from './uncheck';
 
 export default {
+  blur,
   check,
   click,
   focus,
