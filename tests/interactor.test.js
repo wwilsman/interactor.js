@@ -394,9 +394,9 @@ describe('Interactor', () => {
     it('starts executing the instance queue', async () => {
       let calls = 0;
       let interactor = Interactor()
-          .exec(() => calls++)
-          .assert(() => assert.equal(calls, 1))
-          .exec(() => calls++);
+        .exec(() => calls++)
+        .assert(() => assert.equal(calls, 1))
+        .exec(() => calls++);
 
       assert.equal(calls, 0);
       await assert.doesNotReject(interactor);
