@@ -1,5 +1,6 @@
 import check from './check';
 import click from './click';
+import focus from './focus';
 import keydown from './keydown';
 import keyup from './keyup';
 import press from './press';
@@ -11,6 +12,7 @@ import uncheck from './uncheck';
 export default {
   check,
   click,
+  focus,
   keydown,
   keyup,
   press,
