@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "algoliasearch": "^4.3.0",
-    "autoprefixer": "^9.8.0",
+    "autoprefixer": "^9.8.5",
     "classnames": "^2.2.6",
     "dotenv": "^8.2.0",
     "gatsby": "^2.23.3",
