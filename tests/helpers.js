@@ -1,6 +1,27 @@
 import { strict as assert } from 'assert';
 
-const { assign } = Object;
+const { assign, defineProperty } = Object;
+
+// Returns true when running in jsdom
+export function jsdom() {
+  return (jsdom.result = jsdom.result ?? navigator.userAgent.includes('jsdom'));
+}
+
+// In jsdom, when elements lose focus they nullify the _lastFocusedElement which is reflected in
+// document.hasFocus(); this sets focus back to the body so that hasFocus() is accurate.
+function jsdomCaptureFocus(e) {
+  if (e.relatedTarget === e.currentTarget.ownerDocument) {
+    e.currentTarget.ownerDocument.body.focus();
+  }
+}
+
+// In jsdom, the dom is not automatically focused and window.focus() is not implemented;
+// additionally, even though the body has a default tabIndex of -1, jsdom will not focus the body
+// unless it has an explicit tabindex attribute.
+function jsdomFocusDocument(doc) {
+  doc.body.setAttribute('tabIndex', -1);
+  doc.body.focus();
+};
 
 // Helper which creates a generic testing hook. The provided function is called on setup and any
 // returned function is called before the next setup call. If either function is asynchronous, the
@@ -21,6 +42,44 @@ export const fixture = createHook(innerHTML => {
   let $test = document.createElement('div');
   assign($test, { id: 'test', innerHTML });
   document.body.appendChild($test);
+
+  if (jsdom()) {
+    // apply focus hacks to the current document
+    if (!document.body.hasAttribute('tabindex')) {
+      document.body.addEventListener('focusout', jsdomCaptureFocus);
+    }
+
+    // jsdom doesn't support srcdoc or sandbox
+    for (let $f of $test.querySelectorAll('iframe')) {
+      // polyfill srcdoc
+      $f.setAttribute('src', `data:text/html;charset=utf-8,${
+        encodeURI($f.getAttribute('srcdoc'))
+      }`);
+
+      if ($f.getAttribute('sandbox') != null) {
+        // simulate sandbox without breaking jsdom
+        defineProperty($f, 'contentDocument', { value: null });
+      } else {
+        // apply the focus hacks to frame documents
+        $f.addEventListener('load', () => {
+          $f.contentDocument.body.addEventListener('focusout', jsdomCaptureFocus);
+
+          $f.addEventListener('focus', e => {
+            if (!e.defaultPrevented) jsdomFocusDocument($f.contentDocument);
+          });
+        });
+      }
+    }
+
+    // jsdom doesn't support isContentEditable
+    for (let $e of $test.querySelectorAll('[contenteditable]')) {
+      defineProperty($e, 'isContentEditable', { value: true });
+    }
+
+    // autofocus the document
+    jsdomFocusDocument(document);
+  }
+
   return () => $test.remove();
 });
 
@@ -37,8 +96,7 @@ export function listen(selector, event, fn) {
   let results = { count: 0, $el };
 
   $el.addEventListener(event, function(evt) {
-    results.count++;
-    fn?.call(this, evt);
+    return (results.count++, fn?.call(this, evt));
   });
 
   return results;

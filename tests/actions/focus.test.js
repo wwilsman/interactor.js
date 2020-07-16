@@ -79,12 +79,13 @@ describe('Actions: focus', () => {
 
     let $f = document.querySelector('.test-frame');
 
-    listen('.test-frame', 'focus', e => {
-      e.preventDefault();
-      return e.relatedTarget
+    listen('.test-frame', 'focus', e => (
+      e.preventDefault(),
+      e.stopImmediatePropagation(),
+      e.relatedTarget
         ? e.relatedTarget.focus()
-        : e.currentTarget.blur();
-    });
+        : e.currentTarget.blur()
+    ));
 
     let Frame = Interactor.extend({
       interactor: { dom: () => $f.contentWindow }
