@@ -75,7 +75,7 @@ describe('Actions: type', () => {
     assert.equal(iEvent.count, 1);
     assert.equal(iEvent.$el.value, 'foo');
     assert.equal(eEvent.count, 0);
-    assert.equal(eEvent.$el.innerText, 'bar');
+    assert.equal(eEvent.$el.textContent, 'bar');
   });
 
   it('does not insert text into an element that does not accept input', async () => {
@@ -86,9 +86,9 @@ describe('Actions: type', () => {
     await type('.just-a-div', 'bar');
 
     assert.equal(eEvent.count, 3);
-    assert.equal(eEvent.$el.innerText, 'foo');
+    assert.equal(eEvent.$el.textContent, 'foo');
     assert.equal(dEvent.count, 0);
-    assert.equal(dEvent.$el.innerText, '');
+    assert.equal(dEvent.$el.textContent, '');
   });
 
   it('does not insert text when previous events are cancelled', async () => {

@@ -54,9 +54,9 @@ describe('Actions: keydown', () => {
     await keydown('.just-a-div', 'b');
 
     assert.equal(eEvent.count, 1);
-    assert.equal(eEvent.$el.innerText, 'a');
+    assert.equal(eEvent.$el.textContent, 'a');
     assert.equal(dEvent.count, 1);
-    assert.equal(dEvent.$el.innerText, '');
+    assert.equal(dEvent.$el.textContent, '');
   });
 
   it('can be called with an interactor selector', async () => {
