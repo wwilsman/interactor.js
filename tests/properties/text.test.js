@@ -1,25 +1,30 @@
-import { assert, e, fixture } from 'tests/helpers';
+import { assert, e, fixture, jsdom, mockConsole } from 'tests/helpers';
 import Interactor from 'interactor.js';
 
 describe('Properties: text', () => {
   const Test = Interactor.extend({
     interactor: {
-      timeout: 50
+      timeout: 50,
+      suppressLayoutEngineWarning: true
     }
   });
 
   beforeEach(() => {
     fixture(`
-      <ul class="list" style="text-transform:uppercase">
+      <ul class="list">
         <li class="a">a</li>
         <li class="b">b</li>
       </ul>
+      <p class="para">
+        <span style="text-transform:uppercase">uppercase</span>
+        <span style="text-transform:lowercase">LOWERCASE</span>
+      </p>
     `);
   });
 
-  it('returns the element\'s text content', () => {
-    assert.equal(Test('.list .a').text, 'A');
-    assert.equal(Test('.list .b').text, 'B');
+  it('returns the element\'s inner text', () => {
+    assert.equal(Test('.list .a').text, 'a');
+    assert.equal(Test('.list .b').text, 'b');
   });
 
   it('throws an error when the element does not exist', () => {
@@ -29,106 +34,134 @@ describe('Properties: text', () => {
     );
   });
 
+  if (!jsdom()) {
+    it('returns text content as styled by CSS', () => {
+      assert.equal(Test('.para').text, 'UPPERCASE lowercase');
+    });
+  } else {
+    describe('jsdom', () => {
+      const mock = mockConsole();
+
+      it('returns the element\'s unstyled text content', () => {
+        assert.equal(Test('.para').text, '\n  uppercase\n  LOWERCASE\n');
+      });
+
+      it('logs a warning about the layout engine', () => {
+        let T = Test.extend();
+
+        assert.equal(T('.list .a').text, 'a');
+        assert.equal(mock.warn.calls.length, 0);
+
+        T.suppressLayoutEngineWarning = false;
+
+        assert.equal(T('.list .a').text, 'a');
+        assert.equal(mock.warn.calls.length, 1);
+        assert.equal(mock.warn.calls[0], [
+          'No layout engine detected.',
+          'Text content as a result of CSS cannot be determined.',
+          'You can disable this warning by setting',
+          '`Interactor.suppressLayoutEngineWarning = true`'
+        ].join(' '));
+      });
+    });
+  }
+
   describe('assert', () => {
     it('passes when the text matches', async () => {
       await assert.doesNotReject(
-        Test('.list .a').assert.text('A')
+        Test('.list .a').assert.text('a')
       );
 
       await assert.doesNotReject(
-        Test('.list .b').assert.text(/b/i)
+        Test('.list .b').assert.text(/B/i)
       );
     });
 
     it('fails when the text does not match', async () => {
       await assert.rejects(
-        Test('.list .a').assert.text('B'),
-        e('InteractorError', '.list .a text is "A" but expected "B"')
+        Test('.list .a').assert.text('b'),
+        e('InteractorError', '.list .a text is "a" but expected "b"')
       );
 
       await assert.rejects(
-        Test('.list .b').assert.text(/a/i),
-        e('InteractorError', '.list .b text is "B" but expected "/a/i"')
+        Test('.list .b').assert.text(/A/i),
+        e('InteractorError', '.list .b text is "b" but expected "/A/i"')
       );
     });
 
     describe('negated', () => {
       it('fails when the text matches', async () => {
         await assert.rejects(
-          Test('.list .a').assert.not.text('A'),
-          e('InteractorError', '.list .a text is "A" but expected it not to be')
+          Test('.list .a').assert.not.text('a'),
+          e('InteractorError', '.list .a text is "a" but expected it not to be')
         );
 
         await assert.rejects(
-          Test('.list .b').assert.not.text(/b/i),
-          e('InteractorError', '.list .b text is "B" but expected it not to be')
+          Test('.list .b').assert.not.text(/B/i),
+          e('InteractorError', '.list .b text is "b" but expected it not to be')
         );
       });
 
       it('passes when the text does not match', async () => {
         await assert.doesNotReject(
-          Test('.list .a').assert.not.text('B')
+          Test('.list .a').assert.not.text('b')
         );
 
         await assert.doesNotReject(
-          Test('.list .b').assert.not.text(/a/i)
+          Test('.list .b').assert.not.text(/A/i)
         );
       });
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const T = Test.extend({
         assert: {
           text(expected, ab, text) {
             this[ab].assert.text(text);
           }
         },
 
-        a: Interactor('.a'),
-        b: Interactor('.b')
+        a: Test('.a'),
+        b: Test('.b')
       });
 
       it('works as expected when called via nested methods', async () => {
         await assert.doesNotReject(
-          Test('.list')
-            .assert.a.text('A')
-            .assert.b.text(/b/i)
-            .assert.a.not.text('a')
-            .assert.b.not.text('A')
+          T('.list')
+            .assert.a.text('a')
+            .assert.b.text(/B/i)
+            .assert.a.not.text('A')
+            .assert.b.not.text('a')
         );
 
         await assert.rejects(
-          Test('.list').assert.a.not.text('A'),
-          e('InteractorError', '.a within .list text is "A" but expected it not to be')
+          T('.list').assert.a.not.text('a'),
+          e('InteractorError', '.a within .list text is "a" but expected it not to be')
         );
 
         await assert.rejects(
-          Test('.list').assert.b.text(/a/i),
-          e('InteractorError', '.b within .list text is "B" but expected "/a/i"')
+          T('.list').assert.b.text(/A/i),
+          e('InteractorError', '.b within .list text is "b" but expected "/A/i"')
         );
       });
 
       it('can be overridden', async () => {
         await assert.doesNotReject(
-          Test('.list')
-            .assert.text('a', 'A')
-            .assert.text('b', /b/i)
+          T('.list')
+            .assert.text('a', 'a')
+            .assert.text('b', /B/i)
             .assert.not.text('a', 'b')
-            .assert.not.text('b', /a/i)
+            .assert.not.text('b', /A/i)
         );
 
         await assert.rejects(
-          Test('.list').assert.not.text('a', 'A'),
-          e('InteractorError', '.a within .list text is "A" but expected it not to be')
+          T('.list').assert.not.text('a', 'a'),
+          e('InteractorError', '.a within .list text is "a" but expected it not to be')
         );
 
         await assert.rejects(
-          Test('.list').assert.text('b', 'b'),
-          e('InteractorError', '.b within .list text is "B" but expected "b"')
+          T('.list').assert.text('b', 'B'),
+          e('InteractorError', '.b within .list text is "b" but expected "B"')
         );
       });
     });
