@@ -27,6 +27,7 @@ export {
   defineProperties,
   freeze,
   getOwnPropertyDescriptor,
+  getPrototypeOf,
   now,
   random,
   round

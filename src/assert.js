@@ -33,6 +33,10 @@ function context(inst, expected, skipNegation) {
         }
       };
     }), {
+      // provide the instance constructor for static properties
+      constructor: {
+        value: inst.constructor
+      },
       // assertions are wrapped in further contexts
       assert: {
         value: create(null, assign(

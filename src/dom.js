@@ -7,6 +7,33 @@ export function dom(inst) {
   return inst.constructor.dom;
 }
 
+// Returns false and logs a warning when there is no layout engine
+export function hasLayoutEngine(inst, subj) {
+  let { suppressLayoutEngineWarning } = inst.constructor;
+  let { result, debounce } = hasLayoutEngine;
+
+  if (result == null) {
+    // jsdom does not have a layout engine
+    result = hasLayoutEngine.result = !dom(inst).navigator.userAgent.includes('jsdom');
+    debounce = hasLayoutEngine.debounce = debounce ?? {};
+  }
+
+  if (!suppressLayoutEngineWarning && !result) {
+    if (!debounce[subj]) {
+      console.warn((
+        `No layout engine detected. ${subj} as a result of CSS cannot be determined. ` +
+          'You can disable this warning by setting `Interactor.suppressLayoutEngineWarning = true`'
+      ));
+    }
+
+    // debounce warnings so they are not logged hundreds of times during assertions
+    clearTimeout(debounce[subj]);
+    debounce[subj] = setTimeout(() => (debounce[subj] = null), 100);
+  }
+
+  return result;
+}
+
 // Returns an element that can be used to query for child elements
 function getParentElement(inst, deep) {
   let { parent, selector } = m.get(inst);

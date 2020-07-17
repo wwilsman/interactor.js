@@ -109,6 +109,9 @@ export default function extend(properties = {}) {
     // define inherited static properties
     extend: getOwnPropertyDescriptor(Parent, 'extend'),
     dom: getOwnPropertyDescriptor(Parent, 'dom'),
+    suppressLayoutEngineWarning: (
+      getOwnPropertyDescriptor(Parent, 'suppressLayoutEngineWarning')
+    ),
 
     // extend the parent prototype
     prototype: {
@@ -132,6 +135,11 @@ export default function extend(properties = {}) {
   // define dom reference while extending
   if (options?.dom) {
     Extended.dom = options.dom;
+  }
+
+  // suppress the layout engine warning for instances
+  if (options?.suppressLayoutEngineWarning) {
+    Extended.suppressLayoutEngineWarning = options.suppressLayoutEngineWarning;
   }
 
   return Extended;

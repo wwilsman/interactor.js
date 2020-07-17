@@ -14,7 +14,8 @@ import {
 import {
   assign,
   defineProperty,
-  defineProperties
+  defineProperties,
+  getPrototypeOf
 } from './utils';
 
 // The base interactor class sets initial metadata and creates bound assert methods. When no
@@ -58,6 +59,22 @@ defineProperties(Interactor, {
         get: typeof win === 'function'
           ? win : () => win,
         set: setDOM
+      });
+    }
+  },
+
+  // Control suppression of the layout engine warning
+  suppressLayoutEngineWarning: {
+    configurable: true,
+    get: function() {
+      return !!getPrototypeOf(this).constructor
+        .suppressLayoutEngineWarning;
+    },
+    set: function suppressLayoutEngineWarning(bool) {
+      defineProperty(this, 'suppressLayoutEngineWarning', {
+        configurable: true,
+        get: () => !!bool,
+        set: suppressLayoutEngineWarning
       });
     }
   }
