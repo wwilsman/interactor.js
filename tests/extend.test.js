@@ -1,7 +1,9 @@
-import { assert } from 'tests/helpers';
+import { assert, mockConsole } from 'tests/helpers';
 import Interactor from 'interactor.js';
 
 describe('Interactor.extend', () => {
+  const mock = mockConsole();
+
   it('extends the parent instance', () => {
     let Test = Interactor.extend();
     assert.instanceOf(Test(), Test);
@@ -56,10 +58,6 @@ describe('Interactor.extend', () => {
   });
 
   it('has properties that cannot be overridden', async () => {
-    let mock = msg => (mock.calls = (mock.calls || [])).push(msg);
-    let warn = console.warn;
-    console.warn = mock;
-
     let Test = Interactor.extend({
       assert: {
         interactor() { throw new Error('interactor'); },
@@ -75,8 +73,7 @@ describe('Interactor.extend', () => {
       then() { throw new Error('then'); }
     });
 
-    console.warn = warn;
-    assert.deepEqual(mock.calls, [
+    assert.deepEqual(mock.warn.calls, [
       '`interactor` is a reserved property and will be ignored',
       '`assert` is a reserved property and will be ignored',
       '`remains` is a reserved property and will be ignored',

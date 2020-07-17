@@ -40,6 +40,12 @@ function createHook(fn) {
 // A testing hook which injects HTML into the document body and removes it upon the next call.
 export const fixture = createHook(innerHTML => {
   let $test = document.createElement('div');
+
+  // format HTML to remove extraneous spaces
+  let ind = innerHTML.match(/^\n(\s*)/)?.[1]?.length;
+  innerHTML = innerHTML.replace(new RegExp(`^\\s{${ind}}`, 'mg'), '').trim();
+
+  // assign HTML and append to the body
   assign($test, { id: 'test', innerHTML });
   document.body.appendChild($test);
 
@@ -100,6 +106,29 @@ export function listen(selector, event, fn) {
   });
 
   return results;
+}
+
+// Mock console methods for testing.
+export function mockConsole() {
+  let names = ['warn'];
+  let mock = {};
+
+  let og = names.reduce((o, name) => (
+    assign(o, { [name]: console[name] })
+  ), {});
+
+  beforeEach(() => {
+    names.forEach(name => {
+      mock[name] = console[name] = msg => mock[name].calls.push(msg);
+      mock[name].calls = [];
+    });
+  });
+
+  afterEach(() => {
+    names.forEach(name => (console[name] = og[name]));
+  });
+
+  return mock;
 }
 
 // Extend the assert function with other useful assertions.
