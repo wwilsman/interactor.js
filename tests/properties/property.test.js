@@ -1,4 +1,4 @@
-import { assert, e, fixture } from 'tests/helpers';
+import { assert, e, fixture, jsdom, mockConsole } from 'tests/helpers';
 import Interactor from 'interactor.js';
 
 describe('Properties: property', () => {
@@ -26,6 +26,38 @@ describe('Properties: property', () => {
       e('InteractorError', 'could not find .bar')
     );
   });
+
+  if (jsdom()) {
+    describe('jsdom', () => {
+      const mock = mockConsole();
+      const LAYOUT_PROPS = [
+        'scrollTop',
+        'scrollLeft',
+        'scrollWidth',
+        'scrollHeight',
+        'clientTop',
+        'clientLeft',
+        'clientWidth',
+        'clientHeight'
+      ];
+
+      it('logs a warning about the layout engine for specific properties', async () => {
+        for (let prop of LAYOUT_PROPS) {
+          assert.equal(Test('.foo').property(prop), 0);
+          // wait for the warning to finish debouncing
+          await new Promise(r => setTimeout(r, 100));
+        }
+
+        assert.equal(mock.warn.calls.length, LAYOUT_PROPS.length);
+        assert.equal(mock.warn.calls[0], [
+          'No layout engine detected.',
+          'Layout as a result of CSS cannot be determined.',
+          'You can disable this warning by setting',
+          '`Interactor.suppressLayoutEngineWarning = true`'
+        ].join(' '));
+      });
+    });
+  }
 
   describe('assert', () => {
     it('passes when the property matches', async () => {
