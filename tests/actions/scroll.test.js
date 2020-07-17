@@ -1,4 +1,4 @@
-import { assert, e, fixture, listen } from 'tests/helpers';
+import { assert, e, fixture, listen, jsdom, mockConsole } from 'tests/helpers';
 import Interactor, { scroll } from 'interactor.js';
 
 describe('Actions: scroll', () => {
@@ -19,6 +19,55 @@ describe('Actions: scroll', () => {
   it('creates a new interactor from the standalone action', () => {
     assert.instanceOf(scroll('.overflow.x', { x: 0 }), Interactor);
   });
+
+  if (jsdom()) {
+    describe('jsdom', () => {
+      const mock = mockConsole();
+      const Test = Interactor.extend({
+        interactor: {
+          suppressLayoutEngineWarning: true
+        }
+      });
+
+      it('throws an overflow error for all elements', async () => {
+        await assert.rejects(
+          scroll(Test('.overflow.x'), { x: 10 }).timeout(50),
+          e('InteractorError', '.overflow.x has no overflow-x')
+        );
+
+        await assert.rejects(
+          scroll(Test('.overflow.y'), { y: 10 }).timeout(50),
+          e('InteractorError', '.overflow.y has no overflow-y')
+        );
+      });
+
+      it('logs a warning about the layout engine', async () => {
+        await assert.rejects(
+          Test('.overflow.x.y').scroll({ x: 10 }).timeout(50),
+          e('InteractorError', '.overflow.x.y has no overflow-x')
+        );
+
+        assert.equal(mock.warn.calls.length, 0);
+        Test.suppressLayoutEngineWarning = false;
+
+        await assert.rejects(
+          Test('.overflow.x.y').scroll({ y: 10 }).timeout(50),
+          e('InteractorError', '.overflow.x.y has no overflow-y')
+        );
+
+        assert.equal(mock.warn.calls.length, 1);
+        assert.equal(mock.warn.calls[0], [
+          'No layout engine detected.',
+          'Overflow as a result of CSS cannot be determined.',
+          'You can disable this warning by setting',
+          '`Interactor.suppressLayoutEngineWarning = true`'
+        ].join(' '));
+      });
+    });
+
+    // do not run any of the following tests since most will fail
+    return;
+  }
 
   it('fires a scroll event on the element after scrolling', async () => {
     let xEvent = listen('.overflow.x', 'scroll');

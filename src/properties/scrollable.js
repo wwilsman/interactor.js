@@ -5,7 +5,8 @@ import { isScrollableY } from './scrollable-y';
 export function computed() {
   let $el = this.$();
 
-  return isScrollableY($el) || isScrollableX($el);
+  return isScrollableY(this, $el) ||
+    isScrollableX(this, $el);
 }
 
 export const assert = assertion(computed, result => ({

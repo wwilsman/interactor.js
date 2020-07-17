@@ -1,10 +1,11 @@
-import { assert, e, fixture } from 'tests/helpers';
+import { assert, e, fixture, jsdom, mockConsole } from 'tests/helpers';
 import Interactor from 'interactor.js';
 
 describe('Properties: scrollable', () => {
   const Test = Interactor.extend({
     interactor: {
-      timeout: 50
+      timeout: 50,
+      suppressLayoutEngineWarning: true
     }
   });
 
@@ -22,6 +23,52 @@ describe('Properties: scrollable', () => {
       </style>
     `);
   });
+
+  if (jsdom()) {
+    describe('jsdom', () => {
+      const mock = mockConsole();
+
+      it('returns false when overflow cannot be determined', () => {
+        assert.equal(Test('.overflow.x').scrollable, false);
+        assert.equal(Test('.overflow.x').scrollableX, false);
+        assert.equal(Test('.overflow.x').scrollableY, false);
+        assert.equal(Test('.overflow.y').scrollable, false);
+        assert.equal(Test('.overflow.y').scrollableX, false);
+        assert.equal(Test('.overflow.y').scrollableY, false);
+        assert.equal(Test('.overflow.x.y').scrollable, false);
+        assert.equal(Test('.overflow.x.y').scrollableX, false);
+        assert.equal(Test('.overflow.x.y').scrollableY, false);
+        assert.equal(Test('.overflow.none').scrollable, false);
+        assert.equal(Test('.overflow.none').scrollableX, false);
+        assert.equal(Test('.overflow.none').scrollableY, false);
+      });
+
+      it('logs a warning about the layout engine', () => {
+        let T = Test.extend();
+
+        assert.equal(T('.overflow.x').scrollableX, false);
+        assert.equal(T('.overflow.y').scrollableY, false);
+        assert.equal(T('.overflow.x.y').scrollable, false);
+        assert.equal(mock.warn.calls.length, 0);
+
+        T.suppressLayoutEngineWarning = false;
+
+        assert.equal(T('.overflow.x').scrollableX, false);
+        assert.equal(T('.overflow.y').scrollableY, false);
+        assert.equal(T('.overflow.x.y').scrollable, false);
+        assert.equal(mock.warn.calls.length, 1);
+        assert.equal(mock.warn.calls[0], [
+          'No layout engine detected.',
+          'Overflow as a result of CSS cannot be determined.',
+          'You can disable this warning by setting',
+          '`Interactor.suppressLayoutEngineWarning = true`'
+        ].join(' '));
+      });
+    });
+
+    // do not run any of the following tests since most will fail
+    return;
+  }
 
   it('returns a boolean value reflecting the element\'s scrollable state', () => {
     assert.equal(Test('.overflow.x').scrollable, true);

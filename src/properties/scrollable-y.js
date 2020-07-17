@@ -1,11 +1,13 @@
 import { assertion } from '../assert';
+import { hasLayoutEngine } from '../dom';
 
-export function isScrollableY($el) {
-  return $el.scrollHeight > $el.clientHeight;
+export function isScrollableY(inst, $el) {
+  return hasLayoutEngine(inst, 'Overflow') &&
+    $el.scrollHeight > $el.clientHeight;
 }
 
 export function computed() {
-  return isScrollableY(this.$());
+  return isScrollableY(this, this.$());
 }
 
 export const assert = assertion(computed, result => ({
