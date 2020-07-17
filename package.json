@@ -20,7 +20,7 @@
     "test:jsdom:coverage": "yarn test:jsdom --coverage json"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.3",
+    "@babel/core": "^7.10.5",
     "@babel/plugin-transform-runtime": "^7.10.3",
     "@babel/preset-env": "^7.10.3",
     "@rollup/plugin-babel": "^5.0.3",
