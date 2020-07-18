@@ -102,20 +102,13 @@ assign(Interactor.prototype, actions, {
       : m.get(m.top(this), 'timeout');
   },
 
-  // Returns a child interactor instance referencing the selector. If the selector is an interactor
-  // with queued actions, those actions are appended to the next topmost interactor queue as child
-  // actions and the next topmost interactor instance is returned.
+  // Returns a child interactor instance referencing the selector.
   find(selector) {
-    let iq = m.get(selector, 'queue');
-    let i = iq ? selector : Interactor(selector);
-    iq = iq || m.get(i, 'queue');
+    let q = m.get(selector, 'queue');
+    let i = q ? selector : Interactor(selector);
 
-    if (iq.length) {
-      return m.new(this, 'queue', q => {
-        return q.concat(iq.map(a => assign({}, a, {
-          ctx: m.new(a.ctx, 'parent', this)
-        })));
-      });
+    if ((q || m.get(i, 'queue')).length) {
+      throw InteractorError('the provided interactor must not have queued actions');
     }
 
     return m.new(i, 'parent', this);
@@ -132,10 +125,18 @@ assign(Interactor.prototype, actions, {
     });
   }, 'fns', assertions),
 
-  // Adds a callback to the next interactor instance's queue.
+  // Adds a callback to the next interactor instance's queue. If an interactor with queued actions
+  // is provided, those actions are appended to the next topmost interactor queue as child actions
+  // and the next topmost interactor instance is returned.
   exec(callback) {
+    let iq = m.get(callback, 'queue');
+
     return m.new(this, 'queue', q => {
-      return q.concat({
+      return q.concat(iq ? (
+        iq.map(a => assign({}, a, {
+          ctx: m.new(a.ctx, 'parent', this)
+        }))
+      ) : {
         type: 'exec',
         fn: callback,
         ctx: this
