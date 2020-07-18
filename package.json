@@ -1,7 +1,7 @@
 {
   "name": "interactor.js",
   "description": "Composable, immutable, asynchronous way to interact with the DOM",
-  "version": "2.0.0-beta.0",
+  "version": "2.0.0-beta.1",
   "license": "MIT",
   "repository": "https://github.com/wwilsman/interactor.js",
   "main": "dist/umd/index.js",
@@ -15,8 +15,9 @@
     "lint": "eslint --ignore-path .gitignore ./",
     "test": "NODE_ENV=test karma start",
     "test:watch": "yarn test --no-single-run",
-    "test:jsdom": "yarn test --browsers jsdom",
     "test:coverage": "yarn test --coverage json",
+    "test:jsdom": "yarn test --browsers jsdom",
+    "test:jsdom:watch": "yarn test:jsdom --no-single-run",
     "test:jsdom:coverage": "yarn test:jsdom --coverage json"
   },
   "devDependencies": {
