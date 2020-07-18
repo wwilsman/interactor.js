@@ -49,7 +49,7 @@ function wrapProperty({ get, value }) {
       if (queue && !m.eq(this, ret)) {
         // append its queue or associate it with the parent interactor
         return queue.length && !get
-          ? this.find(ret)
+          ? this.exec(ret)
           : m.new(ret, 'parent', this);
       }
 

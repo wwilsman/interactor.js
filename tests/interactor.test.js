@@ -287,19 +287,12 @@ describe('Interactor', () => {
         assert.instanceOf(next, Bar);
         assert.instanceOf(next.exec(), Foo);
       });
-    });
 
-    describe('with an interactor action', () => {
-      it('returns an new instance of the topmost interactor', () => {
-        let next = Foo('.a').find(Bar('.b').exec());
-        assert.instanceOf(next, Foo);
-        assert.instanceOf(next.exec(), Foo);
-      });
-
-      it('appends actions to the next queue', async () => {
-        let called = false;
-        await Foo('.a').find(Bar('.b').exec(() => (called = true)));
-        assert.equal(called, true);
+      it('throws when the interactor has queued actions', () => {
+        assert.throws(
+          () => Foo('.a').find(Bar('.b').exec()),
+          e('InteractorError', 'the provided interactor must not have queued actions')
+        );
       });
     });
   });
@@ -331,6 +324,23 @@ describe('Interactor', () => {
             .assert(() => (count *= 2))
             .assert(() => assert.equal(count, 40))
         );
+      });
+    });
+
+    describe('with an interactor action', () => {
+      const Foo = Interactor.extend();
+      const Bar = Interactor.extend();
+
+      it('returns an new instance of the topmost interactor', () => {
+        let next = Foo().exec(Bar().exec());
+        assert.instanceOf(next, Foo);
+        assert.instanceOf(next.exec(), Foo);
+      });
+
+      it('appends actions to the next queue', async () => {
+        let called = false;
+        await Foo().exec(Bar().exec(() => (called = true)));
+        assert.equal(called, true);
       });
     });
   });
