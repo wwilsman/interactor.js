@@ -1,61 +1,83 @@
 import m from './meta';
-import { createAssertion } from './assert';
+import { createAssert } from './assert';
 
 import {
   assign,
   create,
+  defineProperty,
   defineProperties,
   getOwnPropertyDescriptor,
-  mapPropertyDescriptors
+  getPrototypeOf,
+  map,
+  named
 } from './utils';
 
 // Used to ignore reserved properties
-const reserved = [
+const RESERVED_PROPERTIES = [
   'interactor', '$', '$$',
   'assert', 'remains', 'not',
   'exec', 'catch', 'then'
 ];
 
-function filterReserved(descr, name) {
-  if (reserved.includes(name)) {
+function reserved(name) {
+  if (RESERVED_PROPERTIES.includes(name)) {
     console.warn(`\`${name}\` is a reserved property and will be ignored`);
-    return;
+    return true;
   }
-
-  return descr;
 }
 
-// Wraps a property descriptor so that if a method or property returns an interactor, it is properly
-// associated with its parent interactor or its queue is appended to the parent queue.
-function wrapProperty({ get, value }) {
-  let fn = get || value;
-
-  // guaranteed to be an interactor
-  if (m.get(value, 'queue')) {
-    // interactors are lazily wrapped via a getter
-    fn = get = () => value;
-  } else if (typeof fn !== 'function') {
-    // anything other than a function or interactor is assigned directly
-    return { value };
-  }
-
+function wrapInteractorProperty(name, fn, getter) {
   return {
-    [get ? 'get' : 'value']: function() {
-      let ctx = m.new(this, 'parent', null);
-      let ret = fn.apply(ctx, arguments);
-      let queue = m.get(ret, 'queue');
+    configurable: true,
+    [getter ? 'get' : 'value']: named(name, function() {
+      let result = fn.apply(m.new(this, 'top', true), arguments);
+      let queue = m.get(result, 'queue');
 
-      // guaranteed to be a different interactor than the parent interactor
-      if (queue && !m.eq(this, ret)) {
-        // append its queue or associate it with the parent interactor
-        return queue.length && !get
-          ? this.exec(ret)
-          : m.new(ret, 'parent', this);
+      // guaranteed to be a unique instance not from the current instance
+      if (queue && !m.eq(this, result)) {
+        // associate the instance with the parent interactor
+        result = m.new(result, 'parent', this);
+        // execute an action or return the result
+        return (queue.length && !getter) ? this.exec(result) : result;
       }
 
-      return ret;
-    }
+      return result;
+    })
   };
+}
+
+function defineInteractorProperty(I, name, descr) {
+  let { assert, call, child, get } = descr;
+
+  if (get || call || typeof child === 'function') {
+    defineProperty(I.prototype, name, (
+      wrapInteractorProperty(name, (get || call || child), !!get)
+    ));
+  } else if (child) {
+    defineProperty(I.prototype, name, (
+      wrapInteractorProperty(name, () => child, true)
+    ));
+  }
+
+  if (assert !== false && (assert || get || call)) {
+    m.set(I.prototype.assert, 'assertions', a => (
+      assign(a ?? {}, { [name]: assert ?? createAssert(name, (get || call)) })
+    ));
+  } else if (child) {
+    m.set(I.prototype.assert, 'children', c => (
+      assign(c, { [name]: child })
+    ));
+  }
+
+  return I;
+}
+
+export function defineInteractorProperties(I, properties) {
+  for (let key in properties) {
+    defineInteractorProperty(I, key, properties[key]);
+  }
+
+  return I;
 }
 
 // Returns a custom interactor creator using the provided methods, properties, assertions, and
@@ -67,30 +89,6 @@ function wrapProperty({ get, value }) {
 export default function extend(properties = {}) {
   let Parent = this;
   let options = properties.interactor;
-
-  // extend parent assert with addition properties
-  let passert = Parent.prototype.assert;
-  let assertions = mapPropertyDescriptors(properties.assert, filterReserved);
-  let children = create(null);
-
-  // while mapping, collect additional assert properties
-  let props = mapPropertyDescriptors(properties, (descr, key) => {
-    // siliently ignore assert and interactor, but warn on other reserved properties
-    if (['assert', 'interactor'].includes(key) || !filterReserved(descr, key)) return;
-
-    // auto generate assertions based on getters when necessary
-    if (descr.get && !assertions[key]) {
-      assertions[key] = { value: createAssertion(key, descr.get) };
-    }
-
-    // action-less interactors become assert children
-    if (m.get(descr.value, 'queue')?.length === 0) {
-      children[key] = descr;
-    }
-
-    // make nested interactors parent-aware
-    return wrapProperty(descr);
-  });
 
   function Extended(selector) {
     if (!(this instanceof Extended)) {
@@ -109,28 +107,60 @@ export default function extend(properties = {}) {
     // define inherited static properties
     extend: getOwnPropertyDescriptor(Parent, 'extend'),
     dom: getOwnPropertyDescriptor(Parent, 'dom'),
+
     suppressLayoutEngineWarning: (
       getOwnPropertyDescriptor(Parent, 'suppressLayoutEngineWarning')
     ),
 
     // extend the parent prototype
     prototype: {
-      value: create(Parent.prototype, assign(props, {
+      value: create(Parent.prototype, {
         // correct the constructor
         constructor: { value: Extended },
 
-        // copy the parent assert with additional functions and interactors
+        // copy the parent assert
         assert: {
           value: m.set(function() {
-            return passert.apply(this, arguments);
+            return Parent.prototype.assert.apply(this, arguments);
           }, {
-            fns: create(m.get(passert, 'fns'), assertions),
-            children: create(m.get(passert, 'children') || null, children)
+            assertions: assign({}, m.get(Parent.prototype.assert, 'assertions')),
+            children: assign({}, m.get(Parent.prototype.assert, 'children'))
           })
         }
-      }))
+      })
     }
   });
+
+  if (properties.assert) {
+    m.set(Extended.prototype.assert, 'assertions', a => (
+      assign(a, map(properties.assert, (p, k) => reserved(k) ? null : p))
+    ));
+  }
+
+  for (let key in properties) {
+    if (key === 'assert' || key === 'interactor' || reserved(key)) continue;
+
+    let { get, value } = getOwnPropertyDescriptor(properties, key);
+    let property;
+
+    if (get) {
+      property = { get };
+    } else if (typeof value === 'function') {
+      property = { call: value };
+    } else if (m.get(value, 'queue')) {
+      property = { child: value };
+    } else if (getPrototypeOf(value) === Object.prototype) {
+      property = value;
+    }
+
+    if (properties.assert?.[key]) {
+      property.assert = false;
+    }
+
+    if (property) {
+      defineInteractorProperty(Extended, key, property);
+    }
+  }
 
   // define dom reference while extending
   if (options?.dom) {
@@ -138,7 +168,7 @@ export default function extend(properties = {}) {
   }
 
   // suppress the layout engine warning for instances
-  if (options?.suppressLayoutEngineWarning) {
+  if (options?.suppressLayoutEngineWarning != null) {
     Extended.suppressLayoutEngineWarning = options.suppressLayoutEngineWarning;
   }
 
