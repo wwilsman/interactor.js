@@ -1,27 +1,12 @@
-import blur from './blur';
-import check from './check';
-import click from './click';
-import focus from './focus';
-import keydown from './keydown';
-import keyup from './keyup';
-import press from './press';
-import scroll from './scroll';
-import select from './select';
-import trigger from './trigger';
-import type from './type';
-import uncheck from './uncheck';
-
-export default {
-  blur,
-  check,
-  click,
-  focus,
-  keydown,
-  keyup,
-  press,
-  scroll,
-  select,
-  trigger,
-  type,
-  uncheck
-};
+export { default as blur } from './blur';
+export { default as check } from './check';
+export { default as click } from './click';
+export { default as focus } from './focus';
+export { default as keydown } from './keydown';
+export { default as keyup } from './keyup';
+export { default as press } from './press';
+export { default as scroll } from './scroll';
+export { default as select } from './select';
+export { default as trigger } from './trigger';
+export { default as type } from './type';
+export { default as uncheck } from './uncheck';
