@@ -146,7 +146,7 @@ export default function extend(properties = {}) {
     if (get) {
       property = { get };
     } else if (typeof value === 'function') {
-      property = { call: value };
+      property = { call: value, assert: false };
     } else if (m.get(value, 'queue')) {
       property = { child: value };
     } else if (getPrototypeOf(value) === Object.prototype) {
