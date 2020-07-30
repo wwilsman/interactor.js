@@ -142,15 +142,19 @@ describe('Interactor.extend', () => {
     assert.instanceOf(Test().foo.bar(), Test);
   });
 
-  it('allows non-interactor related properties', () => {
+  it('ignores property values that are not getters, methods, or valid descriptors', () => {
     let Test = Interactor.extend({
-      foo: 'bar',
+      foo: () => 'bar',
       get bar() { return 'baz'; },
-      baz: () => 'qux'
+      baz: { get: () => 'qux' },
+      qux: 'quux',
+      quux: { foo: 'bar' }
     });
 
-    assert.equal(Test().foo, 'bar');
+    assert.equal(Test().foo(), 'bar');
     assert.equal(Test().bar, 'baz');
-    assert.equal(Test().baz(), 'qux');
+    assert.equal(Test().baz, 'qux');
+    assert.typeOf(Test().qux, 'undefined');
+    assert.typeOf(Test().quux, 'undefined');
   });
 });

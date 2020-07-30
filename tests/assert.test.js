@@ -231,12 +231,12 @@ describe('InteractorAssert', () => {
         assert: {
           test() {
             assert.equal(this.foo, 'bar');
-            assert.equal(this.bar, 'baz');
           }
         },
 
-        foo: 'bar',
-        get bar() { return 'baz'; }
+        get foo() {
+          return 'bar';
+        }
       });
 
       await assert.doesNotReject(
