@@ -44,7 +44,8 @@ const m = {
   top(inst) {
     let top = inst;
 
-    while (m.get(top, 'parent')) {
+    // allow augmenting top level instances while preserving parent relationships
+    while (!m.get(top, 'top') && m.get(top, 'parent')) {
       top = m.get(top, 'parent');
     }
 
@@ -55,7 +56,11 @@ const m = {
   // and return the topmost parent interactor. Given a function value, the instance queue will be
   // concatenated into the parent queue before the function is called.
   new(inst, key, val) {
-    if (key === 'queue' && m.get(inst, 'parent')) {
+    if (key === 'parent') {
+      return m.new(inst, { parent: val, top: false });
+    }
+
+    if (key === 'queue' && !m.eq(m.top(inst), inst)) {
       return m.new(m.top(inst), key, q => (
         val(q.concat(m.get(inst, 'queue')))
       ));
