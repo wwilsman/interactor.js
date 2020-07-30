@@ -39,6 +39,7 @@ export default function InteractorError(message) {
   }
 
   Error.prototype.constructor.call(this, message);
+  Error.captureStackTrace?.(this, InteractorError);
 
   defineProperties(this, {
     raw: { value: message },
