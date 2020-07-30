@@ -86,41 +86,46 @@ describe('Properties: focusable', () => {
 
         assert: {
           focusable(expected, input, heading) {
-            this.input(input).assert.focusable();
-            this.heading(heading).assert.focusable();
+            this.assert.input(input).focusable();
+            this.assert.heading(heading).focusable();
           }
         },
 
-        input: ab => Interactor(`.input-${ab}`),
-        heading: ab => Interactor(`.heading-${ab}`)
+        input: {
+          child: ab => Interactor(`.input-${ab}`)
+        },
+
+        heading: {
+          child: ab => Interactor(`.heading-${ab}`)
+        }
       });
 
       it('works as expected when called via nested methods', async () => {
         await assert.doesNotReject(
           Test()
-            .input('a').assert.focusable()
-            .heading('a').assert.focusable()
-            .input('b').assert.not.focusable()
-            .heading('b').assert.not.focusable()
+            .assert.input('a').focusable()
+            .assert.heading('a').focusable()
+            .assert.input('b').not.focusable()
+            .assert.heading('b').not.focusable()
         );
 
         await assert.rejects(
-          Test().input('a').assert.not.focusable(),
+          Test().assert.input('a').not.focusable(),
           e('InteractorError', '.input-a is focusable')
         );
 
         await assert.rejects(
-          Test().heading('a').assert.not.focusable(),
+          Test().assert.heading('a').not.focusable(),
           e('InteractorError', '.heading-a is focusable')
         );
 
         await assert.rejects(
-          Test().input('b').assert.focusable(),
+          Test().assert.input('b').focusable(),
           e('InteractorError', '.input-b is disabled')
         );
 
         await assert.rejects(
-          Test().heading('b').assert.focusable(),
+          Test().assert.heading('b').focusable(),
           e('InteractorError', '.heading-b is not focusable')
         );
       });

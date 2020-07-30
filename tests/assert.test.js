@@ -202,6 +202,17 @@ describe('InteractorAssert', () => {
         e('Error', 'test')
       );
     });
+
+    it('does not create an automated assertion when already defined', async () => {
+      const T = Test.extend({
+        assert: { foo() {} },
+        get foo() { return 'bar'; }
+      });
+
+      await assert.doesNotReject(
+        T('test').assert.foo('baz')
+      );
+    });
   });
 
   describe('context', () => {

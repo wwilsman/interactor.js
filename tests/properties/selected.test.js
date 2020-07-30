@@ -74,34 +74,36 @@ describe('Properties: selected', () => {
 
         assert: {
           selected(expected, n) {
-            this.options(n).assert.selected();
+            this.assert.options(n).selected();
           }
         },
 
-        options: n => Interactor(`.opt-${n}`)
+        options: {
+          child: n => Interactor(`.opt-${n}`)
+        }
       });
 
       it('works as expected when called via nested methods', async () => {
         await assert.doesNotReject(
           Test('.sel-a')
-            .options(1).assert.selected()
-            .options(2).assert.not.selected()
+            .assert.options(1).selected()
+            .assert.options(2).not.selected()
         );
 
         await assert.doesNotReject(
           Test('.sel-b')
-            .options(1).assert.not.selected()
-            .options(2).assert.selected()
-            .options(3).assert.selected()
+            .assert.options(1).not.selected()
+            .assert.options(2).selected()
+            .assert.options(3).selected()
         );
 
         await assert.rejects(
-          Test('.sel-a').options(1).assert.not.selected(),
+          Test('.sel-a').assert.options(1).not.selected(),
           e('InteractorError', '.opt-1 within .sel-a is selected')
         );
 
         await assert.rejects(
-          Test('.sel-b').options(1).assert.selected(),
+          Test('.sel-b').assert.options(1).selected(),
           e('InteractorError', '.opt-1 within .sel-b is not selected')
         );
       });
