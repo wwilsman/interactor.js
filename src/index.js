@@ -1,14 +1,20 @@
 import m from './meta';
-import { assign, map } from './utils';
+import { assign, map, named } from './utils';
+import { defineInteractorProperties } from './extend';
 
 import Interactor from './interactor';
-import actions from './actions';
+import * as actions from './actions';
+import * as properties from './properties';
+
+// define default action methods and interactor properties
+assign(Interactor.prototype, actions);
+defineInteractorProperties(Interactor, properties);
 
 // turn action methods into interactor action creators
-assign(exports, map(actions, action => {
-  return (selector, ...args) => action.apply((
+assign(exports, map(actions, (action, name) => {
+  return named(name, (selector, ...args) => action.apply((
     m.get(selector, 'queue') ? selector : Interactor(selector)
-  ), args);
+  ), args));
 }));
 
 export * from './selectors';

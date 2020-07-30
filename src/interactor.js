@@ -5,17 +5,16 @@ import extend from './extend';
 import when from './when';
 import m from './meta';
 
-import actions from './actions';
-import properties, { assertions } from './properties';
-
 import {
   query
 } from './dom';
+
 import {
   assign,
   defineProperty,
   defineProperties,
-  getPrototypeOf
+  getPrototypeOf,
+  named
 } from './utils';
 
 // The base interactor class sets initial metadata and creates bound assert methods. When no
@@ -31,11 +30,23 @@ export default function Interactor(selector) {
     selector: selector ?? this.constructor.selector,
     keyboard: InteractorKeyboard(),
     interval: 10,
-    queue: []
+    queue: [],
+    top: true
   });
 
+  // lazily create the instance assert property the first time it is invoked
   defineProperty(this, 'assert', {
-    value: InteractorAssert(this)
+    configurable: true,
+    get: () => {
+      let a = InteractorAssert(this);
+
+      defineProperty(this, 'assert', {
+        configurable: true,
+        value: a
+      });
+
+      return a;
+    }
   });
 }
 
@@ -80,11 +91,8 @@ defineProperties(Interactor, {
   }
 });
 
-// define default properties
-defineProperties(Interactor.prototype, properties);
-
-// define actions and methods
-assign(Interactor.prototype, actions, {
+// define core methods
+assign(Interactor.prototype, {
   // Return a child element or the interactor element when no selector is provided.
   $(selector) {
     return query.call(this, selector);
@@ -108,14 +116,16 @@ assign(Interactor.prototype, actions, {
     let i = q ? selector : Interactor(selector);
 
     if ((q || m.get(i, 'queue')).length) {
-      throw InteractorError('the provided interactor must not have queued actions');
+      throw InteractorError(
+        'the provided interactor must not have queued actions'
+      );
     }
 
     return m.new(i, 'parent', this);
   },
 
   // Adds an assertion to the next interactor instance's queue.
-  assert: m.set(function assert(assertion) {
+  assert(assertion) {
     return m.new(this, 'queue', q => {
       return q.concat({
         type: 'assert',
@@ -123,7 +133,7 @@ assign(Interactor.prototype, actions, {
         ctx: this
       });
     });
-  }, 'fns', assertions),
+  },
 
   // Adds a callback to the next interactor instance's queue. If an interactor with queued actions
   // is provided, those actions are appended to the next topmost interactor queue as child actions
@@ -181,13 +191,13 @@ assign(Interactor.prototype, actions, {
 
       // bind the action to its associated instance and call any additional function beforehand; if
       // the action requires an argument, the interactor instance element is provided
-      let bind$ = (fn, f) => () => {
+      let bind$ = (fn, f) => named(fn.name, () => {
         if (f) f();
 
         return fn.length
           ? fn.call(ctx, ctx.$())
           : fn.call(ctx);
-      };
+      });
 
       // format any thrown interactor errors
       let onError = err => {
