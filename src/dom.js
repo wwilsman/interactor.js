@@ -37,10 +37,7 @@ export function hasLayoutEngine(inst, subj) {
 // Returns an element that can be used to query for child elements
 function getParentElement(inst, deep) {
   let { parent, selector } = m.get(inst);
-
-  let $parent = parent
-    ? parent.$()
-    : dom(inst).document.body;
+  let $parent = parent ? parent.$() : dom(inst).document.body;
 
   // when no selector is provided the current element is returned
   let ret = typeof selector === 'function' ? selector($parent) : (
@@ -90,14 +87,16 @@ export function query(sel, multiple) {
   // get the real selector from the interactor
   sel = sq ? m.get(sel, 'selector') : sel;
 
-  if (typeof sel === 'function') {
-    ret = sel(ret, multiple);
-  } else if (typeof sel === 'string') {
-    ret = multiple
-      ? ret.querySelectorAll(sel)
-      : ret.querySelector(sel);
-  } else if (sel) {
-    throw error(`unknown selector: ${sel}`);
+  if (sel) {
+    if (typeof sel === 'function') {
+      ret = sel(ret, multiple);
+    } else if (typeof sel === 'string') {
+      ret = multiple
+        ? ret.querySelectorAll(sel)
+        : ret.querySelector(sel);
+    } else {
+      throw error(`unknown selector: ${sel}`);
+    }
   }
 
   ret = multiple ? Array.from(ret) : ret;
