@@ -67,8 +67,10 @@ jobs:
           command: yarn test:coverage --junit
       - store_test_results:
           path: ./junit
-      - codecov/upload:
-          file: coverage/**/*.json
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - interactor.js/coverage
 
   test-jsdom:
     <<: *defaults
@@ -79,8 +81,18 @@ jobs:
           command: yarn test:jsdom:coverage --junit
       - store_test_results:
           path: ./junit
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - interactor.js/coverage
+
+  upload-coverage:
+    <<: *defaults
+    steps:
+      - *attach_workspace
       - codecov/upload:
           file: coverage/**/*.json
+
 
 workflows:
   version: 2
@@ -99,3 +111,7 @@ workflows:
       - test-jsdom:
           requires:
             - install
+      - upload-coverage:
+          requires:
+            - test
+            - test-jsdom
