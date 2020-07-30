@@ -1,6 +1,6 @@
 import { hasLayoutEngine } from '../dom';
 
-export function computed() {
+export function get() {
   return hasLayoutEngine(this, 'Text content')
     ? this.$().innerText
     : this.$().textContent;

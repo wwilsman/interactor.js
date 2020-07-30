@@ -1,3 +1,3 @@
-export function computed() {
+export function get() {
   return this.$().value;
 }

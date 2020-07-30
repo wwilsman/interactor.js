@@ -1,11 +1,11 @@
 import error from '../error';
 
-export function computed() {
+export function get() {
   return !this.disabled && !!~this.$().tabIndex;
 }
 
 export function assert(expected) {
-  let result = computed.call(this);
+  let result = get.call(this);
 
   if (expected) {
     this.assert.not.disabled();

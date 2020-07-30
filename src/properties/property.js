@@ -12,7 +12,7 @@ const LAYOUT_PROPS = [
   'clientHeight'
 ];
 
-export function method(prop) {
+export function call(prop) {
   if (LAYOUT_PROPS.includes(prop)) {
     hasLayoutEngine(this, 'Layout');
   }
@@ -20,7 +20,7 @@ export function method(prop) {
   return this.$()[prop];
 }
 
-export const assert = assertion(method, (actual, prop, expected) => ({
+export const assert = assertion(call, (actual, prop, expected) => ({
   message: `%{@} ${prop} is "${actual}" but expected %{- "${expected}"|it not to be}`,
   result: actual === expected
 }));

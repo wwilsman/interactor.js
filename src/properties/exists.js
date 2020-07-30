@@ -1,7 +1,6 @@
 import { assertion } from '../assert';
 
-// .exists
-export function computed() {
+export function get() {
   try {
     return !!this.$();
   } catch (e) {
@@ -9,8 +8,7 @@ export function computed() {
   }
 }
 
-// use a matcher
-export const assert = assertion(computed, result => ({
+export const assert = assertion(get, result => ({
   message: '%{@} %{- does not exist|exists}',
   result
 }));

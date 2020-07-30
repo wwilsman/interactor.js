@@ -6,11 +6,11 @@ export function isScrollableY(inst, $el) {
     $el.scrollHeight > $el.clientHeight;
 }
 
-export function computed() {
+export function get() {
   return isScrollableY(this, this.$());
 }
 
-export const assert = assertion(computed, result => ({
+export const assert = assertion(get, result => ({
   message: '%{@} has %{- no} overflow-y',
   result
 }));
