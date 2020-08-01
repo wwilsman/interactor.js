@@ -18,7 +18,10 @@
     "test:coverage": "yarn test --coverage json",
     "test:jsdom": "yarn test --browsers jsdom",
     "test:jsdom:watch": "yarn test:jsdom --no-single-run",
-    "test:jsdom:coverage": "yarn test:jsdom --coverage json"
+    "test:jsdom:coverage": "yarn test:jsdom --coverage json",
+    "docs:install": "cd docs && yarn install",
+    "docs:build": "cd docs && yarn gatsby build",
+    "docs:dev": "cd docs && yarn gatsby develop"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",

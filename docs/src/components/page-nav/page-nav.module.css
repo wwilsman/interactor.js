@@ -1,0 +1,64 @@
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  margin: 4rem 0 2rem;
+
+  .prev, .next {
+    color: #666668;
+    display: block;
+    position: relative;
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0.25rem;
+    width: calc(50% - 1rem);
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    line-height: 1.5;
+
+    @media (max-width: 37rem) {
+      width: calc(50% - 0.5rem);
+    }
+
+    &:hover {
+      border-color: #F0DB50;
+      color: black;
+
+      svg {
+        color: #F0DB50;
+      }
+    }
+
+    svg {
+      color: #AAAAAC;
+      font-size: 1.25rem;
+      margin-top: -0.5em;
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+    }
+  }
+
+  .prev {
+    text-align: right;
+    padding-left: 3rem;
+
+    svg {
+      right: auto;
+      left: 1rem;
+    }
+  }
+
+  .next {
+    padding-right: 3rem;
+
+    &:only-child {
+      margin-left: auto;
+    }
+  }
+
+  .heading {
+    display: block;
+    color: #CCCCCE;
+    font-size: 0.8em;
+  }
+}

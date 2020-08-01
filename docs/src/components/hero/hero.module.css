@@ -1,0 +1,44 @@
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 0 auto;
+
+  h1 {
+    max-width: 60ch;
+    font-size: 1.6em;
+    line-height: 2;
+    font-weight: 400;
+    color: black;
+
+    strong {
+      font-size: 1.1em;
+    }
+  }
+
+  h2 {
+    max-width: 40ch;
+    font-size: 1.4em;
+    line-height: 1.8;
+    font-weight: 400;
+    margin-bottom: 2.5rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+
+  article& {
+    padding: 4em 1em;
+  }
+
+  @media (max-width: 62rem) {
+    font-size: 0.825rem;
+  }
+
+  @media (max-width: 37rem) {
+    font-size: 0.625rem;
+  }
+}

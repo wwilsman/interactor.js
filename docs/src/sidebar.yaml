@@ -1,0 +1,54 @@
+- section: Introduction
+  items:
+  - slug: /getting-started/
+  - slug: /creating-interactors/
+  - slug: /making-assertions/
+
+# - section: Guides
+#   items:
+#   - slug: /guides/cypress
+#   - slug: /guides/react
+#   - slug: /guides/angular
+#   - slug: /guides/ember
+
+# - section: API
+#   items:
+#   - slug: /core/
+#     items:
+#     - slug: /core/dollar/
+#     - slug: /core/dollardollar/
+#     - slug: /core/assert/
+#     - slug: /core/catch/
+#     - slug: /core/exec/
+#     - slug: /core/find/
+#     - slug: /core/then/
+#     - slug: /core/timeout/
+
+#   - slug: /actions/
+#     items:
+#     - slug: /actions/click/
+#     - slug: /actions/focus/
+#     - slug: /actions/blur/
+#     - slug: /actions/scroll/
+#     - slug: /actions/select/
+#     - slug: /actions/trigger/
+#     - slug: /actions/keydown/
+#     - slug: /actions/keyup/
+#     - slug: /actions/press/
+#     - slug: /actions/type/
+#     - slug: /actions/check/
+#     - slug: /actions/uncheck/
+
+#   - slug: /properties/
+#     items:
+#     - slug: /properties/checked/
+#     - slug: /properties/disabled/
+#     - slug: /properties/exists/
+#     - slug: /properties/focusable/
+#     - slug: /properties/focused/
+#     - slug: /properties/scrollable/
+#     - slug: /properties/scrollablex/
+#     - slug: /properties/scrollabley/
+#     - slug: /properties/selected/
+#     - slug: /properties/text/
+#     - slug: /properties/value/

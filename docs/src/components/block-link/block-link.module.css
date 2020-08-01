@@ -1,0 +1,29 @@
+.block-link {
+  text-decoration: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  margin-bottom: 1.825rem;
+  align-items: center;
+  display: flex;
+
+  &:hover {
+    border-color: #F0DB50;
+  }
+
+  svg {
+    margin-left: auto;
+    font-size: 1.25rem;
+  }
+}
+
+.inline {
+  display: inline-flex;
+  margin: 0 0.625rem 1.25rem;
+
+  svg {
+    margin-left: 0.5rem;
+    margin-right: -0.5rem;
+  }
+}

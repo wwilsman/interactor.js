@@ -1,0 +1,6 @@
+extends:
+  - ../.eslintrc
+  - plugin:react/recommended
+settings:
+  react:
+    version: detect

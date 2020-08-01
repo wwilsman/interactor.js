@@ -1,0 +1,131 @@
+.sidebar-container {
+  background: #F7F5F9;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  justify-content: flex-end;
+  width: calc(50% - 25rem);
+  min-width: 15rem;
+  display: flex;
+
+  &.mobile-only {
+    display: none;
+  }
+
+  @media (max-width: 62rem) {
+    display: none;
+    box-shadow: 0.5rem 0 1rem rgba(0, 0, 0, 0.1);
+    position: fixed;
+    height: 100vh;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+
+    &.is-open {
+      display: block;
+    }
+  }
+}
+
+.sidebar {
+  height: 100%;
+  padding: 2rem 0 0 1.5rem;
+  font-size: 0.825rem;
+  font-weight: 500;
+  color: #666668;
+  width: 15rem;
+
+  @supports (position: sticky) {
+    max-height: 100vh;
+    overflow: auto;
+    position: sticky;
+    top: 0;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0 0 3rem;
+
+    ul {
+      display: none;
+      color: #AAAAAB;
+      border-left: 1px solid rgba(0, 0, 0, 0.05);
+      margin: 0 0 0 1rem;
+      font-weight: 400;
+    }
+
+    li {
+      margin: 0;
+    }
+  }
+
+  li > a {
+    display: block;
+    padding: 0.3rem 1rem;
+    text-decoration: none;
+    border-top-left-radius: 0.2rem;
+    border-bottom-left-radius: 0.2rem;
+    border: 1px solid transparent;
+    position: relative;
+    border-right: none;
+    color: inherit;
+
+    &:hover {
+      background: rgba(0, 0, 150, 0.03);
+    }
+
+    svg {
+      right: 1rem;
+      font-size: 1.25em;
+      position: absolute;
+      margin-top: -0.5em;
+      top: 50%;
+    }
+  }
+
+  .is-active > a {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: black;
+  }
+
+  .is-active > ul,
+  .is-active-parent > ul {
+    display: block;
+  }
+
+  .section {
+    display: block;
+    font-size: 0.825em;
+    text-transform: uppercase;
+    letter-spacing: 0.125em;
+    padding: 0.4rem 1.125rem;
+    font-weight: 400;
+    color: #AAAAAB;
+  }
+
+  .link {
+    color: inherit;
+    display: inline-flex;
+    margin: 0.625rem;
+    padding: 0.5rem;
+    font-size: 1.25rem;
+
+    &:hover {
+      color: black;
+    }
+  }
+}
+
+.sidebar-overlay {
+  display: none;
+
+  @media (max-width: 62rem) {
+    display: block;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+}
