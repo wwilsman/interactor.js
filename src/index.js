@@ -17,7 +17,7 @@ assign(exports, map(actions, (action, name) => {
   ), args));
 }));
 
-export * from './selectors';
+export * as by from './selectors';
 export { default as when } from './when';
 export { default as InteractorError } from './error';
 export default Interactor;

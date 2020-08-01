@@ -1,5 +1,5 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor, { t, x } from 'interactor.js';
+import Interactor, { by } from 'interactor.js';
 
 describe('Selectors', () => {
   beforeEach(() => {
@@ -12,47 +12,47 @@ describe('Selectors', () => {
     `);
   });
 
-  describe('x(xpath)', () => {
+  describe('by.xpath(path)', () => {
     it('can select an element by xpath', () => {
       assert.equal(
-        Interactor(x('//ul')).$(),
+        Interactor(by.xpath('//ul')).$(),
         document.querySelector('.list')
       );
     });
 
     it('can select multiple elements by xpath', () => {
       assert.deepEqual(
-        Interactor('.list').$$(x('.//li')),
+        Interactor('.list').$$(by.xpath('.//li')),
         Array.from(document.querySelectorAll('.list li'))
       );
     });
 
     it('formats errors from xpath selectors', () => {
       assert.throws(
-        () => Interactor(x('//foobar')).$(),
-        e('InteractorError', 'could not find x(//foobar)')
+        () => Interactor(by.xpath('//foobar')).$(),
+        e('InteractorError', 'could not find xpath(//foobar)')
       );
     });
   });
 
-  describe('t(text)', () => {
+  describe('by.text(string)', () => {
     it('can select an element by text', () => {
       assert.equal(
-        Interactor(t('Item')).$(),
+        Interactor(by.text('Item')).$(),
         document.querySelector('.list li')
       );
     });
 
     it('can select multiple elements by text', () => {
       assert.deepEqual(
-        Interactor('.list').$$(t('Item')),
+        Interactor('.list').$$(by.text('Item')),
         Array.from(document.querySelectorAll('.list li'))
       );
     });
 
     it('formats errors from text selectors', () => {
       assert.throws(
-        () => Interactor(t('Item A')).$(),
+        () => Interactor(by.text('Item A')).$(),
         e('InteractorError', 'could not find "Item A"')
       );
     });

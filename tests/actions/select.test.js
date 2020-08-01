@@ -1,5 +1,5 @@
 import { assert, e, fixture, listen } from 'tests/helpers';
-import Interactor, { select, t } from 'interactor.js';
+import Interactor, { select, by } from 'interactor.js';
 
 describe('Actions: select', () => {
   beforeEach(() => {
@@ -40,7 +40,7 @@ describe('Actions: select', () => {
     assert.equal(cEvent.$el.selectedOptions.length, 1);
     assert.equal(cEvent.$el.selectedOptions[0].text, 'Three');
 
-    await select('.sel-b', [t('One'), t('Three')]);
+    await select('.sel-b', [by.text('One'), by.text('Three')]);
     await select('.sel-b', '.opt-2, .opt-3');
 
     assert.equal(iEvent.count, 4);
@@ -102,7 +102,7 @@ describe('Actions: select', () => {
       foo: () => select('', '.opt-2')
     });
 
-    let action = select(Test('.sel-a'), t('Two'));
+    let action = select(Test('.sel-a'), by.text('Two'));
     let event = listen('.sel-a', 'change');
 
     assert.instanceOf(action, Test);

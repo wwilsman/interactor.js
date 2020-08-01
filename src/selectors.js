@@ -1,9 +1,9 @@
 import { assign } from './utils';
 
 // Selector creator using an xpath selector.
-export function x(xpath) {
+export function xpath(path) {
   return assign(($node, multiple) => {
-    let result = document.evaluate(xpath, $node, null, multiple ? 5 : 9, null);
+    let result = document.evaluate(path, $node, null, multiple ? 5 : 9, null);
     let arr, n;
 
     if (multiple) {
@@ -18,15 +18,15 @@ export function x(xpath) {
 
     return result.singleNodeValue;
   }, {
-    toString: () => `x(${xpath})`
+    toString: () => `xpath(${path})`
   });
 }
 
 // Selector creator using an element's text.
-export function t(text) {
+export function text(string, xsel = '*') {
   return assign((
-    x(`.//*[normalize-space()="${text}"]`)
+    xpath(`.//${xsel}[normalize-space()="${string}"]`)
   ), {
-    toString: () => `"${text}"`
+    toString: () => `"${string}"`
   });
 }
