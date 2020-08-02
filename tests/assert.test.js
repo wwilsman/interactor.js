@@ -1,5 +1,5 @@
 import { assert, e } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { assertion } from 'interactor.js';
 
 describe('InteractorAssert', () => {
   const Test = Interactor.extend({
@@ -122,7 +122,63 @@ describe('InteractorAssert', () => {
     );
   });
 
-  describe('getter assertions', () => {
+  describe('assertions matchers', () => {
+    it('throws the message if the result is not expected', async () => {
+      let T = Test.extend({
+        assert: {
+          test: assertion((a, b) => ({
+            message: `%{@} was ${a} %{- but expected ${b}}`,
+            result: a === b
+          }))
+        }
+      });
+
+      await assert.doesNotReject(
+        T('test')
+          .assert.test('A', 'A')
+          .assert.not.test('A', 'B')
+      );
+
+      await assert.rejects(
+        T('test').assert.test('A', 'B'),
+        e('InteractorError', 'test was A but expected B')
+      );
+
+      await assert.rejects(
+        T('test').assert.not.test('A', 'A'),
+        e('InteractorError', 'test was A')
+      );
+    });
+
+    it('uses the function result as the first argument to the matcher', async () => {
+      let T = Test.extend({
+        assert: {
+          test: assertion((a, b) => a * b, (r, a, b, c) => ({
+            message: `%{@} %{- |not} expected ${a} * ${b} = ${c} %{- but was ${r}}`,
+            result: r === c
+          }))
+        }
+      });
+
+      await assert.doesNotReject(
+        T('test')
+          .assert.test(2, 4, 8)
+          .assert.not.test(5, 10, 20)
+      );
+
+      await assert.rejects(
+        T('test').assert.test(5, 10, 20),
+        e('InteractorError', 'test expected 5 * 10 = 20 but was 50')
+      );
+
+      await assert.rejects(
+        T('test').assert.not.test(2, 4, 8),
+        e('InteractorError', 'test not expected 2 * 4 = 8')
+      );
+    });
+  });
+
+  describe('auto assertions', () => {
     const Test = Interactor.extend({
       interactor: {
         timeout: 50
@@ -131,18 +187,21 @@ describe('InteractorAssert', () => {
       get true() { return true; },
       get false() { return false; },
       get simple() { return 'foo'; },
-      get compound() { return `${this.simple}bar`; }
+      get compound() { return `${this.simple}bar`; },
+      func: { call: (a, b) => `${a} ${b}` }
     });
 
-    it('automatically creates custom assertions based on interactor getters', () => {
+    it('automatically creates assertions for getters and property descriptors', () => {
       assert.equal(Test().true, true);
       assert.equal(Test().false, false);
       assert.equal(Test().simple, 'foo');
       assert.equal(Test().compound, 'foobar');
+      assert.equal(Test().func('foo', 'bar'), 'foo bar');
       assert.typeOf(Test().assert.true, 'function');
       assert.typeOf(Test().assert.false, 'function');
       assert.typeOf(Test().assert.simple, 'function');
       assert.typeOf(Test().assert.compound, 'function');
+      assert.typeOf(Test().assert.func, 'function');
     });
 
     it('can handle boolean getters', async () => {
@@ -170,6 +229,8 @@ describe('InteractorAssert', () => {
           .assert.not.simple('bar')
           .assert.compound(/bar$/)
           .assert.not.compound(/^bar/)
+          .assert.func('foo', 'bar', 'foo bar')
+          .assert.not.func('foo', 'bar', 'foobar')
       );
 
       await assert.rejects(
@@ -185,6 +246,11 @@ describe('InteractorAssert', () => {
       await assert.rejects(
         Test('test').assert.compound(/baz/),
         e('InteractorError', 'test compound is "foobar" but expected "/baz/"')
+      );
+
+      await assert.rejects(
+        Test('test').assert.func('foo', 'bar', 'foobar'),
+        e('InteractorError', 'test func is "foo bar" but expected "foobar"')
       );
     });
 

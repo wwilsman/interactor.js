@@ -12,13 +12,17 @@ import {
 } from './utils';
 
 // Returns an interactor assert function that automatically handles negation. The matcher function
-// should return an object with a message and a result. If the matcher accepts arguments, the first
-// argument is the element and all other arguments are forwarded from the assert invocation.
-export function assertion(...matchers) {
+// should return an object with a message and a result.
+export function assertion(get, matcher = get) {
+  get = matcher === get ? null : get;
+
   return function(expected, ...args) {
-    let [{ message, result }] = matchers.reduce((next, fn) => {
-      return [fn.apply(this, next.concat(args))];
-    }, []);
+    if (get) {
+      let value = get.apply(this, args.slice(0, get.length));
+      args = [value].concat(args);
+    }
+
+    let { message, result } = matcher.apply(this, args);
 
     if (result !== expected) {
       throw error(message).bind(this, expected);
@@ -30,27 +34,27 @@ export function assertion(...matchers) {
 // will be compared with the value resulting from the provided function. With no argument, and when
 // the result is a boolean, the error message is reworded to be stateful.
 export function createAssert(name, fn) {
-  return named(name, assertion(fn, function(result, expected) {
-    let message = `%{@} ${name} is "${result}"`;
+  return named(name, assertion(fn, function(actual, ...args) {
+    let expected = args[args.length - 1];
+    let message = `%{@} ${name} is "${actual}"`;
+    let result = !!actual;
 
     if (expected != null) {
       message += ` but expected %{- "${expected}"|it not to be}`;
 
       // allow regular expression comparisons to strings
-      if (typeof result === 'string' && expected instanceof RegExp) {
-        result = expected.test(result);
+      if (typeof actual === 'string' && expected instanceof RegExp) {
+        result = expected.test(actual);
         // allow custom comparisons
       } else if (typeof expected === 'function') {
-        result = expected.call(this, result);
+        result = expected.call(this, actual);
         result = typeof result === 'undefined' || result;
         // default to strict equality
       } else {
-        result = result === expected;
+        result = actual === expected;
       }
-    } else if (typeof result === 'boolean') {
+    } else if (typeof actual === 'boolean') {
       message = `%{@} is %{- not} ${name}`;
-    } else {
-      result = !!result;
     }
 
     return { message, result };
