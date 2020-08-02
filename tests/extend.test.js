@@ -44,7 +44,8 @@ describe('Interactor.extend', () => {
 
     let Test = Custom.extend({
       assert: { something() {} },
-      nested: Custom()
+      nested: Custom(),
+      custom: Custom
     });
 
     assert.instanceOf(Test().assert(() => {}), Test);
@@ -55,6 +56,10 @@ describe('Interactor.extend', () => {
     assert.equal(typeof Test().assert.nested.passing, 'function');
     assert.equal(typeof Test().assert.nested.failing, 'function');
     assert.equal(typeof Test().assert.nested.something, 'undefined');
+    assert.equal(typeof Test().assert.custom, 'function');
+    assert.equal(typeof Test().assert.custom().passing, 'function');
+    assert.equal(typeof Test().assert.custom().failing, 'function');
+    assert.equal(typeof Test().assert.custom().something, 'undefined');
   });
 
   it('has properties that cannot be overridden', async () => {
@@ -100,13 +105,13 @@ describe('Interactor.extend', () => {
     let Child = Interactor.extend({
       bar: Deep(),
       get baz() { return Deep(); },
-      qux: () => Deep()
+      qux: Deep
     });
 
     let Test = Interactor.extend({
       foo: Child(),
       get bar() { return Child(); },
-      baz: () => Child()
+      baz: Child
     });
 
     assert.instanceOf(Test().foo, Child);

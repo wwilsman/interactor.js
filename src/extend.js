@@ -26,6 +26,14 @@ function reserved(name) {
   }
 }
 
+function isInteractorClass(klass) {
+  return typeof klass === 'function' &&
+    'extend' in klass &&
+    'assert' in klass.prototype &&
+    'exec' in klass.prototype &&
+    'then' in klass.prototype;
+}
+
 function wrapInteractorProperty(name, fn, getter) {
   return {
     configurable: true,
@@ -145,6 +153,8 @@ export default function extend(properties = {}) {
 
     if (get) {
       property = { get };
+    } else if (isInteractorClass(value)) {
+      property = { child: s => value(s) };
     } else if (typeof value === 'function') {
       property = { call: value, assert: false };
     } else if (m.get(value, 'queue')) {
