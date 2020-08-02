@@ -106,7 +106,7 @@ export default function Search({
   return (
     <>
       <div ref={ref} className={cx('searchContainer', { isExpanded })}>
-        <InstantSearch indexName="Docs" searchClient={searchClient}>
+        <InstantSearch indexName="Next" searchClient={searchClient}>
           <SearchBox
             className={style.searchBox}
             onFocus={onExpand}
