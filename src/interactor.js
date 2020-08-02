@@ -27,7 +27,7 @@ export default function Interactor(selector) {
 
   m.set(this, {
     timeout: this.constructor.timeout,
-    selector: selector ?? this.constructor.selector,
+    selector: this.constructor.selector(selector),
     keyboard: InteractorKeyboard(),
     interval: 10,
     queue: [],
@@ -53,12 +53,24 @@ export default function Interactor(selector) {
 defineProperties(Interactor, {
   // Default interactor options
   name: { value: '' },
-  selector: { value: '' },
   timeout: { value: 2000 },
 
   // Static methods
   error: { value: InteractorError },
   extend: { value: extend },
+
+  // Allow alternate selector functions
+  selector: {
+    configurable: true,
+    get: () => s => s,
+    set: function setSelectorFn(selector) {
+      defineProperty(this, 'selector', {
+        configurable: true,
+        get: () => selector,
+        set: setSelectorFn
+      });
+    }
+  },
 
   // DOM association getter/setter
   dom: {

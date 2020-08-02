@@ -16,6 +16,24 @@ describe('Interactor', () => {
     assert.typeOf(Interactor.extend().extend, 'function');
   });
 
+  it('can customize the interactor element selector', () => {
+    let Test = Interactor.extend();
+
+    fixture(`
+      <p class="a">A</li>
+      <ul class="list">
+        <li class="a">List A</li>
+      </ul>
+    `);
+
+    Test.selector = sel => `.list ${sel}`;
+
+    assert.equal(
+      Test('.a').$(),
+      document.querySelector('.list .a')
+    );
+  });
+
   describe('$([selector])', () => {
     beforeEach(() => {
       fixture(`

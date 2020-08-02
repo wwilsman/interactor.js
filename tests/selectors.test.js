@@ -33,6 +33,17 @@ describe('Selectors', () => {
         e('InteractorError', 'could not find xpath(//foobar)')
       );
     });
+
+    it('can be used as an interactor selector function', () => {
+      let Test = Interactor.extend({
+        interactor: { selector: by.xpath }
+      });
+
+      assert.equal(
+        Test('.//ul').$(),
+        document.querySelector('.list')
+      );
+    });
   });
 
   describe('by.text(string)', () => {
@@ -54,6 +65,17 @@ describe('Selectors', () => {
       assert.throws(
         () => Interactor(by.text('Item A')).$(),
         e('InteractorError', 'could not find "Item A"')
+      );
+    });
+
+    it('can be used as an interactor selector function', () => {
+      let Test = Interactor.extend({
+        interactor: { selector: by.text }
+      });
+
+      assert.equal(
+        Test('Item').$(),
+        document.querySelector('.list li')
       );
     });
   });

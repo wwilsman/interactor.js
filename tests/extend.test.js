@@ -26,7 +26,7 @@ describe('Interactor.extend', () => {
     });
 
     assert.equal(Test.name, 'bar');
-    assert.equal(Test.selector, 'foo');
+    assert.equal(Test.selector(), 'foo');
     assert.equal(Test.timeout, 1000);
     assert.equal(Test.dom, 'dom');
 

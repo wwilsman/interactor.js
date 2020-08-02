@@ -109,13 +109,12 @@ export default function extend(properties = {}) {
   defineProperties(Extended, {
     // define the custom interactor's options
     name: { value: options?.name ?? Parent.name },
-    selector: { value: options?.selector ?? Parent.selector },
     timeout: { value: options?.timeout || Parent.timeout },
 
     // define inherited static properties
     extend: getOwnPropertyDescriptor(Parent, 'extend'),
+    selector: getOwnPropertyDescriptor(Parent, 'selector'),
     dom: getOwnPropertyDescriptor(Parent, 'dom'),
-
     suppressLayoutEngineWarning: (
       getOwnPropertyDescriptor(Parent, 'suppressLayoutEngineWarning')
     ),
@@ -170,6 +169,12 @@ export default function extend(properties = {}) {
     if (property) {
       defineInteractorProperty(Extended, key, property);
     }
+  }
+
+  // define custom selector function or default selector string
+  if (options?.selector) {
+    Extended.selector = typeof options.selector === 'string'
+      ? s => s ?? options.selector : options.selector;
   }
 
   // define dom reference while extending
