@@ -25,7 +25,7 @@ export function assertion(get, matcher = get) {
     let { message, result } = matcher.apply(this, args);
 
     if (result !== expected) {
-      throw error(message).bind(this, expected);
+      throw error(message);
     }
   };
 }
@@ -81,8 +81,8 @@ function context(i, expected, negated) {
     }
 
     return {
-      [get ? 'get' : 'value']: (...args) => {
-        let ret = (get || value).apply(ctx, args);
+      [get ? 'get' : 'value'](...args) {
+        let ret = (get || value).apply(this, args);
         // if an interactor was returned, return its assert context
         return m.get(ret, 'queue') ? context(ret, expected) : ret;
       }
@@ -92,18 +92,18 @@ function context(i, expected, negated) {
   defineProperties(ctx, {
     assert: {
       // in assert contexts, the assert method executes immediately
-      value: defineProperties(f => {
+      value: defineProperties(function(f) {
         if (m.get(f, 'queue')) {
           return context(f, expected, negated).assert;
         }
 
-        try { f.apply(ctx); } catch (err) {
+        try { f.apply(this); } catch (err) {
           // bind interactor errors to the instance and expectation
-          if (err.name === 'InteractorError') err.bind(i, expected);
+          if (err.name === 'InteractorError') err.bind(this, expected);
           throw err;
         }
 
-        return ctx;
+        return this;
       }, assign(
         // lazily bind assert properties to an assert context
         map(assertions, (assertion, name) => ({

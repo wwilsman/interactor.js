@@ -250,11 +250,11 @@ assign(Interactor.prototype, {
   toString() {
     let name = this.constructor.name;
     let { parent, selector } = m.get(this);
-    let string = selector.toString();
+    let string = selector?.toString() || '';
 
     if (name) string += ` ${name}`;
     if (parent && m.get(parent, 'selector')) {
-      string += ` within ${parent}`;
+      string += `${string && ' within'} ${parent}`;
     }
 
     return string;
