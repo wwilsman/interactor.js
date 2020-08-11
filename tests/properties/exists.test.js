@@ -1,5 +1,5 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { exists } from 'interactor.js';
 
 describe('Properties: exists', () => {
   const Test = Interactor.extend({
@@ -96,6 +96,75 @@ describe('Properties: exists', () => {
 
         await assert.rejects(
           Test().assert.exists('bar'),
+          e('InteractorError', '.bar does not exist')
+        );
+      });
+    });
+  });
+
+  describe('property creator', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      there: exists()
+    });
+
+    it('creates a parent bound property', () => {
+      assert.equal(Test('.foo').there, true);
+      assert.equal(Test('.bar').there, false);
+    });
+
+    it('creates an associated parent bound assertion', async () => {
+      await assert.doesNotReject(
+        Test('.foo').assert.there()
+      );
+
+      await assert.doesNotReject(
+        Test('.bar').assert.not.there()
+      );
+
+      await assert.rejects(
+        Test('.foo').assert.not.there(),
+        e('InteractorError', '.foo exists')
+      );
+
+      await assert.rejects(
+        Test('.bar').assert.there(),
+        e('InteractorError', '.bar does not exist')
+      );
+    });
+
+    describe('with a selector', () => {
+      const Test = Interactor.extend({
+        interactor: {
+          timeout: 50
+        },
+
+        foo: exists('.foo'),
+        bar: exists('.bar')
+      });
+
+      it('creates a scoped bound property', () => {
+        assert.equal(Test().foo, true);
+        assert.equal(Test().bar, false);
+      });
+
+      it('creates an associated scoped bound assertion', async () => {
+        await assert.doesNotReject(
+          Test()
+            .assert.foo()
+            .assert.not.bar()
+        );
+
+        await assert.rejects(
+          Test().assert.not.foo(),
+          e('InteractorError', '.foo exists')
+        );
+
+        await assert.rejects(
+          Test().assert.bar(),
           e('InteractorError', '.bar does not exist')
         );
       });

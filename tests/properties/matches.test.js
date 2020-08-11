@@ -1,5 +1,5 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { matches } from 'interactor.js';
 
 describe('Properties: matches', () => {
   const Test = Interactor.extend({
@@ -103,6 +103,74 @@ describe('Properties: matches', () => {
         await assert.rejects(
           Test().assert.matches('.bar'),
           e('InteractorError', '.div does not match .bar')
+        );
+      });
+    });
+  });
+
+  describe('property creator', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      foo: matches('.foo'),
+      bar: matches('.bar')
+    });
+
+    it('creates a parent bound property', () => {
+      assert.equal(Test('.div').foo, true);
+      assert.equal(Test('.div').bar, false);
+    });
+
+    it('creates an associated parent bound assertion', async () => {
+      await assert.doesNotReject(
+        Test('.div')
+          .assert.foo()
+          .assert.not.bar()
+      );
+
+      await assert.rejects(
+        Test('.div').assert.bar(),
+        e('InteractorError', '.div does not match .bar')
+      );
+
+      await assert.rejects(
+        Test('.div').assert.not.foo(),
+        e('InteractorError', '.div matches .foo but expected it not to')
+      );
+    });
+
+    describe('with a selector', () => {
+      const Test = Interactor.extend({
+        interactor: {
+          timeout: 50
+        },
+
+        foo: matches('.div', '.foo'),
+        bar: matches('.div', '.bar')
+      });
+
+      it('creates a scoped bound property', () => {
+        assert.equal(Test().foo, true);
+        assert.equal(Test().bar, false);
+      });
+
+      it('creates an associated scoped bound assertion', async () => {
+        await assert.doesNotReject(
+          Test()
+            .assert.foo()
+            .assert.not.bar()
+        );
+
+        await assert.rejects(
+          Test().assert.bar(),
+          e('InteractorError', '.div does not match .bar')
+        );
+
+        await assert.rejects(
+          Test().assert.not.foo(),
+          e('InteractorError', '.div matches .foo but expected it not to')
         );
       });
     });

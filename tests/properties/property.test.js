@@ -1,5 +1,5 @@
 import { assert, e, fixture, jsdom, mockConsole } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { property } from 'interactor.js';
 
 describe('Properties: property', () => {
   const Test = Interactor.extend({
@@ -141,6 +141,82 @@ describe('Properties: property', () => {
         await assert.rejects(
           Test().assert.property('para', 'tagName', 'SPAN'),
           e('InteractorError', '.para tagName is "P" but expected "SPAN"')
+        );
+      });
+    });
+  });
+
+  describe('property creator', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      title: property('title'),
+      tagName: property('tagName')
+    });
+
+    it('creates a parent bound property', () => {
+      assert.equal(Test('.foo').title, 'bar');
+      assert.equal(Test('.para').tagName, 'P');
+    });
+
+    it('creates an associated parent bound assertion', async () => {
+      await assert.doesNotReject(
+        Test('.foo')
+          .assert.title('bar')
+          .assert.not.title('baz')
+      );
+
+      await assert.doesNotReject(
+        Test('.para')
+          .assert.tagName('P')
+          .assert.not.tagName('DIV')
+      );
+
+      await assert.rejects(
+        Test('.foo').assert.not.title('bar'),
+        e('InteractorError', '.foo title is "bar" but expected it not to be')
+      );
+
+      await assert.rejects(
+        Test('.para').assert.tagName('DIV'),
+        e('InteractorError', '.para tagName is "P" but expected "DIV"')
+      );
+    });
+
+    describe('with a selector', () => {
+      const Test = Interactor.extend({
+        interactor: {
+          timeout: 50
+        },
+
+        foo: property('.foo', 'title'),
+        para: property('.para', 'tagName')
+      });
+
+      it('creates a scoped bound property', () => {
+        assert.equal(Test().foo, 'bar');
+        assert.equal(Test().para, 'P');
+      });
+
+      it('creates an associated scoped bound assertion', async () => {
+        await assert.doesNotReject(
+          Test()
+            .assert.foo('bar')
+            .assert.para('P')
+            .assert.not.foo('baz')
+            .assert.not.para('DIV')
+        );
+
+        await assert.rejects(
+          Test().assert.foo('baz'),
+          e('InteractorError', '.foo title is "bar" but expected "baz"')
+        );
+
+        await assert.rejects(
+          Test().assert.not.para('P'),
+          e('InteractorError', '.para tagName is "P" but expected it not to be')
         );
       });
     });

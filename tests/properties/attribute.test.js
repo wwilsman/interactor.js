@@ -1,5 +1,5 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { attribute } from 'interactor.js';
 
 describe('Properties: attribute', () => {
   const Test = Interactor.extend({
@@ -109,6 +109,70 @@ describe('Properties: attribute', () => {
         await assert.rejects(
           Test().assert.attribute('bar', 'id', 'qux'),
           e('InteractorError', '.bar id is "baz" but expected "qux"')
+        );
+      });
+    });
+  });
+
+  describe('property creator', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      data: attribute('data-test')
+    });
+
+    it('creates a parent bound property', () => {
+      assert.equal(Test('.foo').data, 'bar');
+    });
+
+    it('creates an associated parent bound assertion', async () => {
+      await assert.doesNotReject(
+        Test('.foo')
+          .assert.data('bar')
+          .assert.not.data('baz')
+      );
+
+      await assert.rejects(
+        Test('.foo').assert.data('baz'),
+        e('InteractorError', '.foo data-test is "bar" but expected "baz"')
+      );
+
+      await assert.rejects(
+        Test('.foo').assert.not.data('bar'),
+        e('InteractorError', '.foo data-test is "bar" but expected it not to be')
+      );
+    });
+
+    describe('with a selector', () => {
+      const Test = Interactor.extend({
+        interactor: {
+          timeout: 50
+        },
+
+        foo: attribute('.foo', 'data-test')
+      });
+
+      it('creates a scoped bound property', () => {
+        assert.equal(Test().foo, 'bar');
+      });
+
+      it('creates an associated scoped bound assertion', async () => {
+        await assert.doesNotReject(
+          Test()
+            .assert.foo('bar')
+            .assert.not.foo('baz')
+        );
+
+        await assert.rejects(
+          Test().assert.foo('baz'),
+          e('InteractorError', '.foo data-test is "bar" but expected "baz"')
+        );
+
+        await assert.rejects(
+          Test().assert.not.foo('bar'),
+          e('InteractorError', '.foo data-test is "bar" but expected it not to be')
         );
       });
     });

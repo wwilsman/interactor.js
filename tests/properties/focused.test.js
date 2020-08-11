@@ -1,5 +1,5 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { focused } from 'interactor.js';
 
 describe('Properties: focused', () => {
   const Test = Interactor.extend({
@@ -106,6 +106,75 @@ describe('Properties: focused', () => {
 
         await assert.rejects(
           Test().assert.focused('b'),
+          e('InteractorError', '.input-b is not focused')
+        );
+      });
+    });
+  });
+
+  describe('property creator', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      active: focused()
+    });
+
+    it('creates a parent bound property', () => {
+      assert.equal(Test('.input-a').active, true);
+      assert.equal(Test('.input-b').active, false);
+    });
+
+    it('creates an associated parent bound assertion', async () => {
+      await assert.doesNotReject(
+        Test('.input-a').assert.active()
+      );
+
+      await assert.doesNotReject(
+        Test('.input-b').assert.not.active()
+      );
+
+      await assert.rejects(
+        Test('.input-a').assert.not.active(),
+        e('InteractorError', '.input-a is focused')
+      );
+
+      await assert.rejects(
+        Test('.input-b').assert.active(),
+        e('InteractorError', '.input-b is not focused')
+      );
+    });
+
+    describe('with a selector', () => {
+      const Test = Interactor.extend({
+        interactor: {
+          timeout: 50
+        },
+
+        a: focused('.input-a'),
+        b: focused('.input-b')
+      });
+
+      it('creates a scoped bound property', () => {
+        assert.equal(Test().a, true);
+        assert.equal(Test().b, false);
+      });
+
+      it('creates an associated scoped bound assertion', async () => {
+        await assert.doesNotReject(
+          Test()
+            .assert.a()
+            .assert.not.b()
+        );
+
+        await assert.rejects(
+          Test().assert.not.a(),
+          e('InteractorError', '.input-a is focused')
+        );
+
+        await assert.rejects(
+          Test().assert.b(),
           e('InteractorError', '.input-b is not focused')
         );
       });

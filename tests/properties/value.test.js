@@ -1,5 +1,5 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { value } from 'interactor.js';
 
 describe('Properties: value', () => {
   const Test = Interactor.extend({
@@ -127,6 +127,75 @@ describe('Properties: value', () => {
         await assert.rejects(
           Test().assert.value('b', 'b'),
           e('InteractorError', '.input-b value is "B" but expected "b"')
+        );
+      });
+    });
+  });
+
+  describe('property creator', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      val: value()
+    });
+
+    it('creates a parent bound property', () => {
+      assert.equal(Test('.input-a').val, 'A');
+      assert.equal(Test('.input-b').val, 'B');
+    });
+
+    it('creates an associated parent bound assertion', async () => {
+      await assert.doesNotReject(
+        Test('.input-a')
+          .assert.val('A')
+          .assert.not.val('B')
+      );
+
+      await assert.rejects(
+        Test('.input-b').assert.val('A'),
+        e('InteractorError', '.input-b value is "B" but expected "A"')
+      );
+
+      await assert.rejects(
+        Test('.input-a').assert.not.val('A'),
+        e('InteractorError', '.input-a value is "A" but expected it not to be')
+      );
+    });
+
+    describe('with a selector', () => {
+      const Test = Interactor.extend({
+        interactor: {
+          timeout: 50
+        },
+
+        a: value('.input-a'),
+        b: value('.input-b')
+      });
+
+      it('creates a scoped bound property', () => {
+        assert.equal(Test().a, 'A');
+        assert.equal(Test().b, 'B');
+      });
+
+      it('creates an associated scoped bound assertion', async () => {
+        await assert.doesNotReject(
+          Test()
+            .assert.a('A')
+            .assert.b('B')
+            .assert.not.a('b')
+            .assert.not.b('c')
+        );
+
+        await assert.rejects(
+          Test().assert.a('b'),
+          e('InteractorError', '.input-a value is "A" but expected "b"')
+        );
+
+        await assert.rejects(
+          Test().assert.not.b('B'),
+          e('InteractorError', '.input-b value is "B" but expected it not to be')
         );
       });
     });

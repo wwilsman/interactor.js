@@ -1,5 +1,5 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { checked } from 'interactor.js';
 
 describe('Properties: checked', () => {
   const Test = Interactor.extend({
@@ -104,6 +104,75 @@ describe('Properties: checked', () => {
 
         await assert.rejects(
           Test().assert.checked('b'),
+          e('InteractorError', '.check-b is not checked')
+        );
+      });
+    });
+  });
+
+  describe('property creator', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      yes: checked()
+    });
+
+    it('creates a parent bound property', () => {
+      assert.equal(Test('.check-a').yes, true);
+      assert.equal(Test('.check-b').yes, false);
+    });
+
+    it('creates an associated parent bound assertion', async () => {
+      await assert.doesNotReject(
+        Test('.check-a').assert.yes()
+      );
+
+      await assert.doesNotReject(
+        Test('.check-b').assert.not.yes()
+      );
+
+      await assert.rejects(
+        Test('.check-a').assert.not.yes(),
+        e('InteractorError', '.check-a is checked')
+      );
+
+      await assert.rejects(
+        Test('.check-b').assert.yes(),
+        e('InteractorError', '.check-b is not checked')
+      );
+    });
+
+    describe('with a selector', () => {
+      const Test = Interactor.extend({
+        interactor: {
+          timeout: 50
+        },
+
+        a: checked('.check-a'),
+        b: checked('.check-b')
+      });
+
+      it('creates a scoped bound property', () => {
+        assert.equal(Test().a, true);
+        assert.equal(Test().b, false);
+      });
+
+      it('creates an associated scoped bound assertion', async () => {
+        await assert.doesNotReject(
+          Test()
+            .assert.a()
+            .assert.not.b()
+        );
+
+        await assert.rejects(
+          Test().assert.not.a(),
+          e('InteractorError', '.check-a is checked')
+        );
+
+        await assert.rejects(
+          Test().assert.b(),
           e('InteractorError', '.check-b is not checked')
         );
       });

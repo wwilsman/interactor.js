@@ -1,5 +1,5 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { focusable } from 'interactor.js';
 
 describe('Properties: focusable', () => {
   const Test = Interactor.extend({
@@ -155,6 +155,75 @@ describe('Properties: focusable', () => {
         await assert.rejects(
           Test().assert.focusable('a', 'b'),
           e('InteractorError', '.heading-b is not focusable')
+        );
+      });
+    });
+  });
+
+  describe('property creator', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      blurrable: focusable()
+    });
+
+    it('creates a parent bound property', () => {
+      assert.equal(Test('.input-a').blurrable, true);
+      assert.equal(Test('.input-b').blurrable, false);
+    });
+
+    it('creates an associated parent bound assertion', async () => {
+      await assert.doesNotReject(
+        Test('.input-a').assert.blurrable()
+      );
+
+      await assert.doesNotReject(
+        Test('.input-b').assert.not.blurrable()
+      );
+
+      await assert.rejects(
+        Test('.input-a').assert.not.blurrable(),
+        e('InteractorError', '.input-a is focusable')
+      );
+
+      await assert.rejects(
+        Test('.input-b').assert.blurrable(),
+        e('InteractorError', '.input-b is disabled')
+      );
+    });
+
+    describe('with a selector', () => {
+      const Test = Interactor.extend({
+        interactor: {
+          timeout: 50
+        },
+
+        a: focusable('.input-a'),
+        b: focusable('.input-b')
+      });
+
+      it('creates a scoped bound property', () => {
+        assert.equal(Test().a, true);
+        assert.equal(Test().b, false);
+      });
+
+      it('creates an associated scoped bound assertion', async () => {
+        await assert.doesNotReject(
+          Test()
+            .assert.a()
+            .assert.not.b()
+        );
+
+        await assert.rejects(
+          Test().assert.not.a(),
+          e('InteractorError', '.input-a is focusable')
+        );
+
+        await assert.rejects(
+          Test().assert.b(),
+          e('InteractorError', '.input-b is disabled')
         );
       });
     });

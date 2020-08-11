@@ -1,5 +1,5 @@
 import { assert, e, fixture, jsdom, mockConsole } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { scrollable, scrollableX, scrollableY } from 'interactor.js';
 
 describe('Properties: scrollable', () => {
   const Test = Interactor.extend({
@@ -251,6 +251,99 @@ describe('Properties: scrollable', () => {
 
         await assert.rejects(
           Test().assert.scrollable('z'),
+          e('InteractorError', '.overflow.none has no overflow')
+        );
+      });
+    });
+  });
+
+  describe('property creator', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      x: scrollableX(),
+      y: scrollableY(),
+      any: scrollable()
+    });
+
+    it('creates a parent bound property', () => {
+      assert.equal(Test('.overflow.x').x, true);
+      assert.equal(Test('.overflow.x').y, false);
+      assert.equal(Test('.overflow.x').any, true);
+      assert.equal(Test('.overflow.y').x, false);
+      assert.equal(Test('.overflow.y').y, true);
+      assert.equal(Test('.overflow.y').any, true);
+      assert.equal(Test('.overflow.x.y').x, true);
+      assert.equal(Test('.overflow.x.y').y, true);
+      assert.equal(Test('.overflow.x.y').any, true);
+      assert.equal(Test('.overflow.none').x, false);
+      assert.equal(Test('.overflow.none').y, false);
+      assert.equal(Test('.overflow.none').any, false);
+    });
+
+    it('creates an associated parent bound assertion', async () => {
+      await assert.doesNotReject(
+        Test('.overflow.x').assert.x()
+      );
+
+      await assert.doesNotReject(
+        Test('.overflow.y').assert.not.x()
+      );
+
+      await assert.rejects(
+        Test('.overflow.x.y').assert.not.any(),
+        e('InteractorError', '.overflow.x.y has overflow')
+      );
+
+      await assert.rejects(
+        Test('.overflow.none').assert.any(),
+        e('InteractorError', '.overflow.none has no overflow')
+      );
+    });
+
+    describe('with a selector', () => {
+      const Test = Interactor.extend({
+        interactor: {
+          timeout: 50
+        },
+
+        X: scrollableX('.overflow.x'),
+        Xy: scrollableY('.overflow.x'),
+        Y: scrollableY('.overflow.y'),
+        Yx: scrollableX('.overflow.y'),
+        any: scrollable('.overflow.x.y'),
+        none: scrollable('.overflow.none')
+      });
+
+      it('creates a scoped bound property', () => {
+        assert.equal(Test().X, true);
+        assert.equal(Test().Xy, false);
+        assert.equal(Test().Y, true);
+        assert.equal(Test().Yx, false);
+        assert.equal(Test().any, true);
+        assert.equal(Test().none, false);
+      });
+
+      it('creates an associated scoped bound assertion', async () => {
+        await assert.doesNotReject(
+          Test()
+            .assert.X()
+            .assert.Y()
+            .assert.any()
+            .assert.not.Xy()
+            .assert.not.Yx()
+            .assert.not.none()
+        );
+
+        await assert.rejects(
+          Test().assert.not.X(),
+          e('InteractorError', '.overflow.x has overflow-x')
+        );
+
+        await assert.rejects(
+          Test().assert.none(),
           e('InteractorError', '.overflow.none has no overflow')
         );
       });

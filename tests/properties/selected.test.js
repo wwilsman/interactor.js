@@ -1,5 +1,5 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { selected } from 'interactor.js';
 
 describe('Properties: selected', () => {
   const Test = Interactor.extend({
@@ -130,6 +130,77 @@ describe('Properties: selected', () => {
         await assert.rejects(
           Test('.sel-b').assert.selected(1),
           e('InteractorError', '.opt-1 within .sel-b is not selected')
+        );
+      });
+    });
+  });
+
+  describe('property creator', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      chosen: selected()
+    });
+
+    it('creates a parent bound property', () => {
+      assert.equal(Test('.sel-a .opt-1').chosen, true);
+      assert.equal(Test('.sel-b .opt-1').chosen, false);
+    });
+
+    it('creates an associated parent bound assertion', async () => {
+      await assert.doesNotReject(
+        Test('.sel-a .opt-1').assert.chosen()
+      );
+
+      await assert.doesNotReject(
+        Test('.sel-b .opt-1').assert.not.chosen()
+      );
+
+      await assert.rejects(
+        Test('.sel-a .opt-1').assert.not.chosen(),
+        e('InteractorError', '.sel-a .opt-1 is selected')
+      );
+
+      await assert.rejects(
+        Test('.sel-b .opt-1').assert.chosen(),
+        e('InteractorError', '.sel-b .opt-1 is not selected')
+      );
+    });
+
+    describe('with a selector', () => {
+      const Test = Interactor.extend({
+        interactor: {
+          timeout: 50
+        },
+
+        one: selected('.opt-1'),
+        two: selected('.opt-2')
+      });
+
+      it('creates a scoped bound property', () => {
+        assert.equal(Test('.sel-a').one, true);
+        assert.equal(Test('.sel-a').two, false);
+        assert.equal(Test('.sel-b').one, false);
+        assert.equal(Test('.sel-b').two, true);
+      });
+
+      it('creates an associated scoped bound assertion', async () => {
+        await assert.doesNotReject(
+          Test('.sel-a')
+            .assert.one()
+            .assert.not.two()
+        );
+
+        await assert.rejects(
+          Test('.sel-b').assert.one(),
+          e('InteractorError', '.opt-1 within .sel-b is not selected')
+        );
+
+        await assert.rejects(
+          Test('.sel-a').assert.not.one(),
+          e('InteractorError', '.opt-1 within .sel-a is selected')
         );
       });
     });

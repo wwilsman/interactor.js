@@ -1,5 +1,5 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { count } from 'interactor.js';
 
 describe('Properties: count', () => {
   const Test = Interactor.extend({
@@ -158,6 +158,80 @@ describe('Properties: count', () => {
         await assert.rejects(
           Test().assert.count('b', 'li', 1),
           e('InteractorError', 'found 3 elements matching li within .list-b but expected 1')
+        );
+      });
+    });
+  });
+
+  describe('property creator', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      length: count('li')
+    });
+
+    it('creates a parent bound property', () => {
+      assert.equal(Test('.list-a').length, 1);
+      assert.equal(Test('.list-b').length, 3);
+      assert.equal(Test('.list-c').length, 0);
+    });
+
+    it('creates an associated parent bound assertion', async () => {
+      await assert.doesNotReject(
+        Test('.list-b')
+          .assert.length(3)
+          .assert.not.length(1)
+      );
+
+      await assert.rejects(
+        Test('.list-c').assert.length(2),
+        e('InteractorError', 'found 0 elements matching li within .list-c but expected 2')
+      );
+
+      await assert.rejects(
+        Test('.list-a').assert.not.length(1),
+        e('InteractorError', 'found 1 element matching li within .list-a but expected not to')
+      );
+    });
+
+    describe('with a selector', () => {
+      const Test = Interactor.extend({
+        interactor: {
+          timeout: 50
+        },
+
+        a: count('.list-a', 'li'),
+        b: count('.list-b', 'li'),
+        c: count('.list-c', 'li')
+      });
+
+      it('creates a scoped bound property', () => {
+        assert.equal(Test().a, 1);
+        assert.equal(Test().b, 3);
+        assert.equal(Test().c, 0);
+      });
+
+      it('creates an associated scoped bound assertion', async () => {
+        await assert.doesNotReject(
+          Test()
+            .assert.a(1)
+            .assert.b(3)
+            .assert.c(0)
+            .assert.not.a(3)
+            .assert.not.b(0)
+            .assert.not.c(1)
+        );
+
+        await assert.rejects(
+          Test().assert.a(3),
+          e('InteractorError', 'found 1 element matching li within .list-a but expected 3')
+        );
+
+        await assert.rejects(
+          Test().assert.not.b(3),
+          e('InteractorError', 'found 3 elements matching li within .list-b but expected not to')
         );
       });
     });

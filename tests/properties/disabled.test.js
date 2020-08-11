@@ -1,5 +1,5 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { disabled } from 'interactor.js';
 
 describe('Properties: disabled', () => {
   const Test = Interactor.extend({
@@ -104,6 +104,75 @@ describe('Properties: disabled', () => {
 
         await assert.rejects(
           Test().assert.disabled('b'),
+          e('InteractorError', '.btn-b is not disabled')
+        );
+      });
+    });
+  });
+
+  describe('property creator', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      off: disabled()
+    });
+
+    it('creates a parent bound property', () => {
+      assert.equal(Test('.btn-a').off, true);
+      assert.equal(Test('.btn-b').off, false);
+    });
+
+    it('creates an associated parent bound assertion', async () => {
+      await assert.doesNotReject(
+        Test('.btn-a').assert.off()
+      );
+
+      await assert.doesNotReject(
+        Test('.btn-b').assert.not.off()
+      );
+
+      await assert.rejects(
+        Test('.btn-a').assert.not.off(),
+        e('InteractorError', '.btn-a is disabled')
+      );
+
+      await assert.rejects(
+        Test('.btn-b').assert.off(),
+        e('InteractorError', '.btn-b is not disabled')
+      );
+    });
+
+    describe('with a selector', () => {
+      const Test = Interactor.extend({
+        interactor: {
+          timeout: 50
+        },
+
+        a: disabled('.btn-a'),
+        b: disabled('.btn-b')
+      });
+
+      it('creates a scoped bound property', () => {
+        assert.equal(Test().a, true);
+        assert.equal(Test().b, false);
+      });
+
+      it('creates an associated scoped bound assertion', async () => {
+        await assert.doesNotReject(
+          Test()
+            .assert.a()
+            .assert.not.b()
+        );
+
+        await assert.rejects(
+          Test().assert.not.a(),
+          e('InteractorError', '.btn-a is disabled')
+        );
+
+        await assert.rejects(
+          Test().assert.b(),
           e('InteractorError', '.btn-b is not disabled')
         );
       });

@@ -1,5 +1,5 @@
 import { assert, e, fixture, jsdom, mockConsole } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { text } from 'interactor.js';
 
 describe('Properties: text', () => {
   const Test = Interactor.extend({
@@ -162,6 +162,75 @@ describe('Properties: text', () => {
         await assert.rejects(
           T('.list').assert.text('b', 'B'),
           e('InteractorError', '.b within .list text is "b" but expected "B"')
+        );
+      });
+    });
+  });
+
+  describe('property creator', () => {
+    const Test = Interactor.extend({
+      interactor: {
+        timeout: 50
+      },
+
+      content: text()
+    });
+
+    it('creates a parent bound property', () => {
+      assert.equal(Test('.list .a').content, 'a');
+      assert.equal(Test('.list .b').content, 'b');
+    });
+
+    it('creates an associated parent bound assertion', async () => {
+      await assert.doesNotReject(
+        Test('.list .a')
+          .assert.content('a')
+          .assert.not.content('b')
+      );
+
+      await assert.rejects(
+        Test('.list .b').assert.content('a'),
+        e('InteractorError', '.list .b text is "b" but expected "a"')
+      );
+
+      await assert.rejects(
+        Test('.list .a').assert.not.content('a'),
+        e('InteractorError', '.list .a text is "a" but expected it not to be')
+      );
+    });
+
+    describe('with a selector', () => {
+      const Test = Interactor.extend({
+        interactor: {
+          timeout: 50
+        },
+
+        a: text('.a'),
+        b: text('.b')
+      });
+
+      it('creates a scoped bound property', () => {
+        assert.equal(Test('.list').a, 'a');
+        assert.equal(Test('.list').b, 'b');
+      });
+
+      it('creates an associated scoped bound assertion', async () => {
+        await assert.doesNotReject(
+          Test('.list')
+            .assert.a('a')
+            .assert.b('b')
+            .assert.not.a('b')
+            .assert.not.b('c')
+        );
+
+        await assert.rejects(
+          Test('.list').assert.a('b'),
+          e('InteractorError', '.a within .list text is "a" but expected "b"')
+        );
+
+        await assert.rejects(
+          Test('.list').assert.not.b('b'),
+          e('InteractorError', '.b within .list text is "b" but expected it not to be')
         );
       });
     });
