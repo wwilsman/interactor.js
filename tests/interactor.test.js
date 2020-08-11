@@ -34,6 +34,25 @@ describe('Interactor', () => {
     );
   });
 
+  it('can create extended instances', () => {
+    let test = Interactor('test', {
+      get foo() { return 'bar'; }
+    });
+
+    assert.instanceOf(test, Interactor);
+    assert.equal(test.foo, 'bar');
+
+    let Test = Interactor.extend({
+      get foo() { return 'bar'; }
+    });
+
+    test = Test('test', { bar: () => 'baz' });
+
+    assert.instanceOf(test, Test);
+    assert.equal(test.foo, 'bar');
+    assert.equal(test.bar(), 'baz');
+  });
+
   describe('$([selector])', () => {
     beforeEach(() => {
       fixture(`

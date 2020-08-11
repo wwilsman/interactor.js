@@ -98,8 +98,10 @@ export default function extend(properties = {}) {
   let Parent = this;
   let options = properties.interactor;
 
-  function Extended(selector) {
-    if (!(this instanceof Extended)) {
+  function Extended(selector, props) {
+    if (props) {
+      return Extended.extend(props)(selector);
+    } else if (!(this instanceof Extended)) {
       return new Extended(selector);
     }
 

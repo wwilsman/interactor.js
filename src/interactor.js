@@ -20,8 +20,10 @@ import {
 // The base interactor class sets initial metadata and creates bound assert methods. When no
 // selector is provided and there is no default selector, the interactor will reference the parent
 // interactor element or the document body if there is no parent interactor.
-export default function Interactor(selector) {
-  if (!(this instanceof Interactor)) {
+export default function Interactor(selector, properties) {
+  if (properties) {
+    return Interactor.extend(properties)(selector);
+  } else if (!(this instanceof Interactor)) {
     return new Interactor(selector);
   }
 
