@@ -1,14 +1,9 @@
 module.exports = function(config) {
   config.set({
     frameworks: ['mocha'],
-    browsers: ['ChromeHeadless'],
+    browsers: ['ChromeHeadless', 'jsdom'],
+    reporters: ['mocha', 'coverage', config.junit && 'junit'].filter(Boolean),
     singleRun: true,
-
-    reporters: [
-      'mocha',
-      'coverage',
-      config.junit && 'junit'
-    ].filter(Boolean),
 
     files: [
       { pattern: 'src/index.js', watched: false },

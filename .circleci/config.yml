@@ -2,7 +2,7 @@ references:
   defaults: &defaults
     working_directory: ~/interactor.js
     docker:
-      - image: circleci/node:10-browsers
+      - image: circleci/node:12-browsers
 
   cache_key: &cache_key
     v1-{{ .Branch }}-{{ checksum "yarn.lock" }}
@@ -67,32 +67,8 @@ jobs:
           command: yarn test:coverage --junit
       - store_test_results:
           path: ./junit
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - interactor.js/coverage
-
-  test-jsdom:
-    <<: *defaults
-    steps:
-      - *attach_workspace
-      - run:
-          name: Run jsdom tests
-          command: yarn test:jsdom:coverage --junit
-      - store_test_results:
-          path: ./junit
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - interactor.js/coverage
-
-  upload-coverage:
-    <<: *defaults
-    steps:
-      - *attach_workspace
       - codecov/upload:
           file: coverage/**/*.json
-
 
 workflows:
   version: 2
@@ -108,10 +84,3 @@ workflows:
       - test:
           requires:
             - install
-      - test-jsdom:
-          requires:
-            - install
-      - upload-coverage:
-          requires:
-            - test
-            - test-jsdom
