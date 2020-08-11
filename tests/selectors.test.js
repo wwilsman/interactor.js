@@ -79,4 +79,49 @@ describe('Selectors', () => {
       );
     });
   });
+
+  describe('by.nth(n, selector)', () => {
+    it('can select an nth element', () => {
+      assert.equal(
+        Interactor(by.nth(2, '.list li')).$(),
+        document.querySelectorAll('.list li')[1]
+      );
+    });
+
+    it('can select multiple nth elements', () => {
+      assert.deepEqual(
+        Interactor('.list').$$(by.nth('odd', 'li')),
+        [document.querySelector('.list li:first-child'),
+          document.querySelector('.list li:last-child')]
+      );
+    });
+
+    it('formats errors from nth selectors', () => {
+      assert.throws(
+        () => Interactor('.list').$(by.nth(15, 'li')),
+        e('InteractorError', 'could not find the 15th li child within .list')
+      );
+
+      assert.throws(
+        () => Interactor('.list').$(by.nth(2, 'div')),
+        e('InteractorError', 'could not find the 2nd div child within .list')
+      );
+
+      assert.throws(
+        () => Interactor('.list').$(by.nth('n+10', 'li')),
+        e('InteractorError', 'could not find the nth(n+10) li child within .list')
+      );
+    });
+
+    it('can be used within an interactor selector function', () => {
+      let Test = Interactor.extend({
+        interactor: { selector: n => by.nth(n, '.list li') }
+      });
+
+      assert.equal(
+        Test(1).$(),
+        document.querySelector('.list li')
+      );
+    });
+  });
 });

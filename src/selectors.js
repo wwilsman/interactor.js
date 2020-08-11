@@ -30,3 +30,21 @@ export function text(string, xsel = '*') {
     toString: () => `"${string}"`
   });
 }
+
+// Selector creator for nth-child or nth-of-type
+export function nth(n, selector, of = 'child') {
+  return assign(($node, multiple) => {
+    let sel = `${selector}:nth-${of}(${n})`;
+
+    return multiple
+      ? $node.querySelectorAll(sel)
+      : $node.querySelector(sel);
+  }, {
+    toString: () => {
+      if (!/^\d+$/.test(n)) return `the nth(${n}) ${selector} ${of}`;
+      let teen = Array.from(`${n}`).reverse()[1] === '1';
+      let th = (!teen && ['', 'st', 'nd', 'rd'][n % 10]) || 'th';
+      return `the ${n}${th} ${selector} ${of}`;
+    }
+  });
+}
