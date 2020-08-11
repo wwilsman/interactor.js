@@ -9,7 +9,8 @@ export function dom(inst) {
 
 // Returns false and logs a warning when there is no layout engine
 export function hasLayoutEngine(inst, subj) {
-  let { suppressLayoutEngineWarning } = inst.constructor;
+  // get the top instance option when checking for supression
+  let { suppressLayoutEngineWarning } = m.top(inst).constructor;
   let { result, debounce } = hasLayoutEngine;
 
   if (result == null) {
