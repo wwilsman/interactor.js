@@ -6,7 +6,8 @@ import {
   create,
   defineProperty,
   defineProperties,
-  getOwnPropertyDescriptor,
+  entries,
+  getOwnPropertyDescriptors,
   getPrototypeOf,
   map,
   named
@@ -96,7 +97,6 @@ export function defineInteractorProperties(I, properties) {
 // not be applied to the final interactor creator.
 export default function extend(properties = {}) {
   let Parent = this;
-  let options = properties.interactor;
 
   function Extended(selector, props) {
     if (props) {
@@ -108,19 +108,8 @@ export default function extend(properties = {}) {
     Parent.call(this, selector);
   };
 
-  defineProperties(Extended, {
-    // define the custom interactor's options
-    name: { value: options?.name ?? Parent.name },
-    timeout: { value: options?.timeout || Parent.timeout },
-
-    // define inherited static properties
-    extend: getOwnPropertyDescriptor(Parent, 'extend'),
-    selector: getOwnPropertyDescriptor(Parent, 'selector'),
-    dom: getOwnPropertyDescriptor(Parent, 'dom'),
-    suppressLayoutEngineWarning: (
-      getOwnPropertyDescriptor(Parent, 'suppressLayoutEngineWarning')
-    ),
-
+  // define inherited static properties
+  defineProperties(Extended, assign(getOwnPropertyDescriptors(Parent), {
     // extend the parent prototype
     prototype: {
       value: create(Parent.prototype, {
@@ -138,18 +127,21 @@ export default function extend(properties = {}) {
         }
       })
     }
-  });
+  }));
 
+  // assign custom static properties to invoke inherited setters
+  assign(Extended, properties.interactor);
+
+  // define own custom assertions
   if (properties.assert) {
     m.set(Extended.prototype.assert, 'assertions', a => (
       assign(a, map(properties.assert, (p, k) => reserved(k) ? null : p))
     ));
   }
 
-  for (let key in properties) {
+  // define own custom properties
+  for (let [key, { get, value }] of entries(getOwnPropertyDescriptors(properties))) {
     if (key === 'assert' || key === 'interactor' || reserved(key)) continue;
-
-    let { get, value } = getOwnPropertyDescriptor(properties, key);
     let property;
 
     if (get) {
@@ -164,29 +156,13 @@ export default function extend(properties = {}) {
       property = value;
     }
 
-    if (properties.assert?.[key]) {
+    if (property && properties.assert?.[key]) {
       property.assert = false;
     }
 
     if (property) {
       defineInteractorProperty(Extended, key, property);
     }
-  }
-
-  // define custom selector function or default selector string
-  if (options?.selector) {
-    Extended.selector = typeof options.selector === 'string'
-      ? s => s ?? options.selector : options.selector;
-  }
-
-  // define dom reference while extending
-  if (options?.dom) {
-    Extended.dom = options.dom;
-  }
-
-  // suppress the layout engine warning for instances
-  if (options?.suppressLayoutEngineWarning != null) {
-    Extended.suppressLayoutEngineWarning = options.suppressLayoutEngineWarning;
   }
 
   return Extended;

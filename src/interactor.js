@@ -54,21 +54,22 @@ export default function Interactor(selector, properties) {
 
 defineProperties(Interactor, {
   // Default interactor options
-  name: { value: '' },
-  timeout: { value: 2000 },
+  name: { writable: true, value: '' },
+  timeout: { writable: true, value: 2000 },
 
-  // Static methods
+  // Static non-configurable methods
   error: { value: InteractorError },
   extend: { value: extend },
 
-  // Allow alternate selector functions
+  // Allow default selectors and alternate selector functions
   selector: {
     configurable: true,
     get: () => s => s,
     set: function setSelectorFn(selector) {
       defineProperty(this, 'selector', {
         configurable: true,
-        get: () => selector,
+        get: () => typeof selector === 'string'
+          ? s => s ?? selector : selector,
         set: setSelectorFn
       });
     }

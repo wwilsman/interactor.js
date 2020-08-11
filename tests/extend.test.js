@@ -15,13 +15,14 @@ describe('Interactor.extend', () => {
     assert.instanceOf(TestExtended(), Interactor);
   });
 
-  it('augments static interactor options', () => {
+  it('can define static interactor options', () => {
     let Test = Interactor.extend({
       interactor: {
         name: 'bar',
         selector: 'foo',
         timeout: 1000,
-        dom: () => 'dom'
+        dom: () => 'dom',
+        foobar: 'bazqux'
       }
     });
 
@@ -29,6 +30,7 @@ describe('Interactor.extend', () => {
     assert.equal(Test.selector(), 'foo');
     assert.equal(Test.timeout, 1000);
     assert.equal(Test.dom, 'dom');
+    assert.equal(Test.foobar, 'bazqux');
 
     assert.equal(Test().timeout(), 1000);
     assert.equal(Test().toString(), 'foo bar');
