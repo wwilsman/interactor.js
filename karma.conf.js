@@ -124,6 +124,7 @@ module.exports = function(config) {
     plugins: [
       'karma-chrome-launcher',
       'karma-coverage',
+      'karma-firefox-launcher',
       'karma-jsdom-launcher',
       'karma-junit-reporter',
       'karma-mocha',
