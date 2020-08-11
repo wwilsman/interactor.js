@@ -8,12 +8,12 @@ export default function when(assertion, { timeout, interval, remains }) {
   let then = () => new Promise((resolve, reject) => (
     function retry(t, r) {
       try {
-        assertion();
+        let ret = assertion();
 
         if (remains && now() - (r || t) <= remains) {
           setTimeout(retry, interval, t, r || now());
         } else {
-          resolve();
+          resolve(ret);
         }
       } catch (error) {
         if (r || now() - t <= timeout) {
