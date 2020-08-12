@@ -1,9 +1,12 @@
 import InteractorKeyboard from './keyboard';
 import InteractorAssert from './assert';
 import InteractorError from './error';
-import extend from './extend';
 import when from './when';
 import m from './meta';
+
+import extend, {
+  defineInteractorProperties
+} from './extend';
 
 import {
   query
@@ -16,6 +19,9 @@ import {
   getPrototypeOf,
   named
 } from './utils';
+
+import * as actions from './actions';
+import * as properties from './properties';
 
 // The base interactor class sets initial metadata and creates bound assert methods. When no
 // selector is provided and there is no default selector, the interactor will reference the parent
@@ -263,3 +269,7 @@ assign(Interactor.prototype, {
     return string;
   }
 });
+
+// define built-in actions and properties
+assign(Interactor.prototype, actions);
+defineInteractorProperties(Interactor, properties);
