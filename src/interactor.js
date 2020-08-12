@@ -263,7 +263,7 @@ assign(Interactor.prototype, {
 
     if (name) string += ` ${name}`;
     if (parent && m.get(parent, 'selector')) {
-      string += `${string && ' within'} ${parent}`;
+      string += `${string && ' within '}${parent}`;
     }
 
     return string;

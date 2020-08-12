@@ -578,5 +578,9 @@ describe('Interactor', () => {
         '.foo within .bar'
       );
     });
+
+    it('does not reference undefined selectors', () => {
+      assert.equal(Interactor('.bar').find().toString(), '.bar');
+    });
   });
 });
