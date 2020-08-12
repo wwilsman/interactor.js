@@ -168,6 +168,11 @@ describe('Properties: exists', () => {
           e('InteractorError', '.bar does not exist')
         );
       });
+
+      it('can be awaited on for the value', async () => {
+        assert.equal(await exists('.foo'), true);
+        assert.equal(await exists('.bar'), false);
+      });
     });
   });
 });

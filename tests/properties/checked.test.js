@@ -176,6 +176,11 @@ describe('Properties: checked', () => {
           e('InteractorError', '.check-b is not checked')
         );
       });
+
+      it('can be awaited on for the value', async () => {
+        assert.equal(await checked('.check-a'), true);
+        assert.equal(await checked('.check-b'), false);
+      });
     });
   });
 });

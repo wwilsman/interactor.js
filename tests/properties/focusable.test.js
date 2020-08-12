@@ -226,6 +226,11 @@ describe('Properties: focusable', () => {
           e('InteractorError', '.input-b is disabled')
         );
       });
+
+      it('can be awaited on for the value', async () => {
+        assert.equal(await focusable('.input-a'), true);
+        assert.equal(await focusable('.input-b'), false);
+      });
     });
   });
 });

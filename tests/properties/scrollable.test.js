@@ -347,6 +347,21 @@ describe('Properties: scrollable', () => {
           e('InteractorError', '.overflow.none has no overflow')
         );
       });
+
+      it('can be awaited on for the value', async () => {
+        assert.equal(await scrollable('.overflow.x'), true);
+        assert.equal(await scrollableX('.overflow.x'), true);
+        assert.equal(await scrollableY('.overflow.x'), false);
+        assert.equal(await scrollable('.overflow.y'), true);
+        assert.equal(await scrollableX('.overflow.y'), false);
+        assert.equal(await scrollableY('.overflow.y'), true);
+        assert.equal(await scrollable('.overflow.x.y'), true);
+        assert.equal(await scrollableX('.overflow.x.y'), true);
+        assert.equal(await scrollableY('.overflow.x.y'), true);
+        assert.equal(await scrollable('.overflow.none'), false);
+        assert.equal(await scrollableX('.overflow.none'), false);
+        assert.equal(await scrollableY('.overflow.none'), false);
+      });
     });
   });
 });

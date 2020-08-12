@@ -175,6 +175,14 @@ describe('Properties: attribute', () => {
           e('InteractorError', '.foo data-test is "bar" but expected it not to be')
         );
       });
+
+      it('can be awaited on for the value', async () => {
+        await assert.rejects(attribute('data-test'), (
+          e('InteractorError', 'an element selector is required when awaiting on properties')
+        ));
+
+        assert.equal(await attribute('.foo', 'data-test'), 'bar');
+      });
     });
   });
 });

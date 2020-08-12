@@ -225,6 +225,14 @@ describe('Properties: text', () => {
           e('InteractorError', '.b within .list text is "b" but expected it not to be')
         );
       });
+
+      // rather than globally disable the layout engine warning, just skip this test for jsdom
+      if (!jsdom()) {
+        it('can be awaited on for the value', async () => {
+          assert.equal(await text('.list .a'), 'a');
+          assert.equal(await text('.list .b'), 'b');
+        });
+      }
     });
   });
 });

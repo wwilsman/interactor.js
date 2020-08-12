@@ -173,6 +173,15 @@ describe('Properties: matches', () => {
           e('InteractorError', '.div matches .foo but expected it not to')
         );
       });
+
+      it('can be awaited on for the value', async () => {
+        await assert.rejects(
+          matches('.foo'),
+          e('InteractorError', 'an element selector is required when awaiting on properties')
+        );
+
+        assert.equal(await matches('.div', '.foo'), true);
+      });
     });
   });
 });

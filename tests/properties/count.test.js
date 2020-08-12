@@ -234,6 +234,16 @@ describe('Properties: count', () => {
           e('InteractorError', 'found 3 elements matching li within .list-b but expected not to')
         );
       });
+
+      it('can be awaited on for the value', async () => {
+        await assert.rejects(count('li'), (
+          e('InteractorError', 'an element selector is required when awaiting on properties')
+        ));
+
+        assert.equal(await count('.list-a', 'li'), 1);
+        assert.equal(await count('.list-b', 'li'), 3);
+        assert.equal(await count('.list-c', 'li'), 0);
+      });
     });
   });
 });

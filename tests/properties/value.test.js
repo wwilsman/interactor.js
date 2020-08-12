@@ -198,6 +198,11 @@ describe('Properties: value', () => {
           e('InteractorError', '.input-b value is "B" but expected it not to be')
         );
       });
+
+      it('can be awaited on for the value', async () => {
+        assert.equal(await value('.input-a'), 'A');
+        assert.equal(await value('.input-b'), 'B');
+      });
     });
   });
 });

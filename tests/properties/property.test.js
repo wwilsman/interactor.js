@@ -219,6 +219,14 @@ describe('Properties: property', () => {
           e('InteractorError', '.para tagName is "P" but expected it not to be')
         );
       });
+
+      it('can be awaited on for the value', async () => {
+        await assert.rejects(property('title'), (
+          e('InteractorError', 'an element selector is required when awaiting on properties')
+        ));
+
+        assert.equal(await property('.foo', 'title'), 'bar');
+      });
     });
   });
 });

@@ -176,6 +176,11 @@ describe('Properties: disabled', () => {
           e('InteractorError', '.btn-b is not disabled')
         );
       });
+
+      it('can be awaited on for the value', async () => {
+        assert.equal(await disabled('.btn-a'), true);
+        assert.equal(await disabled('.btn-b'), false);
+      });
     });
   });
 });

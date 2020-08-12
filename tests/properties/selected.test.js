@@ -203,6 +203,11 @@ describe('Properties: selected', () => {
           e('InteractorError', '.opt-1 within .sel-a is selected')
         );
       });
+
+      it('can be awaited on for the value', async () => {
+        assert.equal(await selected('.sel-a .opt-1'), true);
+        assert.equal(await selected('.sel-b .opt-1'), false);
+      });
     });
   });
 });

@@ -178,6 +178,11 @@ describe('Properties: focused', () => {
           e('InteractorError', '.input-b is not focused')
         );
       });
+
+      it('can be awaited on for the value', async () => {
+        assert.equal(await focused('.input-a'), true);
+        assert.equal(await focused('.input-b'), false);
+      });
     });
   });
 });
