@@ -35,6 +35,11 @@ describe('Properties: count', () => {
     );
   });
 
+  it('returns the number of instance elements without a selector', () => {
+    assert.equal(Test('li').count(), 4);
+    assert.equal(Test('.list-b').find('li').count(), 3);
+  });
+
   describe('assert', () => {
     it('passes when the count is accurate', async () => {
       await assert.doesNotReject(
@@ -47,6 +52,10 @@ describe('Properties: count', () => {
 
       await assert.doesNotReject(
         Test('.list-c').assert.count('li', 0)
+      );
+
+      await assert.doesNotReject(
+        Test('li').assert.count(4)
       );
     });
 
@@ -64,6 +73,11 @@ describe('Properties: count', () => {
       await assert.rejects(
         Test('.list-c').assert.count('li', 1),
         e('InteractorError', 'found 0 elements matching li within .list-c but expected 1')
+      );
+
+      await assert.rejects(
+        Test('li').assert.count(5),
+        e('InteractorError', 'found 4 elements matching li but expected 5')
       );
     });
 
@@ -83,6 +97,11 @@ describe('Properties: count', () => {
           Test('.list-c').assert.not.count('li', 0),
           e('InteractorError', 'found 0 elements matching li within .list-c but expected not to')
         );
+
+        await assert.rejects(
+          Test('li').assert.not.count(4),
+          e('InteractorError', 'found 4 elements matching li but expected not to')
+        );
       });
 
       it('passes when the count is not accurate', async () => {
@@ -97,6 +116,10 @@ describe('Properties: count', () => {
         await assert.doesNotReject(
           Test('.list-c').assert.not.count('li', 3)
         );
+
+        await assert.doesNotReject(
+          Test('li').assert.not.count(5)
+        );
       });
     });
 
@@ -107,14 +130,15 @@ describe('Properties: count', () => {
         },
 
         assert: {
-          count(expected, ab, sel, n) {
-            this[ab].assert.count(sel, n);
+          count(expected, ab, ...args) {
+            this[ab].assert.count(...args);
           }
         },
 
         a: Interactor('.list-a'),
         b: Interactor('.list-b'),
-        c: Interactor('.list-c')
+        c: Interactor('.list-c'),
+        item: Interactor('li')
       });
 
       it('works as expected when called via nested methods', async () => {
@@ -126,6 +150,8 @@ describe('Properties: count', () => {
             .assert.b.not.count('li', 4)
             .assert.c.count('li', 0)
             .assert.c.not.count('li', 1)
+            .assert.item.count(4)
+            .assert.item.not.count(5)
         );
 
         await assert.rejects(
@@ -136,6 +162,11 @@ describe('Properties: count', () => {
         await assert.rejects(
           Test().assert.b.count('li', 0),
           e('InteractorError', 'found 3 elements matching li within .list-b but expected 0')
+        );
+
+        await assert.rejects(
+          Test().assert.item.count(2),
+          e('InteractorError', 'found 4 elements matching li but expected 2')
         );
       });
 
@@ -148,6 +179,8 @@ describe('Properties: count', () => {
             .assert.not.count('b', 'li', 4)
             .assert.count('c', 'li', 0)
             .assert.not.count('c', 'li', 1)
+            .assert.count('item', 4)
+            .assert.not.count('item', 1)
         );
 
         await assert.rejects(
@@ -159,6 +192,11 @@ describe('Properties: count', () => {
           Test().assert.count('b', 'li', 1),
           e('InteractorError', 'found 3 elements matching li within .list-b but expected 1')
         );
+
+        await assert.rejects(
+          Test().assert.count('item', 1),
+          e('InteractorError', 'found 4 elements matching li but expected 1')
+        );
       });
     });
   });
@@ -169,13 +207,15 @@ describe('Properties: count', () => {
         timeout: 50
       },
 
-      length: count('li')
+      length: count('li'),
+      amount: count()
     });
 
     it('creates a parent bound property', () => {
       assert.equal(Test('.list-a').length, 1);
       assert.equal(Test('.list-b').length, 3);
       assert.equal(Test('.list-c').length, 0);
+      assert.equal(Test('li').amount, 4);
     });
 
     it('creates an associated parent bound assertion', async () => {
@@ -183,6 +223,12 @@ describe('Properties: count', () => {
         Test('.list-b')
           .assert.length(3)
           .assert.not.length(1)
+      );
+
+      await assert.doesNotReject(
+        Test('li')
+          .assert.amount(4)
+          .assert.not.amount(5)
       );
 
       await assert.rejects(
@@ -193,6 +239,11 @@ describe('Properties: count', () => {
       await assert.rejects(
         Test('.list-a').assert.not.length(1),
         e('InteractorError', 'found 1 element matching li within .list-a but expected not to')
+      );
+
+      await assert.rejects(
+        Test('li').assert.amount(3),
+        e('InteractorError', 'found 4 elements matching li but expected 3')
       );
     });
 
@@ -236,13 +287,10 @@ describe('Properties: count', () => {
       });
 
       it('can be awaited on for the value', async () => {
-        await assert.rejects(count('li'), (
-          e('InteractorError', 'an element selector is required when awaiting on properties')
-        ));
-
         assert.equal(await count('.list-a', 'li'), 1);
         assert.equal(await count('.list-b', 'li'), 3);
         assert.equal(await count('.list-c', 'li'), 0);
+        assert.equal(await count('li'), 4);
       });
     });
   });

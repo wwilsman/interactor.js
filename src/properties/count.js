@@ -1,11 +1,36 @@
+import m from '../meta';
 import { assertion } from '../assert';
+import { getPrototypeOf } from '../utils';
 
-export function call(selector) {
-  return this.$$(selector).length;
+// creates an empty interactor to use as the parent when counting instance elements
+function newEmptyInteractor(inst) {
+  let I, proto;
+
+  while ((proto = getPrototypeOf(proto || inst)) !== Object.prototype) {
+    I = proto.constructor;
+  }
+
+  return m.new(I(), 'selector', null);
 }
 
-export const assert = assertion(call, (actual, selector, expected) => ({
-  message: `found ${actual} element${actual === 1 ? '' : 's'} ` +
-    `matching %{@ ${selector}} but expected %{- ${expected}|not to}`,
-  result: actual === expected
-}));
+export function call(selector = '') {
+  let parent = selector && this;
+
+  if (!parent) {
+    ({ parent, selector } = m.get(this));
+    parent = parent || newEmptyInteractor(this);
+  }
+
+  return parent.$$(selector).length;
+}
+
+export const assert = assertion(function(selector, expected = selector) {
+  selector = expected !== selector ? selector : '';
+  let actual = call.call(this, selector);
+
+  return {
+    message: `found ${actual} element${actual === 1 ? '' : 's'} ` +
+      `matching %{@ ${selector}} but expected %{- ${expected}|not to}`,
+    result: actual === expected
+  };
+});
