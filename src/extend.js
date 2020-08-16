@@ -64,7 +64,9 @@ function wrapInteractorProperty(name, fn, getter) {
 
         // execute a nested action or return the result
         if (!m.get(result, 'top') && queue.length && !getter) {
-          return m.top(result).exec(result);
+          while (m.get(result, 'parent')) {
+            result = m.get(result, 'parent').exec(result);
+          }
         }
       }
 
