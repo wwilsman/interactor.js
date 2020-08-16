@@ -35,19 +35,37 @@ function isInteractorClass(klass) {
     'then' in klass.prototype;
 }
 
+function isInteractorDescriptor(prop) {
+  let proto = getPrototypeOf(prop);
+
+  return (proto === Object.prototype || proto == null) &&
+    ('child' in prop || 'call' in prop || 'get' in prop || 'assert' in prop);
+}
+
 function wrapInteractorProperty(name, fn, getter) {
   return {
+    enumerable: true,
     configurable: true,
     [getter ? 'get' : 'value']: named(name, function() {
-      let result = fn.apply(m.new(this, 'top', true), arguments);
+      let top = m.get(this, 'top');
+      // in property contexts, the current instance should always be considered the top instance
+      let result = fn.apply(top ? this : m.new(this, 'top', true), arguments);
       let queue = m.get(result, 'queue');
 
-      // guaranteed to be a unique instance not from the current instance
-      if (queue && !m.eq(this, result)) {
-        // associate the instance with the parent interactor
-        result = m.new(result, 'parent', this);
-        // execute an action or return the result
-        return (queue.length && !getter) ? this.exec(result) : result;
+      if (queue) {
+        // is an instance of the current interactor
+        if (m.eq(this, result)) {
+          // re-apply the proper top value
+          result = m.new(result, 'top', top);
+        } else {
+          // associate the instance with the parent interactor
+          result = m.new(result, 'parent', this);
+        }
+
+        // execute a nested action or return the result
+        if (!m.get(result, 'top') && queue.length && !getter) {
+          return m.top(result).exec(result);
+        }
       }
 
       return result;
@@ -55,38 +73,67 @@ function wrapInteractorProperty(name, fn, getter) {
   };
 }
 
-function defineInteractorProperty(I, name, descr) {
+function defineInteractorProperty(proto, name, descr) {
   let { assert, call, child, get } = descr;
 
   if (get || call || typeof child === 'function') {
-    defineProperty(I.prototype, name, (
+    defineProperty(proto, name, (
       wrapInteractorProperty(name, (get || call || child), !!get)
     ));
   } else if (child) {
-    defineProperty(I.prototype, name, (
+    defineProperty(proto, name, (
       wrapInteractorProperty(name, () => child, true)
     ));
   }
 
   if (assert !== false && (assert || get || call)) {
-    m.set(I.prototype.assert, 'assertions', a => (
-      assign(a ?? {}, { [name]: assert ?? createAssert(name, (get || call)) })
-    ));
+    m.set(proto.assert, 'assertions', {
+      [name]: assert || createAssert(name, (get || call))
+    });
   } else if (child) {
-    m.set(I.prototype.assert, 'children', c => (
-      assign(c, { [name]: child })
-    ));
+    m.set(proto.assert, 'children', {
+      [name]: child
+    });
   }
 
-  return I;
+  return proto;
 }
 
-export function defineInteractorProperties(I, properties) {
-  for (let key in properties) {
-    defineInteractorProperty(I, key, properties[key]);
+export function defineInteractorProperties(proto, properties) {
+  let { assert, interactor, ...descriptors } = getOwnPropertyDescriptors(properties);
+
+  if (assert) {
+    m.set(proto.assert, 'assertions', (
+      map(assert.value, (p, k) => reserved(k) ? null : p)
+    ));
   }
 
-  return I;
+  for (let [key, { get, value }] of entries(descriptors)) {
+    if (reserved(key)) continue;
+    let property;
+
+    if (get) {
+      property = { get };
+    } else if (isInteractorClass(value)) {
+      property = { child: s => value(s) };
+    } else if (typeof value === 'function') {
+      property = { call: value, assert: false };
+    } else if (m.get(value, 'queue')) {
+      property = { child: value };
+    } else if (isInteractorDescriptor(value)) {
+      property = value;
+    }
+
+    if (property && properties.assert?.[key]) {
+      property.assert = false;
+    }
+
+    if (property) {
+      defineInteractorProperty(proto, key, property);
+    }
+  }
+
+  return proto;
 }
 
 // Returns a custom interactor creator using the provided methods, properties, assertions, and
@@ -132,38 +179,8 @@ export default function extend(properties = {}) {
   // assign custom static properties to invoke inherited setters
   assign(Extended, properties.interactor);
 
-  // define own custom assertions
-  if (properties.assert) {
-    m.set(Extended.prototype.assert, 'assertions', a => (
-      assign(a, map(properties.assert, (p, k) => reserved(k) ? null : p))
-    ));
-  }
-
-  // define own custom properties
-  for (let [key, { get, value }] of entries(getOwnPropertyDescriptors(properties))) {
-    if (key === 'assert' || key === 'interactor' || reserved(key)) continue;
-    let property;
-
-    if (get) {
-      property = { get };
-    } else if (isInteractorClass(value)) {
-      property = { child: s => value(s) };
-    } else if (typeof value === 'function') {
-      property = { call: value, assert: false };
-    } else if (m.get(value, 'queue')) {
-      property = { child: value };
-    } else if (getPrototypeOf(value) === Object.prototype) {
-      property = value;
-    }
-
-    if (property && properties.assert?.[key]) {
-      property.assert = false;
-    }
-
-    if (property) {
-      defineInteractorProperty(Extended, key, property);
-    }
-  }
+  // define custom interactor assertions, actions, and properties
+  defineInteractorProperties(Extended.prototype, properties);
 
   return Extended;
 }
