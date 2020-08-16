@@ -35,7 +35,7 @@ export function assertion(get, matcher = get) {
 // the result is a boolean, the error message is reworded to be stateful.
 export function createAssert(name, fn) {
   return named(name, assertion(fn, function(actual, ...args) {
-    let expected = args[args.length - 1];
+    let expected = args[fn.length];
     let message = `%{@} ${name} is "${actual}"`;
     let result = !!actual;
 
@@ -66,6 +66,31 @@ function ctxError() {
   throw error('interactor methods should not be called within assertions');
 }
 
+function mapAssertMethods(assert, expected, ctx, negated = !expected) {
+  return (fn, name) => ({
+    value: (...args) => {
+      return assert(named(
+        `assert${negated ? '.not' : ''}.${name}`,
+        function(...a) {
+          let c = ctx || context(this, expected);
+          c.assert(fn.bind(c, expected, ...args, ...a));
+        }
+      ));
+    }
+  });
+}
+
+function mapAssertChildren(assert, inst, negated) {
+  return (child, name) => ({
+    [typeof child === 'function' ? 'value' : 'get']: named(
+      `assert${negated ? '.not' : ''}.${name}`,
+      (...args) => assert(m.new(typeof child === 'function' ? (
+        child.apply(m.new(inst, 'top', true), args)
+      ) : child, 'parent', inst))
+    )
+  });
+}
+
 function context(i, expected, negated) {
   let proto = i.constructor.prototype;
   let { assertions, children } = m.get(proto.assert);
@@ -91,12 +116,12 @@ function context(i, expected, negated) {
 
   defineProperties(ctx, {
     assert: {
-      // in assert contexts, the assert method executes immediately
-      value: defineProperties(function(f) {
+      value(f) {
         if (m.get(f, 'queue')) {
           return context(f, expected, negated).assert;
         }
 
+        // in assert contexts, the assert method executes immediately
         try { f.apply(this); } catch (err) {
           // bind interactor errors to the instance and expectation
           if (err.name === 'InteractorError') err.bind(this, expected);
@@ -104,24 +129,15 @@ function context(i, expected, negated) {
         }
 
         return this;
-      }, assign(
-        // lazily bind assert properties to an assert context
-        map(assertions, (assertion, name) => ({
-          value: named(`assert.${name}`, (...args) => (
-            ctx.assert(assertion.bind(ctx, expected, ...args))
-          ))
-        })),
-        // bind assert properties to the instance context
-        map(children, (child, name, getter = !!m.get(child, 'queue')) => ({
-          [getter ? 'get' : 'value']: named(`assert.${name}`, (...args) => (
-            ctx.assert(m.new(getter ? child : (
-              child.apply(m.new(i, 'top', true), args)
-            ), 'parent', i))
-          ))
-        }))
-      ))
+      }
     }
   });
+
+  // lazily bind assert properties to assert contexts
+  defineProperties(ctx.assert, assign(
+    map(assertions, mapAssertMethods(f => f(), expected, ctx, negated)),
+    map(children, mapAssertChildren(ctx.assert, i, negated))
+  ));
 
   if (!negated) {
     // lazily create a negated context
@@ -138,7 +154,7 @@ export default function InteractorAssert(i, expected = true) {
   let { assertions, children } = m.get(passert);
 
   // create an instance bound assert
-  let assert = defineProperties(function assert(f) {
+  let assert = function assert(f) {
     if (m.get(f, 'queue')) {
       return InteractorAssert(f, expected);
     }
@@ -160,27 +176,15 @@ export default function InteractorAssert(i, expected = true) {
       // used to determine invoking the interactor element
       length: { value: f.length }
     }));
-  }, assign(
-    // lazily bind assert properties to an assert context
-    map(assertions, (assertion, name) => ({
-      value: (...args) => {
-        return passert.call(i, named(`assert.${name}`, function() {
-          let ctx = context(this, expected);
-          ctx.assert(assertion.bind(ctx, expected, ...args));
-        }));
-      }
-    })),
-    // bind assert properties to the instance context
-    map(children, (child, name, getter = !!m.get(child, 'queue')) => ({
-      [getter ? 'get' : 'value']: named(`assert.${name}`, (...args) => (
-        assert(m.new(getter ? child : (
-          child.apply(m.new(i, 'top', true), args)
-        ), 'parent', i))
-      ))
-    }))
+  };
+
+  // lazily bind assert properties to assert contexts
+  defineProperties(assert, assign(
+    map(assertions, mapAssertMethods(passert.bind(i), expected)),
+    map(children, mapAssertChildren(assert, i, !expected))
   ));
 
-  // Do not apply these properties to negated instances
+  // do not apply these properties to negated instances
   if (expected) {
     defineProperties(assert, {
       // lazily create a negated instance
@@ -191,15 +195,15 @@ export default function InteractorAssert(i, expected = true) {
       // persist previous assertions once passing
       remains: {
         value: function remains(ms = 500) {
-          return m.new(i, 'queue', q => {
-            if (q[q.length - 1]?.type !== 'assert') {
-              throw error('no previous assertion to persist');
-            }
+          let q = m.get(i, 'queue');
 
-            return q.concat({
-              type: 'assert',
-              remains: ms
-            });
+          if (q[q.length - 1]?.type !== 'assert') {
+            throw error('no previous assertion to persist');
+          }
+
+          return m.new(i, 'queue', {
+            type: 'assert',
+            remains: ms
           });
         }
       }
