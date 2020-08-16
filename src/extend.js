@@ -39,7 +39,7 @@ function isInteractorDescriptor(prop) {
   let proto = getPrototypeOf(prop);
 
   return (proto === Object.prototype || proto == null) &&
-    ('child' in prop || 'call' in prop || 'get' in prop || 'assert' in prop);
+    ('child' in prop || 'value' in prop || 'get' in prop || 'assert' in prop);
 }
 
 function wrapInteractorProperty(name, fn, getter) {
@@ -74,11 +74,11 @@ function wrapInteractorProperty(name, fn, getter) {
 }
 
 function defineInteractorProperty(proto, name, descr) {
-  let { assert, call, child, get } = descr;
+  let { assert, child, get, value } = descr;
 
-  if (get || call || typeof child === 'function') {
+  if (get || value || typeof child === 'function') {
     defineProperty(proto, name, (
-      wrapInteractorProperty(name, (get || call || child), !!get)
+      wrapInteractorProperty(name, (get || value || child), !!get)
     ));
   } else if (child) {
     defineProperty(proto, name, (
@@ -86,9 +86,9 @@ function defineInteractorProperty(proto, name, descr) {
     ));
   }
 
-  if (assert !== false && (assert || get || call)) {
+  if (assert !== false && (assert || get || value)) {
     m.set(proto.assert, 'assertions', {
-      [name]: assert || createAssert(name, (get || call))
+      [name]: assert || createAssert(name, (get || value))
     });
   } else if (child) {
     m.set(proto.assert, 'children', {
@@ -117,7 +117,7 @@ export function defineInteractorProperties(proto, properties) {
     } else if (isInteractorClass(value)) {
       property = { child: s => value(s) };
     } else if (typeof value === 'function') {
-      property = { call: value, assert: false };
+      property = { value, assert: false };
     } else if (m.get(value, 'queue')) {
       property = { child: value };
     } else if (isInteractorDescriptor(value)) {

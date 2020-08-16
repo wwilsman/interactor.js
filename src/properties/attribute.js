@@ -1,3 +1,3 @@
-export function call(attr) {
+export function value(attr) {
   return this.$().getAttribute(attr);
 }

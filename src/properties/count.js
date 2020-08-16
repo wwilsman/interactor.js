@@ -13,7 +13,7 @@ function newEmptyInteractor(inst) {
   return m.new(I(), 'selector', null);
 }
 
-export function call(selector = '') {
+export function value(selector = '') {
   let parent = selector && this;
 
   if (!parent) {
@@ -26,7 +26,7 @@ export function call(selector = '') {
 
 export const assert = assertion(function(selector, expected = selector) {
   selector = expected !== selector ? selector : '';
-  let actual = call.call(this, selector);
+  let actual = value.call(this, selector);
 
   return {
     message: `found ${actual} element${actual === 1 ? '' : 's'} ` +

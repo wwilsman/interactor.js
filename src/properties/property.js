@@ -11,7 +11,7 @@ const LAYOUT_PROPS = [
   'clientHeight'
 ];
 
-export function call(prop) {
+export function value(prop) {
   if (LAYOUT_PROPS.includes(prop)) {
     hasLayoutEngine(this, 'Layout');
   }

@@ -188,7 +188,7 @@ describe('InteractorAssert', () => {
       get false() { return false; },
       get simple() { return 'foo'; },
       get compound() { return `${this.simple}bar`; },
-      func: { call: (a, b) => `${a} ${b}` }
+      func: { value: (a, b) => `${a} ${b}` }
     });
 
     it('automatically creates assertions for getters and property descriptors', () => {

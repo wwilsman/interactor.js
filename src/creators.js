@@ -16,15 +16,15 @@ assign(exports, map(actions, (action, name) => {
 }));
 
 // turn interactor properties into property creators
-assign(exports, map(properties, ({ get, call, assert }, name) => {
+assign(exports, map(properties, ({ get, value, assert }, name) => {
   return named(name, (...args) => {
-    let selector = get || (call && args.length > call.length) ? args.shift() : '';
-    let assertion = assert || createAssert(name, get || call);
+    let selector = get || (value && args.length > value.length) ? args.shift() : '';
+    let assertion = assert || createAssert(name, get || value);
     let ctx = i => selector ? i.find(selector) : i;
 
     let thennable = when(() => {
       if (!selector) throw error('an element selector is required when awaiting on properties');
-      return (get || call).apply(Interactor(selector), args);
+      return (get || value).apply(Interactor(selector), args);
     });
 
     return {
@@ -32,7 +32,7 @@ assign(exports, map(properties, ({ get, call, assert }, name) => {
       catch: thennable.catch,
 
       get() {
-        return (get || call).apply(ctx(this), args);
+        return (get || value).apply(ctx(this), args);
       },
 
       assert(expected, ...a) {
