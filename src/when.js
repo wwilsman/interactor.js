@@ -6,9 +6,9 @@ import { assign, now } from './utils';
 // returns a thennable function that runs the assertion when called or awaited on.
 export default function when(assertion, { timeout = 2000, interval = 10, remains } = {}) {
   let then = (...handlers) => new Promise((resolve, reject) => (
-    function retry(t, r) {
+    async function retry(t, r) {
       try {
-        let ret = assertion();
+        let ret = await assertion();
 
         if (remains && (!r || now() - r <= remains)) {
           setTimeout(retry, interval, t, r || now());

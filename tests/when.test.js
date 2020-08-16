@@ -20,11 +20,13 @@ describe('Utility: when', () => {
   });
 
   it('rejects when the timeout has been exceeded', async () => {
-    await assert.rejects(
-      when(() => assert(++count > 9), { timeout: 80 })
-    );
-
+    await assert.rejects(when(() => assert(++count > 9), { timeout: 80 }));
     assert(count < 10);
+  });
+
+  it('can be called with an async function', async () => {
+    assert.equal(await when(async () => Promise.resolve(10)), 10);
+    await assert.rejects(when(async () => Promise.reject(new Error())));
   });
 
   it('calls the function at an interval', async () => {
