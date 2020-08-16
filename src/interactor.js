@@ -1,4 +1,3 @@
-import InteractorKeyboard from './keyboard';
 import InteractorAssert from './assert';
 import InteractorError from './error';
 import when from './when';
@@ -34,10 +33,10 @@ export default function Interactor(selector, properties) {
   }
 
   m.set(this, {
-    timeout: this.constructor.timeout,
     selector: this.constructor.selector(selector),
-    keyboard: InteractorKeyboard(),
+    timeout: this.constructor.timeout,
     interval: 10,
+    keyboard: {},
     queue: [],
     top: true
   });
@@ -112,7 +111,6 @@ defineProperties(Interactor, {
   }
 });
 
-// define core methods
 assign(Interactor.prototype, {
   // Return a child element or the interactor element when no selector is provided.
   $(selector) {
@@ -147,12 +145,10 @@ assign(Interactor.prototype, {
 
   // Adds an assertion to the next interactor instance's queue.
   assert(assertion) {
-    return m.new(this, 'queue', q => {
-      return q.concat({
-        type: 'assert',
-        fn: assertion,
-        ctx: this
-      });
+    return m.new(m.top(this), 'queue', {
+      type: 'assert',
+      fn: assertion,
+      ctx: this
     });
   },
 
@@ -160,25 +156,28 @@ assign(Interactor.prototype, {
   // is provided, those actions are appended to the next topmost interactor queue as child actions
   // and the next topmost interactor instance is returned.
   exec(callback) {
-    let iq = m.get(callback, 'queue');
+    if (m.get(callback, 'queue')) {
+      let { queue, keyboard } = m.get(callback);
 
-    return m.new(this, 'queue', q => {
-      return q.concat(iq ? (
-        iq.map(a => assign({}, a, {
-          ctx: m.new(a.ctx, 'parent', this)
-        }))
-      ) : {
+      queue = queue.map(a => assign({}, a, {
+        ctx: m.new(a.ctx, 'parent', this)
+      }));
+
+      return m.new(m.top(this), { keyboard, queue });
+    } else {
+      return m.new(m.top(this), 'queue', {
         type: 'exec',
         fn: callback,
         ctx: this
       });
-    });
+    }
   },
 
   // Adds an error handler to the next interactor instance's queue.
   catch(handler) {
     if (typeof handler === 'string') {
       let message = handler;
+
       handler = err => {
         if (err.name === 'InteractorError') {
           throw err.format(message);
@@ -188,12 +187,10 @@ assign(Interactor.prototype, {
       };
     }
 
-    return m.new(this, 'queue', q => {
-      return q.concat({
-        type: 'catch',
-        fn: handler,
-        ctx: this
-      });
+    return m.new(m.top(this), 'queue', {
+      type: 'catch',
+      fn: handler,
+      ctx: this
     });
   },
 
@@ -271,5 +268,7 @@ assign(Interactor.prototype, {
 });
 
 // define built-in actions and properties
-assign(Interactor.prototype, actions);
-defineInteractorProperties(Interactor, properties);
+defineInteractorProperties(
+  Interactor.prototype,
+  assign({}, actions, properties)
+);
