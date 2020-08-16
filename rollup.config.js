@@ -5,15 +5,12 @@ import pkg from './package.json';
 
 export default {
   input: 'src/index.js',
-  output: [{
+  output: {
     format: 'umd',
     exports: 'named',
     name: 'Interactor',
     file: pkg.main
-  }, {
-    format: 'module',
-    file: pkg.module
-  }],
+  },
   plugins: [
     commonjs(),
     resolve(),
