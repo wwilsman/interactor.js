@@ -4,7 +4,8 @@ import {
   freeze,
   now,
   random,
-  round
+  round,
+  map
 } from './utils';
 
 // Symbol used to reference interactor metadata.
@@ -23,33 +24,39 @@ const m = {
   // set multiple values. If given a key-value pair, and the value is a function, it will be called
   // with the previous metadata and the return value will become the new metadata.
   set(inst, key, val) {
-    let meta = typeof key === 'string' ? {
-      [key]: typeof val === 'function'
-        ? val(m.get(inst, key)) : val
-    } : key;
+    if (typeof key === 'string') {
+      return m.set(inst, { [key]: val });
+    }
 
     return defineProperty(inst, sym, {
+      enumerable: false,
+      configurable: true,
       // frozen to prevent accidental mutation
       value: freeze(assign({
         // will be overridden with any existing ID; used to determine interactor uniqueness across
         // chained instances to avoid interactor collisions
         id: round(random() * now())
-      }, m.get(inst), meta)),
-      configurable: true,
-      enumerable: false
+      }, m.get(inst), map(key, (next, key) => {
+        let prev = m.get(inst, key);
+
+        switch (key) {
+          case 'queue':
+            return (prev || []).concat(next);
+          case 'keyboard':
+          case 'assertions':
+          case 'children':
+            return assign({}, prev, next);
+          default:
+            return next;
+        }
+      }, {})))
     });
   },
 
-  // Retrieve the topmost parent instance.
-  top(inst) {
-    let top = inst;
-
-    // allow augmenting top level instances while preserving parent relationships
-    while (!m.get(top, 'top') && m.get(top, 'parent')) {
-      top = m.get(top, 'parent');
-    }
-
-    return top;
+  // Retrieve the contextual top parent instance.
+  top(inst, topmost) {
+    let { top, parent } = m.get(inst);
+    return !parent || (!topmost && top) ? inst : m.top(parent);
   },
 
   // Returns a new instance with copied and additional metadata. Setting the queue will set it on
@@ -58,17 +65,9 @@ const m = {
   new(inst, key, val) {
     if (key === 'parent') {
       return m.new(inst, { parent: val, top: false });
+    } else {
+      return m.set(m.set(new inst.constructor(), m.get(inst)), key, val);
     }
-
-    if (key === 'queue' && !m.eq(m.top(inst), inst)) {
-      return m.new(m.top(inst), key, q => (
-        val(q.concat(m.get(inst, 'queue')))
-      ));
-    }
-
-    return m.set((
-      m.set(new inst.constructor(), m.get(inst))
-    ), key, val);
   },
 
   // Returns true when two instances have the same metadata ID
