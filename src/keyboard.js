@@ -9,10 +9,12 @@ export function execKey(inst, key, exec, press) {
   let def = DEFINITIONS[key];
   if (!def) throw error(`unknown key \`${key}\``);
 
-  // execute the provided function with the element and parsed key
-  let next = inst.exec(function($element) {
-    exec.call(this, $element, parseKey(this, key));
-  });
+  let next = inst
+    .assert.exists()
+    .exec(function($element) {
+      // execute the provided function with the element and parsed key
+      exec.call(this, $element, parseKey(this, key));
+    });
 
   // maybe track pressed keys
   if (press != null) {
