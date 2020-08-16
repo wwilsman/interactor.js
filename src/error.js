@@ -3,7 +3,8 @@ import {
   defineProperties
 } from './utils';
 
-const regexDF = /%\{(.*?)\}/g; // regex directive format
+const regexDF = /%{((?:%{.*?}|.)*?)}/g; // regex directive format
+const regexNS = /^(true|false|undefined|null|[\d.,]+|\[.*\]|\{.*\})$/; // regex non-string values
 const regexES = /\s{2,}/g; // regex extra-spaces
 
 // Formats interactor error messages with specific directives.
@@ -11,17 +12,23 @@ function format(message, inst, expected) {
   return message
     // directive format: %{<directive> <arg>}
     .replace(regexDF, (_, f) => {
-      let i = f.indexOf(' ');
-      let directive = ~i ? f.substr(0, i) : f;
-      let arg = ~i ? f.substr(i + 1) : '';
+      let arg = f.substr(1).trim();
 
-      switch (directive) {
+      // recersively format any nested directives
+      if (regexDF.test(arg)) {
+        arg = format(arg, inst, expected);
+      }
+
+      switch (f[0]) {
         // %{@ <sel>} -> friendly interactor name with optional child selector
         case '@':
           return arg ? `${arg} within ${inst}` : inst.toString();
         // %{- <t>|<f>} -> use <t> when expecting a success, <f> otherwise
         case '-':
           return arg.split('|')[expected ? 0 : 1] || '';
+        // %{" <val>} -> quote values that look like strings
+        case '"':
+          return !regexNS.test(arg) ? `"${arg}"` : arg;
         // remove unknown directives
         default:
           return '';

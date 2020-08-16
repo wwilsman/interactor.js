@@ -88,7 +88,7 @@ describe('Properties: attribute', () => {
 
         await assert.rejects(
           Test().assert.bar.attribute('data-test', 'baz'),
-          e('InteractorError', '.bar data-test is "null" but expected "baz"')
+          e('InteractorError', '.bar data-test is null but expected "baz"')
         );
       });
 
