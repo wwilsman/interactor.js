@@ -41,6 +41,10 @@ describe('Interactor.extend', () => {
       assert: {
         passing() {},
         failing() { throw Error('fail'); }
+      },
+
+      foo: {
+        assert() {}
       }
     });
 
@@ -54,14 +58,17 @@ describe('Interactor.extend', () => {
     assert.equal(typeof Test().assert.passing, 'function');
     assert.equal(typeof Test().assert.failing, 'function');
     assert.equal(typeof Test().assert.something, 'function');
+    assert.equal(typeof Test().assert.foo, 'function');
     assert.equal(typeof Test().assert.nested, 'function');
     assert.equal(typeof Test().assert.nested.passing, 'function');
     assert.equal(typeof Test().assert.nested.failing, 'function');
     assert.equal(typeof Test().assert.nested.something, 'undefined');
+    assert.equal(typeof Test().assert.nested.foo, 'function');
     assert.equal(typeof Test().assert.custom, 'function');
     assert.equal(typeof Test().assert.custom().passing, 'function');
     assert.equal(typeof Test().assert.custom().failing, 'function');
     assert.equal(typeof Test().assert.custom().something, 'undefined');
+    assert.equal(typeof Test().assert.custom().foo, 'function');
   });
 
   it('has properties that cannot be overridden', async () => {
