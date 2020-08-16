@@ -35,12 +35,13 @@ export function assertion(get, matcher = get) {
 // the result is a boolean, the error message is reworded to be stateful.
 export function createAssert(name, fn) {
   return named(name, assertion(fn, function(actual, ...args) {
-    let expected = args[fn.length];
-    let message = `%{@} ${name} is "${actual}"`;
+    let what = fn?.length ? args[0] : name;
+    let message = `%{@} ${what} is %{"${actual}}`;
+    let expected = args[fn?.length || 0];
     let result = !!actual;
 
     if (expected != null) {
-      message += ` but expected %{- "${expected}"|it not to be}`;
+      message += ` but expected %{- %{"${expected}}|it not to be}`;
 
       // allow regular expression comparisons to strings
       if (typeof actual === 'string' && expected instanceof RegExp) {
@@ -54,7 +55,7 @@ export function createAssert(name, fn) {
         result = actual === expected;
       }
     } else if (typeof actual === 'boolean') {
-      message = `%{@} is %{- not} ${name}`;
+      message = `%{@} is %{- not} ${what}`;
     }
 
     return { message, result };

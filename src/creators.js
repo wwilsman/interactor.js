@@ -19,7 +19,7 @@ assign(exports, map(actions, (action, name) => {
 assign(exports, map(properties, ({ get, call, assert }, name) => {
   return named(name, (...args) => {
     let selector = get || (call && args.length > call.length) ? args.shift() : '';
-    let assertion = assert || createAssert(name, get/* || call - unused */);
+    let assertion = assert || createAssert(name, get || call);
     let ctx = i => selector ? i.find(selector) : i;
 
     let thennable = when(() => {

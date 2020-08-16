@@ -1,4 +1,3 @@
-import { assertion } from '../assert';
 import { hasLayoutEngine } from '../dom';
 
 const LAYOUT_PROPS = [
@@ -19,8 +18,3 @@ export function call(prop) {
 
   return this.$()[prop];
 }
-
-export const assert = assertion(call, (actual, prop, expected) => ({
-  message: `%{@} ${prop} is "${actual}" but expected %{- "${expected}"|it not to be}`,
-  result: actual === expected
-}));

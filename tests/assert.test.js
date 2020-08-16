@@ -250,7 +250,7 @@ describe('InteractorAssert', () => {
 
       await assert.rejects(
         Test('test').assert.func('foo', 'bar', 'foobar'),
-        e('InteractorError', 'test func is "foo bar" but expected "foobar"')
+        e('InteractorError', 'test foo is "foo bar" but expected "foobar"')
       );
     });
 
