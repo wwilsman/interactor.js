@@ -159,17 +159,5 @@ describe('Actions: keydown', () => {
       assert.equal(event.count, 5);
       assert.equal(event.$el.value, '1a!A');
     });
-
-    it('inverts character case when shift is pressed', async () => {
-      let event = listen('.input', 'keydown');
-
-      await Interactor('.input')
-        .keydown('Shift')
-        .keydown('f')
-        .keydown('O');
-
-      assert.equal(event.count, 3);
-      assert.equal(event.$el.value, 'Fo');
-    });
   });
 });

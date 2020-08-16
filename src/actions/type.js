@@ -1,3 +1,4 @@
+import { parseKey } from '../keyboard';
 import { exec as press } from './press';
 import { dispatch } from '../dom';
 
@@ -11,7 +12,7 @@ export default function type(text, { range, delay, change } = {}) {
     // loop over each character
     for (let i = 0, l = text.length; i < l; i++) {
       // for the first char replace the range; otherwise insert after the previous char
-      press.call(this, $element, text[i], (
+      press($element, parseKey(this, text[i]), (
         range && (i === 0 ? range : range[0] + i)
       ));
 
