@@ -2,6 +2,14 @@
 title: Getting Started
 ---
 
+## What is interactor.js?
+
+Interactors will work anywhere they can access the DOM. They can automatically wait for elements to
+exist before interacting with them, buttons to not be disabled before clicking, inputs to be
+focusable before typing, etc.
+
+## Installing
+
 Install interactor.js using `yarn`:
 
 ``` session
@@ -14,12 +22,10 @@ Or `npm`:
 $ npm install --save-dev interactor.js
 ```
 
-## What is interactor.js?
+## Using Interactors
 
-Interactors will work anywhere they can access the DOM. They can automatically wait for elements to
-exist before interacting with them, buttons to not be disabled before clicking, inputs to be
-focusable before typing, etc. The most basic interactors can be created with [interactor
-actions](/actions).
+Interactors will execute any queued actions when awaited on. Some basic actions can be created with
+[interactor action creators](/actions).
 
 ``` javascript
 import { focus, type, blur, click } from 'interactor.js';
@@ -58,7 +64,7 @@ await login('email@domain.tld', 'hunter2');
 
 ## Composing Interactors
 
-Interactors can be composed with other interactors, which will be scoped to the parent
+Interactors can also be composed with other interactors, which will be scoped to the parent
 interactor. Using the interactor methods [`exec`](/api/exec) and [`find`](/api/find), we can keep
 simplifying the above example even further.
 
@@ -76,8 +82,9 @@ await login('email@domain.tld', 'hunter2');
 
 ## Custom Interactors
 
-Custom interactors can be created for specific components using [`extend`](/api/extend). These
-interactors can then become the building blocks of tests and automations.
+Rather than defining reusable actions, custom interactors can be defined for specific components
+using [`extend`](/api/extend). These interactors can then become the building blocks of tests and
+automations.
 
 ``` javascript
 import Interactor, { focus } from 'interactor.js';
