@@ -8,21 +8,8 @@ export default function type(text, { range, delay, change } = {}) {
   return this
     .assert.exists()
     .exec(async function($element) {
-      // normalize the range as an array
-      range = range != null && [].concat(range);
-
-      // loop over each character
-      for (let i = 0, l = text.length; i < l; i++) {
-        // for the first char replace the range; otherwise insert after the previous char
-        press($element, k.parse(this, text[i]), (
-          range && (i === 0 ? range : range[0] + i)
-        ));
-
-        // delay between presses if needed
-        if (delay && i !== text.length - 1) {
-          await new Promise(r => setTimeout(r, delay));
-        }
-      }
+      let parsed = [...text].map(c => k.parse(this, c));
+      await press($element, parsed, range, delay);
 
       // trigger change events for form elements
       if (change && (/^(input|textarea)$/i).test($element.tagName)) {

@@ -25,6 +25,31 @@ describe('Actions: press', () => {
     assert.equal(uEvent.count, 1);
   });
 
+  it('can handle an array of keys to press sequentially', async () => {
+    let dEvent = listen('.input', 'keydown');
+    let uEvent = listen('.input', 'keyup');
+
+    await press('.input', ['f', 'o', 'o']);
+
+    assert.equal(dEvent.count, 3);
+    assert.equal(uEvent.count, 3);
+    assert.equal(uEvent.$el.value, 'foo');
+
+    let delta = Date.now();
+    await press('.input', ['b', 'a', 'r'], { delay: 50 });
+    delta = Date.now() - delta;
+
+    assert.equal(dEvent.count, 6);
+    assert.equal(uEvent.count, 6);
+    assert.equal(uEvent.$el.value, 'foobar');
+
+    assert(delta > 100, (
+      new assert.AssertionError({
+        message: `100 < ${delta}`
+      })
+    ));
+  });
+
   it('can be called with an interactor selector', async () => {
     let Test = Interactor.extend({
       foo: () => press('', 'f')
