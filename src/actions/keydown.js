@@ -1,4 +1,4 @@
-import { execKey } from '../keyboard';
+import k from '../keyboard';
 import { dispatch } from '../dom';
 
 import {
@@ -67,7 +67,11 @@ export function exec($element, parsed, range) {
 
 // Interactor method to add a keydown action to the interactor's queue.
 export default function keydown(key, { range } = {}) {
-  return execKey(this, key, ($element, parsed) => {
-    exec($element, parsed, range);
-  }, true);
+  return k.press(key, true, (
+    this
+      .assert.exists()
+      .exec(function($element) {
+        exec($element, k.parse(this, key), range);
+      })
+  ));
 }

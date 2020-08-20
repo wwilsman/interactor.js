@@ -1,4 +1,4 @@
-import { execKey } from '../keyboard';
+import k from '../keyboard';
 import { exec as keydown } from './keydown';
 import { exec as keyup } from './keyup';
 
@@ -12,7 +12,9 @@ export function exec($element, parsed, range) {
 // Interactor method to add a press action to the interactor's queue which will trigger keydown and
 // keyup events for a specified key.
 export default function press(key, { range } = {}) {
-  return execKey(this, key, ($element, parsed) => {
-    exec($element, parsed, range);
-  });
+  return this
+    .assert.exists()
+    .exec(async function($element) {
+      await exec($element, k.parse(this, key), range);
+    });
 }

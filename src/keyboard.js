@@ -2,62 +2,60 @@ import m from './meta';
 import error from './error';
 import { assign, entries } from './utils';
 
-// Update the interactor instance's keyboard configuration and execute a function with the
-// interactor element and parsed key definition
-export function execKey(inst, key, exec, press) {
-  // look up key definition
-  let def = DEFINITIONS[key];
-  if (!def) throw error(`unknown key \`${key}\``);
+// Keyboard namespace
+const k = {
 
-  let next = inst
-    .assert.exists()
-    .exec(function($element) {
-      // execute the provided function with the element and parsed key
-      exec.call(this, $element, parseKey(this, key));
+  // Returns a key definition from the definitions list below.
+  def(key) {
+    let def = DEFINITIONS[key];
+    if (!def) throw error(`unknown key \`${key}\``);
+    return def;
+  },
+
+  // Update the interactor instance's keyboard configuration
+  press(key, active, next) {
+    return m.new(next, 'keyboard', {
+      [k.def(key).code]: active
     });
+  },
 
-  // maybe track pressed keys
-  if (press != null) {
-    return m.new(next, 'keyboard', { [def.code]: press });
-  } else {
-    return next;
+  // Returns a key definition's parsed text and event details
+  parse(inst, key) {
+    let pressed = m.get(m.top(inst, true), 'keyboard');
+    let def = k.def(key);
+
+    let {
+      // check if any modifiers are pressed
+      Alt: altKey = def.key === 'Alt' || false,
+      Control: ctrlKey = def.key === 'Control' || false,
+      Meta: metaKey = def.key === 'Meta' || false,
+      Shift: shiftKey = def.key === 'Shift' || false
+    } = entries(pressed).reduce((m, [c, v]) => assign(m, {
+      [DEFINITIONS[c].key]: v || null
+    }), {});
+
+    // normalize event values and fallback to defaults
+    let event = {
+      code: def.code,
+      location: def.location || 0,
+      repeat: pressed[def.code] || false,
+      key: (shiftKey && def.shiftKey) || def.key,
+      keyCode: (shiftKey && def.shiftKeyCode) || def.keyCode,
+      // eslint-disable-next-line object-property-newline
+      altKey, ctrlKey, metaKey, shiftKey
+    };
+
+    // when other modifiers are pressed no text should be sent
+    let text = (!(altKey || ctrlKey || metaKey) && (
+      // single letter keys become text or fallback to defined or no text
+      (event.key.length === 1) ? event.key : def.text
+    )) || '';
+
+    return { text, event };
   }
-}
+};
 
-// Helper to normalize a key definition from the definitions list below.
-export function parseKey(inst, key) {
-  let pressed = m.get(m.top(inst, true), 'keyboard');
-  let def = DEFINITIONS[key];
-
-  let {
-    // check if any modifiers are pressed
-    Alt: altKey = def.key === 'Alt' || false,
-    Control: ctrlKey = def.key === 'Control' || false,
-    Meta: metaKey = def.key === 'Meta' || false,
-    Shift: shiftKey = def.key === 'Shift' || false
-  } = entries(pressed).reduce((m, [c, v]) => assign(m, {
-    [DEFINITIONS[c].key]: v || null
-  }), {});
-
-  // normalize event values and fallback to defaults
-  let event = {
-    code: def.code,
-    location: def.location || 0,
-    repeat: pressed[def.code] || false,
-    key: (shiftKey && def.shiftKey) || def.key,
-    keyCode: (shiftKey && def.shiftKeyCode) || def.keyCode,
-    // eslint-disable-next-line object-property-newline
-    altKey, ctrlKey, metaKey, shiftKey
-  };
-
-  // when other modifiers are pressed no text should be sent
-  let text = (!(altKey || ctrlKey || metaKey) && (
-    // single letter keys become text or fallback to defined or no text
-    (event.key.length === 1) ? event.key : def.text
-  )) || '';
-
-  return { text, event };
-}
+export default k;
 
 /* eslint-disable quote-props */
 const DEFINITIONS = {
