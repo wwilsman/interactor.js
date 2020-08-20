@@ -78,6 +78,30 @@ describe('Actions: type', () => {
     assert.equal(eEvent.$el.textContent, 'bar');
   });
 
+  it('can trigger a focus event before and a blur event after typing', async () => {
+    let fEvent = listen('.input', 'focus');
+    let iEvent = listen('.input', 'input');
+    let bEvent = listen('.input', 'blur');
+
+    await type('.input', 'fill');
+
+    assert.equal(fEvent.count, 1, 'fEvent');
+    assert.equal(iEvent.count, 4, 'iEvent');
+    assert.equal(bEvent.count, 1, 'bEvent');
+    assert.equal(iEvent.$el.value, 'fill');
+
+    await type('.input', 'oo', {
+      range: [1, 4],
+      focus: false,
+      blur: false
+    });
+
+    assert.equal(fEvent.count, 1, 'fEvent');
+    assert.equal(iEvent.count, 6, 'iEvent');
+    assert.equal(bEvent.count, 1, 'bEvent');
+    assert.equal(iEvent.$el.value, 'foo');
+  });
+
   it('does not insert text into an element that does not accept input', async () => {
     let eEvent = listen('.contenteditable', 'input');
     let dEvent = listen('.just-a-div', 'input');
