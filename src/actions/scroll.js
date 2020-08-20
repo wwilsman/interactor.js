@@ -2,7 +2,7 @@ import error from '../error';
 import { dispatch } from '../dom';
 
 export default function scroll(options = {}) {
-  let result = this;
+  let next = this;
 
   let {
     top = options.y,
@@ -16,14 +16,14 @@ export default function scroll(options = {}) {
   }
 
   if (left != null) {
-    result = result.assert.scrollableX();
+    next = next.assert.scrollableX();
   }
 
   if (top != null) {
-    result = result.assert.scrollableY();
+    next = next.assert.scrollableY();
   }
 
-  return result.exec($el => {
+  return next.exec($el => {
     for (let i = 1; i <= frequency; i++) {
       let cancelled = false;
 
