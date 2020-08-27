@@ -2,11 +2,7 @@ import { assert, e, fixture } from 'tests/helpers';
 import Interactor, { value } from 'interactor.js';
 
 describe('Properties: value', () => {
-  const Test = Interactor.extend({
-    interactor: {
-      timeout: 50
-    }
-  });
+  const Test = Interactor.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -75,11 +71,7 @@ describe('Properties: value', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         assert: {
           value(expected, ab, val) {
             this[ab].assert.value(val);
@@ -133,11 +125,7 @@ describe('Properties: value', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({
-      interactor: {
-        timeout: 50
-      },
-
+    const Test = Interactor.extend({ timeout: 50 }, {
       val: value()
     });
 
@@ -165,11 +153,7 @@ describe('Properties: value', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         a: value('.input-a'),
         b: value('.input-b')
       });

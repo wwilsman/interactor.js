@@ -2,11 +2,7 @@ import { assert, e, fixture } from 'tests/helpers';
 import Interactor, { attribute } from 'interactor.js';
 
 describe('Properties: attribute', () => {
-  const Test = Interactor.extend({
-    interactor: {
-      timeout: 50
-    }
-  });
+  const Test = Interactor.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -57,11 +53,7 @@ describe('Properties: attribute', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         assert: {
           attribute(expected, foobar, attr, val) {
             this[foobar].assert.attribute(attr, val);
@@ -115,11 +107,7 @@ describe('Properties: attribute', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({
-      interactor: {
-        timeout: 50
-      },
-
+    const Test = Interactor.extend({ timeout: 50 }, {
       data: attribute('data-test')
     });
 
@@ -146,11 +134,7 @@ describe('Properties: attribute', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         foo: attribute('.foo', 'data-test')
       });
 

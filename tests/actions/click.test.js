@@ -55,9 +55,7 @@ describe('Actions: click', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.btn-a', 'click');
-      let Test = Interactor.extend({
-        interactor: { selector: '.btn-a' }
-      });
+      let Test = Interactor.extend({ selector: '.btn-a' }, {});
 
       assert.typeOf(Interactor('.btn-a').click, 'function');
       assert.instanceOf(Interactor('.btn-a').click(), Interactor);
@@ -75,8 +73,7 @@ describe('Actions: click', () => {
       let event = listen('.btn-a', 'click');
       let called = false;
 
-      let Test = Interactor.extend({
-        interactor: { selector: '.btn-a' },
+      let Test = Interactor.extend({ selector: '.btn-a' }, {
         click: () => (called = true)
       });
 

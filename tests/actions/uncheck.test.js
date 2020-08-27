@@ -96,9 +96,7 @@ describe('Actions: uncheck', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.check-a', 'click');
-      let Test = Interactor.extend({
-        interactor: { selector: '.check-a' }
-      });
+      let Test = Interactor.extend({ selector: '.check-a' }, {});
 
       assert.typeOf(Interactor('.check-a').uncheck, 'function');
       assert.instanceOf(Interactor('.check-a').uncheck(), Interactor);
@@ -116,8 +114,7 @@ describe('Actions: uncheck', () => {
       let event = listen('.check-a', 'click');
       let called = false;
 
-      let Test = Interactor.extend({
-        interactor: { selector: '.check-a' },
+      let Test = Interactor.extend({ selector: '.check-a' }, {
         uncheck: () => (called = true)
       });
 

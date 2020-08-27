@@ -40,9 +40,7 @@ describe('Actions: keyup', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.input', 'keyup');
-      let Test = Interactor.extend({
-        interactor: { selector: '.input' }
-      });
+      let Test = Interactor.extend({ selector: '.input' }, {});
 
       assert.typeOf(Interactor('.input').keyup, 'function');
       assert.instanceOf(Interactor('.input').keyup('a'), Interactor);
@@ -76,8 +74,7 @@ describe('Actions: keyup', () => {
       let event = listen('.input', 'keyup');
       let called = false;
 
-      let Test = Interactor.extend({
-        interactor: { selector: '.input' },
+      let Test = Interactor.extend({ selector: '.input' }, {
         keyup: () => (called = true)
       });
 

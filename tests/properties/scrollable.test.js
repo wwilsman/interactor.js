@@ -3,11 +3,9 @@ import Interactor, { scrollable, scrollableX, scrollableY } from 'interactor.js'
 
 describe('Properties: scrollable', () => {
   const Test = Interactor.extend({
-    interactor: {
-      timeout: 50,
-      suppressLayoutEngineWarning: true
-    }
-  });
+    timeout: 50,
+    suppressLayoutEngineWarning: true
+  }, {});
 
   beforeEach(() => {
     fixture(`
@@ -175,11 +173,7 @@ describe('Properties: scrollable', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         assert: {
           scrollable(expected, xy) {
             this[xy].assert.scrollable();
@@ -258,11 +252,7 @@ describe('Properties: scrollable', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({
-      interactor: {
-        timeout: 50
-      },
-
+    const Test = Interactor.extend({ timeout: 50 }, {
       x: scrollableX(),
       y: scrollableY(),
       any: scrollable()
@@ -304,11 +294,7 @@ describe('Properties: scrollable', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         X: scrollableX('.overflow.x'),
         Xy: scrollableY('.overflow.x'),
         Y: scrollableY('.overflow.y'),

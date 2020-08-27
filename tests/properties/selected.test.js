@@ -2,11 +2,7 @@ import { assert, e, fixture } from 'tests/helpers';
 import Interactor, { selected } from 'interactor.js';
 
 describe('Properties: selected', () => {
-  const Test = Interactor.extend({
-    interactor: {
-      timeout: 50
-    }
-  });
+  const Test = Interactor.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -67,11 +63,7 @@ describe('Properties: selected', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         assert: {
           selected(expected, n) {
             this.assert.options(n).selected();
@@ -136,11 +128,7 @@ describe('Properties: selected', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({
-      interactor: {
-        timeout: 50
-      },
-
+    const Test = Interactor.extend({ timeout: 50 }, {
       chosen: selected()
     });
 
@@ -170,11 +158,7 @@ describe('Properties: selected', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         one: selected('.opt-1'),
         two: selected('.opt-2')
       });

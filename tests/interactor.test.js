@@ -562,13 +562,13 @@ describe('Interactor', () => {
     });
 
     it('references custom interactor names', () => {
-      let Custom = Interactor.extend({ interactor: { name: 'element' } });
+      let Custom = Interactor.extend({ name: 'element' }, {});
       assert.equal(Custom('.bar').toString(), '.bar element');
 
       let CustomInherit = Custom.extend();
       assert.equal(CustomInherit('.bar').toString(), '.bar element');
 
-      let CustomOverride = Custom.extend({ interactor: { name: 'qux' } });
+      let CustomOverride = Custom.extend({ name: 'qux' }, {});
       assert.equal(CustomOverride('.baz').toString(), '.baz qux');
     });
 

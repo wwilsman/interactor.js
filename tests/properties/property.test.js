@@ -2,11 +2,7 @@ import { assert, e, fixture, jsdom, mockConsole } from 'tests/helpers';
 import Interactor, { property } from 'interactor.js';
 
 describe('Properties: property', () => {
-  const Test = Interactor.extend({
-    interactor: {
-      timeout: 50
-    }
-  });
+  const Test = Interactor.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -89,11 +85,7 @@ describe('Properties: property', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         assert: {
           property(expected, foobar, prop, val) {
             this[foobar].assert.property(prop, val);
@@ -147,11 +139,7 @@ describe('Properties: property', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({
-      interactor: {
-        timeout: 50
-      },
-
+    const Test = Interactor.extend({ timeout: 50 }, {
       title: property('title'),
       tagName: property('tagName')
     });
@@ -186,11 +174,7 @@ describe('Properties: property', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         foo: property('.foo', 'title'),
         para: property('.para', 'tagName')
       });

@@ -2,11 +2,7 @@ import { assert, e, fixture } from 'tests/helpers';
 import Interactor, { focusable } from 'interactor.js';
 
 describe('Properties: focusable', () => {
-  const Test = Interactor.extend({
-    interactor: {
-      timeout: 50
-    }
-  });
+  const Test = Interactor.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -79,11 +75,7 @@ describe('Properties: focusable', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         assert: {
           focusable(expected, input, heading) {
             this.assert.input(input).focusable();
@@ -161,11 +153,7 @@ describe('Properties: focusable', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({
-      interactor: {
-        timeout: 50
-      },
-
+    const Test = Interactor.extend({ timeout: 50 }, {
       blurrable: focusable()
     });
 
@@ -195,11 +183,7 @@ describe('Properties: focusable', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         a: focusable('.input-a'),
         b: focusable('.input-b')
       });

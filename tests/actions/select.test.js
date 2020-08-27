@@ -116,9 +116,7 @@ describe('Actions: select', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.sel-a', 'change');
-      let Test = Interactor.extend({
-        interactor: { selector: '.sel-a' }
-      });
+      let Test = Interactor.extend({ selector: '.sel-a' }, {});
 
       assert.typeOf(Interactor('.sel-a').select, 'function');
       assert.instanceOf(Interactor('.sel-a').select('.opt-2'), Interactor);
@@ -136,8 +134,7 @@ describe('Actions: select', () => {
       let event = listen('.sel-a', 'change');
       let called = false;
 
-      let Test = Interactor.extend({
-        interactor: { selector: '.sel-a' },
+      let Test = Interactor.extend({ selector: '.sel-a' }, {
         select: () => (called = true)
       });
 

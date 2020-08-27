@@ -2,11 +2,7 @@ import { assert, e, fixture } from 'tests/helpers';
 import Interactor, { disabled } from 'interactor.js';
 
 describe('Properties: disabled', () => {
-  const Test = Interactor.extend({
-    interactor: {
-      timeout: 50
-    }
-  });
+  const Test = Interactor.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -57,11 +53,7 @@ describe('Properties: disabled', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         assert: {
           disabled(expected, ab) {
             this[ab].assert.disabled();
@@ -111,11 +103,7 @@ describe('Properties: disabled', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({
-      interactor: {
-        timeout: 50
-      },
-
+    const Test = Interactor.extend({ timeout: 50 }, {
       off: disabled()
     });
 
@@ -145,11 +133,7 @@ describe('Properties: disabled', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         a: disabled('.btn-a'),
         b: disabled('.btn-b')
       });

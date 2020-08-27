@@ -17,14 +17,12 @@ describe('Interactor.extend', () => {
 
   it('can define static interactor options', () => {
     let Test = Interactor.extend({
-      interactor: {
-        name: 'bar',
-        selector: 'foo',
-        timeout: 1000,
-        dom: () => 'dom',
-        foobar: 'bazqux'
-      }
-    });
+      name: 'bar',
+      selector: 'foo',
+      timeout: 1000,
+      dom: () => 'dom',
+      foobar: 'bazqux'
+    }, {});
 
     assert.equal(Test.name, 'bar');
     assert.equal(Test.selector(), 'foo');
@@ -88,7 +86,6 @@ describe('Interactor.extend', () => {
     });
 
     assert.deepEqual(mock.warn.calls, [
-      '`interactor` is a reserved property and will be ignored',
       '`assert` is a reserved property and will be ignored',
       '`remains` is a reserved property and will be ignored',
       '`not` is a reserved property and will be ignored',

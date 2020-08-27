@@ -15,7 +15,7 @@ import {
 
 // Used to ignore reserved properties
 const RESERVED_PROPERTIES = [
-  'interactor', '$', '$$',
+  '$', '$$',
   'assert', 'remains', 'not',
   'exec', 'catch', 'then'
 ];
@@ -102,7 +102,7 @@ function defineInteractorProperty(proto, name, descr) {
 }
 
 export function defineInteractorProperties(proto, properties) {
-  let { assert, interactor, ...descriptors } = getOwnPropertyDescriptors(properties);
+  let { assert, ...descriptors } = getOwnPropertyDescriptors(properties);
 
   if (assert) {
     m.set(proto.assert, 'assertions', (
@@ -144,7 +144,8 @@ export function defineInteractorProperties(proto, properties) {
 // during interactor creation when binding assert methods. Options, such as the default constructor
 // selector and interactor name, may be defined by providing an `interactor` property, which will
 // not be applied to the final interactor creator.
-export default function extend(properties = {}) {
+export default function extend(options = {}, properties = options) {
+  if (options === properties) options = null;
   let Parent = this;
 
   function Extended(selector, props) {
@@ -169,17 +170,14 @@ export default function extend(properties = {}) {
         assert: {
           value: m.set(function() {
             return Parent.prototype.assert.apply(this, arguments);
-          }, {
-            assertions: assign({}, m.get(Parent.prototype.assert, 'assertions')),
-            children: assign({}, m.get(Parent.prototype.assert, 'children'))
-          })
+          }, m.get(Parent.prototype.assert))
         }
       })
     }
   }));
 
-  // assign custom static properties to invoke inherited setters
-  assign(Extended, properties.interactor);
+  // assign options as static properties to invoke setters
+  assign(Extended, options);
 
   // define custom interactor assertions, actions, and properties
   defineInteractorProperties(Extended.prototype, properties);

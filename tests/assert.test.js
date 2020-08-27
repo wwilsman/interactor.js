@@ -2,11 +2,7 @@ import { assert, e } from 'tests/helpers';
 import Interactor, { assertion } from 'interactor.js';
 
 describe('InteractorAssert', () => {
-  const Test = Interactor.extend({
-    interactor: {
-      timeout: 50
-    }
-  });
+  const Test = Interactor.extend({ timeout: 50 }, {});
 
   it('is unique per interactor instance', () => {
     assert.notEqual(
@@ -179,11 +175,7 @@ describe('InteractorAssert', () => {
   });
 
   describe('auto assertions', () => {
-    const Test = Interactor.extend({
-      interactor: {
-        timeout: 50
-      },
-
+    const Test = Interactor.extend({ timeout: 50 }, {
       get true() { return true; },
       get false() { return false; },
       get simple() { return 'foo'; },

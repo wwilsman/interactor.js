@@ -58,9 +58,7 @@ describe('Actions: blur', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.heading', 'blur');
-      let Test = Interactor.extend({
-        interactor: { selector: '.heading' }
-      });
+      let Test = Interactor.extend({ selector: '.heading' }, {});
 
       assert.typeOf(Interactor('.heading').blur, 'function');
       assert.instanceOf(Interactor('.heading').blur(), Interactor);
@@ -81,8 +79,7 @@ describe('Actions: blur', () => {
       let event = listen('.heading', 'blur');
       let called = false;
 
-      let Test = Interactor.extend({
-        interactor: { selector: '.heading' },
+      let Test = Interactor.extend({ selector: '.heading' }, {
         blur: () => (called = true)
       });
 

@@ -24,10 +24,8 @@ describe('Actions: scroll', () => {
     describe('jsdom', () => {
       const mock = mockConsole();
       const Test = Interactor.extend({
-        interactor: {
-          suppressLayoutEngineWarning: true
-        }
-      });
+        suppressLayoutEngineWarning: true
+      }, {});
 
       it('throws an overflow error for all elements', async () => {
         await assert.rejects(
@@ -174,9 +172,7 @@ describe('Actions: scroll', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.overflow.y', 'scroll');
-      let Test = Interactor.extend({
-        interactor: { selector: '.overflow.y' }
-      });
+      let Test = Interactor.extend({ selector: '.overflow.y' }, {});
 
       assert.typeOf(Interactor('.overflow.y').scroll, 'function');
       assert.instanceOf(Interactor('.overflow.y').scroll({ top: 10 }), Interactor);
@@ -195,8 +191,7 @@ describe('Actions: scroll', () => {
       let event = listen('.overflow.y', 'scroll');
       let called = false;
 
-      let Test = Interactor.extend({
-        interactor: { selector: '.btn-a' },
+      let Test = Interactor.extend({ selector: '.btn-a' }, {
         scroll: () => (called = true)
       });
 

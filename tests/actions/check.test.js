@@ -105,9 +105,7 @@ describe('Actions: check', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.radio-a', 'click');
-      let Test = Interactor.extend({
-        interactor: { selector: '.radio-a' }
-      });
+      let Test = Interactor.extend({ selector: '.radio-a' }, {});
 
       assert.typeOf(Interactor('.radio-a').check, 'function');
       assert.instanceOf(Interactor('.radio-a').check(), Interactor);
@@ -126,8 +124,7 @@ describe('Actions: check', () => {
       let event = listen('.check-a', 'click');
       let called = false;
 
-      let Test = Interactor.extend({
-        interactor: { selector: '.check-a' },
+      let Test = Interactor.extend({ selector: '.check-a' }, {
         check: () => (called = true)
       });
 

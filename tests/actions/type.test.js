@@ -182,9 +182,7 @@ describe('Actions: type', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.input', 'input');
-      let Test = Interactor.extend({
-        interactor: { selector: '.input' }
-      });
+      let Test = Interactor.extend({ selector: '.input' }, {});
 
       assert.typeOf(Interactor('.input').type, 'function');
       assert.instanceOf(Interactor('.input').type('foo'), Interactor);
@@ -217,8 +215,7 @@ describe('Actions: type', () => {
       let event = listen('.input', 'input');
       let called = false;
 
-      let Test = Interactor.extend({
-        interactor: { selector: '.input' },
+      let Test = Interactor.extend({ selector: '.input' }, {
         type: () => (called = true)
       });
 

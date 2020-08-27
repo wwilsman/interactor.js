@@ -3,11 +3,9 @@ import Interactor, { text } from 'interactor.js';
 
 describe('Properties: text', () => {
   const Test = Interactor.extend({
-    interactor: {
-      timeout: 50,
-      suppressLayoutEngineWarning: true
-    }
-  });
+    timeout: 50,
+    suppressLayoutEngineWarning: true
+  }, {});
 
   beforeEach(() => {
     fixture(`

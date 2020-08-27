@@ -2,11 +2,7 @@ import { assert, e, fixture } from 'tests/helpers';
 import Interactor, { count } from 'interactor.js';
 
 describe('Properties: count', () => {
-  const Test = Interactor.extend({
-    interactor: {
-      timeout: 50
-    }
-  });
+  const Test = Interactor.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -124,11 +120,7 @@ describe('Properties: count', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         assert: {
           count(expected, ab, ...args) {
             this[ab].assert.count(...args);
@@ -202,11 +194,7 @@ describe('Properties: count', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({
-      interactor: {
-        timeout: 50
-      },
-
+    const Test = Interactor.extend({ timeout: 50 }, {
       length: count('li'),
       amount: count()
     });
@@ -248,11 +236,7 @@ describe('Properties: count', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         a: count('.list-a', 'li'),
         b: count('.list-b', 'li'),
         c: count('.list-c', 'li')

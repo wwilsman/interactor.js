@@ -35,9 +35,7 @@ describe('Selectors', () => {
     });
 
     it('can be used as an interactor selector function', () => {
-      let Test = Interactor.extend({
-        interactor: { selector: by.xpath }
-      });
+      let Test = Interactor.extend({ selector: by.xpath }, {});
 
       assert.equal(
         Test('.//ul').$(),
@@ -69,9 +67,7 @@ describe('Selectors', () => {
     });
 
     it('can be used as an interactor selector function', () => {
-      let Test = Interactor.extend({
-        interactor: { selector: by.text }
-      });
+      let Test = Interactor.extend({ selector: by.text }, {});
 
       assert.equal(
         Test('Item').$(),
@@ -115,8 +111,8 @@ describe('Selectors', () => {
 
     it('can be used within an interactor selector function', () => {
       let Test = Interactor.extend({
-        interactor: { selector: n => by.nth(n, '.list li') }
-      });
+        selector: n => by.nth(n, '.list li')
+      }, {});
 
       assert.equal(
         Test(1).$(),

@@ -2,11 +2,7 @@ import { assert, e, fixture } from 'tests/helpers';
 import Interactor, { matches } from 'interactor.js';
 
 describe('Properties: matches', () => {
-  const Test = Interactor.extend({
-    interactor: {
-      timeout: 50
-    }
-  });
+  const Test = Interactor.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -56,11 +52,7 @@ describe('Properties: matches', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         assert: {
           matches(expected, sel) {
             this.foo.assert.matches(sel);
@@ -109,11 +101,7 @@ describe('Properties: matches', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({
-      interactor: {
-        timeout: 50
-      },
-
+    const Test = Interactor.extend({ timeout: 50 }, {
       foo: matches('.foo'),
       bar: matches('.bar')
     });
@@ -142,11 +130,7 @@ describe('Properties: matches', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({
-        interactor: {
-          timeout: 50
-        },
-
+      const Test = Interactor.extend({ timeout: 50 }, {
         foo: matches('.div', '.foo'),
         bar: matches('.div', '.bar')
       });

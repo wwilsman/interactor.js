@@ -41,9 +41,7 @@ describe('Actions: trigger', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.test', 'foo');
-      let Test = Interactor.extend({
-        interactor: { selector: '.test' }
-      });
+      let Test = Interactor.extend({ selector: '.test' }, {});
 
       assert.typeOf(Interactor('.test').trigger, 'function');
       assert.instanceOf(Interactor('.test').trigger('foo'), Interactor);
@@ -61,8 +59,7 @@ describe('Actions: trigger', () => {
       let event = listen('.test', 'foo');
       let called = false;
 
-      let Test = Interactor.extend({
-        interactor: { selector: '.test' },
+      let Test = Interactor.extend({ selector: '.test' }, {
         trigger: () => (called = true)
       });
 

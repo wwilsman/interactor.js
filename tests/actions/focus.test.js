@@ -36,10 +36,7 @@ describe('Actions: focus', () => {
     `);
 
     let $f = document.querySelector('.test-frame');
-
-    let Frame = Interactor.extend({
-      interactor: { dom: () => $f.contentWindow }
-    });
+    let Frame = Interactor.extend({ dom: () => $f.contentWindow }, {});
 
     await focus(Frame('.input-f'));
 
@@ -88,8 +85,8 @@ describe('Actions: focus', () => {
     ));
 
     let Frame = Interactor.extend({
-      interactor: { dom: () => $f.contentWindow }
-    });
+      dom: () => $f.contentWindow
+    }, {});
 
     await assert.rejects(
       focus(Frame('.input-f')).timeout(50),
@@ -118,9 +115,7 @@ describe('Actions: focus', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.input-a', 'focus');
-      let Test = Interactor.extend({
-        interactor: { selector: '.input-a' }
-      });
+      let Test = Interactor.extend({ selector: '.input-a' }, {});
 
       assert.typeOf(Interactor('.input-a').focus, 'function');
       assert.instanceOf(Interactor('.input-a').focus(), Interactor);
@@ -139,8 +134,7 @@ describe('Actions: focus', () => {
       let event = listen('.input-a', 'focus');
       let called = false;
 
-      let Test = Interactor.extend({
-        interactor: { selector: '.input-a' },
+      let Test = Interactor.extend({ selector: '.input-a' }, {
         focus: () => (called = true)
       });
 
