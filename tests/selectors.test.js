@@ -7,7 +7,7 @@ describe('Selectors', () => {
       <ul class="list">
         <li>Item</li>
         <li>Item</li>
-        <li>Item</li>
+        <li>Item 3</li>
       </ul>
     `);
   });
@@ -47,15 +47,15 @@ describe('Selectors', () => {
   describe('by.text(string)', () => {
     it('can select an element by text', () => {
       assert.equal(
-        Interactor(by.text('Item')).$(),
-        document.querySelector('.list li')
+        Interactor(by.text('Item', '.list li')).$(),
+        document.querySelector('.list li:nth-child(1)')
       );
     });
 
     it('can select multiple elements by text', () => {
       assert.deepEqual(
-        Interactor('.list').$$(by.text('Item')),
-        Array.from(document.querySelectorAll('.list li'))
+        Interactor('.list').$$(by.text('Item', 'li')),
+        Array.from(document.querySelectorAll('.list li:not(:last-child)'))
       );
     });
 
@@ -70,8 +70,8 @@ describe('Selectors', () => {
       let Test = Interactor.extend({ selector: by.text }, {});
 
       assert.equal(
-        Test('Item').$(),
-        document.querySelector('.list li')
+        Test('Item 3').$(),
+        document.querySelector('.list li:nth-child(3)')
       );
     });
   });

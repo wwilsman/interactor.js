@@ -23,10 +23,24 @@ export function xpath(path) {
 }
 
 // Selector creator using an element's text.
-export function text(string, xsel = '*') {
-  return assign((
-    xpath(`.//${xsel}[normalize-space()="${string}"]`)
-  ), {
+export function text(string, selector = '*') {
+  return assign(($node, multiple) => {
+    let result;
+
+    for (let $el of $node.querySelectorAll(selector)) {
+      let text = $el.innerText ?? $el.textContent;
+
+      if (text === string) {
+        if (multiple) {
+          result = (result || []).concat($el);
+        } else {
+          return $el;
+        }
+      }
+    }
+
+    return result;
+  }, {
     toString: () => `"${string}"`
   });
 }
