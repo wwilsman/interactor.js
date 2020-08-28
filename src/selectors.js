@@ -45,8 +45,16 @@ export function text(string, selector = '*') {
   });
 }
 
-// Selector creator for nth-child or nth-of-type
+// Selector creator for nth-child, nth-last-child, nth-of-type, and nth-last-of-type
 export function nth(n, selector, of = 'child') {
+  let isInt = Number.isInteger(n);
+  let last = isInt && n < 0;
+
+  if (last) {
+    of = `last-${of}`;
+    n = Math.abs(n);
+  }
+
   return assign(($node, multiple) => {
     let sel = `${selector}:nth-${of}(${n})`;
 
@@ -55,10 +63,10 @@ export function nth(n, selector, of = 'child') {
       : $node.querySelector(sel);
   }, {
     toString: () => {
-      if (!/^\d+$/.test(n)) return `the nth(${n}) ${selector} ${of}`;
+      if (!isInt) return `the nth(${n}) ${selector}`;
       let teen = Array.from(`${n}`).reverse()[1] === '1';
       let th = (!teen && ['', 'st', 'nd', 'rd'][n % 10]) || 'th';
-      return `the ${n}${th} ${selector} ${of}`;
+      return `the ${n}${th} ${last ? 'last' : ''} ${selector}`;
     }
   });
 }

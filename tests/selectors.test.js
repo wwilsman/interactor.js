@@ -95,17 +95,22 @@ describe('Selectors', () => {
     it('formats errors from nth selectors', () => {
       assert.throws(
         () => Interactor('.list').$(by.nth(15, 'li')),
-        e('InteractorError', 'could not find the 15th li child within .list')
+        e('InteractorError', 'could not find the 15th li within .list')
       );
 
       assert.throws(
         () => Interactor('.list').$(by.nth(2, 'div')),
-        e('InteractorError', 'could not find the 2nd div child within .list')
+        e('InteractorError', 'could not find the 2nd div within .list')
       );
 
       assert.throws(
         () => Interactor('.list').$(by.nth('n+10', 'li')),
-        e('InteractorError', 'could not find the nth(n+10) li child within .list')
+        e('InteractorError', 'could not find the nth(n+10) li within .list')
+      );
+
+      assert.throws(
+        () => Interactor('.list').$(by.nth(-5, 'li')),
+        e('InteractorError', 'could not find the 5th last li within .list')
       );
     });
 
