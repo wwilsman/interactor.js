@@ -2,14 +2,6 @@
 title: Getting Started
 ---
 
-## What is interactor.js?
-
-Interactors will work anywhere they can access the DOM. They can automatically wait for elements to
-exist before interacting with them, buttons to not be disabled before clicking, inputs to be
-focusable before typing, etc.
-
-## Installing
-
 Install interactor.js using `yarn`:
 
 ``` session
@@ -22,86 +14,90 @@ Or `npm`:
 $ npm install --save-dev interactor.js
 ```
 
-## Using Interactors
+## Interactor Actions and Properties
 
-Interactors will execute any queued actions when awaited on. Some basic actions can be created with
-[interactor action creators](/actions).
+Interactors will work anywhere they have access to the DOM. Actions and properties can be awaited on
+to execute an action on an element or to return an element's property value. For example, we can
+type into an input with the [`type`](/actions/type) action, check for a matching class with the
+[`matches`](/properties/matches) property, or click on a button with the [`click`](/actions/click)
+action.
 
 ``` javascript
-import { focus, type, blur, click } from 'interactor.js';
+import { type, matches, click } from 'interactor.js';
 
-await focus('.email');
+// all actions wait for the element to exist
 await type('.email', 'email@domain.tld');
-await blur('.email');
 
-await focus('.password');
+// properties can be used in tests or automations
+let isValid = await matches('.email', '.is-valid');
+
+// some actions also wait for other criteria, such as for the element to not be disabled
 await type('.password', 'hunter2');
-await blur('.password');
-
 await click('.submit');
 ```
 
-## Interactor Actions
+Many other [actions](/actions) and [properties](/properties) are also included with
+interactor.js. Custom actions can be created by returning interactors from custom functions.
 
-All actions return interactors, and all actions are also available as interactor methods. The above
-can be simplified into a few distinct resuable actions.
+## Chaining and Nesting Interactors
+
+In addition to a few core methods, all actions and properties are also available as interactor
+methods and properties. One of the core methods, [`find`](/api/find), can be used to nest actions
+scoped to specific elements.
 
 ``` javascript
-import { focus, click } from 'interactor.js';
+import Interactor from 'interactor.js';
 
-const fillEmail = val => focus('.email').type(val).blur();
-const fillPassword = val => focus('.password').type(val).blur();
-const clickSubmit = () => click('.submit');
-
-async function login(email, password) {
-  await fillEmail(email);
-  await fillPassword(password);
-  await clickSubmit();
+// create a login action
+function login(email, password) {
+  return Interactor('.login')
+    .find('.email').type(email)
+    .find('.password').type(password)
+    .find('.submit').click()
 }
 
 await login('email@domain.tld', 'hunter2');
 ```
 
-## Composing Interactors
-
-Interactors can also be composed with other interactors, which will be scoped to the parent
-interactor. Using the interactor methods [`exec`](/api/exec) and [`find`](/api/find), we can keep
-simplifying the above example even further.
+Another core method, [`exec`](/api/exec), can also be used to nest actions scoped to specific
+elements by composing other interactor instances. A callback may be provided instead, which will be
+executed with the current element when the interactor is awaited on.
 
 ``` javascript
-import Interactor, { focus } from 'interactor.js';
+import Interactor, { type, click } from 'interactor.js';
 
-const fill = (sel, val) => focus(sel).type(val).blur();
-const login = (email, password) => Interactor('.login')
-  .exec(fill('.email', email))
-  .exec(fill('.password', password))
-  .find('.submit').click()
+// create a logging action
+function log(selector) {
+  return Interactor(selector)
+    .exec($element => console.log($element));
+}
 
-await login('email@domain.tld', 'hunter2');
+// used as is
+await log('.some-element');
+
+// or compose with exec
+await Interactor('.login')
+  .find('.email').type('email@domain.tld')
+  .exec(log('.email'))
 ```
 
-## Custom Interactors
+## Creating Interactors
 
-Rather than defining reusable actions, custom interactors can be defined for specific components
-using [`extend`](/api/extend). These interactors can then become the building blocks of tests and
-automations.
+Custom interactors can be defined for specific components using [`extend`](/api/extend). These
+interactors can then become the building blocks of tests and automations.
 
 ``` javascript
 import Interactor, { focus } from 'interactor.js';
 
-const Input = Interactor.extend({
-  fill: val => focus().type(val).blur()
-});
-
 const Login = Interactor.extend({
-  email: Input('.email'),
-  password: Input('.password'),
+  email: Interactor('.email'),
+  password: Interactor('.password'),
   submit: Interactor('.submit')
 });
 
 await Login()
-  .email.fill('email@domain.tld')
-  .password.fill('hunter2')
+  .email.type('email@domain.tld')
+  .password.type('hunter2')
   .submit.click();
 ```
 

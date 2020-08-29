@@ -15,6 +15,7 @@ added to the list. We can facilitate creating a new todo using both the [`type`]
 assert that the input is cleared after adding a todo.
 
 ``` javascript
+// extend(properties)
 const NewTodoInput = Interactor.extend({
   add(text) {
     return this.type(text).press('Enter');
@@ -31,37 +32,31 @@ button. When you double click on an item to edit, an input is displayed and take
 the input or pressing enter updates the todo item's label.
 
 Interactor provides a helper to select elements by text, which will be helpful for selecting our
-todo items. We can also provide an interactor selector option that will be used when querying for
-the interactor element (see [`extend`](/api/extend) docs for API details). Various properties can
-also be defined using [property](/properties) and [action](/actions) creators.
+todo items. We can also provide interactor options to the extend function, including a selector
+option that will be used when querying for the interactor element (see [`extend`](/api/extend) docs
+for API details). Various properties can also be defined using [property](/properties) and
+[action](/actions) creators.
 
 ``` javascript
-import Interactor, { by, text, click, matches } from 'interactor.js';
+import Interactor, { by, click, matches, text, type } from 'interactor.js';
 
+// extend(options, properties)
 const TodoItem = Interactor.extend({
-  interactor: {
-    // select list elements from the .todo-list by the provided text
-    selector: text => $el => by.text(text, 'li')(
-      $el.querySelector('.todo-list')
-    )
-  },
-
+  selector: text => by.text(text, '.list-item li')
+}, {
   label: text('label'),
   toggle: () => click('.toggle'),
   completed: matches('.completed'),
   delete: () => click('.destroy'),
   edit: () => click().click(),
-  update: (text) => Interactor('.edit')
-    // replace the previous value
-    .type(text, { range: [0, -1] })
-    .blur()
+  update: val => type('.edit', val, { replace: true })
 });
 ```
 
 We can now use either of these interactors in our tests to interact with and make assertions against
-those components. For making assertions, you can use the getter properties with any assertion library,
+those components. For making assertions, you can use getter properties with any assertion library,
 or you can utilize interactor's built in assertions. Interactor assertions can be chained with
-actions and run asynchronously, passing when the assertion doesn't fail within a timeout.
+actions and run asynchronously, passing when the assertions do not fail within a timeout.
 
 ``` javascript
 await NewTodoInput('.new-todo')
@@ -92,11 +87,15 @@ remaining (incomplete) todo items, a set of filters, and a clear completed butto
 
 ``` javascript
 const TodoList = Interactor.exted({
+  // interactors can be nested within each other
   newTodo: NewTodoInput('.new-todo'),
+
+  // interactor creator methods will return nested instances
   todoItem: TodoItem,
+
   toggleAll: () => click('.toggle-all'),
   incomplete: text('.todo-count'),
-  filter: (name) => Interactor('.filters').find(by.text(name)).click(),
+  filter: (name) => click(by.text(name, '.filters li')),
   clearCompleted: click('.clear-completed')
 });
 ```
@@ -142,6 +141,6 @@ await TodoList()
   .assert.todoItem('Item C').not.exists()
 ```
 
-All getters defined in `extend` will get an auto generated assertion as well. You can customize
-or add additional assertions using the `assert` option. See [Making Assertions](/making-assertions)
-for more details on interactor assertions.
+All property getters defined in `extend` will get auto generated assertions. You can customize or
+add additional assertions via an `assert` property descriptor. See [Making
+Assertions](/making-assertions) for more details on interactor assertions.
