@@ -4,10 +4,10 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  margin: 0 auto;
+  margin: 2rem auto 0;
 
   h1 {
-    max-width: 60ch;
+    max-width: 40ch;
     font-size: 1.6em;
     line-height: 2;
     font-weight: 400;

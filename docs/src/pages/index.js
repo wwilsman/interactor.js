@@ -26,13 +26,12 @@ export default function HomePage({ location }) {
 
       <Hero
         heading={(
-          <><strong>interactor.js</strong> is a
-            composable, immutable, asynchronous library for interacting with
-            elements the way a user would.</>
+          <><strong>interactor.js</strong> is an asynchronous and
+            composable library for interacting with DOM elements.</>
         )}
         subheading={(
-          <>It works alongside browser DOM to produce blazingly fast
-            interactions and assertions.</>
+          <>It works in any browser, with any framework, to produce
+            blazingly fast automations and tests.</>
         )}
         ctas={[
           { text: 'Getting Started', url: '/getting-started' },
