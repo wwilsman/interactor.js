@@ -1,7 +1,7 @@
 import k from '../keyboard';
 import { dispatch } from '../dom';
 import { exec as press } from './press';
-import { maybeFocusDocument } from './focus';
+import { exec as focusElement } from './focus';
 import { get as focused } from '../properties/focused';
 
 // Interactor method to add a type action to the interactor's queue which will trigger keydown,
@@ -18,8 +18,7 @@ export default function type(text, {
     .exec(async function($element) {
       // maybe focus the element
       if (focus && !focused.call(this)) {
-        maybeFocusDocument(this);
-        $element.focus();
+        focusElement($element);
       }
 
       // type the text by pressing each key
