@@ -16,10 +16,10 @@ function jsdomCaptureFocus(e) {
 }
 
 // In jsdom, the dom is not automatically focused and window.focus() is not implemented;
-// additionally, even though the body has a default tabIndex of -1, jsdom will not focus the body
+// additionally, even though the body has a default tabindex of -1, jsdom will not focus the body
 // unless it has an explicit tabindex attribute.
 function jsdomFocusDocument(doc) {
-  doc.body.setAttribute('tabIndex', -1);
+  doc.body.setAttribute('tabindex', -1);
   doc.body.focus();
 };
 
