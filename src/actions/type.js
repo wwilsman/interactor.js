@@ -8,6 +8,7 @@ import { get as focused } from '../properties/focused';
 // input, and keyup events, for each character in the provied text string.
 export default function type(text, {
   range,
+  replace,
   delay,
   focus = true,
   blur = true,
@@ -23,7 +24,7 @@ export default function type(text, {
 
       // type the text by pressing each key
       let parsed = [...text].map(c => k.parse(this, c));
-      await press($element, parsed, range, delay);
+      await press($element, parsed, { range, replace, delay });
 
       // trigger change events for input and textarea elements
       if (change && (/^(input|textarea)$/i).test($element.tagName)) {

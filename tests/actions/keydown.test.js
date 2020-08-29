@@ -46,6 +46,15 @@ describe('Actions: keydown', () => {
     assert.equal(event.$el.value, 'foo');
   });
 
+  it('can replace values entirely', async () => {
+    let event = listen('.input', 'keydown');
+    event.$el.value = 'foobar';
+
+    await keydown('.input', 'a', { replace: true });
+
+    assert.equal(event.$el.value, 'a');
+  });
+
   it('does not enter text for elements that cannot accept input', async () => {
     let eEvent = listen('.contenteditable', 'keydown');
     let dEvent = listen('.just-a-div', 'keydown');

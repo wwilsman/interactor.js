@@ -7,7 +7,7 @@ describe('Actions: type', () => {
       <input class="input"/>
       <textarea class="textarea"></textarea>
       <div class="contenteditable" contenteditable></div>
-      <div class="just-a-div"></div>
+      <div class="just-a-div" tabindex="0"></div>
     `);
   });
 
@@ -45,6 +45,15 @@ describe('Actions: type', () => {
 
     assert.equal(event.count, 4);
     assert.equal(event.$el.value, 'footest');
+  });
+
+  it('can replace values entirely', async () => {
+    let event = listen('.input', 'keydown');
+    event.$el.value = 'foo';
+
+    await type('.input', 'bar', { replace: true });
+
+    assert.equal(event.$el.value, 'bar');
   });
 
   it('can delay key presses', async () => {

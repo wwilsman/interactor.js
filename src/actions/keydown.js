@@ -8,7 +8,7 @@ import {
 } from '../utils';
 
 // Shared function to trigger a parsed keydown event and type resulting text into the element.
-export function exec($element, parsed, range) {
+export function exec($element, parsed, { range, replace }) {
   let { text: char, event } = parsed;
   let cancelled = !dispatch($element, 'keydown', event);
 
@@ -35,7 +35,7 @@ export function exec($element, parsed, range) {
   if (!cancelled) {
     // get the current value and range
     let value = isInput ? $element.value : $element.textContent;
-    range = range || value.length;
+    range = replace ? [0, value.length] : (range || value.length);
 
     // adjust the range if backspace or delete was pressed
     if (typeof range === 'number') {
@@ -66,12 +66,12 @@ export function exec($element, parsed, range) {
 }
 
 // Interactor method to add a keydown action to the interactor's queue.
-export default function keydown(key, { range } = {}) {
+export default function keydown(key, options = {}) {
   return k.press(key, true, (
     this
       .assert.exists()
       .exec(function($element) {
-        exec($element, k.parse(this, key), range);
+        exec($element, k.parse(this, key), options);
       })
   ));
 }
