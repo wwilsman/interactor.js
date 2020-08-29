@@ -1,7 +1,9 @@
 import error from '../error';
 
 export function get() {
-  return !this.disabled && !!~this.$().tabIndex;
+  return !this.disabled && !!(
+    ~this.$().tabIndex || this.$().isContentEditable
+  );
 }
 
 export function assert(expected) {
