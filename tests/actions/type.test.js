@@ -56,6 +56,16 @@ describe('Actions: type', () => {
     assert.equal(event.$el.value, 'bar');
   });
 
+  it('can replace any existing selected text range', async () => {
+    let event = listen('.input', 'keydown');
+    event.$el.value = 'foobar';
+    event.$el.setSelectionRange(3, 6);
+
+    await type('.input', 'foo');
+
+    assert.equal(event.$el.value, 'foofoo');
+  });
+
   it('can delay key presses', async () => {
     let time = Date.now();
     let delta = 0;

@@ -7,6 +7,38 @@ import {
   getOwnPropertyDescriptor
 } from '../utils';
 
+// Returns any selected text range
+function getTextRange($element) {
+  let win = $element.ownerDocument.defaultView;
+
+  // input elements have dedicated properties
+  if ('selectionStart' in $element) {
+    return [$element.selectionStart, $element.selectionEnd];
+  }
+
+  // for content-editable elements, the range needs to be calculated
+  let sel = win.getSelection();
+
+  if (sel.containsNode($element, true) ||
+      // jsdom returns false for the above if the selection is within the element
+      $element.contains(sel.anchorNode) || $element.contains(sel.focusNode)) {
+    let range = sel.getRangeAt(0);
+    let caretRange = range.cloneRange();
+    caretRange.selectNodeContents($element);
+
+    caretRange.setEnd(range.startContainer, range.startOffset);
+    let start = caretRange.toString().length;
+
+    caretRange.setEnd(range.endContainer, range.endOffset);
+    let end = caretRange.toString().length;
+
+    // only return the range when there is one
+    if (start || end) {
+      return [start, end];
+    }
+  }
+}
+
 // Shared function to trigger a parsed keydown event and type resulting text into the element.
 export function exec($element, parsed, { range, replace }) {
   let { text: char, event } = parsed;
@@ -33,9 +65,13 @@ export function exec($element, parsed, { range, replace }) {
     !dispatch($element, 'beforeinput', event);
 
   if (!cancelled) {
-    // get the current value and range
+    // get the current value
     let value = isInput ? $element.value : $element.textContent;
-    range = replace ? [0, value.length] : (range || value.length);
+
+    // set the range when replacing, get any existing range, or fall back to the end of the input
+    range = replace ? [0, value.length] : (
+      range || getTextRange($element) || value.length
+    );
 
     // adjust the range if backspace or delete was pressed
     if (typeof range === 'number') {

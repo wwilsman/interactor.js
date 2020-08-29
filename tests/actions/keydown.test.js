@@ -55,6 +55,32 @@ describe('Actions: keydown', () => {
     assert.equal(event.$el.value, 'a');
   });
 
+  it('can replace an existing input text range', async () => {
+    let event = listen('.input', 'keydown');
+    event.$el.value = 'foobar';
+    event.$el.setSelectionRange(1, 4);
+
+    await keydown('.input', 'b');
+
+    assert.equal(event.$el.value, 'fbar');
+  });
+
+  it('can replace an existing content-editable text range', async () => {
+    let event = listen('.contenteditable', 'keydown');
+    event.$el.textContent = 'foobar';
+
+    let range = document.createRange();
+    range.setStart(event.$el.firstChild, 1);
+    range.setEnd(event.$el.firstChild, 3);
+    let sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    await keydown('.contenteditable', 'f');
+
+    assert.equal(event.$el.textContent, 'ffbar');
+  });
+
   it('does not enter text for elements that cannot accept input', async () => {
     let eEvent = listen('.contenteditable', 'keydown');
     let dEvent = listen('.just-a-div', 'keydown');
