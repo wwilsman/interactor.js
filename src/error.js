@@ -3,9 +3,9 @@ import {
   defineProperties
 } from './utils';
 
-const regexDF = /%{((?:%{.*?}|.)*?)}/g; // regex directive format
-const regexNS = /^(true|false|undefined|null|[\d.,]+|\[.*\]|\{.*\})$/; // regex non-string values
-const regexES = /\s{2,}/g; // regex extra-spaces
+const regexDF = new RegExp('%{((?:%{.*?}|.)*?)}', 'gs'); // regex directive format
+const regexNS = new RegExp('^(true|false|undefined|null|[\\d.,]+|\\[.*\\]|{.*})$'); // regex non-string values
+const regexES = new RegExp('\\s{2,}', 'g'); // regex extra-spaces
 
 // Formats interactor error messages with specific directives.
 function format(message, inst, expected) {
