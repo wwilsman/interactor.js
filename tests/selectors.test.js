@@ -67,12 +67,15 @@ describe('Selectors', () => {
     });
 
     it('can be used as an interactor selector function', () => {
-      let Test = Interactor.extend({ selector: by.text }, {});
+      let Item = Interactor.extend({ selector: by.text }, {});
+      let List = Interactor.extend({ item: Item });
 
       assert.equal(
-        Test('Item 3').$(),
+        Item('Item 3').$(),
         document.querySelector('.list li:nth-child(3)')
       );
+
+      assert.equal(List('.list').item().count(), 3);
     });
   });
 

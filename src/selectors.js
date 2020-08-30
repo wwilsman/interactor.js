@@ -30,7 +30,8 @@ export function text(string, selector = '*') {
     for (let $el of $node.querySelectorAll(selector)) {
       let text = $el.innerText ?? $el.textContent;
 
-      if (text === string) {
+      // if no string, return all selector matches or the first one
+      if (!string || text === string) {
         if (multiple) {
           result = (result || []).concat($el);
         } else {
