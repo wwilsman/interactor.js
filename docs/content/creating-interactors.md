@@ -95,8 +95,8 @@ const TodoList = Interactor.exted({
 
   toggleAll: () => click('.toggle-all'),
   incomplete: text('.todo-count'),
-  filter: (name) => click(by.text(name, '.filters li')),
-  clearCompleted: click('.clear-completed')
+  filter: name => click(by.text(name, '.filters a')),
+  clearCompleted: () => click('.clear-completed')
 });
 ```
 
@@ -120,25 +120,23 @@ await TodoList()
 // filtering todo items
 await TodoList()
   .filter('Active')
+  .assert.todoItem().count(2)
   .assert.todoItem('Item A').not.exists()
-  .assert.todoItem('Item B').exists()
   .filter('Completed')
+  .assert.todoItem().count(1)
   .assert.todoItem('Item A').exists()
-  .assert.todoItem('Item B').not.exists()
   .filter('All')
-  .assert.todoItem('Item A').exists()
-  .assert.todoItem('Item B').exists();
+  .assert.todoItem().count(3);
 
 // clearing completed todo items
 await TodoList()
   .clearCompleted()
   .assert.todoItem('Item A').not.exists()
   .assert.todoItem('Item B').exists()
-  .assert.todoItem('Item C').exists();
+  .assert.todoItem('Item C').exists()
   .toggleAll()
   .clearCompleted()
-  .assert.todoItem('Item B').not.exists()
-  .assert.todoItem('Item C').not.exists()
+  .assert.todoItem().count(0)
 ```
 
 All property getters defined in `extend` will get auto generated assertions. You can customize or
