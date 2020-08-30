@@ -57,14 +57,18 @@ export function nth(n, selector, of = 'child') {
   }
 
   return assign(($node, multiple) => {
-    let sel = `${selector}:nth-${of}(${n})`;
+    let sel = n != null
+      ? `${selector}:nth-${of}(${n})`
+      : selector;
 
     return multiple
       ? $node.querySelectorAll(sel)
       : $node.querySelector(sel);
   }, {
     toString: () => {
+      if (n == null) return selector;
       if (!isInt) return `the nth(${n}) ${selector}`;
+      if (last && n === 1) return `the last ${selector}`;
       let teen = Array.from(`${n}`).reverse()[1] === '1';
       let th = (!teen && ['', 'st', 'nd', 'rd'][n % 10]) || 'th';
       return `the ${n}${th} ${last ? 'last' : ''} ${selector}`;

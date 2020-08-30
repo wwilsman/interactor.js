@@ -115,6 +115,16 @@ describe('Selectors', () => {
         () => Interactor('.list').$(by.nth(-5, 'li')),
         e('InteractorError', 'could not find the 5th last li within .list')
       );
+
+      assert.throws(
+        () => Interactor('.list').$(by.nth(-1, 'div')),
+        e('InteractorError', 'could not find the last div within .list')
+      );
+
+      assert.throws(
+        () => Interactor('.list').$(by.nth(null, 'div')),
+        e('InteractorError', 'could not find div within .list')
+      );
     });
 
     it('can be used within an interactor selector function', () => {
@@ -126,6 +136,8 @@ describe('Selectors', () => {
         Test(1).$(),
         document.querySelector('.list li')
       );
+
+      assert.equal(Interactor().count(Test()), 3);
     });
   });
 });
