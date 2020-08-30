@@ -10,16 +10,15 @@ import {
 // Returns any selected text range
 function getTextRange($element) {
   let win = $element.ownerDocument.defaultView;
+  let sel = win.getSelection();
+  let start, end;
 
   // input elements have dedicated properties
   if ('selectionStart' in $element) {
-    return [$element.selectionStart, $element.selectionEnd];
-  }
+    ({ selectionStart: start, selectionEnd: end } = $element);
 
   // for content-editable elements, the range needs to be calculated
-  let sel = win.getSelection();
-
-  if (sel.containsNode($element, true) ||
+  } else if (sel.containsNode($element, true) ||
       // jsdom returns false for the above if the selection is within the element
       $element.contains(sel.anchorNode) || $element.contains(sel.focusNode)) {
     let range = sel.getRangeAt(0);
@@ -27,15 +26,15 @@ function getTextRange($element) {
     caretRange.selectNodeContents($element);
 
     caretRange.setEnd(range.startContainer, range.startOffset);
-    let start = caretRange.toString().length;
+    start = caretRange.toString().length;
 
     caretRange.setEnd(range.endContainer, range.endOffset);
-    let end = caretRange.toString().length;
+    end = caretRange.toString().length;
+  }
 
-    // only return the range when there is one
-    if (start || end) {
-      return [start, end];
-    }
+  // only return the range when there is one
+  if (start || end) {
+    return [start, end];
   }
 }
 
@@ -69,22 +68,16 @@ export function exec($element, parsed, { range, replace }) {
     let value = isInput ? $element.value : $element.textContent;
 
     // set the range when replacing, get any existing range, or fall back to the end of the input
-    range = replace ? [0, value.length] : (
-      range || getTextRange($element) || value.length
-    );
+    range = replace ? [0, value.length] : range;
+    range = [].concat(range || getTextRange($element) || value.length);
+    if (range.length === 1) range[1] = range[0];
 
     // adjust the range if backspace or delete was pressed
-    if (typeof range === 'number') {
-      range = [
-        event.key === 'Backspace' ? range - 1 : range,
-        event.key === 'Delete' ? range + 1 : range
-      ];
-    }
+    if (event.key === 'Backspace') range[0] -= 1;
+    if (event.key === 'Delete') range[1] += 1;
 
     // erase text encapsulated by the range
-    value = value.slice(0, range[0]) + char + (
-      value.slice(range[1] || range[0])
-    );
+    value = value.slice(0, range[0]) + char + value.slice(range[1]);
 
     // apply the new value
     if (isInput) {
