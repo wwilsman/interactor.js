@@ -22,9 +22,18 @@ import {
 import * as actions from './actions';
 import * as properties from './properties';
 
-// The base interactor class sets initial metadata and creates bound assert methods. When no
-// selector is provided and there is no default selector, the interactor will reference the parent
-// interactor element or the document body if there is no parent interactor.
+/**
+ * The base interactor class sets initial metadata and creates bound assert methods. When no
+ * selector is provided and there is no default selector, the interactor will reference the parent
+ * interactor element or the document body if there is no parent interactor.
+ *
+ * When additional interactor properties are provided, an extended instance of the interactor is
+ * returned with those additional properties.
+ *
+ * @constructor
+ * @param {String|Function} [selector] - Interactor selector string or function.
+ * @param {Object} [properties] - Additional interactor properties.
+ */
 export default function Interactor(selector, properties) {
   if (properties) {
     return Interactor.extend(properties)(selector);
@@ -32,6 +41,7 @@ export default function Interactor(selector, properties) {
     return new Interactor(selector);
   }
 
+  // initial metadata
   m.set(this, {
     selector: this.constructor.selector(selector),
     timeout: this.constructor.timeout,
@@ -58,15 +68,55 @@ export default function Interactor(selector, properties) {
 }
 
 defineProperties(Interactor, {
-  // Default interactor options
+  /**
+   * Name used in error messages and stack traces.
+   *
+   * @static
+   * @memberof Interactor
+   * @type {String}
+   * @default ""
+   */
   name: { writable: true, value: '' },
+
+  /**
+   * Timeout used by grouped assertions.
+   *
+   * @static
+   * @memberof Interactor
+   * @type {Number}
+   * @default 2000
+   */
   timeout: { writable: true, value: 2000 },
 
-  // Static non-configurable methods
+  /**
+   * [Interactor error creator]{@link InteractorError}.
+   *
+   * @static
+   * @memberof Interactor
+   * @type {Function}
+   * @readonly
+   */
   error: { value: InteractorError },
+
+  /**
+   * [Extended interactor creator]{@link extend}.
+   *
+   * @static
+   * @memberof Interactor
+   * @type {Function}
+   * @readonly
+   */
   extend: { value: extend },
 
-  // Allow default selectors and alternate selector functions
+  /**
+   * A function that accepts the selector provided to a new interactor instance and returns a valid
+   * interactor selector for that instance.
+   *
+   * @static
+   * @memberof Interactor
+   * @type {Function}
+   * @default s => s
+   */
   selector: {
     configurable: true,
     get: () => s => s,
@@ -80,7 +130,14 @@ defineProperties(Interactor, {
     }
   },
 
-  // DOM association getter/setter
+  /**
+   * The DOM object being interacted with.
+   *
+   * @static
+   * @memberof Interactor
+   * @type {Object}
+   * @default window
+   */
   dom: {
     configurable: true,
     get: () => window,
@@ -94,7 +151,14 @@ defineProperties(Interactor, {
     }
   },
 
-  // Control suppression of the layout engine warning
+  /**
+   * Suppresses the layout engine warning.
+   *
+   * @static
+   * @memberof Interactor
+   * @type {Boolean}
+   * @default false
+   */
   suppressLayoutEngineWarning: {
     configurable: true,
     get: function() {
@@ -112,24 +176,59 @@ defineProperties(Interactor, {
 });
 
 assign(Interactor.prototype, {
-  // Return a child element or the interactor element when no selector is provided.
+  /**
+   * Returns a child element or the interactor element when no selector is provided. Throws when the
+   * element or parent element cannot be found.
+   *
+   * @instance
+   * @memberof Interactor
+   * @category Core
+   * @param {String|Function} [selector] - Interactor selector string or function.
+   * @returns {Element} The found child element or root element when no selector is provided.
+   */
   $(selector) {
     return query.call(this, selector);
   },
 
-  // Return an array of child elements; errors when no selector is provided.
+  /**
+   * Returns an array of child elements. Throws an error when no selector is provided or when the
+   * parent element cannot be found. Returns an empty array when no child elements are found.
+   *
+   * @instance
+   * @memberof Interactor
+   * @param {String|Function} selector - Interactor selector string or function.
+   * @returns {Element[]} The found child elements within the root element.
+   */
   $$(selector) {
     return query.call(this, selector, true);
   },
 
-  // Retreives or sets the interactor's default timeout for assertions.
+  /**
+   * Retreives or sets the topmost interactor's assertion timeout.
+   *
+   * @instance
+   * @memberof Interactor
+   * @param {Number} [ms] - Interactor assertion timeout, in milliseconds.
+   * @returns {Number|Interactor} The topmost interactor timeout or a new interactor instance with
+   * the specified timeout when one is provided.
+   */
   timeout(ms) {
     return ms
       ? m.new(m.top(this), 'timeout', ms)
       : m.get(m.top(this), 'timeout');
   },
 
-  // Returns a child interactor instance referencing the selector.
+  /**
+   * Returns a child interactor instance referencing the selector. The child interactor's methods
+   * will return the topmost interactor unless returning a further nested child interactor. When an
+   * interactor instance is provided, a new child instance of it will be returned with the current
+   * interactor attached as its parent.
+   *
+   * @instance
+   * @memberof Interactor
+   * @param {String|Function|Interactor} selector - A selector string or function, or an interactor.
+   * @returns {Interactor} A nested child interactor instance.
+   */
   find(selector) {
     let q = m.get(selector, 'queue');
     let i = q ? selector : Interactor(selector);
@@ -143,7 +242,17 @@ assign(Interactor.prototype, {
     return m.new(i, 'parent', this);
   },
 
-  // Adds an assertion to the next interactor instance's queue.
+  /**
+   * Adds an assertion to the next interactor instance's queue. Sequential assertions will be
+   * grouped together and run at the same time. When running, assertions will be retried if they
+   * throw an error until the interactor's timeout has passed. If the provided assertion defines an
+   * argument, the interactor's element will be provided as that argument.
+   *
+   * @instance
+   * @memberof Interactor
+   * @param {Function} assertion - The assertion function to add to the interactor queue.
+   * @returns {Interactor} A new interactor instance with the assertion added to its queue.
+   */
   assert(assertion) {
     return m.new(m.top(this), 'queue', {
       type: 'assert',
@@ -152,9 +261,18 @@ assign(Interactor.prototype, {
     });
   },
 
-  // Adds a callback to the next interactor instance's queue. If an interactor with queued actions
-  // is provided, those actions are appended to the next topmost interactor queue as child actions
-  // and the next topmost interactor instance is returned.
+  /**
+   * Adds a callback to the next interactor instance's queue. If an interactor with an existing
+   * queue is provided, that queue is appended to the next topmost interactor queue and the next
+   * topmost interactor instance is returned.
+   *
+   * @instance
+   * @memberof Interactor
+   * @param {Function|Interactor} callback - The callback function to add to the interactor queue or
+   * another interactor with an existing queue.
+   * @returns {Interactor} A new interactor instance with the callback added to its queue or
+   * appended with the provided interactor's queue.
+   */
   exec(callback) {
     if (m.get(callback, 'queue')) {
       let { queue, keyboard } = m.get(callback);
@@ -173,7 +291,15 @@ assign(Interactor.prototype, {
     }
   },
 
-  // Adds an error handler to the next interactor instance's queue.
+  /**
+   * Adds an error handler to the next interactor instance's queue. When a string is provided, the
+   * substring "%{e}" will be replaced with the thrown error message.
+   *
+   * @instance
+   * @memberof Interactor
+   * @param {Function|String} handler - The error handler or an error message string.
+   * @returns {Interactor} A new interactor instance with the handler added to its queue.
+   */
   catch(handler) {
     if (typeof handler === 'string') {
       let message = handler;
@@ -194,11 +320,18 @@ assign(Interactor.prototype, {
     });
   },
 
-  // Start processing this interactor instance's queue and return a promise, allowing interactors to
-  // be used with the async/await syntax. Queued actions are bound to the instance it was called
-  // within. Sequential assertions are pushed to a deferred function that is then called before the
-  // next queued action that is not an assertion. Actions that throw interactor errors are formatted
-  // with the current interactor instance.
+  /**
+   * Starts processing the interactor instance's queue and returns a promise, allowing interactors
+   * to be used with the async/await syntax. Queued functions are bound to the instance it was
+   * called within. Sequential assertions are pushed to a deferred function that is then called
+   * before the next queued function that is not an assertion. Functions that throw interactor
+   * errors are formatted with the current interactor instance.
+   *
+   * @instance
+   * @memberof Interactor
+   * @param {...Function} [args] - Passed along to the resulting Promise#then method.
+   * @returns {Promise} A promise that resolves once all queued functions have run.
+   */
   then() {
     let { queue, timeout, interval } = m.get(this);
     let assertion;
@@ -252,7 +385,13 @@ assign(Interactor.prototype, {
     }, Promise.resolve()).then(...arguments);
   },
 
-  // Returns a string representation of the interactor using its selector and any parent.
+  /**
+   * Returns a string representation of the interactor using its selector and any parent.
+   *
+   * @instance
+   * @memberof Interactor
+   * @returns {String} - A string representation of the interactor.
+   */
   toString() {
     let name = this.constructor.name;
     let { parent, selector } = m.get(this);

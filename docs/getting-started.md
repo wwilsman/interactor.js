@@ -4,13 +4,13 @@ title: Getting Started
 
 Install interactor.js using `yarn`:
 
-``` session
+``` bash
 $ yarn add --dev interactor.js
 ```
 
 Or `npm`:
 
-``` session
+``` bash
 $ npm install --save-dev interactor.js
 ```
 

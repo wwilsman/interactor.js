@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'gatsby';
 
-import logo from '../../../images/logo.svg';
+import logo from '../../images/logo.svg';
 import style from './header.module.css';
 import Search from '../search';
 import Icon from '../icon';

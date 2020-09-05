@@ -11,11 +11,11 @@
   ],
   "scripts": {
     "build": "rollup --config",
-    "lint": "eslint --ignore-path .gitignore --ignore-pattern docs .",
+    "lint": "eslint --ignore-path .gitignore --ignore-pattern www .",
     "test": "NODE_ENV=test karma start",
     "test:watch": "yarn test --no-single-run",
     "test:coverage": "yarn test --coverage json",
-    "docs": "cd docs && yarn"
+    "docs": "cd www && yarn"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",
