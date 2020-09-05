@@ -25,6 +25,14 @@ module.exports = {
       }
     },
     {
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        name: 'source',
+        path: `${__dirname}/../src/`
+      }
+    },
+    'gatsby-transformer-documentationjs',
+    {
       resolve: 'gatsby-transformer-remark',
       options: {
         tableOfContents: {

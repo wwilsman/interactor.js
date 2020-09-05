@@ -1,5 +1,6 @@
 {
   "private": true,
+  "name": "docs",
   "scripts": {
     "lint": "eslint --ignore-path ../.gitignore .",
     "build": "gatsby build",
@@ -24,6 +25,7 @@
     "gatsby-remark-prismjs": "^3.5.10",
     "gatsby-remark-widows": "^1.0.0",
     "gatsby-source-filesystem": "^2.3.20",
+    "gatsby-transformer-documentationjs": "^4.3.13",
     "gatsby-transformer-remark": "^2.8.25",
     "precss": "^4.0.0",
     "prism-themes": "^1.4.0",
