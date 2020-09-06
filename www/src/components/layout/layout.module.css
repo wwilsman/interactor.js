@@ -76,11 +76,10 @@ body > div > div {
 
     code {
       font-family: "Operator Mono", "Fira Code", monospace;
+      font-size: 0.825em;
     }
 
-    li > code,
-    p > code,
-    p > a > code {
+    :not(pre) > code {
       background: #f7f5f9;
       border: 1px solid rgba(0, 0, 0, 0.1);
       padding: 0 0.3em 0.05em;
