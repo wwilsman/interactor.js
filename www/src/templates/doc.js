@@ -12,24 +12,55 @@ DocTemplate.propTypes = {
 export default function DocTemplate({
   location,
   data: {
-    page: {
+    doc: {
       name,
       description,
-      returns,
-      params
+      members
     }
   }
 }) {
+  let descr = Object.assign({}, description.childMarkdownRemark.htmlAst, {
+    children: [{ type: 'element', tagName: 'header', children: (
+      description.childMarkdownRemark.htmlAst.children.slice(0, 1)
+    )}, ...description.childMarkdownRemark.htmlAst.children.slice(1)]
+  });
+
+  let docs = members.static.map(({ name, description, params, returns, type }) => ({
+    descr: description.childMarkdownRemark.htmlAst,
+    title: name.replace(/^.+#/, '.') + (returns ? `(${params ? (
+      params.map(({ name, optional }, i) => (
+        `${optional ? '[' : ''}${i > 0 ? ', ' : ''}${name}${optional ? ']' : ''}`
+      )).join('')
+    ) : ''})` : ''),
+  }));
+
   return (
-    <LayoutTemplate location={location} title={name}>
+    <LayoutTemplate location={location} title={`${name} API`}>
       {renderAst => (
         <>
           <div>
-            <header>
-              <h1>{name}</h1>
-            </header>
+            {renderAst(descr)}
 
-            {renderAst(description.htmlAst)}
+            <ul>
+              {docs.map(({ title }, i) => (
+                <li key={i}>
+                  <a href={`#${title}`}>
+                    <code>{title}</code>
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            {docs.map(({ title, descr, type }, i) => (
+              <React.Fragment key={i}>
+                <h2 id={title}>
+                  <code>{title}</code>
+                </h2>
+
+
+                {renderAst(descr)}
+              </React.Fragment>
+            ))}
           </div>
         </>
       )}
@@ -39,31 +70,23 @@ export default function DocTemplate({
 
 export const query = graphql`
   query($slug: String!) {
-    page: documentationJs(fields: { slug: { eq: $slug } }) {
+    doc: documentationJs(fields: { slug: { eq: $slug } }) {
       name
-      description {
-        childMarkdownRemark {
-          htmlAst
-        }
-      }
-      params {
-        name
-        type {
+      description { childMarkdownRemark { htmlAst } }
+      members {
+        static {
           name
-        }
-        description {
-          childMarkdownRemark {
-            htmlAst
+          type { name }
+          description { childMarkdownRemark { htmlAst } }
+          params {
+            name
+            optional
+            type { name }
+            description { childMarkdownRemark { htmlAst } }
           }
-        }
-      }
-      returns {
-        type {
-          name
-        }
-        description {
-          childMarkdownRemark {
-            htmlAst
+          returns {
+            type { name }
+            description { childMarkdownRemark { htmlAst } }
           }
         }
       }

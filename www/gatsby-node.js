@@ -9,9 +9,9 @@ exports.onCreateNode = ({ node, getNode, actions: { createNodeField } }) => {
     slug = createFilePath({ node, getNode, basePath: 'docs' })
   }
 
-  // documentation nodes that have a kind
-  if (node.internal.type === 'DocumentationJs' && node.kind) {
-    slug = '/api' + createFilePath({ node, getNode, basePath: 'src' });
+  // documentation nodes that have a namespace
+  if (node.internal.type === 'DocumentationJs' && node.kind === 'namespace') {
+    slug = `/api/${node.name.toLowerCase()}/`;
   }
 
   // create a slug field for the node to later create pages
