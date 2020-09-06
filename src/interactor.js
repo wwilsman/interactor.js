@@ -96,7 +96,7 @@ defineProperties(Interactor, {
    * @type {Function}
    * @readonly
    */
-  error: { value: InteractorError },
+  Error: { value: InteractorError },
 
   /**
    * [Extended interactor creator]{@link extend}.

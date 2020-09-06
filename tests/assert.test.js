@@ -94,7 +94,7 @@ describe('InteractorAssert', () => {
       assert: {
         passing(expected, bool) {
           if (expected !== bool) {
-            throw Interactor.error('%{@} is %{- failing|passing}');
+            throw Interactor.Error('%{@} is %{- failing|passing}');
           }
         }
       }
@@ -102,7 +102,7 @@ describe('InteractorAssert', () => {
 
     await assert.rejects(
       T('foo').assert(() => {
-        throw Interactor.error('%{@} is %{- not} passing');
+        throw Interactor.Error('%{@} is %{- not} passing');
       }),
       e('InteractorError', 'foo is not passing')
     );

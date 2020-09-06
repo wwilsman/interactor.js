@@ -1,5 +1,5 @@
 import { assert, e, fixture, listen } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import Interactor, { InteractorError } from 'interactor.js';
 
 describe('Interactor', () => {
   it('can be used with or without the new keyword', () => {
@@ -7,8 +7,9 @@ describe('Interactor', () => {
     assert.instanceOf(Interactor(), Interactor);
   });
 
-  it('has a static .error() method', () => {
-    assert.typeOf(Interactor.error, 'function');
+  it('has a static error constructor', () => {
+    assert.typeOf(Interactor.Error, 'function');
+    assert.equal(Interactor.Error, InteractorError);
   });
 
   it('has an inheritable static .extend() method', () => {
@@ -403,7 +404,7 @@ describe('Interactor', () => {
 
         await assert.rejects(
           Interactor()
-            .exec(() => { throw Interactor.error('test'); })
+            .exec(() => { throw Interactor.Error('test'); })
             .catch('there was an error: %{e}')
             .exec(() => (called = true)),
           e('InteractorError', 'there was an error: test')
@@ -548,7 +549,7 @@ describe('Interactor', () => {
       await assert.rejects(
         Interactor('foo').exec(function() {
           return this.find('test').exec(() => {
-            throw Interactor.error('%{@} bar %{!!} baz %{- qux}', true);
+            throw Interactor.Error('%{@} bar %{!!} baz %{- qux}', true);
           });
         }),
         e('InteractorError', 'test within foo bar baz')
