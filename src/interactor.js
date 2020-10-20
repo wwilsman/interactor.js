@@ -42,11 +42,11 @@ import * as selectors from './selectors';
  * the interactor is returned with those additional properties (see [Interactor.extend](#Interactor.extend)).
  *
  * ``` javascript
- * await Interactor('.btn').click();
- * await Interactor('.btn').exec(Interactor().click());
+ * await I('.btn').click();
+ * await I('.btn').exec(I.click());
  *
- * const btn = Interactor('.btn', {
- *   doubleClick: () => Interactor().click().click()
+ * const btn = I('.btn', {
+ *   doubleClick: () => I.click().click()
  * });
  *
  * await btn.doubleClick();
@@ -99,13 +99,13 @@ defineProperties(Interactor, {
    * selector if also present.
    *
    * ``` javascript
-   * const Button = Interactor.extend({ name: 'button' }, { ... });
-   * const Link = Interactor.extend({ name: 'link' }, { ... });
+   * const Button = I.extend({ name: 'button' }, { ... });
+   * const Link = I.extend({ name: 'link' }, { ... });
    *
    * await Button('.submit').click();
    * // => InteractorError: could not find .submit button
    *
-   * await Link(by.text('Home')).click();
+   * await Link(I.find.text('Home')).click();
    * // => InteractorError: could not find "Home" link
    * ```
    *
@@ -122,7 +122,7 @@ defineProperties(Interactor, {
    *
    * ``` javascript
    * // assertions made with this interactor will timeout after 500ms
-   * const Quick = Interactor.extend({ timeout: 500 }, { ... });
+   * const Quick = I.extend({ timeout: 500 }, { ... });
    * ```
    *
    * @memberof Core

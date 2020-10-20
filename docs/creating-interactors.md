@@ -16,7 +16,7 @@ assert that the input is cleared after adding a todo.
 
 ``` javascript
 // extend(properties)
-const NewTodoInput = Interactor.extend({
+const NewTodoInput = I.extend({
   add(text) {
     return this.type(text).press('Enter');
   },
@@ -38,18 +38,18 @@ for API details). Various properties can also be defined using [property](/prope
 [action](/actions) creators.
 
 ``` javascript
-import Interactor, { by, click, matches, text, type } from 'interactor.js';
+import I 'interactor.js';
 
 // extend(options, properties)
-const TodoItem = Interactor.extend({
-  selector: text => by.text(text, '.list-item li')
+const TodoItem = I.extend({
+  selector: text => I.find.text(text, '.list-item li')
 }, {
-  label: text('label'),
-  toggle: () => click('.toggle'),
-  completed: matches('.completed'),
-  delete: () => click('.destroy'),
-  edit: () => click().click(),
-  update: val => type('.edit', val, { replace: true })
+  label: I.text('label'),
+  toggle: () => I.click('.toggle'),
+  completed: I.matches('.completed'),
+  delete: () => I.click('.destroy'),
+  edit: () => I.click().click(),
+  update: val => I.type('.edit', val, { replace: true })
 });
 ```
 
@@ -86,17 +86,17 @@ entire todo list. In addition to those components, the todo list has a toggle al
 remaining (incomplete) todo items, a set of filters, and a clear completed button.
 
 ``` javascript
-const TodoList = Interactor.exted({
+const TodoList = I.exted({
   // interactors can be nested within each other
   newTodo: NewTodoInput('.new-todo'),
 
   // interactor creator methods will return nested instances
   todoItem: TodoItem,
 
-  toggleAll: () => click('.toggle-all'),
-  incomplete: text('.todo-count'),
-  filter: name => click(by.text(name, '.filters a')),
-  clearCompleted: () => click('.clear-completed')
+  toggleAll: () => I.click('.toggle-all'),
+  incomplete: I.text('.todo-count'),
+  filter: name => I.click(I.find.text(name, '.filters a')),
+  clearCompleted: () => I.click('.clear-completed')
 });
 ```
 

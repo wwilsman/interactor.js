@@ -59,9 +59,8 @@ const m = {
     return !parent || (!topmost && top) ? inst : m.top(parent);
   },
 
-  // Returns a new instance with copied and additional metadata. Setting the queue will set it on
-  // and return the topmost parent interactor. Given a function value, the instance queue will be
-  // concatenated into the parent queue before the function is called.
+  // Returns a new instance with copied and additional metadata. Setting the parent meta will also
+  // set the top meta to false, and setting the nested meta will set both the parent and top meta.
   new(inst, key, val) {
     if (key === 'parent') {
       return m.new(inst, { parent: val, top: false });

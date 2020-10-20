@@ -23,7 +23,7 @@ export function hasLayoutEngine(inst, subj) {
     if (!debounce[subj]) {
       console.warn((
         `No layout engine detected. ${subj} as a result of CSS cannot be determined. ` +
-          'You can disable this warning by setting `Interactor.suppressLayoutEngineWarning = true`'
+          'You can disable this warning by setting `I.suppressLayoutEngineWarning = true`'
       ));
     }
 
