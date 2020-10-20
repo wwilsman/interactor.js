@@ -86,7 +86,7 @@ entire todo list. In addition to those components, the todo list has a toggle al
 remaining (incomplete) todo items, a set of filters, and a clear completed button.
 
 ``` javascript
-const TodoList = I.exted({
+const TodoList = I.extend({
   // interactors can be nested within each other
   newTodo: NewTodoInput('.new-todo'),
 
