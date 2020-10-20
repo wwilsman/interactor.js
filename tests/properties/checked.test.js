@@ -1,8 +1,8 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor, { checked } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Properties: checked', () => {
-  const Test = Interactor.extend({ timeout: 50 }, {});
+  const Test = I.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -53,15 +53,15 @@ describe('Properties: checked', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
+      const Test = I.extend({ timeout: 50 }, {
         assert: {
           checked(expected, ab) {
             this[ab].assert.checked();
           }
         },
 
-        a: Interactor('.check-a'),
-        b: Interactor('.check-b')
+        a: I('.check-a'),
+        b: I('.check-b')
       });
 
       it('works as expected when called via nested methods', async () => {
@@ -103,8 +103,8 @@ describe('Properties: checked', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({ timeout: 50 }, {
-      yes: checked()
+    const Test = I.extend({ timeout: 50 }, {
+      yes: I.checked()
     });
 
     it('creates a parent bound property', () => {
@@ -133,9 +133,9 @@ describe('Properties: checked', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
-        a: checked('.check-a'),
-        b: checked('.check-b')
+      const Test = I.extend({ timeout: 50 }, {
+        a: I.checked('.check-a'),
+        b: I.checked('.check-b')
       });
 
       it('creates a scoped bound property', () => {
@@ -162,8 +162,8 @@ describe('Properties: checked', () => {
       });
 
       it('can be awaited on for the value', async () => {
-        assert.equal(await checked('.check-a'), true);
-        assert.equal(await checked('.check-b'), false);
+        assert.equal(await I.checked('.check-a'), true);
+        assert.equal(await I.checked('.check-b'), false);
       });
     });
   });

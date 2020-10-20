@@ -1,5 +1,5 @@
 import { assert, fixture, listen } from 'tests/helpers';
-import Interactor, { keyup } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Actions: keyup', () => {
   beforeEach(() => {
@@ -12,21 +12,21 @@ describe('Actions: keyup', () => {
   });
 
   it('creates a new interactor from the standalone action', () => {
-    assert.instanceOf(keyup('.input', 'f'), Interactor);
+    assert.instanceOf(I.keyup('.input', 'f'), I);
   });
 
   it('fires a keyup event on the element', async () => {
     let event = listen('.input', 'keyup');
-    await keyup('.input', 'f');
+    await I.keyup('.input', 'f');
     assert.equal(event.count, 1);
   });
 
   it('can be called with an interactor selector', async () => {
-    let Test = Interactor.extend({
-      foo: () => keyup('', 'f')
+    let Test = I.extend({
+      foo: () => I.keyup('', 'f')
     });
 
-    let action = keyup(Test('.input'), 'a');
+    let action = I.keyup(Test('.input'), 'a');
     let event = listen('.input', 'keyup');
 
     assert.instanceOf(action, Test);
@@ -40,15 +40,15 @@ describe('Actions: keyup', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.input', 'keyup');
-      let Test = Interactor.extend({ selector: '.input' }, {});
+      let Test = I.extend({ selector: '.input' }, {});
 
-      assert.typeOf(Interactor('.input').keyup, 'function');
-      assert.instanceOf(Interactor('.input').keyup('a'), Interactor);
+      assert.typeOf(I('.input').keyup, 'function');
+      assert.instanceOf(I('.input').keyup('a'), I);
 
       assert.typeOf(Test().keyup, 'function');
       assert.instanceOf(Test().keyup('b'), Test);
 
-      await Interactor('.input').keyup('a');
+      await I('.input').keyup('a');
       await Test().keyup('b');
 
       assert.equal(event.count, 2);
@@ -56,8 +56,8 @@ describe('Actions: keyup', () => {
 
     it('un-persists nested keys throughout the interactor', async () => {
       let event = listen('.input', 'keyup');
-      let Test = Interactor.extend({
-        input: Interactor('.input')
+      let Test = I.extend({
+        input: I('.input')
       });
 
       await Test()
@@ -74,7 +74,7 @@ describe('Actions: keyup', () => {
       let event = listen('.input', 'keyup');
       let called = false;
 
-      let Test = Interactor.extend({ selector: '.input' }, {
+      let Test = I.extend({ selector: '.input' }, {
         keyup: () => (called = true)
       });
 

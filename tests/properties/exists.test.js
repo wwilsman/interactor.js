@@ -1,8 +1,8 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor, { exists } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Properties: exists', () => {
-  const Test = Interactor.extend({ timeout: 50 }, {});
+  const Test = I.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -45,15 +45,15 @@ describe('Properties: exists', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
+      const Test = I.extend({ timeout: 50 }, {
         assert: {
           exists(expected, foobar) {
             this[foobar].assert.exists();
           }
         },
 
-        foo: Interactor('.foo'),
-        bar: Interactor('.bar')
+        foo: I('.foo'),
+        bar: I('.bar')
       });
 
       it('works as expected when called via nested methods', async () => {
@@ -95,8 +95,8 @@ describe('Properties: exists', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({ timeout: 50 }, {
-      there: exists()
+    const Test = I.extend({ timeout: 50 }, {
+      there: I.exists()
     });
 
     it('creates a parent bound property', () => {
@@ -125,9 +125,9 @@ describe('Properties: exists', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
-        foo: exists('.foo'),
-        bar: exists('.bar')
+      const Test = I.extend({ timeout: 50 }, {
+        foo: I.exists('.foo'),
+        bar: I.exists('.bar')
       });
 
       it('creates a scoped bound property', () => {
@@ -154,8 +154,8 @@ describe('Properties: exists', () => {
       });
 
       it('can be awaited on for the value', async () => {
-        assert.equal(await exists('.foo'), true);
-        assert.equal(await exists('.bar'), false);
+        assert.equal(await I.exists('.foo'), true);
+        assert.equal(await I.exists('.bar'), false);
       });
     });
   });

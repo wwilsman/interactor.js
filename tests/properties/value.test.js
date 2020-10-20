@@ -1,8 +1,8 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor, { value } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Properties: value', () => {
-  const Test = Interactor.extend({ timeout: 50 }, {});
+  const Test = I.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -71,15 +71,15 @@ describe('Properties: value', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
+      const Test = I.extend({ timeout: 50 }, {
         assert: {
           value(expected, ab, val) {
             this[ab].assert.value(val);
           }
         },
 
-        a: Interactor('.input-a'),
-        b: Interactor('.input-b')
+        a: I('.input-a'),
+        b: I('.input-b')
       });
 
       it('works as expected when called via nested methods', async () => {
@@ -125,8 +125,8 @@ describe('Properties: value', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({ timeout: 50 }, {
-      val: value()
+    const Test = I.extend({ timeout: 50 }, {
+      val: I.value()
     });
 
     it('creates a parent bound property', () => {
@@ -153,9 +153,9 @@ describe('Properties: value', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
-        a: value('.input-a'),
-        b: value('.input-b')
+      const Test = I.extend({ timeout: 50 }, {
+        a: I.value('.input-a'),
+        b: I.value('.input-b')
       });
 
       it('creates a scoped bound property', () => {
@@ -184,8 +184,8 @@ describe('Properties: value', () => {
       });
 
       it('can be awaited on for the value', async () => {
-        assert.equal(await value('.input-a'), 'A');
-        assert.equal(await value('.input-b'), 'B');
+        assert.equal(await I.value('.input-a'), 'A');
+        assert.equal(await I.value('.input-b'), 'B');
       });
     });
   });

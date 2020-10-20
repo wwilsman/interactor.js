@@ -1,5 +1,5 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor, { by } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Selectors', () => {
   beforeEach(() => {
@@ -12,30 +12,30 @@ describe('Selectors', () => {
     `);
   });
 
-  describe('by.xpath(path)', () => {
+  describe('xpath(path)', () => {
     it('can select an element by xpath', () => {
       assert.equal(
-        Interactor(by.xpath('//ul')).$(),
+        I(I.find.xpath('//ul')).$(),
         document.querySelector('.list')
       );
     });
 
     it('can select multiple elements by xpath', () => {
       assert.deepEqual(
-        Interactor('.list').$$(by.xpath('.//li')),
+        I('.list').$$(I.find.xpath('.//li')),
         Array.from(document.querySelectorAll('.list li'))
       );
     });
 
     it('formats errors from xpath selectors', () => {
       assert.throws(
-        () => Interactor(by.xpath('//foobar')).$(),
+        () => I(I.find.xpath('//foobar')).$(),
         e('InteractorError', 'could not find xpath(//foobar)')
       );
     });
 
     it('can be used as an interactor selector function', () => {
-      let Test = Interactor.extend({ selector: by.xpath }, {});
+      let Test = I.extend({ selector: I.find.xpath }, {});
 
       assert.equal(
         Test('.//ul').$(),
@@ -44,31 +44,31 @@ describe('Selectors', () => {
     });
   });
 
-  describe('by.text(string)', () => {
+  describe('text(string)', () => {
     it('can select an element by text', () => {
       assert.equal(
-        Interactor(by.text('Item', '.list li')).$(),
+        I(I.find.text('Item', '.list li')).$(),
         document.querySelector('.list li:nth-child(1)')
       );
     });
 
     it('can select multiple elements by text', () => {
       assert.deepEqual(
-        Interactor('.list').$$(by.text('Item', 'li')),
+        I('.list').$$(I.find.text('Item', 'li')),
         Array.from(document.querySelectorAll('.list li:not(:last-child)'))
       );
     });
 
     it('formats errors from text selectors', () => {
       assert.throws(
-        () => Interactor(by.text('Item A')).$(),
+        () => I(I.find.text('Item A')).$(),
         e('InteractorError', 'could not find "Item A"')
       );
     });
 
     it('can be used as an interactor selector function', () => {
-      let Item = Interactor.extend({ selector: by.text }, {});
-      let List = Interactor.extend({ item: Item });
+      let Item = I.extend({ selector: I.find.text }, {});
+      let List = I.extend({ item: Item });
 
       assert.equal(
         Item('Item 3').$(),
@@ -79,17 +79,17 @@ describe('Selectors', () => {
     });
   });
 
-  describe('by.nth(n, selector)', () => {
+  describe('nth(n, selector)', () => {
     it('can select an nth element', () => {
       assert.equal(
-        Interactor(by.nth(2, '.list li')).$(),
+        I(I.find.nth(2, '.list li')).$(),
         document.querySelectorAll('.list li')[1]
       );
     });
 
     it('can select multiple nth elements', () => {
       assert.deepEqual(
-        Interactor('.list').$$(by.nth('odd', 'li')),
+        I('.list').$$(I.find.nth('odd', 'li')),
         [document.querySelector('.list li:first-child'),
           document.querySelector('.list li:last-child')]
       );
@@ -97,39 +97,39 @@ describe('Selectors', () => {
 
     it('formats errors from nth selectors', () => {
       assert.throws(
-        () => Interactor('.list').$(by.nth(15, 'li')),
+        () => I('.list').$(I.find.nth(15, 'li')),
         e('InteractorError', 'could not find the 15th li within .list')
       );
 
       assert.throws(
-        () => Interactor('.list').$(by.nth(2, 'div')),
+        () => I('.list').$(I.find.nth(2, 'div')),
         e('InteractorError', 'could not find the 2nd div within .list')
       );
 
       assert.throws(
-        () => Interactor('.list').$(by.nth('n+10', 'li')),
+        () => I('.list').$(I.find.nth('n+10', 'li')),
         e('InteractorError', 'could not find the nth(n+10) li within .list')
       );
 
       assert.throws(
-        () => Interactor('.list').$(by.nth(-5, 'li')),
+        () => I('.list').$(I.find.nth(-5, 'li')),
         e('InteractorError', 'could not find the 5th last li within .list')
       );
 
       assert.throws(
-        () => Interactor('.list').$(by.nth(-1, 'div')),
+        () => I('.list').$(I.find.nth(-1, 'div')),
         e('InteractorError', 'could not find the last div within .list')
       );
 
       assert.throws(
-        () => Interactor('.list').$(by.nth(null, 'div')),
+        () => I('.list').$(I.find.nth(null, 'div')),
         e('InteractorError', 'could not find div within .list')
       );
     });
 
     it('can be used within an interactor selector function', () => {
-      let Test = Interactor.extend({
-        selector: n => by.nth(n, '.list li')
+      let Test = I.extend({
+        selector: n => I.find.nth(n, '.list li')
       }, {});
 
       assert.equal(
@@ -137,7 +137,7 @@ describe('Selectors', () => {
         document.querySelector('.list li')
       );
 
-      assert.equal(Interactor().count(Test()), 3);
+      assert.equal(I().count(Test()), 3);
     });
   });
 });

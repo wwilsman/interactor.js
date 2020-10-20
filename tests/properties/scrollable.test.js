@@ -1,8 +1,8 @@
 import { assert, e, fixture, jsdom, mockConsole } from 'tests/helpers';
-import Interactor, { scrollable, scrollableX, scrollableY } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Properties: scrollable', () => {
-  const Test = Interactor.extend({
+  const Test = I.extend({
     timeout: 50,
     suppressLayoutEngineWarning: true
   }, {});
@@ -59,7 +59,7 @@ describe('Properties: scrollable', () => {
           'No layout engine detected.',
           'Overflow as a result of CSS cannot be determined.',
           'You can disable this warning by setting',
-          '`Interactor.suppressLayoutEngineWarning = true`'
+          '`I.suppressLayoutEngineWarning = true`'
         ].join(' '));
       });
     });
@@ -173,7 +173,7 @@ describe('Properties: scrollable', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
+      const Test = I.extend({ timeout: 50 }, {
         assert: {
           scrollable(expected, xy) {
             this[xy].assert.scrollable();
@@ -182,9 +182,9 @@ describe('Properties: scrollable', () => {
           }
         },
 
-        x: Interactor('.overflow.x'),
-        y: Interactor('.overflow.y'),
-        z: Interactor('.overflow.none')
+        x: I('.overflow.x'),
+        y: I('.overflow.y'),
+        z: I('.overflow.none')
       });
 
       it('works as expected when called via nested methods', async () => {
@@ -252,10 +252,10 @@ describe('Properties: scrollable', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({ timeout: 50 }, {
-      x: scrollableX(),
-      y: scrollableY(),
-      any: scrollable()
+    const Test = I.extend({ timeout: 50 }, {
+      x: I.scrollableX(),
+      y: I.scrollableY(),
+      any: I.scrollable()
     });
 
     it('creates a parent bound property', () => {
@@ -294,13 +294,13 @@ describe('Properties: scrollable', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
-        X: scrollableX('.overflow.x'),
-        Xy: scrollableY('.overflow.x'),
-        Y: scrollableY('.overflow.y'),
-        Yx: scrollableX('.overflow.y'),
-        any: scrollable('.overflow.x.y'),
-        none: scrollable('.overflow.none')
+      const Test = I.extend({ timeout: 50 }, {
+        X: I.scrollableX('.overflow.x'),
+        Xy: I.scrollableY('.overflow.x'),
+        Y: I.scrollableY('.overflow.y'),
+        Yx: I.scrollableX('.overflow.y'),
+        any: I.scrollable('.overflow.x.y'),
+        none: I.scrollable('.overflow.none')
       });
 
       it('creates a scoped bound property', () => {
@@ -335,18 +335,18 @@ describe('Properties: scrollable', () => {
       });
 
       it('can be awaited on for the value', async () => {
-        assert.equal(await scrollable('.overflow.x'), true);
-        assert.equal(await scrollableX('.overflow.x'), true);
-        assert.equal(await scrollableY('.overflow.x'), false);
-        assert.equal(await scrollable('.overflow.y'), true);
-        assert.equal(await scrollableX('.overflow.y'), false);
-        assert.equal(await scrollableY('.overflow.y'), true);
-        assert.equal(await scrollable('.overflow.x.y'), true);
-        assert.equal(await scrollableX('.overflow.x.y'), true);
-        assert.equal(await scrollableY('.overflow.x.y'), true);
-        assert.equal(await scrollable('.overflow.none'), false);
-        assert.equal(await scrollableX('.overflow.none'), false);
-        assert.equal(await scrollableY('.overflow.none'), false);
+        assert.equal(await I.scrollable('.overflow.x'), true);
+        assert.equal(await I.scrollableX('.overflow.x'), true);
+        assert.equal(await I.scrollableY('.overflow.x'), false);
+        assert.equal(await I.scrollable('.overflow.y'), true);
+        assert.equal(await I.scrollableX('.overflow.y'), false);
+        assert.equal(await I.scrollableY('.overflow.y'), true);
+        assert.equal(await I.scrollable('.overflow.x.y'), true);
+        assert.equal(await I.scrollableX('.overflow.x.y'), true);
+        assert.equal(await I.scrollableY('.overflow.x.y'), true);
+        assert.equal(await I.scrollable('.overflow.none'), false);
+        assert.equal(await I.scrollableX('.overflow.none'), false);
+        assert.equal(await I.scrollableY('.overflow.none'), false);
       });
     });
   });

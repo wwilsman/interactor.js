@@ -1,8 +1,8 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor, { attribute } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Properties: attribute', () => {
-  const Test = Interactor.extend({ timeout: 50 }, {});
+  const Test = I.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -53,15 +53,15 @@ describe('Properties: attribute', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
+      const Test = I.extend({ timeout: 50 }, {
         assert: {
           attribute(expected, foobar, attr, val) {
             this[foobar].assert.attribute(attr, val);
           }
         },
 
-        foo: Interactor('.foo'),
-        bar: Interactor('.bar')
+        foo: I('.foo'),
+        bar: I('.bar')
       });
 
       it('works as expected when called via nested methods', async () => {
@@ -107,8 +107,8 @@ describe('Properties: attribute', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({ timeout: 50 }, {
-      data: attribute('data-test')
+    const Test = I.extend({ timeout: 50 }, {
+      data: I.attribute('data-test')
     });
 
     it('creates a parent bound property', () => {
@@ -134,8 +134,8 @@ describe('Properties: attribute', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
-        foo: attribute('.foo', 'data-test')
+      const Test = I.extend({ timeout: 50 }, {
+        foo: I.attribute('.foo', 'data-test')
       });
 
       it('creates a scoped bound property', () => {
@@ -161,11 +161,11 @@ describe('Properties: attribute', () => {
       });
 
       it('can be awaited on for the value', async () => {
-        await assert.rejects(attribute('data-test'), (
+        await assert.rejects(I.attribute('data-test'), (
           e('InteractorError', 'an element selector is required when awaiting on properties')
         ));
 
-        assert.equal(await attribute('.foo', 'data-test'), 'bar');
+        assert.equal(await I.attribute('.foo', 'data-test'), 'bar');
       });
     });
   });

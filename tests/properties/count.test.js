@@ -1,8 +1,8 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor, { count } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Properties: count', () => {
-  const Test = Interactor.extend({ timeout: 50 }, {});
+  const Test = I.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -120,17 +120,17 @@ describe('Properties: count', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
+      const Test = I.extend({ timeout: 50 }, {
         assert: {
           count(expected, ab, ...args) {
             this[ab].assert.count(...args);
           }
         },
 
-        a: Interactor('.list-a'),
-        b: Interactor('.list-b'),
-        c: Interactor('.list-c'),
-        item: Interactor('li')
+        a: I('.list-a'),
+        b: I('.list-b'),
+        c: I('.list-c'),
+        item: I('li')
       });
 
       it('works as expected when called via nested methods', async () => {
@@ -194,9 +194,9 @@ describe('Properties: count', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({ timeout: 50 }, {
-      length: count('li'),
-      amount: count()
+    const Test = I.extend({ timeout: 50 }, {
+      length: I.count('li'),
+      amount: I.count()
     });
 
     it('creates a parent bound property', () => {
@@ -236,10 +236,10 @@ describe('Properties: count', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
-        a: count('.list-a', 'li'),
-        b: count('.list-b', 'li'),
-        c: count('.list-c', 'li')
+      const Test = I.extend({ timeout: 50 }, {
+        a: I.count('.list-a', 'li'),
+        b: I.count('.list-b', 'li'),
+        c: I.count('.list-c', 'li')
       });
 
       it('creates a scoped bound property', () => {
@@ -271,10 +271,10 @@ describe('Properties: count', () => {
       });
 
       it('can be awaited on for the value', async () => {
-        assert.equal(await count('.list-a', 'li'), 1);
-        assert.equal(await count('.list-b', 'li'), 3);
-        assert.equal(await count('.list-c', 'li'), 0);
-        assert.equal(await count('li'), 4);
+        assert.equal(await I.count('.list-a', 'li'), 1);
+        assert.equal(await I.count('.list-b', 'li'), 3);
+        assert.equal(await I.count('.list-c', 'li'), 0);
+        assert.equal(await I.count('li'), 4);
       });
     });
   });

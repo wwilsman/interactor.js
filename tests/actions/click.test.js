@@ -1,5 +1,5 @@
 import { assert, e, fixture, listen } from 'tests/helpers';
-import Interactor, { click } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Actions: click', () => {
   beforeEach(() => {
@@ -11,15 +11,15 @@ describe('Actions: click', () => {
   });
 
   it('creates a new interactor from the standalone action', () => {
-    assert.instanceOf(click('.btn-a'), Interactor);
+    assert.instanceOf(I.click('.btn-a'), I);
   });
 
   it('fires a click event on the element', async () => {
     let bEvent = listen('.btn-a', 'click');
     let dEvent = listen('.div', 'click');
 
-    await click('.btn-a');
-    await click('.div');
+    await I.click('.btn-a');
+    await I.click('.div');
 
     assert.equal(bEvent.count, 1);
     assert.equal(dEvent.count, 1);
@@ -29,7 +29,7 @@ describe('Actions: click', () => {
     let event = listen('.btn-b', 'click');
 
     await assert.rejects(
-      click('.btn-b').timeout(50),
+      I.click('.btn-b').timeout(50),
       e('InteractorError', '.btn-b is disabled')
     );
 
@@ -37,11 +37,11 @@ describe('Actions: click', () => {
   });
 
   it('can be called with an interactor selector', async () => {
-    let Test = Interactor.extend({
-      foo: () => click()
+    let Test = I.extend({
+      foo: () => I.click()
     });
 
-    let action = click(Test('.btn-a'));
+    let action = I.click(Test('.btn-a'));
     let event = listen('.btn-a', 'click');
 
     assert.instanceOf(action, Test);
@@ -55,15 +55,15 @@ describe('Actions: click', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.btn-a', 'click');
-      let Test = Interactor.extend({ selector: '.btn-a' }, {});
+      let Test = I.extend({ selector: '.btn-a' }, {});
 
-      assert.typeOf(Interactor('.btn-a').click, 'function');
-      assert.instanceOf(Interactor('.btn-a').click(), Interactor);
+      assert.typeOf(I('.btn-a').click, 'function');
+      assert.instanceOf(I('.btn-a').click(), I);
 
       assert.typeOf(Test().click, 'function');
       assert.instanceOf(Test().click(), Test);
 
-      await Interactor('.btn-a').click();
+      await I('.btn-a').click();
       await Test().click();
 
       assert.equal(event.count, 2);
@@ -73,7 +73,7 @@ describe('Actions: click', () => {
       let event = listen('.btn-a', 'click');
       let called = false;
 
-      let Test = Interactor.extend({ selector: '.btn-a' }, {
+      let Test = I.extend({ selector: '.btn-a' }, {
         click: () => (called = true)
       });
 

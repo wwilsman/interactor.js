@@ -1,5 +1,5 @@
 import { assert, fixture, listen } from 'tests/helpers';
-import Interactor, { type } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Actions: type', () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('Actions: type', () => {
   });
 
   it('creates a new interactor from the standalone action', () => {
-    assert.instanceOf(type('.input', 'foo'), Interactor);
+    assert.instanceOf(I.type('.input', 'foo'), I);
   });
 
   it('fires various keyboard events on the element for each character', async () => {
@@ -22,7 +22,7 @@ describe('Actions: type', () => {
     let inEvent = listen('.input', 'input');
     let kuEvent = listen('.input', 'keyup');
 
-    await type('.input', 'foo');
+    await I.type('.input', 'foo');
 
     assert.equal(kdEvent.count, 3, 'kdEvent');
     assert.equal(kpEvent.count, 3, 'kpEvent');
@@ -33,7 +33,7 @@ describe('Actions: type', () => {
 
   it('updates the value of the element', async () => {
     let event = listen('.input', 'input');
-    await type('.input', 'foo');
+    await I.type('.input', 'foo');
     assert.equal(event.$el.value, 'foo');
   });
 
@@ -41,7 +41,7 @@ describe('Actions: type', () => {
     let event = listen('.textarea', 'input');
     event.$el.value = 'foobar';
 
-    await type('.textarea', 'test', { range: [3, 6] });
+    await I.type('.textarea', 'test', { range: [3, 6] });
 
     assert.equal(event.count, 4);
     assert.equal(event.$el.value, 'footest');
@@ -51,7 +51,7 @@ describe('Actions: type', () => {
     let event = listen('.input', 'keydown');
     event.$el.value = 'foo';
 
-    await type('.input', 'bar', { replace: true });
+    await I.type('.input', 'bar', { replace: true });
 
     assert.equal(event.$el.value, 'bar');
   });
@@ -61,7 +61,7 @@ describe('Actions: type', () => {
     event.$el.value = 'foobar';
     event.$el.setSelectionRange(3, 6);
 
-    await type('.input', 'foo');
+    await I.type('.input', 'foo');
 
     assert.equal(event.$el.value, 'foofoo');
   });
@@ -75,7 +75,7 @@ describe('Actions: type', () => {
       time = Date.now();
     });
 
-    await type('.input', 'test', { delay: 50 });
+    await I.type('.input', 'test', { delay: 50 });
 
     assert(delta > 150 && delta < 200, (
       new assert.AssertionError({
@@ -88,8 +88,8 @@ describe('Actions: type', () => {
     let iEvent = listen('.input', 'change');
     let eEvent = listen('.contenteditable', 'change');
 
-    await type('.input', 'foo', { change: true });
-    await type('.contenteditable', 'bar', { change: true });
+    await I.type('.input', 'foo', { change: true });
+    await I.type('.contenteditable', 'bar', { change: true });
 
     assert.equal(iEvent.count, 1);
     assert.equal(iEvent.$el.value, 'foo');
@@ -102,14 +102,14 @@ describe('Actions: type', () => {
     let iEvent = listen('.input', 'input');
     let bEvent = listen('.input', 'blur');
 
-    await type('.input', 'fill');
+    await I.type('.input', 'fill');
 
     assert.equal(fEvent.count, 1, 'fEvent');
     assert.equal(iEvent.count, 4, 'iEvent');
     assert.equal(bEvent.count, 1, 'bEvent');
     assert.equal(iEvent.$el.value, 'fill');
 
-    await type('.input', 'oo', {
+    await I.type('.input', 'oo', {
       range: [1, 4],
       focus: false,
       blur: false
@@ -125,8 +125,8 @@ describe('Actions: type', () => {
     let eEvent = listen('.contenteditable', 'input');
     let dEvent = listen('.just-a-div', 'input');
 
-    await type('.contenteditable', 'foo');
-    await type('.just-a-div', 'bar');
+    await I.type('.contenteditable', 'foo');
+    await I.type('.just-a-div', 'bar');
 
     assert.equal(eEvent.count, 3);
     assert.equal(eEvent.$el.textContent, 'foo');
@@ -141,7 +141,7 @@ describe('Actions: type', () => {
     let inEvent = listen('.input', 'input');
 
     inEvent.$el.addEventListener('beforeinput', e => e.preventDefault());
-    await type('.input', 'f');
+    await I.type('.input', 'f');
 
     assert.equal(inEvent.count, 0);
     assert.equal(biEvent.count, 1);
@@ -150,7 +150,7 @@ describe('Actions: type', () => {
     assert.equal(kdEvent.$el.value, '');
 
     inEvent.$el.addEventListener('keypress', e => e.preventDefault());
-    await type('.input', 'f');
+    await I.type('.input', 'f');
 
     assert.equal(inEvent.count, 0);
     assert.equal(biEvent.count, 1);
@@ -159,7 +159,7 @@ describe('Actions: type', () => {
     assert.equal(kdEvent.$el.value, '');
 
     inEvent.$el.addEventListener('keydown', e => e.preventDefault());
-    await type('.input', 'f');
+    await I.type('.input', 'f');
 
     assert.equal(inEvent.count, 0);
     assert.equal(biEvent.count, 1);
@@ -175,18 +175,18 @@ describe('Actions: type', () => {
       value: 'f'
     });
 
-    await type('.input', 'oo');
+    await I.type('.input', 'oo');
 
     assert.equal(event.count, 2);
     assert.equal(event.$el.value, 'f');
   });
 
   it('can be called with an interactor selector', async () => {
-    let Test = Interactor.extend({
-      foo: () => type('', 'foo')
+    let Test = I.extend({
+      foo: () => I.type('', 'foo')
     });
 
-    let action = type(Test('.input'), 'aaa');
+    let action = I.type(Test('.input'), 'aaa');
     let event = listen('.input', 'input');
 
     assert.instanceOf(action, Test);
@@ -201,15 +201,15 @@ describe('Actions: type', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.input', 'input');
-      let Test = Interactor.extend({ selector: '.input' }, {});
+      let Test = I.extend({ selector: '.input' }, {});
 
-      assert.typeOf(Interactor('.input').type, 'function');
-      assert.instanceOf(Interactor('.input').type('foo'), Interactor);
+      assert.typeOf(I('.input').type, 'function');
+      assert.instanceOf(I('.input').type('foo'), I);
 
       assert.typeOf(Test().type, 'function');
       assert.instanceOf(Test().type('bar'), Test);
 
-      await Interactor('.input').type('foo');
+      await I('.input').type('foo');
       await Test().type('bar');
 
       assert.equal(event.count, 6);
@@ -218,8 +218,8 @@ describe('Actions: type', () => {
 
     it('can type into nested interactors', async () => {
       let event = listen('.input', 'input');
-      let Test = Interactor.extend({
-        input: Interactor('.input')
+      let Test = I.extend({
+        input: I('.input')
       });
 
       await Test()
@@ -234,7 +234,7 @@ describe('Actions: type', () => {
       let event = listen('.input', 'input');
       let called = false;
 
-      let Test = Interactor.extend({ selector: '.input' }, {
+      let Test = I.extend({ selector: '.input' }, {
         type: () => (called = true)
       });
 
@@ -251,7 +251,7 @@ describe('Actions: type', () => {
       let kuEvent = listen('.input', 'keyup');
       let inEvent = listen('.input', 'input');
 
-      await Interactor('.input')
+      await I('.input')
         .keydown('Control')
         .type('foo');
 

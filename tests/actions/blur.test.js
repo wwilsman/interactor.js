@@ -1,5 +1,5 @@
 import { assert, e, fixture, listen } from 'tests/helpers';
-import Interactor, { blur } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Actions: blur', () => {
   beforeEach(() => {
@@ -10,7 +10,7 @@ describe('Actions: blur', () => {
   });
 
   it('creates a new interactor from the standalone action', () => {
-    assert.instanceOf(blur('.input'), Interactor);
+    assert.instanceOf(I.blur('.input'), I);
   });
 
   it('fires a blur event on the element', async () => {
@@ -18,10 +18,10 @@ describe('Actions: blur', () => {
     let hEvent = listen('.heading', 'blur');
 
     iEvent.$el.focus();
-    await blur('.input');
+    await I.blur('.input');
 
     hEvent.$el.focus();
-    await blur('.heading');
+    await I.blur('.heading');
 
     assert.equal(iEvent.count, 1);
     assert.equal(hEvent.count, 1);
@@ -31,7 +31,7 @@ describe('Actions: blur', () => {
     let event = listen('.input', 'blur');
 
     await assert.rejects(
-      blur('.input').timeout(50),
+      I.blur('.input').timeout(50),
       e('InteractorError', '.input is not focused')
     );
 
@@ -39,11 +39,11 @@ describe('Actions: blur', () => {
   });
 
   it('can be called with an interactor selector', async () => {
-    let Test = Interactor.extend({
-      foo: () => blur()
+    let Test = I.extend({
+      foo: () => I.blur()
     });
 
-    let action = blur(Test('.input'));
+    let action = I.blur(Test('.input'));
     let event = listen('.input', 'blur');
 
     assert.instanceOf(action, Test);
@@ -58,16 +58,16 @@ describe('Actions: blur', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.heading', 'blur');
-      let Test = Interactor.extend({ selector: '.heading' }, {});
+      let Test = I.extend({ selector: '.heading' }, {});
 
-      assert.typeOf(Interactor('.heading').blur, 'function');
-      assert.instanceOf(Interactor('.heading').blur(), Interactor);
+      assert.typeOf(I('.heading').blur, 'function');
+      assert.instanceOf(I('.heading').blur(), I);
 
       assert.typeOf(Test().blur, 'function');
       assert.instanceOf(Test().blur(), Test);
 
       event.$el.focus();
-      await Interactor('.heading').blur();
+      await I('.heading').blur();
 
       event.$el.focus();
       await Test().blur();
@@ -79,7 +79,7 @@ describe('Actions: blur', () => {
       let event = listen('.heading', 'blur');
       let called = false;
 
-      let Test = Interactor.extend({ selector: '.heading' }, {
+      let Test = I.extend({ selector: '.heading' }, {
         blur: () => (called = true)
       });
 

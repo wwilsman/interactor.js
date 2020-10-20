@@ -1,8 +1,8 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor, { focused } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Properties: focused', () => {
-  const Test = Interactor.extend({ timeout: 50 }, {});
+  const Test = I.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -55,15 +55,15 @@ describe('Properties: focused', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
+      const Test = I.extend({ timeout: 50 }, {
         assert: {
           focused(expected, ab) {
             this[ab].assert.focused();
           }
         },
 
-        a: Interactor('.input-a'),
-        b: Interactor('.input-b')
+        a: I('.input-a'),
+        b: I('.input-b')
       });
 
       it('works as expected when called via nested methods', async () => {
@@ -105,8 +105,8 @@ describe('Properties: focused', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({ timeout: 50 }, {
-      active: focused()
+    const Test = I.extend({ timeout: 50 }, {
+      active: I.focused()
     });
 
     it('creates a parent bound property', () => {
@@ -135,9 +135,9 @@ describe('Properties: focused', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
-        a: focused('.input-a'),
-        b: focused('.input-b')
+      const Test = I.extend({ timeout: 50 }, {
+        a: I.focused('.input-a'),
+        b: I.focused('.input-b')
       });
 
       it('creates a scoped bound property', () => {
@@ -164,8 +164,8 @@ describe('Properties: focused', () => {
       });
 
       it('can be awaited on for the value', async () => {
-        assert.equal(await focused('.input-a'), true);
-        assert.equal(await focused('.input-b'), false);
+        assert.equal(await I.focused('.input-a'), true);
+        assert.equal(await I.focused('.input-b'), false);
       });
     });
   });

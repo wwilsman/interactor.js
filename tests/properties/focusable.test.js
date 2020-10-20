@@ -1,8 +1,8 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor, { focusable } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Properties: focusable', () => {
-  const Test = Interactor.extend({ timeout: 50 }, {});
+  const Test = I.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -75,7 +75,7 @@ describe('Properties: focusable', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
+      const Test = I.extend({ timeout: 50 }, {
         assert: {
           focusable(expected, input, heading) {
             this.assert.input(input).focusable();
@@ -84,11 +84,11 @@ describe('Properties: focusable', () => {
         },
 
         input: {
-          child: ab => Interactor(`.input-${ab}`)
+          child: ab => I(`.input-${ab}`)
         },
 
         heading: {
-          child: ab => Interactor(`.heading-${ab}`)
+          child: ab => I(`.heading-${ab}`)
         }
       });
 
@@ -153,8 +153,8 @@ describe('Properties: focusable', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({ timeout: 50 }, {
-      blurrable: focusable()
+    const Test = I.extend({ timeout: 50 }, {
+      blurrable: I.focusable()
     });
 
     it('creates a parent bound property', () => {
@@ -183,9 +183,9 @@ describe('Properties: focusable', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
-        a: focusable('.input-a'),
-        b: focusable('.input-b')
+      const Test = I.extend({ timeout: 50 }, {
+        a: I.focusable('.input-a'),
+        b: I.focusable('.input-b')
       });
 
       it('creates a scoped bound property', () => {
@@ -212,8 +212,8 @@ describe('Properties: focusable', () => {
       });
 
       it('can be awaited on for the value', async () => {
-        assert.equal(await focusable('.input-a'), true);
-        assert.equal(await focusable('.input-b'), false);
+        assert.equal(await I.focusable('.input-a'), true);
+        assert.equal(await I.focusable('.input-b'), false);
       });
     });
   });

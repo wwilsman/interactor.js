@@ -1,8 +1,8 @@
 import { assert, e, fixture, jsdom, mockConsole } from 'tests/helpers';
-import Interactor, { property } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Properties: property', () => {
-  const Test = Interactor.extend({ timeout: 50 }, {});
+  const Test = I.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -49,7 +49,7 @@ describe('Properties: property', () => {
           'No layout engine detected.',
           'Layout as a result of CSS cannot be determined.',
           'You can disable this warning by setting',
-          '`Interactor.suppressLayoutEngineWarning = true`'
+          '`I.suppressLayoutEngineWarning = true`'
         ].join(' '));
       });
     });
@@ -85,15 +85,15 @@ describe('Properties: property', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
+      const Test = I.extend({ timeout: 50 }, {
         assert: {
           property(expected, foobar, prop, val) {
             this[foobar].assert.property(prop, val);
           }
         },
 
-        foo: Interactor('.foo'),
-        para: Interactor('.para')
+        foo: I('.foo'),
+        para: I('.para')
       });
 
       it('works as expected when called via nested methods', async () => {
@@ -139,9 +139,9 @@ describe('Properties: property', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({ timeout: 50 }, {
-      title: property('title'),
-      tagName: property('tagName')
+    const Test = I.extend({ timeout: 50 }, {
+      title: I.property('title'),
+      tagName: I.property('tagName')
     });
 
     it('creates a parent bound property', () => {
@@ -174,9 +174,9 @@ describe('Properties: property', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
-        foo: property('.foo', 'title'),
-        para: property('.para', 'tagName')
+      const Test = I.extend({ timeout: 50 }, {
+        foo: I.property('.foo', 'title'),
+        para: I.property('.para', 'tagName')
       });
 
       it('creates a scoped bound property', () => {
@@ -205,11 +205,11 @@ describe('Properties: property', () => {
       });
 
       it('can be awaited on for the value', async () => {
-        await assert.rejects(property('title'), (
+        await assert.rejects(I.property('title'), (
           e('InteractorError', 'an element selector is required when awaiting on properties')
         ));
 
-        assert.equal(await property('.foo', 'title'), 'bar');
+        assert.equal(await I.property('.foo', 'title'), 'bar');
       });
     });
   });

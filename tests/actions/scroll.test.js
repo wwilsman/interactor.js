@@ -1,5 +1,5 @@
 import { assert, e, fixture, listen, jsdom, mockConsole } from 'tests/helpers';
-import Interactor, { scroll } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Actions: scroll', () => {
   beforeEach(() => {
@@ -17,24 +17,24 @@ describe('Actions: scroll', () => {
   });
 
   it('creates a new interactor from the standalone action', () => {
-    assert.instanceOf(scroll('.overflow.x', { x: 0 }), Interactor);
+    assert.instanceOf(I.scroll('.overflow.x', { x: 0 }), I);
   });
 
   if (jsdom()) {
     describe('jsdom', () => {
       const mock = mockConsole();
-      const Test = Interactor.extend({
+      const Test = I.extend({
         suppressLayoutEngineWarning: true
       }, {});
 
       it('throws an overflow error for all elements', async () => {
         await assert.rejects(
-          scroll(Test('.overflow.x'), { x: 10 }).timeout(50),
+          I.scroll(Test('.overflow.x'), { x: 10 }).timeout(50),
           e('InteractorError', '.overflow.x has no overflow-x')
         );
 
         await assert.rejects(
-          scroll(Test('.overflow.y'), { y: 10 }).timeout(50),
+          I.scroll(Test('.overflow.y'), { y: 10 }).timeout(50),
           e('InteractorError', '.overflow.y has no overflow-y')
         );
       });
@@ -58,7 +58,7 @@ describe('Actions: scroll', () => {
           'No layout engine detected.',
           'Overflow as a result of CSS cannot be determined.',
           'You can disable this warning by setting',
-          '`Interactor.suppressLayoutEngineWarning = true`'
+          '`I.suppressLayoutEngineWarning = true`'
         ].join(' '));
       });
     });
@@ -77,9 +77,9 @@ describe('Actions: scroll', () => {
     assert.equal(xyEvent.$el.scrollLeft, 0);
     assert.equal(xyEvent.$el.scrollTop, 0);
 
-    await scroll('.overflow.x', { x: 20 });
-    await scroll('.overflow.y', { y: 30 });
-    await scroll('.overflow.x.y', { x: 40, y: 50 });
+    await I.scroll('.overflow.x', { x: 20 });
+    await I.scroll('.overflow.y', { y: 30 });
+    await I.scroll('.overflow.x.y', { x: 40, y: 50 });
 
     assert.equal(xEvent.count, 1);
     assert.equal(yEvent.count, 1);
@@ -95,7 +95,7 @@ describe('Actions: scroll', () => {
     let wEvent = listen('.overflow.x.y', 'wheel');
     let sEvent = listen('.overflow.x.y', 'scroll');
 
-    await scroll('.overflow.x.y', { top: 20, wheel: true });
+    await I.scroll('.overflow.x.y', { top: 20, wheel: true });
 
     assert.equal(wEvent.count, 1);
     assert.equal(sEvent.count, 1);
@@ -108,7 +108,7 @@ describe('Actions: scroll', () => {
       pos.push(event.$el.scrollTop);
     });
 
-    await scroll('.overflow.y', { top: 100, frequency: 10 });
+    await I.scroll('.overflow.y', { top: 100, frequency: 10 });
 
     assert.deepEqual(pos, [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]);
     assert.equal(event.count, 10);
@@ -118,7 +118,7 @@ describe('Actions: scroll', () => {
     let wEvent = listen('.overflow.x.y', 'wheel', e => e.preventDefault());
     let sEvent = listen('.overflow.x.y', 'scroll');
 
-    await scroll('.overflow.x.y', { top: 10, wheel: true });
+    await I.scroll('.overflow.x.y', { top: 10, wheel: true });
 
     assert.equal(wEvent.$el.scrollTop, 0);
     assert.equal(wEvent.count, 1);
@@ -130,12 +130,12 @@ describe('Actions: scroll', () => {
     let yEvent = listen('.overflow.y', 'scroll');
 
     await assert.rejects(
-      scroll('.overflow.x', { y: 10 }).timeout(50),
+      I.scroll('.overflow.x', { y: 10 }).timeout(50),
       e('InteractorError', '.overflow.x has no overflow-y')
     );
 
     await assert.rejects(
-      scroll('.overflow.y', { x: 10 }).timeout(50),
+      I.scroll('.overflow.y', { x: 10 }).timeout(50),
       e('InteractorError', '.overflow.y has no overflow-x')
     );
 
@@ -146,17 +146,17 @@ describe('Actions: scroll', () => {
 
   it('immediately throws an error when a direction is not provided', () => {
     assert.throws(
-      () => scroll('.overflow.x'),
+      () => I.scroll('.overflow.x'),
       e('InteractorError', 'missing scroll direction')
     );
   });
 
   it('can be called with an interactor selector', async () => {
-    let Test = Interactor.extend({
-      foo: y => scroll('', { y })
+    let Test = I.extend({
+      foo: y => I.scroll('', { y })
     });
 
-    let action = scroll(Test('.overflow.x.y'), { x: 10 });
+    let action = I.scroll(Test('.overflow.x.y'), { x: 10 });
     let event = listen('.overflow.x.y', 'scroll');
 
     assert.instanceOf(action, Test);
@@ -172,15 +172,15 @@ describe('Actions: scroll', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.overflow.y', 'scroll');
-      let Test = Interactor.extend({ selector: '.overflow.y' }, {});
+      let Test = I.extend({ selector: '.overflow.y' }, {});
 
-      assert.typeOf(Interactor('.overflow.y').scroll, 'function');
-      assert.instanceOf(Interactor('.overflow.y').scroll({ top: 10 }), Interactor);
+      assert.typeOf(I('.overflow.y').scroll, 'function');
+      assert.instanceOf(I('.overflow.y').scroll({ top: 10 }), I);
 
       assert.typeOf(Test().scroll, 'function');
       assert.instanceOf(Test().scroll({ top: 10 }), Test);
 
-      await Interactor('.overflow.y').scroll({ top: 10 });
+      await I('.overflow.y').scroll({ top: 10 });
       await Test().scroll({ top: 10 });
 
       assert.equal(event.count, 2);
@@ -191,7 +191,7 @@ describe('Actions: scroll', () => {
       let event = listen('.overflow.y', 'scroll');
       let called = false;
 
-      let Test = Interactor.extend({ selector: '.btn-a' }, {
+      let Test = I.extend({ selector: '.btn-a' }, {
         scroll: () => (called = true)
       });
 

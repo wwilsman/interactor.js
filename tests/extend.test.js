@@ -1,22 +1,22 @@
 import { assert, mockConsole } from 'tests/helpers';
-import Interactor from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Interactor.extend', () => {
   const mock = mockConsole();
 
   it('extends the parent instance', () => {
-    let Test = Interactor.extend();
+    let Test = I.extend();
     assert.instanceOf(Test(), Test);
-    assert.instanceOf(Test(), Interactor);
+    assert.instanceOf(Test(), I);
 
     let TestExtended = Test.extend();
     assert.instanceOf(TestExtended(), TestExtended);
     assert.instanceOf(TestExtended(), Test);
-    assert.instanceOf(TestExtended(), Interactor);
+    assert.instanceOf(TestExtended(), I);
   });
 
   it('can define static interactor options', () => {
-    let Test = Interactor.extend({
+    let Test = I.extend({
       name: 'bar',
       selector: 'foo',
       timeout: 1000,
@@ -35,7 +35,7 @@ describe('Interactor.extend', () => {
   });
 
   it('extends assert with custom assertion properties', () => {
-    let Custom = Interactor.extend({
+    let Custom = I.extend({
       assert: {
         passing() {},
         failing() { throw Error('fail'); }
@@ -70,7 +70,7 @@ describe('Interactor.extend', () => {
   });
 
   it('has properties that cannot be overridden', async () => {
-    let Test = Interactor.extend({
+    let Test = I.extend({
       assert: {
         interactor() { throw new Error('interactor'); },
         assert() { throw new Error('assert'); },
@@ -106,15 +106,15 @@ describe('Interactor.extend', () => {
   });
 
   it('wraps nested interactors to return the topmost instance', () => {
-    let Deep = Interactor.extend();
+    let Deep = I.extend();
 
-    let Child = Interactor.extend({
+    let Child = I.extend({
       bar: Deep(),
       get baz() { return Deep(); },
       qux: Deep
     });
 
-    let Test = Interactor.extend({
+    let Test = I.extend({
       foo: Child(),
       get bar() { return Child(); },
       baz: Child
@@ -135,14 +135,14 @@ describe('Interactor.extend', () => {
   });
 
   it('executes interactor action methods without returning the instance', () => {
-    let Deep = Interactor.extend();
+    let Deep = I.extend();
 
-    let Child = Interactor.extend({
+    let Child = I.extend({
       foo: Deep().exec(),
       bar: () => Deep().exec()
     });
 
-    let Test = Interactor.extend({
+    let Test = I.extend({
       foo: Child().exec(),
       bar: () => Child().exec()
     });
@@ -154,7 +154,7 @@ describe('Interactor.extend', () => {
   });
 
   it('ignores property values that are not getters, methods, or valid descriptors', () => {
-    let Test = Interactor.extend({
+    let Test = I.extend({
       foo: () => 'bar',
       get bar() { return 'baz'; },
       baz: { get: () => 'qux' },

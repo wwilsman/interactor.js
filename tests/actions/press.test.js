@@ -1,5 +1,5 @@
 import { assert, fixture, listen } from 'tests/helpers';
-import Interactor, { press } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Actions: press', () => {
   beforeEach(() => {
@@ -12,14 +12,14 @@ describe('Actions: press', () => {
   });
 
   it('creates a new interactor from the standalone action', () => {
-    assert.instanceOf(press('.input', 'f'), Interactor);
+    assert.instanceOf(I.press('.input', 'f'), I);
   });
 
   it('fires keydown and keyup events on the element', async () => {
     let dEvent = listen('.input', 'keydown');
     let uEvent = listen('.input', 'keyup');
 
-    await press('.input', 'f');
+    await I.press('.input', 'f');
 
     assert.equal(dEvent.count, 1);
     assert.equal(uEvent.count, 1);
@@ -29,14 +29,14 @@ describe('Actions: press', () => {
     let dEvent = listen('.input', 'keydown');
     let uEvent = listen('.input', 'keyup');
 
-    await press('.input', ['f', 'o', 'o']);
+    await I.press('.input', ['f', 'o', 'o']);
 
     assert.equal(dEvent.count, 3);
     assert.equal(uEvent.count, 3);
     assert.equal(uEvent.$el.value, 'foo');
 
     let delta = Date.now();
-    await press('.input', ['b', 'a', 'r'], { delay: 50 });
+    await I.press('.input', ['b', 'a', 'r'], { delay: 50 });
     delta = Date.now() - delta;
 
     assert.equal(dEvent.count, 6);
@@ -51,11 +51,11 @@ describe('Actions: press', () => {
   });
 
   it('can be called with an interactor selector', async () => {
-    let Test = Interactor.extend({
-      foo: () => press('', 'f')
+    let Test = I.extend({
+      foo: () => I.press('', 'f')
     });
 
-    let action = press(Test('.input'), 'a');
+    let action = I.press(Test('.input'), 'a');
     let event = listen('.input', 'keyup');
 
     assert.instanceOf(action, Test);
@@ -70,15 +70,15 @@ describe('Actions: press', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.input', 'keyup');
-      let Test = Interactor.extend({ selector: '.input' }, {});
+      let Test = I.extend({ selector: '.input' }, {});
 
-      assert.typeOf(Interactor('.input').press, 'function');
-      assert.instanceOf(Interactor('.input').press('a'), Interactor);
+      assert.typeOf(I('.input').press, 'function');
+      assert.instanceOf(I('.input').press('a'), I);
 
       assert.typeOf(Test().press, 'function');
       assert.instanceOf(Test().press('b'), Test);
 
-      await Interactor('.input').press('a');
+      await I('.input').press('a');
       await Test().press('b');
 
       assert.equal(event.count, 2);
@@ -88,8 +88,8 @@ describe('Actions: press', () => {
     it('can be called on nested interactors', async () => {
       let kdEvent = listen('.input', 'keydown');
       let kuEvent = listen('.input', 'keyup');
-      let Test = Interactor.extend({
-        input: Interactor('.input')
+      let Test = I.extend({
+        input: I('.input')
       });
 
       await Test()
@@ -106,7 +106,7 @@ describe('Actions: press', () => {
       let event = listen('.input', 'keyup');
       let called = false;
 
-      let Test = Interactor.extend({ selector: '.input' }, {
+      let Test = I.extend({ selector: '.input' }, {
         press: () => (called = true)
       });
 

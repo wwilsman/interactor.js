@@ -1,5 +1,5 @@
 import { assert, fixture, listen } from 'tests/helpers';
-import Interactor, { trigger } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Actions: trigger', () => {
   beforeEach(() => {
@@ -9,25 +9,25 @@ describe('Actions: trigger', () => {
   });
 
   it('creates a new interactor from the standalone action', () => {
-    assert.instanceOf(trigger('.test', 'foo'), Interactor);
+    assert.instanceOf(I.trigger('.test', 'foo'), I);
   });
 
   it('fires an arbitrary event on the element', async () => {
     let event = listen('.test', 'foo', e => (evt = e));
     let evt = null;
 
-    await trigger('.test', 'foo', { bar: 'baz' });
+    await I.trigger('.test', 'foo', { bar: 'baz' });
 
     assert.equal(event.count, 1);
     assert.equal(evt.bar, 'baz');
   });
 
   it('can be called with an interactor selector', async () => {
-    let Test = Interactor.extend({
-      foo: () => trigger('', 'foo')
+    let Test = I.extend({
+      foo: () => I.trigger('', 'foo')
     });
 
-    let action = trigger(Test('.test'), 'foo');
+    let action = I.trigger(Test('.test'), 'foo');
     let event = listen('.test', 'foo');
 
     assert.instanceOf(action, Test);
@@ -41,15 +41,15 @@ describe('Actions: trigger', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.test', 'foo');
-      let Test = Interactor.extend({ selector: '.test' }, {});
+      let Test = I.extend({ selector: '.test' }, {});
 
-      assert.typeOf(Interactor('.test').trigger, 'function');
-      assert.instanceOf(Interactor('.test').trigger('foo'), Interactor);
+      assert.typeOf(I('.test').trigger, 'function');
+      assert.instanceOf(I('.test').trigger('foo'), I);
 
       assert.typeOf(Test().trigger, 'function');
       assert.instanceOf(Test().trigger('foo'), Test);
 
-      await Interactor('.test').trigger('foo');
+      await I('.test').trigger('foo');
       await Test().trigger('foo');
 
       assert.equal(event.count, 2);
@@ -59,7 +59,7 @@ describe('Actions: trigger', () => {
       let event = listen('.test', 'foo');
       let called = false;
 
-      let Test = Interactor.extend({ selector: '.test' }, {
+      let Test = I.extend({ selector: '.test' }, {
         trigger: () => (called = true)
       });
 

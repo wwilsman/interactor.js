@@ -1,8 +1,8 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor, { disabled } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Properties: disabled', () => {
-  const Test = Interactor.extend({ timeout: 50 }, {});
+  const Test = I.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -53,15 +53,15 @@ describe('Properties: disabled', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
+      const Test = I.extend({ timeout: 50 }, {
         assert: {
           disabled(expected, ab) {
             this[ab].assert.disabled();
           }
         },
 
-        a: Interactor('.btn-a'),
-        b: Interactor('.btn-b')
+        a: I('.btn-a'),
+        b: I('.btn-b')
       });
 
       it('works as expected when called via nested methods', async () => {
@@ -103,8 +103,8 @@ describe('Properties: disabled', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({ timeout: 50 }, {
-      off: disabled()
+    const Test = I.extend({ timeout: 50 }, {
+      off: I.disabled()
     });
 
     it('creates a parent bound property', () => {
@@ -133,9 +133,9 @@ describe('Properties: disabled', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
-        a: disabled('.btn-a'),
-        b: disabled('.btn-b')
+      const Test = I.extend({ timeout: 50 }, {
+        a: I.disabled('.btn-a'),
+        b: I.disabled('.btn-b')
       });
 
       it('creates a scoped bound property', () => {
@@ -162,8 +162,8 @@ describe('Properties: disabled', () => {
       });
 
       it('can be awaited on for the value', async () => {
-        assert.equal(await disabled('.btn-a'), true);
-        assert.equal(await disabled('.btn-b'), false);
+        assert.equal(await I.disabled('.btn-a'), true);
+        assert.equal(await I.disabled('.btn-b'), false);
       });
     });
   });

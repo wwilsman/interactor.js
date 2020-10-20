@@ -1,5 +1,5 @@
 import { assert, e, fixture, listen } from 'tests/helpers';
-import Interactor, { select, by } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Actions: select', () => {
   beforeEach(() => {
@@ -18,7 +18,7 @@ describe('Actions: select', () => {
   });
 
   it('creates a new interactor from the standalone action', () => {
-    assert.instanceOf(select('.sel-a', '.opt-1'), Interactor);
+    assert.instanceOf(I.select('.sel-a', '.opt-1'), I);
   });
 
   it('fires input and change events on the select element', async () => {
@@ -26,7 +26,7 @@ describe('Actions: select', () => {
     let cEvent = listen('.sel-a', 'change');
 
     assert.equal(cEvent.$el.value, 'One');
-    await select('.sel-a', '.opt-2');
+    await I.select('.sel-a', '.opt-2');
 
     assert.equal(iEvent.count, 1);
     assert.equal(cEvent.count, 1);
@@ -40,8 +40,8 @@ describe('Actions: select', () => {
     assert.equal(cEvent.$el.selectedOptions.length, 1);
     assert.equal(cEvent.$el.selectedOptions[0].text, 'Three');
 
-    await select('.sel-b', [by.text('One'), by.text('Three')]);
-    await select('.sel-b', '.opt-2, .opt-3');
+    await I.select('.sel-b', [I.find.text('One'), I.find.text('Three')]);
+    await I.select('.sel-b', '.opt-2, .opt-3');
 
     assert.equal(iEvent.count, 4);
     assert.equal(cEvent.count, 4);
@@ -56,7 +56,7 @@ describe('Actions: select', () => {
     let event = listen('.sel-a', 'change');
 
     await assert.rejects(
-      select('.sel-a', '.opt-3').timeout(50),
+      I.select('.sel-a', '.opt-3').timeout(50),
       e('InteractorError', '.opt-3 within .sel-a is disabled')
     );
 
@@ -68,7 +68,7 @@ describe('Actions: select', () => {
     event.$el.disabled = true;
 
     await assert.rejects(
-      select('.sel-a', '.opt-2').timeout(50),
+      I.select('.sel-a', '.opt-2').timeout(50),
       e('InteractorError', '.sel-a is disabled')
     );
 
@@ -79,7 +79,7 @@ describe('Actions: select', () => {
     let event = listen('.sel-a', 'change');
 
     await assert.rejects(
-      select('.sel-a', ['.opt-1', 'opt-2']).timeout(50),
+      I.select('.sel-a', ['.opt-1', 'opt-2']).timeout(50),
       e('InteractorError', '.sel-a is not a multi select element')
     );
 
@@ -90,7 +90,7 @@ describe('Actions: select', () => {
     let event = listen('#test', 'change');
 
     await assert.rejects(
-      select('#test', '.opt-1').timeout(50),
+      I.select('#test', '.opt-1').timeout(50),
       e('InteractorError', '#test is not a select element')
     );
 
@@ -98,11 +98,11 @@ describe('Actions: select', () => {
   });
 
   it('can be called with an interactor selector', async () => {
-    let Test = Interactor.extend({
-      foo: () => select('', '.opt-2')
+    let Test = I.extend({
+      foo: () => I.select('', '.opt-2')
     });
 
-    let action = select(Test('.sel-a'), by.text('Two'));
+    let action = I.select(Test('.sel-a'), I.find.text('Two'));
     let event = listen('.sel-a', 'change');
 
     assert.instanceOf(action, Test);
@@ -116,15 +116,15 @@ describe('Actions: select', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.sel-a', 'change');
-      let Test = Interactor.extend({ selector: '.sel-a' }, {});
+      let Test = I.extend({ selector: '.sel-a' }, {});
 
-      assert.typeOf(Interactor('.sel-a').select, 'function');
-      assert.instanceOf(Interactor('.sel-a').select('.opt-2'), Interactor);
+      assert.typeOf(I('.sel-a').select, 'function');
+      assert.instanceOf(I('.sel-a').select('.opt-2'), I);
 
       assert.typeOf(Test().select, 'function');
       assert.instanceOf(Test().select('.opt-1'), Test);
 
-      await Interactor('.sel-a').select('.opt-2');
+      await I('.sel-a').select('.opt-2');
       await Test().select('.opt-1');
 
       assert.equal(event.count, 2);
@@ -134,7 +134,7 @@ describe('Actions: select', () => {
       let event = listen('.sel-a', 'change');
       let called = false;
 
-      let Test = Interactor.extend({ selector: '.sel-a' }, {
+      let Test = I.extend({ selector: '.sel-a' }, {
         select: () => (called = true)
       });
 

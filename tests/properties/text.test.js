@@ -1,8 +1,8 @@
 import { assert, e, fixture, jsdom, mockConsole } from 'tests/helpers';
-import Interactor, { text } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Properties: text', () => {
-  const Test = Interactor.extend({
+  const Test = I.extend({
     timeout: 50,
     suppressLayoutEngineWarning: true
   }, {});
@@ -58,7 +58,7 @@ describe('Properties: text', () => {
           'No layout engine detected.',
           'Text content as a result of CSS cannot be determined.',
           'You can disable this warning by setting',
-          '`Interactor.suppressLayoutEngineWarning = true`'
+          '`I.suppressLayoutEngineWarning = true`'
         ].join(' '));
       });
     });
@@ -167,7 +167,7 @@ describe('Properties: text', () => {
 
   describe('property creator', () => {
     const T = Test.extend({
-      content: text()
+      content: I.text()
     });
 
     it('creates a parent bound property', () => {
@@ -195,8 +195,8 @@ describe('Properties: text', () => {
 
     describe('with a selector', () => {
       const T = Test.extend({
-        a: text('.a'),
-        b: text('.b')
+        a: I.text('.a'),
+        b: I.text('.b')
       });
 
       it('creates a scoped bound property', () => {
@@ -227,8 +227,8 @@ describe('Properties: text', () => {
       // rather than globally disable the layout engine warning, just skip this test for jsdom
       if (!jsdom()) {
         it('can be awaited on for the value', async () => {
-          assert.equal(await text('.list .a'), 'a');
-          assert.equal(await text('.list .b'), 'b');
+          assert.equal(await I.text('.list .a'), 'a');
+          assert.equal(await I.text('.list .b'), 'b');
         });
       }
     });

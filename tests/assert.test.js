@@ -1,14 +1,11 @@
 import { assert, e } from 'tests/helpers';
-import Interactor, { assertion } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('InteractorAssert', () => {
-  const Test = Interactor.extend({ timeout: 50 }, {});
+  const Test = I.extend({ timeout: 50 }, {});
 
   it('is unique per interactor instance', () => {
-    assert.notEqual(
-      Interactor().assert,
-      Interactor().assert
-    );
+    assert.notEqual(I().assert, I().assert);
   });
 
   it('can be negated with .not', async () => {
@@ -94,7 +91,7 @@ describe('InteractorAssert', () => {
       assert: {
         passing(expected, bool) {
           if (expected !== bool) {
-            throw Interactor.Error('%{@} is %{- failing|passing}');
+            throw I.Error('%{@} is %{- failing|passing}');
           }
         }
       }
@@ -102,7 +99,7 @@ describe('InteractorAssert', () => {
 
     await assert.rejects(
       T('foo').assert(() => {
-        throw Interactor.Error('%{@} is %{- not} passing');
+        throw I.Error('%{@} is %{- not} passing');
       }),
       e('InteractorError', 'foo is not passing')
     );
@@ -122,7 +119,7 @@ describe('InteractorAssert', () => {
     it('throws the message if the result is not expected', async () => {
       let T = Test.extend({
         assert: {
-          test: assertion((a, b) => ({
+          test: I.assertion((a, b) => ({
             message: `%{@} was ${a} %{- but expected ${b}}`,
             result: a === b
           }))
@@ -149,7 +146,7 @@ describe('InteractorAssert', () => {
     it('uses the function result as the first argument to the matcher', async () => {
       let T = Test.extend({
         assert: {
-          test: assertion((a, b) => a * b, (r, a, b, c) => ({
+          test: I.assertion((a, b) => a * b, (r, a, b, c) => ({
             message: `%{@} %{- |not} expected ${a} * ${b} = ${c} %{- but was ${r}}`,
             result: r === c
           }))
@@ -175,7 +172,7 @@ describe('InteractorAssert', () => {
   });
 
   describe('auto assertions', () => {
-    const Test = Interactor.extend({ timeout: 50 }, {
+    const Test = I.extend({ timeout: 50 }, {
       get true() { return true; },
       get false() { return false; },
       get simple() { return 'foo'; },

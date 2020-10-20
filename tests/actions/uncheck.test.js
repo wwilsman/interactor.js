@@ -1,5 +1,5 @@
 import { assert, e, fixture, listen } from 'tests/helpers';
-import Interactor, { uncheck } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Actions: uncheck', () => {
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('Actions: uncheck', () => {
   });
 
   it('creates a new interactor from the standalone action', () => {
-    assert.instanceOf(uncheck('.check-a'), Interactor);
+    assert.instanceOf(I.uncheck('.check-a'), I);
   });
 
   it('fires a click event on the element and marks it as not checked', async () => {
@@ -23,7 +23,7 @@ describe('Actions: uncheck', () => {
 
     assert.equal(event.$el.checked, true);
 
-    await uncheck('.check-a');
+    await I.uncheck('.check-a');
 
     assert.equal(event.count, 1);
     assert.equal(event.$el.checked, false);
@@ -33,7 +33,7 @@ describe('Actions: uncheck', () => {
     let event = listen('.check-c', 'click');
 
     await assert.rejects(
-      uncheck('.check-c').timeout(50),
+      I.uncheck('.check-c').timeout(50),
       e('InteractorError', '.check-c is not checked')
     );
 
@@ -44,7 +44,7 @@ describe('Actions: uncheck', () => {
     let event = listen('.check-b', 'click');
 
     await assert.rejects(
-      uncheck('.check-b').timeout(50),
+      I.uncheck('.check-b').timeout(50),
       e('InteractorError', '.check-b is disabled')
     );
 
@@ -57,17 +57,17 @@ describe('Actions: uncheck', () => {
     let dEvent = listen('.div', 'click');
 
     await assert.rejects(
-      uncheck('.radio-a').timeout(50),
+      I.uncheck('.radio-a').timeout(50),
       e('InteractorError', '.radio-a is a radio button which cannot be unchecked')
     );
 
     await assert.rejects(
-      uncheck('.input').timeout(50),
+      I.uncheck('.input').timeout(50),
       e('InteractorError', '.input is not a checkbox')
     );
 
     await assert.rejects(
-      uncheck('.div').timeout(50),
+      I.uncheck('.div').timeout(50),
       e('InteractorError', '.div is not a checkbox')
     );
 
@@ -77,11 +77,11 @@ describe('Actions: uncheck', () => {
   });
 
   it('can be called with an interactor selector', async () => {
-    let Test = Interactor.extend({
-      foo: () => uncheck()
+    let Test = I.extend({
+      foo: () => I.uncheck()
     });
 
-    let action = uncheck(Test('.check-a'));
+    let action = I.uncheck(Test('.check-a'));
     let event = listen('.check-a', 'click');
 
     assert.instanceOf(action, Test);
@@ -96,15 +96,15 @@ describe('Actions: uncheck', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.check-a', 'click');
-      let Test = Interactor.extend({ selector: '.check-a' }, {});
+      let Test = I.extend({ selector: '.check-a' }, {});
 
-      assert.typeOf(Interactor('.check-a').uncheck, 'function');
-      assert.instanceOf(Interactor('.check-a').uncheck(), Interactor);
+      assert.typeOf(I('.check-a').uncheck, 'function');
+      assert.instanceOf(I('.check-a').uncheck(), I);
 
       assert.typeOf(Test().uncheck, 'function');
       assert.instanceOf(Test().uncheck(), Test);
 
-      await Interactor('.check-a').uncheck();
+      await I('.check-a').uncheck();
       await Test().click().uncheck();
 
       assert.equal(event.count, 3);
@@ -114,7 +114,7 @@ describe('Actions: uncheck', () => {
       let event = listen('.check-a', 'click');
       let called = false;
 
-      let Test = Interactor.extend({ selector: '.check-a' }, {
+      let Test = I.extend({ selector: '.check-a' }, {
         uncheck: () => (called = true)
       });
 

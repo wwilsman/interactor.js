@@ -1,8 +1,8 @@
 import { assert, e, fixture } from 'tests/helpers';
-import Interactor, { matches } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Properties: matches', () => {
-  const Test = Interactor.extend({ timeout: 50 }, {});
+  const Test = I.extend({ timeout: 50 }, {});
 
   beforeEach(() => {
     fixture(`
@@ -52,14 +52,14 @@ describe('Properties: matches', () => {
     });
 
     describe('nested', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
+      const Test = I.extend({ timeout: 50 }, {
         assert: {
           matches(expected, sel) {
             this.foo.assert.matches(sel);
           }
         },
 
-        foo: Interactor('.div')
+        foo: I('.div')
       });
 
       it('works as expected when called via nested methods', async () => {
@@ -101,9 +101,9 @@ describe('Properties: matches', () => {
   });
 
   describe('property creator', () => {
-    const Test = Interactor.extend({ timeout: 50 }, {
-      foo: matches('.foo'),
-      bar: matches('.bar')
+    const Test = I.extend({ timeout: 50 }, {
+      foo: I.matches('.foo'),
+      bar: I.matches('.bar')
     });
 
     it('creates a parent bound property', () => {
@@ -130,9 +130,9 @@ describe('Properties: matches', () => {
     });
 
     describe('with a selector', () => {
-      const Test = Interactor.extend({ timeout: 50 }, {
-        foo: matches('.div', '.foo'),
-        bar: matches('.div', '.bar')
+      const Test = I.extend({ timeout: 50 }, {
+        foo: I.matches('.div', '.foo'),
+        bar: I.matches('.div', '.bar')
       });
 
       it('creates a scoped bound property', () => {
@@ -160,11 +160,11 @@ describe('Properties: matches', () => {
 
       it('can be awaited on for the value', async () => {
         await assert.rejects(
-          matches('.foo'),
+          I.matches('.foo'),
           e('InteractorError', 'an element selector is required when awaiting on properties')
         );
 
-        assert.equal(await matches('.div', '.foo'), true);
+        assert.equal(await I.matches('.div', '.foo'), true);
       });
     });
   });

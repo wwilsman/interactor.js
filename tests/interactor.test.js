@@ -1,24 +1,24 @@
 import { assert, e, fixture, listen } from 'tests/helpers';
-import Interactor, { InteractorError } from 'interactor.js';
+import I, { InteractorError } from 'interactor.js';
 
 describe('Interactor', () => {
   it('can be used with or without the new keyword', () => {
-    assert.instanceOf(new Interactor(), Interactor);
-    assert.instanceOf(Interactor(), Interactor);
+    assert.instanceOf(new I(), I);
+    assert.instanceOf(I(), I);
   });
 
   it('has a static error constructor', () => {
-    assert.typeOf(Interactor.Error, 'function');
-    assert.equal(Interactor.Error, InteractorError);
+    assert.typeOf(I.Error, 'function');
+    assert.equal(I.Error, InteractorError);
   });
 
   it('has an inheritable static .extend() method', () => {
-    assert.typeOf(Interactor.extend, 'function');
-    assert.typeOf(Interactor.extend().extend, 'function');
+    assert.typeOf(I.extend, 'function');
+    assert.typeOf(I.extend().extend, 'function');
   });
 
   it('can customize the interactor element selector', () => {
-    let Test = Interactor.extend();
+    let Test = I.extend();
 
     fixture(`
       <p class="a">A</li>
@@ -36,14 +36,14 @@ describe('Interactor', () => {
   });
 
   it('can create extended instances', () => {
-    let test = Interactor('test', {
+    let test = I('test', {
       get foo() { return 'bar'; }
     });
 
-    assert.instanceOf(test, Interactor);
+    assert.instanceOf(test, I);
     assert.equal(test.foo, 'bar');
 
-    let Test = Interactor.extend({
+    let Test = I.extend({
       get foo() { return 'bar'; }
     });
 
@@ -65,31 +65,31 @@ describe('Interactor', () => {
 
     it('returns the interactor element', () => {
       assert.equal(
-        Interactor('.a').$(),
+        I('.a').$(),
         document.querySelector('.a')
       );
 
       assert.equal(
-        Interactor($body => $body.querySelector('.a')).$(),
+        I($body => $body.querySelector('.a')).$(),
         document.querySelector('.a')
       );
     });
 
     it('returns the nested interactor element', () => {
       assert.equal(
-        Interactor('.a').find('.b').$(),
+        I('.a').find('.b').$(),
         document.querySelector('.a .b')
       );
 
       assert.equal(
-        Interactor().find('.a .b').$(),
+        I().find('.a .b').$(),
         document.querySelector('.a .b')
       );
     });
 
     it('throws when the interactor cannot be found', () => {
       assert.throws(
-        () => Interactor('.c').$(),
+        () => I('.c').$(),
         e('InteractorError', 'could not find .c')
       );
     });
@@ -97,14 +97,14 @@ describe('Interactor', () => {
     describe('with a string selector', () => {
       it('returns the element within the interactor', () => {
         assert.equal(
-          Interactor('.a').$('.b'),
+          I('.a').$('.b'),
           document.querySelector('.a .b')
         );
       });
 
       it('throws when the selector cannot be found', () => {
         assert.throws(
-          () => Interactor('.b').$('.c'),
+          () => I('.b').$('.c'),
           e('InteractorError', 'could not find .c within .b')
         );
       });
@@ -113,7 +113,7 @@ describe('Interactor', () => {
     describe('with a selector function', () => {
       it('provides the containing element as an argument', () => {
         assert.doesNotThrow(() => {
-          Interactor('.a').$($a => {
+          I('.a').$($a => {
             assert.equal($a, document.querySelector('.a'));
             return $a;
           });
@@ -122,14 +122,14 @@ describe('Interactor', () => {
 
       it('returns the element from the selector function', () => {
         assert.equal(
-          Interactor('.a').$($a => $a.firstElementChild),
+          I('.a').$($a => $a.firstElementChild),
           document.querySelector('.a .b')
         );
       });
 
       it('throws when the selector function does', () => {
         assert.throws(
-          () => Interactor('.a').$(() => assert(false)),
+          () => I('.a').$(() => assert(false)),
           e('AssertionError', 'false == true')
         );
       });
@@ -139,7 +139,7 @@ describe('Interactor', () => {
         fn.toString = () => 'fn';
 
         assert.throws(
-          () => Interactor('.a').$(fn),
+          () => I('.a').$(fn),
           e('InteractorError', 'could not find fn within .a')
         );
       });
@@ -148,21 +148,21 @@ describe('Interactor', () => {
     describe('with an interactor selector', () => {
       it('returns the selector interactor element', () => {
         assert.equal(
-          Interactor('.a').$(Interactor('.b')),
+          I('.a').$(I('.b')),
           document.querySelector('.a .b')
         );
       });
 
       it('throws an error with queued actions', () => {
         assert.throws(
-          () => Interactor('.a').$(Interactor('.b').exec()),
+          () => I('.a').$(I('.b').exec()),
           e('InteractorError', 'the provided interactor must not have queued actions')
         );
       });
 
       it('throws when the interactor cannot be found', () => {
         assert.throws(
-          () => Interactor('.b').$(Interactor('.c')),
+          () => I('.b').$(I('.c')),
           e('InteractorError', 'could not find .c within .b')
         );
       });
@@ -171,14 +171,14 @@ describe('Interactor', () => {
     describe('with an unknown selector', () => {
       it('throws an unknown selector error', () => {
         assert.throws(
-          () => Interactor('.a').$({}),
+          () => I('.a').$({}),
           e('InteractorError', 'unknown selector: [object Object]')
         );
       });
     });
 
     describe('with other document roots', () => {
-      const Frame = Interactor.extend();
+      const Frame = I.extend();
 
       beforeEach(done => {
         fixture(`
@@ -197,12 +197,12 @@ describe('Interactor', () => {
 
       it('works with alternate dom references', () => {
         assert.equal(
-          Interactor('.div').$(),
+          I('.div').$(),
           document.querySelector('.div.foo')
         );
 
         assert.throws(
-          () => Interactor('.div.bar').$(),
+          () => I('.div.bar').$(),
           e('InteractorError', 'could not find .div.bar')
         );
 
@@ -220,7 +220,7 @@ describe('Interactor', () => {
 
       it('automatically searches within nested documents', () => {
         assert.equal(
-          Interactor('.test-frame').$('.div.bar'),
+          I('.test-frame').$('.div.bar'),
           document.querySelector('.test-frame')
             .contentDocument.body.querySelector('.div.bar')
         );
@@ -238,7 +238,7 @@ describe('Interactor', () => {
         await new Promise(r => listen('.test-frame', 'load', r));
 
         assert.throws(
-          () => Interactor('.test-frame').$('.div.bar'),
+          () => I('.test-frame').$('.div.bar'),
           e('InteractorError', '.test-frame is inaccessible, possibly due to CORS')
         );
       });
@@ -258,14 +258,14 @@ describe('Interactor', () => {
 
     it('returns an array of elements within the interactor', () => {
       assert.deepEqual(
-        Interactor('.list').$$('.item'),
+        I('.list').$$('.item'),
         Array.from(document.querySelectorAll('.list .item'))
       );
     });
 
     it('throws an error when missing a selector', () => {
       assert.throws(
-        () => Interactor('.item').$$(),
+        () => I('.item').$$(),
         e('InteractorError', 'cannot query for multiple elements without a selector')
       );
     });
@@ -273,7 +273,7 @@ describe('Interactor', () => {
     describe('with a selector function', () => {
       it('provides a second truthy argument for multiple elements', () => {
         assert.doesNotThrow(() => {
-          Interactor('.list').$$(($list, multiple) => {
+          I('.list').$$(($list, multiple) => {
             assert.equal($list, document.querySelector('.list'));
             assert.equal(multiple, true);
             return $list.children;
@@ -284,7 +284,7 @@ describe('Interactor', () => {
   });
 
   describe('timeout([ms])', () => {
-    const interactor = Interactor();
+    const interactor = I();
 
     it('returns the interactor timeout', () => {
       assert.equal(interactor.timeout(), 2000);
@@ -294,15 +294,15 @@ describe('Interactor', () => {
       it('sets a new interactor timeout', () => {
         let next = interactor.timeout(1000);
         assert.notEqual(next, interactor);
-        assert.instanceOf(next, Interactor);
+        assert.instanceOf(next, I);
         assert.equal(next.timeout(), 1000);
       });
     });
   });
 
   describe('find(selector)', () => {
-    const Foo = Interactor.extend();
-    const Bar = Interactor.extend();
+    const Foo = I.extend();
+    const Bar = I.extend();
 
     beforeEach(() => {
       fixture(`
@@ -315,7 +315,7 @@ describe('Interactor', () => {
     it('returns a new child interactor', () => {
       let next = Foo('.a').find('.b');
       assert.notInstanceOf(next, Foo);
-      assert.instanceOf(next, Interactor);
+      assert.instanceOf(next, I);
       assert.instanceOf(next.exec(), Foo);
     });
 
@@ -338,7 +338,7 @@ describe('Interactor', () => {
   describe('assert(assertion)', () => {
     it('adds the assertion to the next queue', async () => {
       let called = false;
-      await Interactor().assert(() => (called = true));
+      await I().assert(() => (called = true));
       assert.equal(called, true);
     });
   });
@@ -346,7 +346,7 @@ describe('Interactor', () => {
   describe('exec([callback])', () => {
     it('adds the callback to the next queue', async () => {
       let called = false;
-      await Interactor().exec(() => (called = true));
+      await I().exec(() => (called = true));
       assert.equal(called, true);
     });
 
@@ -355,7 +355,7 @@ describe('Interactor', () => {
         let count = 0;
 
         await assert.doesNotReject(
-          Interactor().timeout(100)
+          I().timeout(100)
             .assert(() => (count += 1))
             .assert(() => assert.equal(count, 5))
             .exec()
@@ -366,8 +366,8 @@ describe('Interactor', () => {
     });
 
     describe('with an interactor action', () => {
-      const Foo = Interactor.extend();
-      const Bar = Interactor.extend();
+      const Foo = I.extend();
+      const Bar = I.extend();
 
       it('returns an new instance of the topmost interactor', () => {
         let next = Foo().exec(Bar().exec());
@@ -388,7 +388,7 @@ describe('Interactor', () => {
       let caught = false;
       let called = false;
 
-      await Interactor()
+      await I()
         .exec(() => { throw new Error('test'); })
         .catch(err => (caught = err))
         .exec(() => (called = true));
@@ -403,8 +403,8 @@ describe('Interactor', () => {
         let called = false;
 
         await assert.rejects(
-          Interactor()
-            .exec(() => { throw Interactor.Error('test'); })
+          I()
+            .exec(() => { throw I.Error('test'); })
             .catch('there was an error: %{e}')
             .exec(() => (called = true)),
           e('InteractorError', 'there was an error: test')
@@ -417,7 +417,7 @@ describe('Interactor', () => {
         let called = false;
 
         await assert.rejects(
-          Interactor()
+          I()
             .exec(() => { throw new Error('test'); })
             .catch('there was an error: %{e}')
             .exec(() => (called = true)),
@@ -432,7 +432,7 @@ describe('Interactor', () => {
   describe('then()', () => {
     it('enables async/await behavior', async () => {
       let called = false;
-      let interactor = Interactor().exec(() => (called = true));
+      let interactor = I().exec(() => (called = true));
 
       assert.equal(called, false);
       await interactor;
@@ -441,7 +441,7 @@ describe('Interactor', () => {
 
     it('starts executing the instance queue', async () => {
       let calls = 0;
-      let interactor = Interactor()
+      let interactor = I()
         .exec(() => calls++)
         .assert(() => assert.equal(calls, 1))
         .exec(() => calls++);
@@ -452,7 +452,7 @@ describe('Interactor', () => {
     });
 
     it('binds each action to the associated instance', async () => {
-      let interactor = Interactor();
+      let interactor = I();
 
       interactor.test = 1;
       interactor = interactor.exec(function() {
@@ -467,7 +467,7 @@ describe('Interactor', () => {
       fixture('<div class="a"></div>');
 
       await assert.doesNotReject(
-        Interactor('.a')
+        I('.a')
           .exec($el => ($el.innerText = 'A'))
           .assert($el => assert.equal($el.innerText, 'A'))
       );
@@ -475,7 +475,7 @@ describe('Interactor', () => {
       let called = false;
 
       await assert.rejects(
-        Interactor('.b').timeout(100)
+        I('.b').timeout(100)
           .exec(() => (called = true))
           .assert($el => assert.equal($el.className, 'b')),
         e('InteractorError', 'could not find .b')
@@ -488,7 +488,7 @@ describe('Interactor', () => {
       let count = 0;
 
       await assert.doesNotReject(
-        Interactor().timeout(100)
+        I().timeout(100)
           .assert(() => (count += 1))
           .assert(() => assert.equal(count, 5))
       );
@@ -499,7 +499,7 @@ describe('Interactor', () => {
       let delta = 0;
 
       await assert.doesNotReject(
-        Interactor()
+        I()
           .assert(() => (delta += Date.now() - time))
           .assert(() => (time = Date.now()))
           .assert.remains(100)
@@ -516,7 +516,7 @@ describe('Interactor', () => {
       let count = 0;
 
       await assert.doesNotReject(
-        Interactor().timeout(100)
+        I().timeout(100)
           .assert(() => (count += 1))
           .assert(() => assert.equal(count, 5))
           .exec(() => (count *= 2))
@@ -529,14 +529,14 @@ describe('Interactor', () => {
       let called = false;
 
       await assert.rejects(
-        Interactor()
+        I()
           .exec(() => { throw new Error('test'); })
           .exec(() => (called = true)),
         e('Error', 'test')
       );
 
       await assert.rejects(
-        Interactor().timeout(100)
+        I().timeout(100)
           .assert(() => { throw new Error('test'); })
           .exec(() => (called = true)),
         e('Error', 'test')
@@ -547,9 +547,9 @@ describe('Interactor', () => {
 
     it('formats thrown interactor errors', async () => {
       await assert.rejects(
-        Interactor('foo').exec(function() {
+        I('foo').exec(function() {
           return this.find('test').exec(() => {
-            throw Interactor.Error('%{@} bar %{!!} baz %{- qux}', true);
+            throw I.Error('%{@} bar %{!!} baz %{- qux}', true);
           });
         }),
         e('InteractorError', 'test within foo bar baz')
@@ -559,11 +559,11 @@ describe('Interactor', () => {
 
   describe('toString', () => {
     it('references the interactor\'s selector', () => {
-      assert.equal(Interactor('.foo').toString(), '.foo');
+      assert.equal(I('.foo').toString(), '.foo');
     });
 
     it('references custom interactor names', () => {
-      let Custom = Interactor.extend({ name: 'element' }, {});
+      let Custom = I.extend({ name: 'element' }, {});
       assert.equal(Custom('.bar').toString(), '.bar element');
 
       let CustomInherit = Custom.extend();
@@ -575,13 +575,13 @@ describe('Interactor', () => {
 
     it('references any parent instance', () => {
       assert.equal(
-        Interactor('.bar').find('.foo').toString(),
+        I('.bar').find('.foo').toString(),
         '.foo within .bar'
       );
     });
 
     it('does not reference undefined selectors', () => {
-      assert.equal(Interactor('.bar').find().toString(), '.bar');
+      assert.equal(I('.bar').find().toString(), '.bar');
     });
   });
 });

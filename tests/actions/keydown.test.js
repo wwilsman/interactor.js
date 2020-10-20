@@ -1,5 +1,5 @@
 import { assert, e, fixture, listen } from 'tests/helpers';
-import Interactor, { keydown } from 'interactor.js';
+import I from 'interactor.js';
 
 describe('Actions: keydown', () => {
   beforeEach(() => {
@@ -12,24 +12,24 @@ describe('Actions: keydown', () => {
   });
 
   it('creates a new interactor from the standalone action', () => {
-    assert.instanceOf(keydown('.input', 'f'), Interactor);
+    assert.instanceOf(I.keydown('.input', 'f'), I);
   });
 
   it('fires a keydown event on the element', async () => {
     let event = listen('.input', 'keydown');
-    await keydown('.input', 'f');
+    await I.keydown('.input', 'f');
     assert.equal(event.count, 1);
   });
 
   it('sends text for keys that produce text', async () => {
     let event = listen('.input', 'keydown');
-    await keydown('.input', 'f');
+    await I.keydown('.input', 'f');
     assert.equal(event.$el.value, 'f');
   });
 
   it('does not send text for keys that do not produce text', async () => {
     let event = listen('.input', 'keydown');
-    await keydown('.input', 'Control');
+    await I.keydown('.input', 'Control');
     assert.equal(event.count, 1);
     assert.equal(event.$el.value, '');
   });
@@ -38,9 +38,9 @@ describe('Actions: keydown', () => {
     let event = listen('.textarea', 'keydown');
     event.$el.value = 'foobar';
 
-    await keydown('.textarea', 'Backspace', { range: 4 });
-    await keydown('.textarea', 'Delete', { range: 3 });
-    await keydown('.textarea', 'Delete', { range: [3, 4] });
+    await I.keydown('.textarea', 'Backspace', { range: 4 });
+    await I.keydown('.textarea', 'Delete', { range: 3 });
+    await I.keydown('.textarea', 'Delete', { range: [3, 4] });
 
     assert.equal(event.count, 3);
     assert.equal(event.$el.value, 'foo');
@@ -50,7 +50,7 @@ describe('Actions: keydown', () => {
     let event = listen('.input', 'keydown');
     event.$el.value = 'foobar';
 
-    await keydown('.input', 'a', { replace: true });
+    await I.keydown('.input', 'a', { replace: true });
 
     assert.equal(event.$el.value, 'a');
   });
@@ -60,7 +60,7 @@ describe('Actions: keydown', () => {
     event.$el.value = 'foobar';
     event.$el.setSelectionRange(1, 4);
 
-    await keydown('.input', 'b');
+    await I.keydown('.input', 'b');
 
     assert.equal(event.$el.value, 'fbar');
   });
@@ -76,7 +76,7 @@ describe('Actions: keydown', () => {
     sel.removeAllRanges();
     sel.addRange(range);
 
-    await keydown('.contenteditable', 'f');
+    await I.keydown('.contenteditable', 'f');
 
     assert.equal(event.$el.textContent, 'ffbar');
   });
@@ -85,8 +85,8 @@ describe('Actions: keydown', () => {
     let eEvent = listen('.contenteditable', 'keydown');
     let dEvent = listen('.just-a-div', 'keydown');
 
-    await keydown('.contenteditable', 'a');
-    await keydown('.just-a-div', 'b');
+    await I.keydown('.contenteditable', 'a');
+    await I.keydown('.just-a-div', 'b');
 
     assert.equal(eEvent.count, 1);
     assert.equal(eEvent.$el.textContent, 'a');
@@ -95,11 +95,11 @@ describe('Actions: keydown', () => {
   });
 
   it('can be called with an interactor selector', async () => {
-    let Test = Interactor.extend({
-      foo: () => keydown('', 'f')
+    let Test = I.extend({
+      foo: () => I.keydown('', 'f')
     });
 
-    let action = keydown(Test('.input'), 'a');
+    let action = I.keydown(Test('.input'), 'a');
     let event = listen('.input', 'keydown');
 
     assert.instanceOf(action, Test);
@@ -113,7 +113,7 @@ describe('Actions: keydown', () => {
 
   it('throws with an unkown key', () => {
     assert.throws(
-      () => keydown('.input', 'U_KEY'),
+      () => I.keydown('.input', 'U_KEY'),
       e('InteractorError', 'unknown key `U_KEY`')
     );
   });
@@ -121,15 +121,15 @@ describe('Actions: keydown', () => {
   describe('method', () => {
     it('can be called on any interactor', async () => {
       let event = listen('.input', 'keydown');
-      let Test = Interactor.extend({ selector: '.input' }, {});
+      let Test = I.extend({ selector: '.input' }, {});
 
-      assert.typeOf(Interactor('.input').keydown, 'function');
-      assert.instanceOf(Interactor('.input').keydown('a'), Interactor);
+      assert.typeOf(I('.input').keydown, 'function');
+      assert.instanceOf(I('.input').keydown('a'), I);
 
       assert.typeOf(Test().keydown, 'function');
       assert.instanceOf(Test().keydown('b'), Test);
 
-      await Interactor('.input').keydown('a');
+      await I('.input').keydown('a');
       await Test().keydown('b');
 
       assert.equal(event.count, 2);
@@ -138,8 +138,8 @@ describe('Actions: keydown', () => {
 
     it('persists nested keys throughout the interactor', async () => {
       let event = listen('.input', 'keydown');
-      let Test = Interactor.extend({
-        input: Interactor('.input')
+      let Test = I.extend({
+        input: I('.input')
       });
 
       await Test()
@@ -155,7 +155,7 @@ describe('Actions: keydown', () => {
       let event = listen('.input', 'keydown');
       let called = false;
 
-      let Test = Interactor.extend({ selector: '.input' }, {
+      let Test = I.extend({ selector: '.input' }, {
         keydown: () => (called = true)
       });
 
@@ -170,7 +170,7 @@ describe('Actions: keydown', () => {
     it('does not send text when a modifier is pressed', async () => {
       let event = listen('.input', 'keydown');
 
-      await Interactor('.input')
+      await I('.input')
         .keydown('Control')
         .keydown('f');
 
@@ -181,7 +181,7 @@ describe('Actions: keydown', () => {
     it('uses shift keys when shift is pressed', async () => {
       let event = listen('.input', 'keydown');
 
-      await Interactor('.input')
+      await I('.input')
         .keydown('Digit1')
         .keydown('KeyA')
         .keydown('Shift')
