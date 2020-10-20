@@ -114,7 +114,13 @@ defineProperties(Interactor, {
   name: { writable: true, value: '' },
 
   /**
-   * Timeout used by grouped assertions.
+   * The default timeout for assertions run by instances of this interactor. The initial value of
+   * this property is 2000ms.
+   *
+   * ``` javascript
+   * // assertions made with this interactor will timeout after 500ms
+   * const Quick = Interactor.extend({ timeout: 500 }, { ... });
+   * ```
    *
    * @memberof Core
    * @name Interactor.timeout
@@ -124,21 +130,13 @@ defineProperties(Interactor, {
   timeout: { writable: true, value: 2000 },
 
   /**
-   * [Interactor error creator]{@link Interactor.Error}.
-   *
-   * @memberof Core
-   * @name Interactor.Error
-   * @type {Function}
+   * @alias Interactor.Error
    * @readonly
    */
   Error: { value: InteractorError },
 
   /**
-   * [Extended interactor creator]{@link Interactor.extend}.
-   *
-   * @memberof Core
-   * @name Interactor.extend
-   * @type {Function}
+   * @alias Interactor.extend
    * @readonly
    */
   extend: { value: extend },

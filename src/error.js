@@ -3,43 +3,24 @@ import {
   defineProperties
 } from './utils';
 
-const regexDF = new RegExp('%{((?:%{.*?}|.)*?)}', 'gs'); // regex directive format
-const regexNS = new RegExp('^(true|false|undefined|null|[\\d.,]+|\\[.*\\]|{.*})$'); // regex non-string values
-const regexES = new RegExp('\\s{2,}', 'g'); // regex extra-spaces
-
-// Formats interactor error messages with specific directives.
-function format(message, inst, expected) {
-  return message
-    // directive format: %{<directive> <arg>}
-    .replace(regexDF, (_, f) => {
-      let arg = f.substr(1).trim();
-
-      // recersively format any nested directives
-      if (regexDF.test(arg)) {
-        arg = format(arg, inst, expected);
-      }
-
-      switch (f[0]) {
-        // %{@ <sel>} -> friendly interactor name with optional child selector
-        case '@':
-          return arg ? `${arg} within ${inst}` : inst.toString();
-        // %{- <t>|<f>} -> use <t> when expecting a success, <f> otherwise
-        case '-':
-          return arg.split('|')[expected ? 0 : 1] || '';
-        // %{" <val>} -> quote values that look like strings
-        case '"':
-          return !regexNS.test(arg) ? `"${arg}"` : arg;
-        // remove unknown directives
-        default:
-          return '';
-      }
-    })
-    // remove extraneous spaces
-    .replace(regexES, ' ')
-    .trim();
-}
-
-// Returns an interactor error. The provided message is parsed by the above format function.
+/**
+ * Interactor error creator for formatting error messages using specific directives when thrown
+ * within interactor contexts.
+ *
+ * - `%{@ <sel>}` - Friendly interactor name with optional child selector
+ * - `%{- <t>|<f>}` - Use `<t>` when expecting a success, `<f>` otherwise
+ * - `%{" <val>}` - Quote values that look like strings
+ *
+ * ``` javascript
+ *
+ * ```
+ *
+ * @memberof Core
+ * @name Interactor.Error
+ * @alias InteractorError
+ * @param {String} message - The error message with optional directives
+ * @returns {InteractorError}
+ */
 export default function InteractorError(message) {
   if (!(this instanceof InteractorError)) {
     return new InteractorError(message);
@@ -101,3 +82,42 @@ defineProperties(InteractorError.prototype, {
     }
   }
 });
+
+// regex for the Directive Format
+const regexDF = new RegExp('%{((?:%{.*?}|.)*?)}', 'gs');
+// regex Non-String values
+const regexNS = new RegExp('^(true|false|undefined|null|[\\d.,]+|\\[.*\\]|{.*})$');
+// regex for Extra-Spaces
+const regexES = new RegExp('\\s{2,}', 'g');
+
+// Formats interactor error messages with specific directives.
+function format(message, inst, expected) {
+  return message
+    // directive format: %{<directive> <arg>}
+    .replace(regexDF, (_, f) => {
+      let arg = f.substr(1).trim();
+
+      // recersively format any nested directives
+      if (regexDF.test(arg)) {
+        arg = format(arg, inst, expected);
+      }
+
+      switch (f[0]) {
+        // %{@ <sel>} -> friendly interactor name with optional child selector
+        case '@':
+          return arg ? `${arg} within ${inst}` : inst.toString();
+        // %{- <t>|<f>} -> use <t> when expecting a success, <f> otherwise
+        case '-':
+          return arg.split('|')[expected ? 0 : 1] || '';
+        // %{" <val>} -> quote values that look like strings
+        case '"':
+          return !regexNS.test(arg) ? `"${arg}"` : arg;
+        // remove unknown directives
+        default:
+          return '';
+      }
+    })
+    // remove extraneous spaces
+    .replace(regexES, ' ')
+    .trim();
+}
