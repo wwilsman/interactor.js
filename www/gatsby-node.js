@@ -24,7 +24,7 @@ exports.onCreateNode = ({ node, getNode, actions: { createNodeField } }) => {
 exports.createPages = async ({ graphql, actions: { createPage } }) => {
   let { data, errors } = await graphql(`{
     page: allMarkdownRemark { edges { node { fields { slug } } } }
-    doc: allDocumentationJs { edges { node { fields { slug } } } }
+    doc: allDocumentationJs { edges { node { fields { slug }, name } } }
   }`)
 
   // throw errors
@@ -34,13 +34,13 @@ exports.createPages = async ({ graphql, actions: { createPage } }) => {
 
   // for each node in each datapoint
   for (let name in data) {
-    for (let { node: { fields } } of data[name].edges) {
+    for (let { node } of data[name].edges) {
       // create a page if there is a slug field
-      if (fields && fields.slug) createPage({
+      if (node.fields && node.fields.slug) createPage({
         // use a component matching the datapoint name
         component: `${__dirname}/src/templates/${name}.js`,
-        context: { slug: fields.slug },
-        path: fields.slug
+        context: { slug: node.fields.slug, name: node.name },
+        path: node.fields.slug
       });
     }
   }

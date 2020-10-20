@@ -12,30 +12,27 @@ DocTemplate.propTypes = {
 export default function DocTemplate({
   location,
   data: {
-    doc: {
-      name,
-      description,
-      members
-    }
+    namespace,
+    members
   }
 }) {
-  let descr = Object.assign({}, description.childMarkdownRemark.htmlAst, {
+  let descr = Object.assign({}, namespace.description.childMarkdownRemark.htmlAst, {
     children: [{ type: 'element', tagName: 'header', children: (
-      description.childMarkdownRemark.htmlAst.children.slice(0, 1)
-    )}, ...description.childMarkdownRemark.htmlAst.children.slice(1)]
+      namespace.description.childMarkdownRemark.htmlAst.children.slice(0, 1)
+    )}, ...namespace.description.childMarkdownRemark.htmlAst.children.slice(1)]
   });
 
-  let docs = members.static.map(({ name, description, params, returns, type }) => ({
-    descr: description.childMarkdownRemark.htmlAst,
-    title: name.replace(/^.+#/, '.') + (returns ? `(${params ? (
-      params.map(({ name, optional }, i) => (
+  let docs = members.edges.map(({ node }) => ({
+    descr: node.description.childMarkdownRemark.htmlAst,
+    title: node.name.replace(/^.+#/, '.') + (node.returns ? `(${node.params ? (
+      node.params.map(({ name, optional }, i) => (
         `${optional ? '[' : ''}${i > 0 ? ', ' : ''}${name}${optional ? ']' : ''}`
       )).join('')
     ) : ''})` : ''),
   }));
 
   return (
-    <LayoutTemplate location={location} title={`${name} API`}>
+    <LayoutTemplate location={location} title={`${namespace.name} API`}>
       {renderAst => (
         <>
           <div>
@@ -69,12 +66,18 @@ export default function DocTemplate({
 }
 
 export const query = graphql`
-  query($slug: String!) {
-    doc: documentationJs(fields: { slug: { eq: $slug } }) {
+  query($slug: String!, $name: String!) {
+    namespace: documentationJs(
+      fields: { slug: { eq: $slug } }
+    ) {
       name
       description { childMarkdownRemark { htmlAst } }
-      members {
-        static {
+    }
+    members: allDocumentationJs(
+      filter: { memberof: { eq: $name } }
+    ) {
+      edges {
+        node {
           name
           type { name }
           description { childMarkdownRemark { htmlAst } }
