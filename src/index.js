@@ -1,7 +1,6 @@
-// the creators files generates its named exports which eslint cannot statically analyze
-// eslint-disable-next-line import/export
-export * from './creators';
-export * as by from './selectors';
+// The creators file generates static creator methods on the Interactor class
+import './creators';
+
 export { assertion } from './assert';
 export { default as when } from './when';
 export { default as InteractorError } from './error';

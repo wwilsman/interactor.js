@@ -37,8 +37,8 @@ export function hasLayoutEngine(inst, subj) {
 
 // Returns an element that can be used to query for child elements
 function getParentElement(inst, deep) {
-  let { parent, selector } = m.get(inst);
-  let $parent = parent ? parent.$() : dom(inst).document.body;
+  let { parent, selector, nested } = m.get(inst);
+  let $parent = nested && parent ? parent.$() : dom(inst).document.body;
 
   // when no selector is provided the current element is returned
   let ret = typeof selector === 'function' ? selector($parent) : (

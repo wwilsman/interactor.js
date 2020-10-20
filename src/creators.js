@@ -9,14 +9,14 @@ import * as actions from './actions';
 import * as properties from './properties';
 
 // turn action methods into interactor action creators
-assign(exports, map(actions, (action, name) => {
+assign(Interactor, map(actions, (action, name) => {
   return named(name, (selector, ...args) => action.apply((
-    m.get(selector, 'queue') ? selector : Interactor(selector)
+    m.get(selector, 'queue') ? selector : Interactor.find(selector)
   ), args));
 }));
 
 // turn interactor properties into property creators
-assign(exports, map(properties, ({ get, value, assert }, name) => {
+assign(Interactor, map(properties, ({ get, value, assert }, name) => {
   return named(name, (...args) => {
     let selector = get || (value && args.length > value.length) ? args.shift() : '';
     let assertion = assert || createAssert(name, get || value);
@@ -24,7 +24,7 @@ assign(exports, map(properties, ({ get, value, assert }, name) => {
 
     let thennable = when(() => {
       if (!selector) throw error('an element selector is required when awaiting on properties');
-      return (get || value).apply(Interactor(selector), args);
+      return (get || value).apply(Interactor.find(selector), args);
     });
 
     return {

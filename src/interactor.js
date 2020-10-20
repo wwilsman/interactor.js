@@ -1,4 +1,4 @@
-import InteractorAssert from './assert';
+import InteractorAssert, { assertion } from './assert';
 import InteractorError from './error';
 import when from './when';
 import m from './meta';
@@ -21,6 +21,7 @@ import {
 
 import * as actions from './actions';
 import * as properties from './properties';
+import * as selectors from './selectors';
 
 /**
  * # Core API
@@ -71,6 +72,8 @@ export default function Interactor(selector, properties) {
     interval: 10,
     keyboard: {},
     queue: [],
+    nested: false,
+    parent: null,
     top: true
   });
 
@@ -142,6 +145,12 @@ defineProperties(Interactor, {
   extend: { value: extend },
 
   /**
+   * @alias Interactor.assertion
+   * @readonly
+   */
+  assertion: { value: assertion },
+
+  /**
    * A function that accepts the selector provided to a new interactor instance and returns a valid
    * interactor selector for that instance.
    *
@@ -205,6 +214,19 @@ defineProperties(Interactor, {
         set: suppressLayoutEngineWarning
       });
     }
+  },
+
+  /**
+   * Create a nested interactor.
+   *
+   * @memberof Core
+   * @name Interactor.find
+   * @type {Function}
+   */
+  find: {
+    value: assign(function find(selector) {
+      return m.new(Interactor(selector), 'nested', true);
+    }, selectors)
   }
 });
 
@@ -271,7 +293,7 @@ assign(Interactor.prototype, {
       );
     }
 
-    return m.new(i, 'parent', this);
+    return m.set(m.new(i, 'parent', this), 'nested', true);
   },
 
   /**
