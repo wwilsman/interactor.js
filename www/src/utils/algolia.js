@@ -3,27 +3,19 @@ module.exports = [
     indexName: 'Next',
     query: `{
       allMarkdownRemark {
-        edges {
-          node {
-            objectID: id
-            fields {
-              slug
-            }
-            frontmatter {
-              title
-            }
-            excerpt(pruneLength: 5000)
-          }
+        nodes {
+          objectID: id
+          fields { slug }
+          frontmatter { title }
+          excerpt(pruneLength: 5000)
         }
       }
     }`,
     transformer: ({ data }) => (
-      data.allMarkdownRemark.edges.map(({
-        node: {
-          fields,
-          frontmatter,
-          ...rest
-        }
+      data.allMarkdownRemark.nodes.map(({
+        fields,
+        frontmatter,
+        ...rest
       }) => ({
         ...fields,
         ...frontmatter,

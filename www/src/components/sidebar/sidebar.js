@@ -15,9 +15,9 @@ import style from './sidebar.module.css';
 const cx = classNames.bind(style);
 
 function getItemTitle({ slug }, data) {
-  let { nodes } = data.allMarkdownRemark;
-  let item = nodes.find(node => node.fields.slug === slug);
-  return item && item.frontmatter.title;
+  let item = data.page.nodes.concat(data.doc.nodes)
+    .find(node => node.fields.slug === slug);
+  return item?.frontmatter?.title || item?.name;
 }
 
 function isItemActive({ slug }, { pathname }) {
@@ -63,7 +63,7 @@ function renderItem(item, i, data, location) {
 Sidebar.propTypes = {
   location: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,
-  mobileOnly: PropTypes.boolean,
+  mobileOnly: PropTypes.bool,
   open: PropTypes.bool
 };
 
@@ -89,14 +89,20 @@ export default function Sidebar({ location, mobileOnly, open, onClose }) {
     <StaticQuery
       query={graphql`
         query {
-          allMarkdownRemark {
+          page: allMarkdownRemark(
+            filter: { frontmatter: { title: { ne: "" } } }
+          ) {
             nodes {
-              fields {
-                slug
-              }
-              frontmatter {
-                title
-              }
+              fields { slug }
+              frontmatter { title }
+            }
+          }
+          doc: allDocumentationJs(
+            filter: { fields: { slug: { ne: "" } } }
+          ) {
+            nodes {
+              fields { slug }
+              name
             }
           }
         }

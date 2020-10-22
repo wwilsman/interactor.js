@@ -22,7 +22,7 @@ export default function DocTemplate({
     )}, ...namespace.description.childMarkdownRemark.htmlAst.children.slice(1)]
   });
 
-  let docs = members.edges.map(({ node }) => ({
+  let docs = members.nodes.map(node => ({
     descr: node.description.childMarkdownRemark.htmlAst,
     title: node.name.replace(/^.+#/, '.') + (node.returns ? `(${node.params ? (
       node.params.map(({ name, optional }, i) => (
@@ -76,21 +76,19 @@ export const query = graphql`
     members: allDocumentationJs(
       filter: { memberof: { eq: $name } }
     ) {
-      edges {
-        node {
+      nodes {
+        name
+        type { name }
+        description { childMarkdownRemark { htmlAst } }
+        params {
           name
+          optional
           type { name }
           description { childMarkdownRemark { htmlAst } }
-          params {
-            name
-            optional
-            type { name }
-            description { childMarkdownRemark { htmlAst } }
-          }
-          returns {
-            type { name }
-            description { childMarkdownRemark { htmlAst } }
-          }
+        }
+        returns {
+          type { name }
+          description { childMarkdownRemark { htmlAst } }
         }
       }
     }

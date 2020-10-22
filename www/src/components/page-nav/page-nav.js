@@ -24,20 +24,23 @@ const flatItems = items.reduce(function flatten(flat, item) {
   return flat;
 }, []);
 
-function getTitle(slug, pages) {
-  let page = pages.find(({ fields }) => fields.slug === slug);
-  return page ? page.frontmatter.title : '';
-}
-
 function getSiblingPages(slug, pages) {
   let i = flatItems.findIndex(item => item.slug === slug);
   let prev = flatItems[i - 1];
   let next = flatItems[i + 1];
 
-  return [
-    prev && { ...prev, title: getTitle(prev.slug, pages) },
-    next && { ...next, title: getTitle(next.slug, pages) }
-  ];
+  return pages.reduce((sibs, {
+    fields: { slug },
+    frontmatter: { title }
+  }) => {
+    if (slug === prev?.slug) {
+      return [{ ...prev, title }, sibs[1]];
+    } else if (slug === next?.slug) {
+      return [sibs[0], { ...next, title }];
+    } else {
+      return sibs;
+    }
+  }, []);
 }
 
 PageNav.propTypes = {
@@ -49,14 +52,14 @@ export default function PageNav({ slug }) {
     <StaticQuery
       query={graphql`
         query {
-          pages: allMarkdownRemark {
+          pages: allMarkdownRemark(
+            filter: {
+              frontmatter: { title: { ne: "" } }
+            }
+          ) {
             nodes {
-              fields {
-                slug
-              }
-              frontmatter {
-                title
-              }
+              fields { slug }
+              frontmatter { title }
             }
           }
         }
