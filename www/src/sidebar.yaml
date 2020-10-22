@@ -11,9 +11,9 @@
 #   - slug: /guides/angular
 #   - slug: /guides/ember
 
-# - section: API
-#   items:
-#   - slug: /core/
+- section: API Reference
+  items:
+  - slug: /api/core/
 #     items:
 #     - slug: /core/dollar/
 #     - slug: /core/dollardollar/
