@@ -27,12 +27,13 @@ function reserved(name) {
   }
 }
 
-function isInteractorClass(klass) {
-  return typeof klass === 'function' &&
-    'extend' in klass &&
-    'assert' in klass.prototype &&
-    'exec' in klass.prototype &&
-    'then' in klass.prototype;
+function isInteractorFn(fn) {
+  return typeof fn === 'function' &&
+    (('extend' in fn && 'find' in fn &&
+      'assert' in fn.prototype &&
+      'exec' in fn.prototype &&
+      'then' in fn.prototype) ||
+     isInteractorFn(m.get(fn, 'constructor')));
 }
 
 function isInteractorDescriptor(prop) {
@@ -116,7 +117,7 @@ export function defineInteractorProperties(proto, properties) {
 
     if (get) {
       property = { get };
-    } else if (isInteractorClass(value)) {
+    } else if (isInteractorFn(value)) {
       property = { child: s => value(s) };
     } else if (typeof value === 'function') {
       property = { value, assert: false };

@@ -224,9 +224,11 @@ defineProperties(Interactor, {
    * @type {Function}
    */
   find: {
-    value: assign(function find(selector) {
-      return m.new(Interactor(selector), 'nested', true);
-    }, selectors)
+    get: function() {
+      return assign(m.set(selector => {
+        return m.new(this(selector), 'nested', true);
+      }, 'constructor', this), selectors);
+    }
   }
 });
 
@@ -449,11 +451,11 @@ assign(Interactor.prototype, {
    */
   toString() {
     let name = this.constructor.name;
-    let { parent, selector } = m.get(this);
+    let { parent, nested, selector } = m.get(this);
     let string = selector?.toString() || '';
 
     if (name) string += ` ${name}`;
-    if (parent && m.get(parent, 'selector')) {
+    if (nested && m.get(parent, 'selector')) {
       string += `${string && ' within '}${parent}`;
     }
 

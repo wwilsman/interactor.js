@@ -1,5 +1,6 @@
 import {
   assign,
+  create,
   defineProperty,
   freeze,
   now,
@@ -16,7 +17,7 @@ const m = {
 
   // Retrieve metadata from an instance. Returns the meta object when a key is omitted.
   get(inst, key) {
-    let meta = inst?.[sym] || {};
+    let meta = inst?.[sym] || create(null);
     return key ? meta[key] : meta;
   },
 
@@ -32,7 +33,7 @@ const m = {
       enumerable: false,
       configurable: true,
       // frozen to prevent accidental mutation
-      value: freeze(assign({
+      value: freeze(assign(create(null), {
         // will be overridden with any existing ID; used to determine interactor uniqueness across
         // chained instances to avoid interactor collisions
         id: round(random() * now())

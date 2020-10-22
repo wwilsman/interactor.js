@@ -119,8 +119,8 @@ describe('Properties: text', () => {
           }
         },
 
-        a: Test('.a'),
-        b: Test('.b')
+        a: Test.find('.a'),
+        b: Test.find('.b')
       });
 
       it('works as expected when called via nested methods', async () => {
