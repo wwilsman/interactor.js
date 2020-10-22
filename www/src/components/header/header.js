@@ -30,7 +30,7 @@ export default function Header({ onNavToggle }) {
 
         <nav className={style.headerNav}>
           <Link to="/getting-started">Docs</Link>
-          <Link to="/api">API</Link>
+          <Link to="/api/core">API</Link>
           <a href="https://github.com/wwilsman/interactor.js" target="blank">GitHub</a>
         </nav>
 

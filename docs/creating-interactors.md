@@ -2,17 +2,18 @@
 title: Creating Interactors
 ---
 
-To create a custom interactor, the static [`extend`](/api/extend) method can be given a list of
-properties to add to a new extended interactor. Let's use the popular [TodoMVC](https://todomvc.com)
-app as an example. Since interactors are not dependent on the framework used to create the app, the
-following interactors will work with all of the TodoMVC examples.
+To create a custom interactor, the static [`extend`](/api/core/#I.extend([options][,%20properties]))
+method can be given a list of properties to add to a new extended interactor. Let's use the popularn
+[TodoMVC](https://todomvc.com) app as an example. Since interactors are not dependent on the
+framework used to create the app, the following interactors will work with all of the TodoMVC
+examples.
 
 We can start creating a custom interactor by describing how a user would interact with a
 component. In the TodoMVC app, there is an input where we can create a new todo item by typing in
 some text and pressing enter. After pressing enter, the input is cleared and a new todo item is
-added to the list. We can facilitate creating a new todo using both the [`type`](/actions/type) and
-[`press`](/actions/press) actions in a single method. We can also add a getter so we can later
-assert that the input is cleared after adding a todo.
+added to the list. We can facilitate creating a new todo using both the [`type`](/api/actions/#type)
+and [`press`](/api/actions/#press) actions in a single method. We can also add a getter so we can
+later assert that the input is cleared after adding a todo.
 
 ``` javascript
 // extend(properties)
@@ -33,9 +34,9 @@ the input or pressing enter updates the todo item's label.
 
 Interactor provides a helper to select elements by text, which will be helpful for selecting our
 todo items. We can also provide interactor options to the extend function, including a selector
-option that will be used when querying for the interactor element (see [`extend`](/api/extend) docs
-for API details). Various properties can also be defined using [property](/properties) and
-[action](/actions) creators.
+option that will be used when querying for the interactor element (see
+[`extend`](/api/core/#I.extend([options][,%20properties])) docs for API details). Various properties
+can also be defined using [property](/api/properties) and [action](/api/actions) creators.
 
 ``` javascript
 import I 'interactor.js';

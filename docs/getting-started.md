@@ -36,14 +36,14 @@ await I.type('.password', 'hunter2');
 await I.click('.submit');
 ```
 
-Many other [actions](/actions) and [properties](/properties) are also included with
+Many other [actions](/api/actions) and [properties](/api/properties) are also included with
 interactor.js. Custom actions can be created by returning interactors from custom functions.
 
 ## Chaining and Nesting Interactors
 
 In addition to a few core methods, all actions and properties are also available as interactor
-methods and properties. One of the core methods, [`find`](/api/find), can be used to nest actions
-scoped to specific elements.
+methods and properties. One of the core methods, [`find`](/api/core/#.find(selector)), can be used
+to nest actions scoped to specific elements.
 
 ``` javascript
 import I from 'interactor.js';
@@ -59,9 +59,9 @@ function login(email, password) {
 await login('email@domain.tld', 'hunter2');
 ```
 
-Another core method, [`exec`](/api/exec), can also be used to nest actions scoped to specific
-elements by composing other interactor instances. A callback may be provided instead, which will be
-executed with the current element when the interactor is awaited on.
+Another core method, [`exec`](/api/core/#.exec(callback)), can also be used to nest actions scoped
+to specific elements by composing other interactor instances. A callback may be provided instead,
+which will be executed with the current element when the interactor is awaited on.
 
 ``` javascript
 import I from 'interactor.js';
@@ -83,8 +83,9 @@ await I('.login')
 
 ## Creating Interactors
 
-Custom interactors can be defined for specific components using [`extend`](/api/extend). These
-interactors can then become the building blocks of tests and automations.
+Custom interactors can be defined for specific components using
+[`extend`](/api/core/#I.extend([options][,%20properties])). These interactors can then become the
+building blocks of tests and automations.
 
 ``` javascript
 import I from 'interactor.js';

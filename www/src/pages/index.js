@@ -36,7 +36,7 @@ export default function HomePage({ location }) {
         ctas={[
           { text: 'Getting Started', url: '/getting-started' },
           { text: 'Documentation', url: '/getting-started' },
-          { text: 'API Reference', url: '/api' }
+          { text: 'API Reference', url: '/api/core' }
         ]}
       />
     </Layout>
