@@ -505,7 +505,7 @@ describe('Interactor', () => {
           .assert.remains(100)
       );
 
-      assert(delta > 100 && delta < 120, (
+      assert(delta >= 100 && delta <= 120, (
         new assert.AssertionError({
           message: `100 < ${delta} < 120`
         })
