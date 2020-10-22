@@ -139,20 +139,6 @@ export function defineInteractorProperties(proto, properties) {
   return proto;
 }
 
-/**
- * Returns a custom interactor creator using the provided methods, properties, assertions, and
- * options. Methods and interactors are wrapped to facilitate parent-child relationships. Assertions
- * and interactors are also saved to a copy of the inherited assert function's prototype to be used
- * during interactor creation when binding assert methods. Options, such as the default constructor
- * selector and interactor name, may be defined by providing an `interactor` property, which will
- * not be applied to the final interactor creator.
- *
- * @memberof Core
- * @name Interactor.extend
- * @param {object} [options] - Static interactor options.
- * @param {object} [properties] - Additional interactor properties.
- * @returns {function} A new extended interactor creator
- */
 export default function extend(options = {}, properties = options) {
   if (options === properties) options = null;
   let Parent = this;

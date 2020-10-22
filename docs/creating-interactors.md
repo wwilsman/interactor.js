@@ -87,11 +87,11 @@ remaining (incomplete) todo items, a set of filters, and a clear completed butto
 
 ``` javascript
 const TodoList = I.extend({
-  // interactors can be nested within each other
-  newTodo: NewTodoInput('.new-todo'),
+  // interactors can be nested within each other with .find()
+  newTodo: NewTodoInput.find('.new-todo'),
 
-  // interactor creator methods will return nested instances
-  todoItem: TodoItem,
+  // .find() can also be used as a child selector method
+  todoItem: TodoItem.find,
 
   toggleAll: () => I.click('.toggle-all'),
   incomplete: I.text('.todo-count'),

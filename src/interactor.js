@@ -46,14 +46,14 @@ import * as selectors from './selectors';
  * await I('.btn').exec(I.click());
  *
  * const btn = I('.btn', {
- *   doubleClick: () => I.click().click()
+ *   dblClick: () => I.click().click()
  * });
  *
- * await btn.doubleClick();
+ * await btn.dblClick();
  * ```
  *
  * @memberof Core
- * @name Interactor
+ * @name I
  * @param {String|Function} [selector] - Interactor selector string or function.
  * @param {Object} [properties] - Additional interactor properties.
  * @returns {Interactor}
@@ -95,52 +95,76 @@ export default function Interactor(selector, properties) {
 
 defineProperties(Interactor, {
   /**
-   * When present, the interactor's name will be used in error messages alongside the interactor's
-   * selector if also present.
+   * Returns a nested interactor instance referencing the selector. The nested interactor can be
+   * used as a child within other interactors to select nested child elements within the parent
+   * interactor element's DOM.
    *
    * ``` javascript
-   * const Button = I.extend({ name: 'button' }, { ... });
-   * const Link = I.extend({ name: 'link' }, { ... });
+   * // <p class="a"><span>A</span></p>
+   * // <p class="b"><span>B</span></p>
+   * // <p class="c"><span>C</span></p>
    *
-   * await Button('.submit').click();
-   * // => InteractorError: could not find .submit button
+   * // this span interactor refers to the first span in the document
+   * const b = I('.b', { span: I('span') });
+   * // this span interactor refers to the first span within the scope
+   * const c = I('.c', { span: I.find('span') });
    *
-   * await Link(I.find.text('Home')).click();
-   * // => InteractorError: could not find "Home" link
+   * await b.assert.span.text('B');
+   * //=> InteractorError: span text is "A" but expected "B"
+   * await c.assert.not.span.text('C');
+   * //=> InteractorError: span within .c text is "C" but expected it not to be
    * ```
    *
    * @memberof Core
-   * @name Interactor.name
-   * @type {String}
-   * @default ""
+   * @name I.find
+   * @param {String|Function} selector - A selector string or function.
+   * @returns {Interactor} A nested interactor instance.
    */
-  name: { writable: true, value: '' },
+  find: {
+    get: function() {
+      return assign(m.set(selector => {
+        return m.new(this(selector), 'nested', true);
+      }, 'constructor', this), selectors);
+    }
+  },
 
   /**
-   * The default timeout for assertions run by instances of this interactor. The initial value of
-   * this property is 2000ms.
+   * Returns a custom interactor creator using the provided methods, properties, assertions, and
+   * options. Methods and interactors are wrapped to facilitate parent-child relationships. Assertions
+   * and interactors are also saved to a copy of the inherited assert function's prototype to be used
+   * during interactor creation when binding assert methods. Options, such as the default constructor
+   * selector and interactor name, may be defined by providing an `interactor` property, which will
+   * not be applied to the final interactor creator.
    *
    * ``` javascript
-   * // assertions made with this interactor will timeout after 500ms
-   * const Quick = I.extend({ timeout: 500 }, { ... });
+   * // properties only
+   * const Btn = I.extend({
+   *   type: I.attribute('type')
+   * });
+   *
+   * await Btn('.btn')
+   *   .assert.type('button')
+   *   .click();
+   *
+   * // with options
+   * const Link = I.extend({
+   *   name: 'link',
+   *   selector: t => I.find.text(t, 'a')
+   * }, {
+   *   href: I.attribute('href')
+   * });
+   *
+   * await Link('About')
+   *   .assert.href('/')
+   *   .click();
+   * //=> InteractorError: "Click Me" link href is "/about" but expected "/"
    * ```
    *
    * @memberof Core
-   * @name Interactor.timeout
-   * @type {Number}
-   * @default 2000
-   */
-  timeout: { writable: true, value: 2000 },
-
-  /**
-   * @alias Interactor.Error
-   * @readonly
-   */
-  Error: { value: InteractorError },
-
-  /**
-   * @alias Interactor.extend
-   * @readonly
+   * @name I.extend
+   * @param {object} [options] - Static interactor options.
+   * @param {object} [properties] - Additional interactor properties.
+   * @returns {function} A new extended interactor creator
    */
   extend: { value: extend },
 
@@ -151,13 +175,62 @@ defineProperties(Interactor, {
   assertion: { value: assertion },
 
   /**
-   * A function that accepts the selector provided to a new interactor instance and returns a valid
-   * interactor selector for that instance.
+   * Interactor error creator for formatting error messages using specific directives when thrown
+   * within interactor contexts.
+   *
+   * - `%{@ <sel>}` - Friendly interactor name with optional child selector
+   * - `%{- <t>|<f>}` - Use `<t>` when expecting a success, `<f>` when expecting a failure
+   * - `%{" <val>}` - Quote values that look like strings
+   *
+   * ``` javascript
+   * const Btn = I.extend({
+   *   assert: {
+   *     type(type) {
+   *       if (this.$el.type !== type) throw I.Error(
+   *         `%{@} type is %{"${this.$el.type}} but expected %{-%{"${type}}|it not to be}`
+   *       );
+   *     }
+   *   }
+   * });
+   *
+   * await Btn('.btn').assert.type('submit');
+   * //=> InteractorError: .btn type is "button" but expected "submit"
+   * await Btn('.submit').assert.not.type('submit');
+   * //=> InteractorError: .submit type is "submit" but expected it not to be
+   * ```
    *
    * @memberof Core
-   * @name Interactor.selector
+   * @name I.Error
+   * @alias InteractorError
+   * @param {String} message - The error message with optional directives
+   * @returns {InteractorError}
+   */
+  Error: { value: InteractorError },
+
+  /**
+   * @memberof Core
+   * @name I.name
+   * @type {String}
+   * @default ""
+   * @ignore
+   */
+  name: { writable: true, value: '' },
+
+  /**
+   * @memberof Core
+   * @name I.timeout
+   * @type {Number}
+   * @default 2000
+   * @ignore
+   */
+  timeout: { writable: true, value: 2000 },
+
+  /**
+   * @memberof Core
+   * @name I.selector
    * @type {Function}
    * @default s => s
+   * @ignore
    */
   selector: {
     configurable: true,
@@ -173,12 +246,11 @@ defineProperties(Interactor, {
   },
 
   /**
-   * The DOM object being interacted with.
-   *
    * @memberof Core
-   * @name Interactor.dom
+   * @name I.dom
    * @type {Object}
    * @default window
+   * @ignore
    */
   dom: {
     configurable: true,
@@ -194,12 +266,11 @@ defineProperties(Interactor, {
   },
 
   /**
-   * Suppresses the layout engine warning.
-   *
    * @memberof Core
-   * @name Interactor.suppressLayoutEngineWarning
+   * @name I.suppressLayoutEngineWarning
    * @type {Boolean}
    * @default false
+   * @ignore
    */
   suppressLayoutEngineWarning: {
     configurable: true,
@@ -214,21 +285,6 @@ defineProperties(Interactor, {
         set: suppressLayoutEngineWarning
       });
     }
-  },
-
-  /**
-   * Create a nested interactor.
-   *
-   * @memberof Core
-   * @name Interactor.find
-   * @type {Function}
-   */
-  find: {
-    get: function() {
-      return assign(m.set(selector => {
-        return m.new(this(selector), 'nested', true);
-      }, 'constructor', this), selectors);
-    }
   }
 });
 
@@ -238,7 +294,7 @@ assign(Interactor.prototype, {
    * element or parent element cannot be found.
    *
    * @memberof Core
-   * @name Interactor#$
+   * @name I#$
    * @param {String|Function} [selector] - Interactor selector string or function.
    * @returns {Element} The found child element or root element when no selector is provided.
    */
@@ -251,7 +307,7 @@ assign(Interactor.prototype, {
    * parent element cannot be found. Returns an empty array when no child elements are found.
    *
    * @memberof Core
-   * @name Interactor#$$
+   * @name I#$$
    * @param {String|Function} selector - Interactor selector string or function.
    * @returns {Element[]} The found child elements within the root element.
    */
@@ -263,7 +319,7 @@ assign(Interactor.prototype, {
    * Retreives or sets the topmost interactor's assertion timeout.
    *
    * @memberof Core
-   * @name Interactor#timeout
+   * @name I#timeout
    * @param {Number} [ms] - Interactor assertion timeout, in milliseconds.
    * @returns {(Number|Interactor)} The topmost interactor timeout or a new interactor instance with
    * the specified timeout when one is provided.
@@ -281,7 +337,7 @@ assign(Interactor.prototype, {
    * interactor attached as its parent.
    *
    * @memberof Core
-   * @name Interactor#find
+   * @name I#find
    * @param {String|Function|Interactor} selector - A selector string or function, or an interactor.
    * @returns {Interactor} A nested child interactor instance.
    */
@@ -305,7 +361,7 @@ assign(Interactor.prototype, {
    * argument, the interactor's element will be provided as that argument.
    *
    * @memberof Core
-   * @name Interactor#assert
+   * @name I#assert
    * @param {Function} assertion - The assertion function to add to the interactor queue.
    * @returns {Interactor} A new interactor instance with the assertion added to its queue.
    */
@@ -323,7 +379,7 @@ assign(Interactor.prototype, {
    * topmost interactor instance is returned.
    *
    * @memberof Core
-   * @name Interactor#exec
+   * @name I#exec
    * @param {Function|Interactor} callback - The callback function to add to the interactor queue or
    * another interactor with an existing queue.
    * @returns {Interactor} A new interactor instance with the callback added to its queue or
@@ -352,7 +408,7 @@ assign(Interactor.prototype, {
    * substring "%{e}" will be replaced with the thrown error message.
    *
    * @memberof Core
-   * @name Interactor#catch
+   * @name I#catch
    * @param {Function|String} handler - The error handler or an error message string.
    * @returns {Interactor} A new interactor instance with the handler added to its queue.
    */
@@ -384,7 +440,7 @@ assign(Interactor.prototype, {
    * errors are formatted with the current interactor instance.
    *
    * @memberof Core
-   * @name Interactor#then
+   * @name I#then
    * @param {Function} [onFulfilled] - Passed along to the resulting Promise#then method.
    * @param {Function} [onRejected] - Passed along to the resulting Promise#then method.
    * @returns {Promise} A promise that resolves once all queued functions have run.
@@ -446,8 +502,9 @@ assign(Interactor.prototype, {
    * Returns a string representation of the interactor using its selector and any parent.
    *
    * @memberof Core
-   * @name Interactor#toString
+   * @name I#toString
    * @returns {String} - A string representation of the interactor.
+   * @ignore
    */
   toString() {
     let name = this.constructor.name;

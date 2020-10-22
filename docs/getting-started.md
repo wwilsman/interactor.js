@@ -68,6 +68,7 @@ import I from 'interactor.js';
 
 // create a logging action
 function log(selector) {
+  // the static .find() method will select nested elements when used within other interactors
   return I.find(selector).exec($el => console.log($el));
 }
 

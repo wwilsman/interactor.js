@@ -3,24 +3,6 @@ import {
   defineProperties
 } from './utils';
 
-/**
- * Interactor error creator for formatting error messages using specific directives when thrown
- * within interactor contexts.
- *
- * - `%{@ <sel>}` - Friendly interactor name with optional child selector
- * - `%{- <t>|<f>}` - Use `<t>` when expecting a success, `<f>` otherwise
- * - `%{" <val>}` - Quote values that look like strings
- *
- * ``` javascript
- *
- * ```
- *
- * @memberof Core
- * @name Interactor.Error
- * @alias InteractorError
- * @param {String} message - The error message with optional directives
- * @returns {InteractorError}
- */
 export default function InteractorError(message) {
   if (!(this instanceof InteractorError)) {
     return new InteractorError(message);
