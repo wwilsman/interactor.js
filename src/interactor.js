@@ -130,11 +130,20 @@ defineProperties(Interactor, {
 
   /**
    * Returns a custom interactor creator using the provided methods, properties, assertions, and
-   * options. Methods and interactors are wrapped to facilitate parent-child relationships. Assertions
-   * and interactors are also saved to a copy of the inherited assert function's prototype to be used
-   * during interactor creation when binding assert methods. Options, such as the default constructor
-   * selector and interactor name, may be defined by providing an `interactor` property, which will
-   * not be applied to the final interactor creator.
+   * options. Methods and interactors are wrapped to facilitate parent-child
+   * relationships. Assertions and interactors aref saved to a copy of the inherited assert
+   * function's prototype to be used during interactor creation when binding assert methods. Options
+   * can also be set and accessed via static properties. Unknown options will be applied as static
+   * properties as well.
+   *
+   * Available options:
+   * - `name` (_default_ `""`) — the interactor name used in error messages.
+   * - `selector` (_default_ `s => s`)— a selector creator that accepts the selector provided to new
+   *   interactors and returns a selector string or function that is used to find the element in the DOM.
+   * - `timeout` (_default_ `2000`) — the default assertion timeout used by instances of this interactor.
+   * - `dom` (_default_ `window`) — the window interface containing the DOM document to operate on.
+   * - `suppressLayoutEngineWarning` (_default_ `false`) — suppresses the warning caused by invoking
+   *   layout related properties or methods when there is non layout engine, such as within jsdom.
    *
    * ``` javascript
    * // properties only
@@ -185,9 +194,11 @@ defineProperties(Interactor, {
    * ``` javascript
    * const Btn = I.extend({
    *   assert: {
-   *     type(type) {
-   *       if (this.$el.type !== type) throw I.Error(
-   *         `%{@} type is %{"${this.$el.type}} but expected %{-%{"${type}}|it not to be}`
+   *     type(expected) {
+   *       let actual = this.$().type;
+   *
+   *       if (actual !== expected) throw I.Error(
+   *         `%{@} type is %{"${actual}} but expected %{-%{"${expected}}|it not to be}`
    *       );
    *     }
    *   }
@@ -293,6 +304,17 @@ assign(Interactor.prototype, {
    * Returns a child element or the interactor element when no selector is provided. Throws when the
    * element or parent element cannot be found.
    *
+   * ``` javascript
+   * // <button><span>Click Me</span></button>
+   *
+   * I('button').$() === document.querySelector('button');
+   * //=> true
+   * I('button').$('span') === document.querySelector('button span');
+   * //=> true
+   * I('button').$('div');
+   * //=> InteractorError: could not find div within button
+   * ```
+   *
    * @memberof Core
    * @name I#$
    * @param {String|Function} [selector] - Interactor selector string or function.
@@ -306,6 +328,19 @@ assign(Interactor.prototype, {
    * Returns an array of child elements. Throws an error when no selector is provided or when the
    * parent element cannot be found. Returns an empty array when no child elements are found.
    *
+   * ``` javascript
+   * // <ul>
+   * //   <li>One</li>
+   * //   <li>Two</li>
+   * //   <li>Three</li>
+   * // </ul>
+   *
+   * I('ul').$$('li');
+   * //=> [<li>One</li>, <li>Two</li>, <li>Three</li>]
+   * I('ul').$$('span');
+   * //=> []
+   * ```
+   *
    * @memberof Core
    * @name I#$$
    * @param {String|Function} selector - Interactor selector string or function.
@@ -316,7 +351,20 @@ assign(Interactor.prototype, {
   },
 
   /**
-   * Retreives or sets the topmost interactor's assertion timeout.
+   * Retreives or sets the interactor's assertion timeout. This timeout is used to determine when an
+   * assertion or group of assertions should fail after being retried repeatedly.
+   *
+   * ``` javascript
+   * // <p>Foo Bar</p>
+   *
+   * // by default, this assertion will fail after 2 seconds
+   * await I('p')
+   *   .assert.text('Bar Baz');
+   *
+   * // this assertion will fail after 1 second
+   * await I('p').timeout(1000)
+   *   .assert.text('Bar Baz');
+   * ```
    *
    * @memberof Core
    * @name I#timeout
