@@ -102,12 +102,12 @@ body > div > div {
       }
     }
 
+    p + ul {
+      margin-top: calc(-1.825rem / 2);
+    }
+
     li {
       margin-bottom: 0;
-
-      p + ul {
-        margin-top: calc(-1.825rem / 2);
-      }
     }
   }
 }
