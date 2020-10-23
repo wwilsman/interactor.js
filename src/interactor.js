@@ -36,10 +36,10 @@ import * as selectors from './selectors';
 
 /**
  * The base interactor creator sets initial metadata for the interactor instance. When no `selector`
- * is provided, and [`Interactor.selector`](#Interactor.selector) does not return a selector, the
- * interactor will reference the parent interactor's element or the document body if there is no
- * parent interactor. When additional interactor `properties` are provided, an extended instance of
- * the interactor is returned with those additional properties (see [Interactor.extend](#Interactor.extend)).
+ * is provided, and `I.selector` does not return a selector, the interactor will reference the
+ * parent interactor's element or the document body if there is no parent interactor. When
+ * additional interactor `properties` are provided, an extended instance of the interactor is
+ * returned with those additional properties (see [I.extend](#I.extend([options][,%20properties]))).
  *
  * ``` javascript
  * await I('.btn').click();
