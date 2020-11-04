@@ -8,6 +8,7 @@ rules:
   babel/no-unused-expressions: warn
   no-sequences: off
   no-unused-expressions: off
+  multiline-ternary: off
   prefer-const: off
   promise/param-names: off
   semi: [error, always]
