@@ -99,11 +99,13 @@ defineProperties(Interactor, {
    * used as a child within other interactors to select nested child elements within the parent
    * interactor element's DOM.
    *
-   * ``` javascript
-   * // <p class="a"><span>A</span></p>
-   * // <p class="b"><span>B</span></p>
-   * // <p class="c"><span>C</span></p>
+   * ``` html
+   * <p class="a"><span>A</span></p>
+   * <p class="b"><span>B</span></p>
+   * <p class="c"><span>C</span></p>
+   * ```
    *
+   * ``` javascript
    * // this span interactor refers to the first span in the document
    * const b = I('.b', { span: I('span') });
    * // this span interactor refers to the first span within the scope
@@ -304,9 +306,11 @@ assign(Interactor.prototype, {
    * Returns a child element or the interactor element when no selector is provided. Throws when the
    * element or parent element cannot be found.
    *
-   * ``` javascript
-   * // <button><span>Click Me</span></button>
+   * ``` html
+   * <button><span>Click Me</span></button>
+   * ```
    *
+   * ``` javascript
    * I('button').$() === document.querySelector('button');
    * //=> true
    * I('button').$('span') === document.querySelector('button span');
@@ -328,13 +332,15 @@ assign(Interactor.prototype, {
    * Returns an array of child elements. Throws an error when no selector is provided or when the
    * parent element cannot be found. Returns an empty array when no child elements are found.
    *
-   * ``` javascript
-   * // <ul>
-   * //   <li>One</li>
-   * //   <li>Two</li>
-   * //   <li>Three</li>
-   * // </ul>
+   * ``` html
+   * <ul>
+   *   <li>One</li>
+   *   <li>Two</li>
+   *   <li>Three</li>
+   * </ul>
+   * ```
    *
+   * ``` javascript
    * I('ul').$$('li');
    * //=> [<li>One</li>, <li>Two</li>, <li>Three</li>]
    * I('ul').$$('span');
@@ -354,9 +360,11 @@ assign(Interactor.prototype, {
    * Retreives or sets the interactor's assertion timeout. This timeout is used to determine when an
    * assertion or group of assertions should fail after being retried repeatedly.
    *
-   * ``` javascript
-   * // <p>Foo Bar</p>
+   * ``` html
+   * <p>Foo Bar</p>
+   * ```
    *
+   * ``` javascript
    * // by default, this assertion will fail after 2 seconds
    * await I('p')
    *   .assert.text('Bar Baz');
@@ -384,6 +392,21 @@ assign(Interactor.prototype, {
    * interactor instance is provided, a new child instance of it will be returned with the current
    * interactor attached as its parent.
    *
+   * ``` html
+   * <span class="buttons">
+   *   <button class="a">Item A</button>
+   *   <button class="b">Item B</button>
+   * </span>
+   * ```
+   *
+   * ``` javascript
+   * await I('.buttons')
+   *   // parent.find() returns a child interactor ...
+   *   .find('.a').click()
+   *   // ... child.click() returns a parent interactor
+   *   .find('.b').click();
+   * ```
+   *
    * @memberof Core
    * @name I#find
    * @param {String|Function|Interactor} selector - A selector string or function, or an interactor.
@@ -408,6 +431,21 @@ assign(Interactor.prototype, {
    * throw an error until the interactor's timeout has passed. If the provided assertion defines an
    * argument, the interactor's element will be provided as that argument.
    *
+   * ``` javascript
+   * await I('form')
+   *   .assert(function() {
+   *     let $input = this.$('input');
+   *     // assert something with $input here
+   *   })
+   *     // ... OR ...
+   *   .find('input').assert($input => {
+   *     // assert something with $input here
+   *   });
+   * ```
+   *
+   * Various built-in assertions are also defined as assert methods along with custom assertions
+   * defined by extended interactors.
+   *
    * @memberof Core
    * @name I#assert
    * @param {Function} assertion - The assertion function to add to the interactor queue.
@@ -424,7 +462,14 @@ assign(Interactor.prototype, {
   /**
    * Adds a callback to the next interactor instance's queue. If an interactor with an existing
    * queue is provided, that queue is appended to the next topmost interactor queue and the next
-   * topmost interactor instance is returned.
+   * topmost interactor instance is returned. If the provided assertion defines an argument, the
+   * interactor's element will be provided as that argument.
+   *
+   * ``` javascript
+   * await I('input')
+   *   .exec($i => $i.checkValidity())
+   *   .assert.matches('.invalid');
+   * ```
    *
    * @memberof Core
    * @name I#exec
@@ -453,7 +498,18 @@ assign(Interactor.prototype, {
 
   /**
    * Adds an error handler to the next interactor instance's queue. When a string is provided, the
-   * substring "%{e}" will be replaced with the thrown error message.
+   * substring `%{e}` will be replaced with the thrown error message.
+   *
+   * ``` javascript
+   * await I('.btn').click()
+   *   .catch(err => {
+   *     // do something with the error here
+   *   });
+   *
+   * await I('.btn').click()
+   *   .catch('Unable to click - %{e}');
+   * //=> InteractorError: Unable to click - .btn is disabled
+   * ```
    *
    * @memberof Core
    * @name I#catch
@@ -483,9 +539,26 @@ assign(Interactor.prototype, {
   /**
    * Starts processing the interactor instance's queue and returns a promise, allowing interactors
    * to be used with the async/await syntax. Queued functions are bound to the instance it was
-   * called within. Sequential assertions are pushed to a deferred function that is then called
-   * before the next queued function that is not an assertion. Functions that throw interactor
-   * errors are formatted with the current interactor instance.
+   * called within. Sequential queued assertions are pushed to a deferred function that is then
+   * called before the next queued function that is not an assertion. Queued functions that throw
+   * interactor errors are formatted with the current interactor instance.
+   *
+   * ``` javascript
+   * // not run until awaited on, or .then is called
+   * let clickBtn = I('button').click();
+   *
+   * // interactor's .catch returns another interactor which is still not run
+   * clickBtn = clickBtn.catch('Unable to click - %{e}');
+   *
+   * // awaiting on an interactor automatically invokes .then
+   * await clickBtn;
+   *
+   * // interactors are immutable and can run multiple times
+   * await clickBtn;
+   *
+   * // .then runs the interactor and returns a native Promise
+   * clickBtn.then(() => ...).catch(...);
+   * ```
    *
    * @memberof Core
    * @name I#then
