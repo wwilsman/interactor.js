@@ -6,12 +6,12 @@ import LayoutTemplate from './layout';
 import PageNav from '../components/page-nav';
 import TOC from '../components/toc';
 
-PageTemplate.propTypes = {
+GuideTemplate.propTypes = {
   location: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired
 };
 
-export default function PageTemplate({
+export default function GuideTemplate({
   location,
   data: {
     page: {

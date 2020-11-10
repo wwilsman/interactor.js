@@ -4,12 +4,12 @@ import { graphql } from 'gatsby';
 
 import LayoutTemplate from './layout';
 
-DocTemplate.propTypes = {
+ApiTemplate.propTypes = {
   location: PropTypes.object.isRequired,
   data: PropTypes.object.isRequired
 };
 
-export default function DocTemplate({
+export default function ApiTemplate({
   location,
   data: {
     namespace,

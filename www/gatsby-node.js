@@ -23,8 +23,8 @@ exports.onCreateNode = ({ node, getNode, actions: { createNodeField } }) => {
 // create pages for all docs with slugs
 exports.createPages = async ({ graphql, actions: { createPage } }) => {
   let { data, errors } = await graphql(`{
-    page: allMarkdownRemark { nodes { fields { slug } } }
-    doc: allDocumentationJs { nodes { fields { slug }, name } }
+    guide: allMarkdownRemark { nodes { fields { slug } } }
+    api: allDocumentationJs { nodes { fields { slug }, name } }
   }`)
 
   // throw errors
