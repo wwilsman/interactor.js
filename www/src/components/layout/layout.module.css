@@ -2,6 +2,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  position: relative;
 }
 
 html,
@@ -32,9 +33,13 @@ body > div > div {
     display: flex;
 
     & > div {
-      margin: 0 5rem;
+      margin: 0 4rem;
       min-width: 0;
       flex: 1;
+
+      &:only-child {
+        margin-right: 18rem;
+      }
 
       @media (max-width: 62rem) {
         margin: 0 10vw;
@@ -74,7 +79,7 @@ body > div > div {
       margin-top: 3rem;
     }
 
-    code {
+    pre, code {
       font-family: "Operator Mono", "Fira Code", monospace;
       font-size: 0.825em;
     }
