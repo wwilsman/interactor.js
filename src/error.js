@@ -66,11 +66,11 @@ defineProperties(InteractorError.prototype, {
 });
 
 // regex for the Directive Format
-const regexDF = new RegExp('%{((?:%{.*?}|.)*?)}', 'gs');
+const regexDF = /%\{((?:%\{.*?}|.)*?)}/gs;
 // regex Non-String values
-const regexNS = new RegExp('^(true|false|undefined|null|[\\d.,]+|\\[.*\\]|{.*})$');
+const regexNS = /^(true|false|undefined|null|[\d.,]+|\[.*\]|\{.*})$/;
 // regex for Extra-Spaces
-const regexES = new RegExp('\\s{2,}', 'g');
+const regexES = /\s{2,}/g;
 
 // Formats interactor error messages with specific directives.
 function format(message, inst, expected) {
