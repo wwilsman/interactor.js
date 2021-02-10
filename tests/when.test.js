@@ -20,7 +20,7 @@ describe('Utility: when', () => {
   });
 
   it('rejects when the timeout has been exceeded', async () => {
-    await assert.rejects(when(() => assert(++count > 9), { timeout: 80 }));
+    await assert.rejects(when(() => assert(++count > 9), 80));
     assert(count < 10);
   });
 

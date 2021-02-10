@@ -4,7 +4,10 @@ import { assign, now } from './utils';
 // timeout is reached. Once passing, if `remains` is provided, the assertion will continue to run
 // every interval throughout the `remains` period unless it throws an error again. This function
 // returns a thennable function that runs the assertion when called or awaited on.
-export default function when(assertion, { timeout = 2000, interval = 10, remains } = {}) {
+export default function when(assertion, options = {}) {
+  if (Number.isInteger(options)) options = { timeout: options };
+  let { timeout = 2000, interval = 10, remains } = options;
+
   let then = (...handlers) => new Promise((resolve, reject) => (
     async function retry(t, r) {
       try {
