@@ -1,18 +1,35 @@
 name: Release
 on:
   release:
-    types: [created]
+    types: [published]
 jobs:
   publish:
+    name: Publish
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '14.x'
-        registry-url: 'https://registry.npmjs.org'
-    - run: yarn
-    - run: yarn build
-    - run: npm publish
-      env:
-        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.release.target_commitish }}
+          token: ${{ secrets.GH_PAT }}
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn
+      - run: yarn build
+      - name: Bump version
+        if: ${{ github.event.release.target_commitish == 'master' }}
+        run: |
+          yarn version --no-git-tag-version --new-version ${TAG_NAME:1}
+          git config user.name wwilsman
+          git config user.email wil@wilwilsman.com
+          git add .
+          git commit --message "🔖 $TAG_NAME"
+          git tag $TAG_NAME
+          git push origin master
+          git push origin refs/tags/$TAG_NAME --force
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
