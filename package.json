@@ -44,7 +44,7 @@
     "karma-mocha": "^2.0.1",
     "karma-mocha-reporter": "^2.2.5",
     "karma-rollup-preprocessor": "^7.0.5",
-    "mocha": "^9.0.0",
+    "mocha": "^10.0.0",
     "rollup": "^2.26.11"
   }
 }
