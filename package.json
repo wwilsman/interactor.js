@@ -24,7 +24,7 @@
     "@babel/preset-env": "^7.10.3",
     "@rollup/plugin-babel": "^5.0.3",
     "@rollup/plugin-commonjs": "^22.0.0",
-    "@rollup/plugin-node-resolve": "^13.0.0",
+    "@rollup/plugin-node-resolve": "^14.0.1",
     "assert": "^2.0.0",
     "babel-plugin-istanbul": "^6.0.0",
     "eslint": "^7.3.0",
