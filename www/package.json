@@ -26,7 +26,7 @@
     "gatsby-remark-widows": "^1.0.0",
     "gatsby-source-filesystem": "^2.3.20",
     "gatsby-transformer-documentationjs": "^4.3.13",
-    "gatsby-transformer-remark": "^2.8.25",
+    "gatsby-transformer-remark": "^5.25.1",
     "precss": "^4.0.0",
     "prism-themes": "^1.4.0",
     "prismjs": "^1.27.0",
