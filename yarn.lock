@@ -2928,10 +2928,10 @@ karma-firefox-launcher@^2.0.0:
     is-wsl "^2.2.0"
     which "^2.0.1"
 
-karma-jsdom-launcher@^13.0.0:
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/karma-jsdom-launcher/-/karma-jsdom-launcher-13.0.0.tgz#c287caa5ef986f8547f369a1b6a2cea6955e8cdf"
-  integrity sha512-03+/myz8sSqg55jp3epB6enurY+Lakn/Dhacd0PMX3NrWOiNClK0sDKqaWFnPxNwYVAjSlMi9hNOSs21AMHlbw==
+karma-jsdom-launcher@^14.0.0:
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/karma-jsdom-launcher/-/karma-jsdom-launcher-14.0.0.tgz#3a37c3bfb4f6040a3b587a478cb01b810ff52374"
+  integrity sha512-GrZpJK9cdBo0C6YXZh0Sbq8D5NvdoTvRE9R/nhJzl0Tyfg7GI6iCU73ww264eqAZzy1mjCk/vj8sVA6ECacLlQ==
 
 karma-junit-reporter@^2.0.1:
   version "2.0.1"
