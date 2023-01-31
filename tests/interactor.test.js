@@ -54,6 +54,24 @@ describe('Interactor', () => {
     assert.equal(test.bar(), 'baz');
   });
 
+  it('can add custom execution middleware', async () => {
+    let calls = 0;
+    let Test = I.extend();
+    Test.executionMiddleware = fn => (calls++, fn());
+    fixture(`<button class="a">A</button>`);
+
+    let test = Test('.a')
+      .assert.text('A')
+      .exec(() => {})
+      .assert.not.text('B')
+      .catch(() => {})
+      .click();
+
+    assert.equal(calls, 0);
+    await test;
+    assert.equal(calls, 2);
+  });
+
   describe('$([selector])', () => {
     beforeEach(() => {
       fixture(`

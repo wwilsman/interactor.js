@@ -572,23 +572,18 @@ assign(Interactor.prototype, {
 
     return queue.reduce((promise, action, i) => {
       let { type, ctx, fn } = action;
+      let wrapper = fn => fn();
       if (!fn) type = null;
 
       // bind the action to its associated instance and call any additional function beforehand; if
       // the action requires an argument, the interactor instance element is provided
-      let bind$ = (fn, f) => named(fn.name, () => {
-        if (f) f();
-
-        return fn.length
-          ? fn.call(ctx, ctx.$())
-          : fn.call(ctx);
-      });
+      let bind$ = (fn, f) => named(fn.name, () => wrapper(() => {
+        return (f?.(), fn.length ? fn.call(ctx, ctx.$()) : fn.call(ctx));
+      }));
 
       // format any thrown interactor errors
       let onError = err => {
-        throw err.name === 'InteractorError'
-          ? err.bind(ctx)
-          : err;
+        throw err.name === 'InteractorError' ? err.bind(ctx) : err;
       };
 
       // track assertions
@@ -598,20 +593,17 @@ assign(Interactor.prototype, {
 
       // execute and clear assertions within a convergence
       if (assertion && (type !== 'assert' || i === queue.length - 1)) {
-        promise = promise.then(
-          when(assertion, {
-            remains: action.remains,
-            interval,
-            timeout
-          })
-        ).catch(onError);
-
+        let converge = when(assertion, { remains: action.remains, interval, timeout });
+        promise = promise.then(converge).catch(onError);
         assertion = null;
       }
 
       if (type === 'exec') {
+        // execute bound exec functions with any defined middleware
+        wrapper = this.constructor.executionMiddleware ?? wrapper;
         promise = promise.then(bind$(fn)).catch(onError);
       } else if (type === 'catch') {
+        // bind any catch handler
         promise = promise.catch(fn.bind(ctx));
       }
 
