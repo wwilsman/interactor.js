@@ -4,7 +4,7 @@ import { exec as keyup } from './keyup';
 
 // Shared function to trigger keydown and keyup events on an element and possibly type resulting
 // text into the element within an optional range.
-export async function exec($element, parsed, { range, replace, delay }) {
+export async function exec($element, parsed, { range, replace, delay = 1 }) {
   range = range != null && [].concat(range);
 
   // loop over each key
