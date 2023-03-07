@@ -1,0 +1,8 @@
+{
+  "exclude": ["dist", "tests"],
+  "instrument": false,
+  "branches": 100,
+  "lines": 100,
+  "functions": 100,
+  "statements": 100
+}
