@@ -1,4 +1,4 @@
-import { assert, e, fixture, listen } from 'tests/helpers';
+import { assert, e, fixture, listen } from '../helpers.js';
 import I from 'interactor.js';
 
 describe('Actions: blur', () => {

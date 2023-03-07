@@ -1,4 +1,4 @@
-import { assert } from 'tests/helpers';
+import { assert } from './helpers.js';
 import { when } from 'interactor.js';
 
 describe('Utility: when', () => {

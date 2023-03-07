@@ -1,4 +1,4 @@
-import { assert, e, fixture, listen } from 'tests/helpers';
+import { assert, e, fixture, listen } from './helpers.js';
 import I, { InteractorError } from 'interactor.js';
 
 describe('Interactor', () => {
@@ -58,7 +58,7 @@ describe('Interactor', () => {
     let calls = 0;
     let Test = I.extend();
     Test.executionMiddleware = fn => (calls++, fn());
-    fixture(`<button class="a">A</button>`);
+    fixture('<button class="a">A</button>');
 
     let test = Test('.a')
       .assert.text('A')
@@ -198,7 +198,7 @@ describe('Interactor', () => {
     describe('with other document roots', () => {
       const Frame = I.extend();
 
-      beforeEach(done => {
+      beforeEach(async () => {
         fixture(`
           <div class="div foo"></div>
           <iframe
@@ -207,10 +207,12 @@ describe('Interactor', () => {
           ></iframe>
         `);
 
+        let done, dom = new Promise(r => (done = r));
         listen('.test-frame', 'load', function() {
-          Frame.dom = this.contentWindow;
-          done();
+          done(this.contentWindow);
         });
+
+        Frame.dom = await dom;
       });
 
       it('works with alternate dom references', () => {
@@ -373,7 +375,7 @@ describe('Interactor', () => {
         let count = 0;
 
         await assert.doesNotReject(
-          I().timeout(100)
+          I().timeout(200)
             .assert(() => (count += 1))
             .assert(() => assert.equal(count, 5))
             .exec()

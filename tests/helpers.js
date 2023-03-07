@@ -1,3 +1,4 @@
+import { createTestHook } from 'moonshiner/utils';
 import { strict as assert } from 'assert';
 
 const { assign, defineProperty } = Object;
@@ -10,9 +11,8 @@ export function jsdom() {
 // In jsdom, when elements lose focus they nullify the _lastFocusedElement which is reflected in
 // document.hasFocus(); this sets focus back to the body so that hasFocus() is accurate.
 function jsdomCaptureFocus(e) {
-  if (e.relatedTarget === e.currentTarget.ownerDocument) {
+  if (e.relatedTarget === e.currentTarget.ownerDocument)
     e.currentTarget.ownerDocument.body.focus();
-  }
 }
 
 // In jsdom, the dom is not automatically focused and window.focus() is not implemented;
@@ -23,22 +23,8 @@ function jsdomFocusDocument(doc) {
   doc.body.focus();
 };
 
-// Helper which creates a generic testing hook. The provided function is called on setup and any
-// returned function is called before the next setup call. If either function is asynchronous, the
-// resulting function is also asynchronous.
-function createHook(fn) {
-  let t = null;
-
-  return function() {
-    let teardown = t?.();
-    let setup = () => (t = fn.apply(this, arguments));
-    return typeof teardown?.then === 'function'
-      ? teardown.then(setup) : setup();
-  };
-}
-
 // A testing hook which injects HTML into the document body and removes it upon the next call.
-export const fixture = createHook(innerHTML => {
+export const fixture = createTestHook(innerHTML => {
   let $test = document.createElement('div');
 
   // format HTML to remove extraneous spaces
@@ -51,9 +37,8 @@ export const fixture = createHook(innerHTML => {
 
   if (jsdom()) {
     // apply focus hacks to the current document
-    if (!document.body.hasAttribute('tabindex')) {
+    if (!document.body.hasAttribute('tabindex'))
       document.body.addEventListener('focusout', jsdomCaptureFocus);
-    }
 
     // jsdom doesn't support srcdoc or sandbox
     for (let $f of $test.querySelectorAll('iframe')) {
@@ -78,9 +63,8 @@ export const fixture = createHook(innerHTML => {
     }
 
     // jsdom doesn't support isContentEditable
-    for (let $e of $test.querySelectorAll('[contenteditable]')) {
+    for (let $e of $test.querySelectorAll('[contenteditable]'))
       defineProperty($e, 'isContentEditable', { value: true });
-    }
 
     // autofocus the document
     jsdomFocusDocument(document);

@@ -1,4 +1,4 @@
-import { assert, e } from 'tests/helpers';
+import { assert, e } from './helpers.js';
 import I from 'interactor.js';
 
 describe('InteractorAssert', () => {
@@ -90,9 +90,8 @@ describe('InteractorAssert', () => {
     let T = Test.extend({
       assert: {
         passing(expected, bool) {
-          if (expected !== bool) {
+          if (expected !== bool)
             throw I.Error('%{@} is %{- failing|passing}');
-          }
         }
       }
     });

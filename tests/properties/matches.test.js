@@ -1,4 +1,4 @@
-import { assert, e, fixture } from 'tests/helpers';
+import { assert, e, fixture } from '../helpers.js';
 import I from 'interactor.js';
 
 describe('Properties: matches', () => {

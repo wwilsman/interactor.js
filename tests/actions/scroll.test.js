@@ -1,4 +1,4 @@
-import { assert, e, fixture, listen, jsdom, mockConsole } from 'tests/helpers';
+import { assert, e, fixture, listen, jsdom, mockConsole } from '../helpers.js';
 import I from 'interactor.js';
 
 describe('Actions: scroll', () => {

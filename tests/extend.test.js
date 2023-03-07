@@ -1,4 +1,4 @@
-import { assert, mockConsole } from 'tests/helpers';
+import { assert, mockConsole } from './helpers.js';
 import I from 'interactor.js';
 
 describe('Interactor.extend', () => {
