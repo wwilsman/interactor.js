@@ -2,10 +2,27 @@ import createTestServer from 'moonshiner/server';
 import middlewares from 'moonshiner/middlewares';
 import reporters from 'moonshiner/reporters';
 import browsers from 'moonshiner/browsers';
+import cov from 'istanbul-lib-coverage';
 
+// create test server
 const testServer = createTestServer();
-testServer.use(reporters.emoji());
 
+// use reporters
+testServer.use(reporters.emoji());
+testServer.use(reporters.createReporter({
+  state: cov.createCoverageMap(),
+  sync: false,
+
+  'after:suite': (_, state, event) => {
+    if (!event.__coverage__) return;
+    state.merge(event.__coverage__);
+    globalThis.__coverage__ = state.toJSON();
+  }
+}));
+
+// use launchers
+testServer.use(browsers.firefox());
+testServer.use(browsers.chromium());
 testServer.use(middlewares.launch(async server => {
   server.emit('console', 'log', ['Launching JSDOM']);
   let { JSDOM } = await import('jsdom');
@@ -18,18 +35,15 @@ testServer.use(middlewares.launch(async server => {
   return () => dom.window.close();
 }));
 
-testServer.use(browsers.firefox());
-testServer.use(browsers.chromium());
-
+// use bundler
 testServer.use(middlewares.listen(async () => {
   let { rollup } = await import('rollup');
   let { test: config } = await import('../rollup.config.js');
-  let { default: cov } = await import('istanbul-lib-coverage');
 
   let bundle = await rollup(config);
-  let coverage = cov.createCoverageMap();
   let { output } = await bundle.generate(config.output);
 
+  // serve bundle output
   testServer.use(middlewares.serve({
     virtual: output.reduce((virtual, output) => {
       let { fileName, code, source } = output;
@@ -38,14 +52,10 @@ testServer.use(middlewares.listen(async () => {
     }, {})
   }));
 
-  testServer.use((event, next) => (event.data?.coverage && (
-    coverage.merge(event.data.coverage),
-    globalThis.__coverage__ = coverage.toJSON()
-  ), next()));
-
   return async () => {
     await bundle.close();
   };
 }));
 
+// start test server
 testServer.listen();
