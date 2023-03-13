@@ -2863,10 +2863,10 @@ mkdirp-classic@^0.5.2:
   resolved "https://registry.yarnpkg.com/mkdirp-classic/-/mkdirp-classic-0.5.3.tgz#fa10c9115cc6d8865be221ba47ee9bed78601113"
   integrity sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==
 
-moonshiner@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/moonshiner/-/moonshiner-0.7.0.tgz#01c8b7d59b3991a166af178375071809ca9da0a7"
-  integrity sha512-rsfl9v/dRlJpgFTzqAjVCJ8MGvFV61f5uy5JRIBEq3hFmQmdhB078EzM83SMDFCma9lp6WfboG2TyexWWYGGbQ==
+moonshiner@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/moonshiner/-/moonshiner-0.9.0.tgz#88e86e52ceec113438d7c706c0010d3d98d51a78"
+  integrity sha512-p5UBaj/+UE1P2tatChv0oKv5eTSIlrusbASncmnF0UCNey8Kx3sIuB37YsvVZbknwTFYhqsgcRXQJ1I9DZfBNA==
   dependencies:
     cross-spawn "^7.0.3"
     extract-zip "^2.0.1"

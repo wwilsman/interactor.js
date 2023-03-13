@@ -8,7 +8,7 @@ use(reporters.remote(event => Object.assign(event, {
 
 use(middlewares.bind(globalThis));
 
-configure({ timeout: 10_000 });
-
-import('./**/*.test.js')
-  .then(() => run());
+import('./**/*.test.js').then(() => {
+  configure({ timeout: 10_000 });
+  run();
+});
