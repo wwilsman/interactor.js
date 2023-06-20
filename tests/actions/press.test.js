@@ -52,7 +52,7 @@ describe('Actions: press', () => {
 
   it('can be called with an interactor selector', async () => {
     let Test = I.extend({
-      foo: () => I.press('', 'f')
+      foo: () => I.press('&', 'f')
     });
 
     let action = I.press(Test('.input'), 'a');

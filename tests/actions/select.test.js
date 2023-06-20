@@ -99,7 +99,7 @@ describe('Actions: select', () => {
 
   it('can be called with an interactor selector', async () => {
     let Test = I.extend({
-      foo: () => I.select('', '.opt-2')
+      foo: () => I.select('&', '.opt-2')
     });
 
     let action = I.select(Test('.sel-a'), I.find.text('Two'));

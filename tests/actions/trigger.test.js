@@ -24,7 +24,7 @@ describe('Actions: trigger', () => {
 
   it('can be called with an interactor selector', async () => {
     let Test = I.extend({
-      foo: () => I.trigger('', 'foo')
+      foo: () => I.trigger('&', 'foo')
     });
 
     let action = I.trigger(Test('.test'), 'foo');

@@ -153,7 +153,7 @@ describe('Actions: scroll', () => {
 
   it('can be called with an interactor selector', async () => {
     let Test = I.extend({
-      foo: y => I.scroll('', { y })
+      foo: y => I.scroll('&', { y })
     });
 
     let action = I.scroll(Test('.overflow.x.y'), { x: 10 });

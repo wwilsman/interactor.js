@@ -183,7 +183,7 @@ describe('Actions: type', () => {
 
   it('can be called with an interactor selector', async () => {
     let Test = I.extend({
-      foo: () => I.type('', 'foo')
+      foo: () => I.type('&', 'foo')
     });
 
     let action = I.type(Test('.input'), 'aaa');

@@ -96,7 +96,7 @@ describe('Actions: keydown', () => {
 
   it('can be called with an interactor selector', async () => {
     let Test = I.extend({
-      foo: () => I.keydown('', 'f')
+      foo: () => I.keydown('&', 'f')
     });
 
     let action = I.keydown(Test('.input'), 'a');
