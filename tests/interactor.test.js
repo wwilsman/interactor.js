@@ -603,5 +603,45 @@ describe('Interactor', () => {
     it('does not reference undefined selectors', () => {
       assert.equal(I('.bar').find().toString(), '.bar');
     });
+
+    it('uniquely handles default selectors', () => {
+      let Test = I.extend({
+        selector: 'default'
+      }, {});
+
+      // with a string, selector method returns a selector function...
+      assert.typeOf(Test.selector, 'function');
+      assert.typeOf(Test.selector(), 'function');
+
+      // ...which returns the provided selector, or the default
+      assert.equal(Test.selector()(), 'default');
+      assert.equal(Test.selector('test')(), 'test');
+
+      // ...which is used in #.toString()
+      assert.equal(Test().toString(), 'default');
+      assert.equal(Test('test').toString(), 'test');
+
+      // when named...
+      Test.name = 'Name';
+
+      // ...still returns the provided selector, or the default
+      assert.equal(Test.selector()(), 'default');
+      assert.equal(Test.selector('test')(), 'test');
+
+      // ...but the default selector is NOT used in #.toString()
+      assert.equal(Test().toString(), 'Name');
+      assert.equal(Test('foo').toString(), 'foo Name');
+
+      // can provide a custom selector method
+      Test.selector = s => `test[${s ?? 'default'}]`;
+
+      // ...selector method handles return value & defaults
+      assert.equal(Test.selector()(), 'test[default]');
+      assert.equal(Test.selector('foobar')(), 'test[foobar]');
+
+      // ...only the provided selector is used in #.toString()
+      assert.equal(Test().toString(), 'Name');
+      assert.equal(Test('foobar').toString(), 'foobar Name');
+    });
   });
 });

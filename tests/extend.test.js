@@ -18,20 +18,18 @@ describe('Interactor.extend', () => {
   it('can define static interactor options', () => {
     let Test = I.extend({
       name: 'bar',
-      selector: 'foo',
       timeout: 1000,
       dom: () => 'dom',
       foobar: 'bazqux'
     }, {});
 
     assert.equal(Test.name, 'bar');
-    assert.equal(Test.selector(), 'foo');
     assert.equal(Test.timeout, 1000);
     assert.equal(Test.dom, 'dom');
     assert.equal(Test.foobar, 'bazqux');
 
     assert.equal(Test().timeout(), 1000);
-    assert.equal(Test().toString(), 'foo bar');
+    assert.equal(Test('foo').toString(), 'foo bar');
   });
 
   it('extends assert with custom assertion properties', () => {
