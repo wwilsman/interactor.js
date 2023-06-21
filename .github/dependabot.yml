@@ -6,3 +6,15 @@ updates:
     interval: weekly
   commit-message:
     prefix: ⬆
+- package-ecosystem: npm
+  directory: /www
+  schedule:
+    interval: weekly
+  commit-message:
+    prefix: ⬆
+- package-ecosystem: github-actions
+  directory: /
+  schedule:
+    interval: weekly
+  commit-message:
+    prefix: 👷
