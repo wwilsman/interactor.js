@@ -29,7 +29,7 @@
     "gatsby-transformer-remark": "^5.25.1",
     "precss": "^4.0.0",
     "prism-themes": "^1.4.0",
-    "prismjs": "^1.27.0",
+    "prismjs": "^1.29.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
