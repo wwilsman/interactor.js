@@ -66,6 +66,8 @@ jobs:
           restore-keys: v1/${{ runner.os }}/node-20/
       - run: npm install
       - run: npm run test:coverage
+        env:
+          NYC_REPORTER: lcov
       - uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
