@@ -8,7 +8,7 @@ jobs:
     if: github.actor == 'dependabot[bot]'
     steps:
       - name: Automerge and Approve
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
