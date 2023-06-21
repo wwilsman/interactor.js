@@ -17,10 +17,11 @@
   ],
   "scripts": {
     "build": "rollup --config",
+    "test": "npm run lint && npm run test:coverage",
+    "test:only": "NODE_ENV=test node ./tests/start.js",
+    "test:coverage": "nyc --check-coverage npm test",
     "lint": "eslint --ignore-path .gitignore --ignore-pattern www .",
-    "test": "NODE_ENV=test node ./tests/start.js",
-    "test:coverage": "nyc --check-coverage yarn test",
-    "docs": "cd www && npm"
+    "docs": "cd www && npm install --legacy-peer-deps"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",

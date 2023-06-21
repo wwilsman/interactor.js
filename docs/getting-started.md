@@ -2,13 +2,7 @@
 title: Getting Started
 ---
 
-Install interactor.js using `yarn`:
-
-``` bash
-$ yarn add --dev interactor.js
-```
-
-Or `npm`:
+Install interactor.js using `npm`:
 
 ``` bash
 $ npm install --save-dev interactor.js
