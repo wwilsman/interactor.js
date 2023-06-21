@@ -15,12 +15,12 @@ jobs:
         with:
           node-version: 18
           registry-url: 'https://registry.npmjs.org'
-      - run: yarn
-      - run: yarn build
+      - run: npm install
+      - run: npm run build
       - name: Bump version
         if: ${{ github.event.release.target_commitish == 'master' }}
         run: |
-          yarn version --no-git-tag-version --new-version ${TAG_NAME:1}
+          npm version --no-git-tag-version ${TAG_NAME:1}
           git config user.name wwilsman
           git config user.email wil@wilwilsman.com
           git add .

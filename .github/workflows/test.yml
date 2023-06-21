@@ -5,68 +5,67 @@ jobs:
     name: Install
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 18
-      - uses: actions/cache@v2
+          node-version: 20
+      - uses: actions/cache@v3
         with:
           path: node_modules
-          key: v1/${{ runner.os }}/node-18/${{ hashFiles('yarn.lock') }}
-          restore-keys: v1/${{ runner.os }}/node-18/
-      - run: yarn
+          key: v1/${{ runner.os }}/node-20/${{ hashFiles('yarn.lock') }}
+          restore-keys: v1/${{ runner.os }}/node-20/
+      - run: npm install
 
   lint:
     name: Lint
     needs: [install]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 18
-      - uses: actions/cache@v2
+          node-version: 20
+      - uses: actions/cache@v3
         with:
           path: node_modules
-          key: v1/${{ runner.os }}/node-18/${{ hashFiles('yarn.lock') }}
-          restore-keys: v1/${{ runner.os }}/node-18/
-      - run: yarn
-      - run: yarn lint
+          key: v1/${{ runner.os }}/node-20/${{ hashFiles('yarn.lock') }}
+          restore-keys: v1/${{ runner.os }}/node-20/
+      - run: npm install
+      - run: npm run lint
 
   build:
     name: Build
     needs: [install]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 18
-      - uses: actions/cache@v2
+          node-version: 20
+      - uses: actions/cache@v3
         with:
           path: node_modules
-          key: v1/${{ runner.os }}/node-18/${{ hashFiles('yarn.lock') }}
-          restore-keys: v1/${{ runner.os }}/node-18/
-      - run: yarn
-      - run: yarn build
+          key: v1/${{ runner.os }}/node-20/${{ hashFiles('yarn.lock') }}
+          restore-keys: v1/${{ runner.os }}/node-20/
+      - run: npm install
+      - run: npm run build
 
   test:
     name: Test
     needs: [install]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 18
-      - uses: actions/cache@v2
+          node-version: 20
+      - uses: actions/cache@v3
         with:
           path: node_modules
-          key: v1/${{ runner.os }}/node-18/${{ hashFiles('yarn.lock') }}
-          restore-keys: v1/${{ runner.os }}/node-18/
-      - run: yarn
-      - name: Run tests
-        run: yarn test:coverage
+          key: v1/${{ runner.os }}/node-20/${{ hashFiles('yarn.lock') }}
+          restore-keys: v1/${{ runner.os }}/node-20/
+      - run: npm install
+      - run: npm run test:coverage
       - uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
