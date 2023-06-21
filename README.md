@@ -10,8 +10,8 @@
 </p>
 
 <p align="center">
-  <a href="https://circleci.com/gh/wwilsman/interactor.js/tree/master">
-    <img alt="CircleCI" src="https://circleci.com/gh/wwilsman/interactor.js/tree/master.svg?style=svg"/>
+  <a href="https://github.com/wwilsman/interactor.js/actions/workflows/test.yml">
+    <img src="https://github.com/wwilsman/interactor.js/actions/workflows/test.yml/badge.svg" />
   </a>
   <a href="https://codecov.io/gh/wwilsman/interactor.js">
     <img src="https://codecov.io/gh/wwilsman/interactor.js/branch/master/graph/badge.svg" />
