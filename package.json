@@ -19,7 +19,7 @@
     "build": "rollup --config",
     "test": "npm run lint && npm run test:coverage",
     "test:only": "NODE_ENV=test node ./tests/start.js",
-    "test:coverage": "nyc --check-coverage npm test",
+    "test:coverage": "nyc --check-coverage npm run test:only",
     "lint": "eslint --ignore-path .gitignore --ignore-pattern www .",
     "docs": "cd www && npm install --legacy-peer-deps"
   },
