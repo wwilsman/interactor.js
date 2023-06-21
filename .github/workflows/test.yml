@@ -67,8 +67,8 @@ jobs:
       - run: npm install
       - run: npm run test:coverage
         env:
-          NYC_REPORTER: lcov
+          NYC_REPORTER: lcov-only
       - uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage/**/*.json
+          directory: ./coverage/
