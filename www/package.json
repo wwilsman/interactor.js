@@ -24,7 +24,7 @@
     "gatsby-remark-autolink-headers": "^2.3.11",
     "gatsby-remark-prismjs": "^3.5.10",
     "gatsby-remark-widows": "^1.0.0",
-    "gatsby-source-filesystem": "^2.3.20",
+    "gatsby-source-filesystem": "^5.11.0",
     "gatsby-transformer-documentationjs": "^4.10.0",
     "gatsby-transformer-remark": "^6.11.0",
     "precss": "^4.0.0",
