@@ -8,6 +8,33 @@ describe('InteractorAssert', () => {
     assert.notEqual(I().assert, I().assert);
   });
 
+  it('handles boolean return values', async () => {
+    await assert.doesNotReject(
+      Test().assert(() => true)
+    );
+
+    await assert.rejects(
+      Test().assert(() => false),
+      e('InteractorError', 'expected assertion to pass but it failed')
+    );
+  });
+
+  it('handles matcher return values', async () => {
+    await assert.doesNotReject(
+      Test().assert(() => ({ result: true }))
+    );
+
+    await assert.rejects(
+      Test().assert(() => ({ result: false })),
+      e('InteractorError', 'expected assertion to pass but it failed')
+    );
+
+    await assert.rejects(
+      Test().assert(() => ({ result: false, message: 'epic fail' })),
+      e('InteractorError', 'epic fail')
+    );
+  });
+
   it('can be negated with .not', async () => {
     let T = Test.extend({
       assert: {
@@ -34,6 +61,29 @@ describe('InteractorAssert', () => {
     );
 
     await assert.doesNotReject(
+      T().assert.not(() => false)
+    );
+
+    await assert.rejects(
+      T().assert.not(() => true),
+      e('InteractorError', 'expected assertion to fail but it passed')
+    );
+
+    await assert.doesNotReject(
+      Test().assert.not(() => ({ result: false }))
+    );
+
+    await assert.rejects(
+      Test().assert.not(() => ({ result: true })),
+      e('InteractorError', 'expected assertion to fail but it passed')
+    );
+
+    await assert.rejects(
+      Test().assert.not(() => ({ result: true, message: 'nega fail' })),
+      e('InteractorError', 'nega fail')
+    );
+
+    await assert.doesNotReject(
       T().assert.not(() => {
         throw Error('failed successfully');
       })
@@ -46,9 +96,9 @@ describe('InteractorAssert', () => {
 
     await assert.doesNotReject(
       Test()
-        .assert(() => (delta == null && (delta = 10)))
-        .assert(() => (delta += Date.now() - time))
-        .assert(() => (time = Date.now()))
+        .assert(() => void (delta == null && (delta = 10)))
+        .assert(() => void (delta += Date.now() - time))
+        .assert(() => void (time = Date.now()))
         .assert.remains()
     );
 
