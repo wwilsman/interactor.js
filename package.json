@@ -1,7 +1,7 @@
 {
   "name": "interactor.js",
   "description": "Composable, immutable, asynchronous way to interact with the DOM",
-  "version": "2.0.0-beta.13",
+  "version": "2.0.0-beta.14",
   "license": "MIT",
   "repository": "https://github.com/wwilsman/interactor.js",
   "type": "module",
