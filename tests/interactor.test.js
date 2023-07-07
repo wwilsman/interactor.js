@@ -17,6 +17,22 @@ describe('Interactor', () => {
     assert.typeOf(I.extend().extend, 'function');
   });
 
+  it('has an inheritable static .find() method', () => {
+    fixture('<p class="test">Test</p>');
+
+    assert.typeOf(I.find, 'function');
+    assert.typeOf(I.extend().find, 'function');
+
+    assert.equal(
+      I.find('.test').$(),
+      document.querySelector('.test')
+    );
+
+    assert.equal(I.find('.test', {
+      get bar() { return 'baz'; }
+    }).bar, 'baz');
+  });
+
   it('can customize the interactor element selector', () => {
     let Test = I.extend();
 
@@ -320,7 +336,7 @@ describe('Interactor', () => {
     });
   });
 
-  describe('find(selector)', () => {
+  describe('find(selector[, properties])', () => {
     const Foo = I.extend();
     const Bar = I.extend();
 
@@ -337,6 +353,17 @@ describe('Interactor', () => {
       assert.notInstanceOf(next, Foo);
       assert.instanceOf(next, I);
       assert.instanceOf(next.exec(), Foo);
+    });
+
+    it('can provide child interactor properties', () => {
+      let next = Foo('.a').find('.b', {
+        get bar() { return 'baz'; }
+      });
+
+      assert.notInstanceOf(next, Foo);
+      assert.instanceOf(next, I);
+      assert.instanceOf(next.exec(), Foo);
+      assert.equal(next.bar, 'baz');
     });
 
     describe('with an interactor selector', () => {
