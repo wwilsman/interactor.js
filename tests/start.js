@@ -22,7 +22,7 @@ testServer.use(reporters.createReporter({
 
 // use launchers
 testServer.use(launch.firefox());
-testServer.use(launch.chromium());
+testServer.use(launch.chrome());
 testServer.use(launch.fork('JSDOM', {
   modulePath: './tests/jsdom.js'
 }));
