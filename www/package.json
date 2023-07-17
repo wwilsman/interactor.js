@@ -20,7 +20,7 @@
     "gatsby-plugin-offline": "^6.11.0",
     "gatsby-plugin-postcss": "^6.11.0",
     "gatsby-plugin-react-helmet": "^6.11.0",
-    "gatsby-plugin-typography": "^2.5.10",
+    "gatsby-plugin-typography": "^5.11.0",
     "gatsby-remark-autolink-headers": "^6.11.0",
     "gatsby-remark-prismjs": "^7.11.0",
     "gatsby-remark-widows": "^1.0.0",
