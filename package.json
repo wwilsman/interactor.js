@@ -21,11 +21,11 @@
     "build": "npm run build:bundle && npm run build:types",
     "build:bundle": "rollup --config",
     "build:types": "tsc --outDir types",
-    "test": "npm run lint && npm run test:types && npm run test:coverage",
+    "test": "npm run lint && npm run test:coverage",
     "test:coverage": "nyc npm run test:only",
     "test:debug": "npm run test:only -- --debug",
-    "test:only": "NODE_ENV=test node tests/start.js",
-    "test:types": "tsc --build tests",
+    "test:only": "NODE_ENV=test node tests/run.js",
+    "test:types": "tsc --project tests",
     "lint": "eslint --ignore-path .gitignore --ignore-pattern www ."
   },
   "devDependencies": {

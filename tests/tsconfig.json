@@ -1,0 +1,16 @@
+{
+  "include": ["./**/*.test.js"],
+  "references": [{ "path": ".." }],
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "lib": ["esnext", "dom"],
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "paths": {
+      "interactor.js": ["../types/index.d.ts"]
+    }
+  }
+}

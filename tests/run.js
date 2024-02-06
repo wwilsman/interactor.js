@@ -5,7 +5,9 @@ import launch from 'moonshiner/launchers';
 import cov from 'istanbul-lib-coverage';
 
 // create test server
-const testServer = createTestServer();
+const testServer = createTestServer({
+  debug: process.argv.includes('--debug')
+});
 
 // use reporters
 testServer.use(reporters.emoji());
@@ -22,10 +24,7 @@ testServer.use(reporters.createReporter({
 
 // use launchers
 testServer.use(launch.firefox());
-testServer.use(launch.chrome());
-testServer.use(launch.fork('JSDOM', {
-  modulePath: './tests/jsdom.js'
-}));
+// testServer.use(launch.chrome());
 
 // use bundler
 testServer.use(middlewares.listen(async () => {

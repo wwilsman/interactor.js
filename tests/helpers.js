@@ -1,29 +1,13 @@
 import { createTestHook } from 'moonshiner/utils';
-import { strict as assert } from 'assert';
+import { Interactor } from 'interactor.js';
 
-const { assign, defineProperty } = Object;
+// Test interactor scoped to the testing fixtures
+export const I = new Interactor({
+  root: () => document.getElementById('testing-root'),
+  assert: { timeout: 100, reliability: 0 }
+});
 
-// Returns true when running in jsdom
-export function jsdom() {
-  return (jsdom.result = jsdom.result ?? navigator.userAgent.includes('jsdom'));
-}
-
-// In jsdom, when elements lose focus they nullify the _lastFocusedElement which is reflected in
-// document.hasFocus(); this sets focus back to the body so that hasFocus() is accurate.
-function jsdomCaptureFocus(e) {
-  if (e.relatedTarget === e.currentTarget.ownerDocument)
-    e.currentTarget.ownerDocument.body.focus();
-}
-
-// In jsdom, the dom is not automatically focused and window.focus() is not implemented;
-// additionally, even though the body has a default tabindex of -1, jsdom will not focus the body
-// unless it has an explicit tabindex attribute.
-function jsdomFocusDocument(doc) {
-  doc.body.setAttribute('tabindex', -1);
-  doc.body.focus();
-};
-
-// A testing hook which injects HTML into the document body and removes it upon the next call.
+// Test hook which sets up and tears down HTML fixtures
 export const fixture = createTestHook(innerHTML => {
   let $test = document.createElement('div');
 
@@ -32,122 +16,52 @@ export const fixture = createTestHook(innerHTML => {
   innerHTML = innerHTML.replace(new RegExp(`^\\s{${ind}}`, 'mg'), '').trim();
 
   // assign HTML and append to the body
-  assign($test, { id: 'test', innerHTML });
+  Object.assign($test, { id: 'testing-root', innerHTML });
   document.body.appendChild($test);
 
-  if (jsdom()) {
-    // apply focus hacks to the current document
-    if (!document.body.hasAttribute('tabindex'))
-      document.body.addEventListener('focusout', jsdomCaptureFocus);
-
-    // jsdom doesn't support srcdoc or sandbox
-    for (let $f of $test.querySelectorAll('iframe')) {
-      // polyfill srcdoc
-      $f.setAttribute('src', `data:text/html;charset=utf-8,${
-        encodeURI($f.getAttribute('srcdoc'))
-      }`);
-
-      if ($f.getAttribute('sandbox') != null) {
-        // simulate sandbox without breaking jsdom
-        defineProperty($f, 'contentDocument', { value: null });
-      } else {
-        // apply the focus hacks to frame documents
-        $f.addEventListener('load', () => {
-          $f.contentDocument.body.addEventListener('focusout', jsdomCaptureFocus);
-
-          $f.addEventListener('focus', e => {
-            if (!e.defaultPrevented) jsdomFocusDocument($f.contentDocument);
-          });
-        });
-      }
-    }
-
-    // jsdom doesn't support isContentEditable
-    for (let $e of $test.querySelectorAll('[contenteditable]'))
-      defineProperty($e, 'isContentEditable', { value: true });
-
-    // autofocus the document
-    jsdomFocusDocument(document);
-  }
-
+  // return a cleanup function
   return () => $test.remove();
 });
 
-// Helper function useful for testing error messages while being slightly more readable.
-export function e(name, message) {
-  return { name, message };
-}
-
-// Helper function that attaches an event listener to an element and returns a reference to
-// collected results of the event. The return value references the element being listened on and a
-// count of triggered events. If a function is provided, it is also called on each event.
+// Test helper to create an event listener spy
 export function listen(selector, event, fn) {
-  let $el = document.querySelector(selector);
-  let results = { count: 0, $el };
+  let $ = document.querySelector(selector);
+  let results = { $, calls: [] };
 
-  $el.addEventListener(event, function(evt) {
-    return (results.count++, fn?.call(this, evt));
+  $.addEventListener(event, function(...args) {
+    results.calls.push(args);
+    if (fn) return fn.apply(this, args);
   });
 
   return results;
 }
 
-// Mock console methods for testing.
-export function mockConsole() {
-  let names = ['warn'];
-  let mock = {};
+// Test helper to throw an error if an assertion fails
+export async function assert(assertion, failureMessage) {
+  let result = false;
 
-  let og = names.reduce((o, name) => (
-    assign(o, { [name]: console[name] })
-  ), {});
+  if (typeof assertion === 'function')
+    result = await assertion();
+  else if (typeof assertion?.then === 'function')
+    result = await assertion;
+  else result = !!assertion;
 
-  beforeEach(() => {
-    names.forEach(name => {
-      mock[name] = console[name] = msg => mock[name].calls.push(msg);
-      mock[name].calls = [];
-    });
-  });
-
-  afterEach(() => {
-    names.forEach(name => (console[name] = og[name]));
-  });
-
-  return mock;
+  if (!result) throw new Error(failureMessage);
 }
 
-// Extend the assert function with other useful assertions.
-assign(assert, {
-  typeOf(subj, expected, err) {
-    let actual = typeof subj;
+// Test helper to assert against thrown error messages
+assert.throws =
+  async function assertThrows(func, expectedMessage) {
+    try {
+      if (typeof func === 'function') await func();
+      else await func;
+    } catch (error) {
+      if (error.message === expectedMessage) return;
 
-    return assert.equal(actual, expected, err || (
-      new assert.AssertionError({
-        operator: 'typeof',
-        expected,
-        actual
-      })
-    ));
-  },
+      throw new Error(`Unexpected error: ${error.message}`, {
+        cause: error
+      });
+    }
 
-  instanceOf(subj, expected, err) {
-    return assert(subj instanceof expected, err || (
-      new assert.AssertionError({
-        operator: 'instanceof',
-        actual: subj,
-        expected
-      })
-    ));
-  },
-
-  notInstanceOf(subj, expected, err) {
-    return assert(!(subj instanceof expected), err || (
-      new assert.AssertionError({
-        operator: '!instanceof',
-        actual: subj,
-        expected
-      })
-    ));
-  }
-});
-
-export { assert };
+    throw new Error('Expected an error to be thrown');
+  };
