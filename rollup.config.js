@@ -10,7 +10,7 @@ export const build = {
     format: 'umd',
     exports: 'named',
     name: 'Interactor',
-    file: 'dist/interactor.js'
+    file: 'bundle/interactor.js'
   },
   plugins: [
     commonjs(),
@@ -21,8 +21,10 @@ export const build = {
 
 export const test = {
   input: 'tests/index.js',
-  output: { format: 'iife', file: 'tests.js' },
-  inlineDynamicImports: true,
+  output: {
+    format: 'esm',
+    inlineDynamicImports: true
+  },
   plugins: [
     html(),
     globImport(),

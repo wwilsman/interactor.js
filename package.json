@@ -1,27 +1,27 @@
 {
   "name": "interactor.js",
   "description": "Composable, immutable, asynchronous way to interact with the DOM",
-  "version": "2.0.0-beta.14",
+  "version": "3.0.0",
   "license": "MIT",
   "repository": "https://github.com/wwilsman/interactor.js",
   "type": "module",
   "main": "lib/index.js",
-  "browser": "dist/interactor.js",
+  "browser": "bundle/interactor.js",
   "exports": {
     "module": "./lib/index.js",
     "default": "./dist/interactor.js"
   },
   "files": [
-    "dist",
+    "bundle",
     "lib"
   ],
   "scripts": {
     "build": "rollup --config",
     "test": "npm run lint && npm run test:coverage",
-    "test:only": "NODE_ENV=test node ./tests/start.js",
-    "test:coverage": "nyc --check-coverage npm run test:only",
-    "lint": "eslint --ignore-path .gitignore --ignore-pattern www .",
-    "docs": "cd www && npm install --legacy-peer-deps"
+    "test:coverage": "nyc npm run test:only",
+    "test:debug": "npm run test:only -- --debug",
+    "test:only": "NODE_ENV=test node tests/start.js",
+    "lint": "eslint --ignore-path .gitignore --ignore-pattern www ."
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",

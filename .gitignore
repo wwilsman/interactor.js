@@ -1,10 +1,7 @@
 .DS_Store
 .nyc_output
-node_modules
-dist
+bundle
 coverage
-junit
-public
-*.log
-.cache
-.env
+node_modules
+types
+*.tsbuildinfo
