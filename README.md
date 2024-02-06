@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://interactorjs.io">
-    <img alt="interactor.js" width="600px" src="https://raw.githubusercontent.com/wwilsman/interactor.js/master/www/src/images/logo.svg?sanitize=true"/>
+    <img alt="interactor.js" width="600px" src="https://raw.githubusercontent.com/wwilsman/interactor.js/main/www/src/images/logo.svg?sanitize=true"/>
   </a>
 </p>
 
@@ -13,7 +13,7 @@
     <img src="https://github.com/wwilsman/interactor.js/actions/workflows/test.yml/badge.svg" />
   </a>
   <a href="https://codecov.io/gh/wwilsman/interactor.js">
-    <img src="https://codecov.io/gh/wwilsman/interactor.js/branch/master/graph/badge.svg" />
+    <img src="https://codecov.io/gh/wwilsman/interactor.js/branch/main/graph/badge.svg" />
   </a>
 </p>
 
@@ -55,4 +55,4 @@ await I.click('::(todo-item-toggle)') // == $([data-test="todo-item-toggle"])
 
 ## License
 
-[MIT](https://github.com/wwilsman/interactor.js/blob/master/LICENSE)
+[MIT](https://github.com/wwilsman/interactor.js/blob/main/LICENSE)
