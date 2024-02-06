@@ -1,6 +1,6 @@
 {
   "name": "interactor.js",
-  "description": "Composable, immutable, asynchronous way to interact with the DOM",
+  "description": "Fast, intuitive, asynchronous interactions for anything that runs in a browser.",
   "version": "3.0.0",
   "license": "MIT",
   "repository": "https://github.com/wwilsman/interactor.js",
