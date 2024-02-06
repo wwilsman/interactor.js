@@ -11,20 +11,13 @@ const testServer = createTestServer({
 
 // use reporters
 testServer.use(reporters.emoji());
-testServer.use(reporters.createReporter({
-  state: cov.createCoverageMap(),
-  sync: false,
-
-  'after:suite'(_, state, event) {
-    if (!event.__coverage__) return;
-    state.merge(event.__coverage__);
-    globalThis.__coverage__ = state.toJSON();
-  }
+testServer.use(reporters.coverage({
+  map: cov.createCoverageMap()
 }));
 
 // use launchers
 testServer.use(launch.firefox());
-// testServer.use(launch.chrome());
+testServer.use(launch.chrome());
 
 // use bundler
 testServer.use(middlewares.listen(async () => {
