@@ -15,9 +15,10 @@ testServer.use(reporters.coverage({
   map: cov.createCoverageMap()
 }));
 
-// use launchers
-testServer.use(launch.firefox());
-testServer.use(launch.chrome());
+// use launchers (firefox via flag, chrome by default)
+if (process.argv.includes('--firefox'))
+  testServer.use(launch.firefox());
+else testServer.use(launch.chrome());
 
 // use bundler
 testServer.use(middlewares.listen(async () => {
