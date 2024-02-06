@@ -1,0 +1,16 @@
+{
+  "files": ["lib/types.d.ts"],
+  "include": ["lib/**/*"],
+  "compilerOptions": {
+    "rootDir": "lib",
+    "composite": true,
+    "target": "esnext",
+    "module": "esnext",
+    "lib": ["esnext", "dom"],
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true
+  }
+}

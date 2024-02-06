@@ -6,6 +6,7 @@
   "repository": "https://github.com/wwilsman/interactor.js",
   "type": "module",
   "main": "lib/index.js",
+  "types": "types/index.d.ts",
   "browser": "bundle/interactor.js",
   "exports": {
     "module": "./lib/index.js",
@@ -13,14 +14,18 @@
   },
   "files": [
     "bundle",
-    "lib"
+    "lib",
+    "types"
   ],
   "scripts": {
-    "build": "rollup --config",
-    "test": "npm run lint && npm run test:coverage",
+    "build": "npm run build:bundle && npm run build:types",
+    "build:bundle": "rollup --config",
+    "build:types": "tsc --outDir types",
+    "test": "npm run lint && npm run test:types && npm run test:coverage",
     "test:coverage": "nyc npm run test:only",
     "test:debug": "npm run test:only -- --debug",
     "test:only": "NODE_ENV=test node tests/start.js",
+    "test:types": "tsc --build tests",
     "lint": "eslint --ignore-path .gitignore --ignore-pattern www ."
   },
   "devDependencies": {
@@ -42,6 +47,7 @@
     "moonshiner": "^0.14.0",
     "nyc": "^15.1.0",
     "rollup": "^4.9.6",
-    "rollup-plugin-glob-import": "^0.5.0"
+    "rollup-plugin-glob-import": "^0.5.0",
+    "typescript": "^5.3.3"
   }
 }
