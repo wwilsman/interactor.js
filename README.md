@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://interactorjs.io">
-    <img alt="interactor.js" width="600px" src="https://raw.githubusercontent.com/wwilsman/interactor.js/main/www/src/images/logo.svg?sanitize=true"/>
+    <img alt="interactor.js" width="600px" src="https://raw.githubusercontent.com/wwilsman/interactor.js/main/logo.svg?sanitize=true"/>
   </a>
 </p>
 
