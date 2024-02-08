@@ -373,8 +373,10 @@ describe('Interactor', () => {
 
     it('finds form elements by label', async () => {
       fixture(`
-        <label for="test">Foo</label>
-        <input id="test" value="Bar"/>
+        <div>
+          <label for="test">Foo</label>
+          <input id="test" value="Bar"/>
+        </div>
         <label for="nothing">Baz</label>
       `);
 
