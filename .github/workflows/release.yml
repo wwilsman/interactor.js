@@ -18,15 +18,15 @@ jobs:
       - run: npm install
       - run: npm run build
       - name: Bump version
-        if: ${{ github.event.release.target_commitish == 'master' }}
+        if: ${{ github.event.release.target_commitish == 'main' }}
         run: |
           npm version --no-git-tag-version ${TAG_NAME:1}
           git config user.name wwilsman
-          git config user.email wil@wilwilsman.com
+          git config user.email wil@wilsman.dev
           git add .
           git commit --message "🔖 $TAG_NAME"
           git tag $TAG_NAME
-          git push origin master
+          git push origin main
           git push origin refs/tags/$TAG_NAME --force
         env:
           TAG_NAME: ${{ github.event.release.tag_name }}
