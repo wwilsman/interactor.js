@@ -182,6 +182,57 @@ describe('Interactor', () => {
     });
   });
 
+  describe('#arrange(setup)', () => {
+    it('creates a new interaction', async () => {
+      await assert(I.arrange(() => {}) instanceof Interaction,
+        'Expected arrange to return an Interaction instance');
+      await assert(await I.arrange(() => 'test') === 'test',
+        'Expected setup to return "test"');
+    });
+
+    it('can be chained with other interactions', async () => {
+      let test = [];
+
+      let interaction = I.arrange(() => test.push('foo'))
+        .then.act(() => test.push('bar'))
+        .then.assert(() => test.push('baz'));
+
+      await assert(interaction instanceof Assertion,
+        'Expected interaction to be an Assertion instance');
+      await assert(await interaction && test.length === 3,
+        'Expected interaction test to have 3 values');
+      await assert(test[0] === 'foo' && test[1] === 'bar' && test[2] === 'baz',
+        'Expected test array to contain "foo", "bar", "baz"');
+    });
+
+    it('calls any returned cleanup function before subsequent calls of the same setup function', async () => {
+      let I = new Interactor();
+      let test = [];
+
+      let setup1 = () => {
+        test.push('setup 1');
+        return () => test.push('cleanup 1');
+      };
+
+      let setup2 = async () => {
+        test.push('setup 2');
+        return async () => test.push('cleanup 2');
+      };
+
+      await I.arrange(setup1);
+      await I.arrange(setup2);
+      await I.arrange(setup1)
+        .then.arrange(setup2);
+
+      await assert([
+        'setup 1', 'setup 2',
+        'cleanup 1', 'setup 1',
+        'cleanup 2', 'setup 2'
+      ].every((t, i) => test[i] === t),
+      'Expected setup and cleanup to be in a specific order');
+    });
+  });
+
   describe('#act(interaction)', () => {
     it('creates a new interaction', async () => {
       await assert(I.act(() => {}) instanceof Interaction,
