@@ -10,7 +10,7 @@
   "browser": "bundle/interactor.js",
   "exports": {
     "module": "./lib/index.js",
-    "default": "./dist/interactor.js"
+    "default": "./bundle/interactor.js"
   },
   "files": [
     "bundle",
