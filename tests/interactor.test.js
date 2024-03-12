@@ -1,6 +1,14 @@
 import { describe, it, beforeEach } from 'moonshiner';
-import { Interactor, Interaction, Assert, Assertion } from 'interactor.js';
 import { I, fixture, assert } from './helpers';
+
+import {
+  Interactor,
+  Interaction,
+  Assert,
+  Assertion,
+  Arrangement,
+  Context
+} from 'interactor.js';
 
 describe('Interactor', () => {
   it('exports a default interactor instance', async () => {
@@ -182,10 +190,10 @@ describe('Interactor', () => {
     });
   });
 
-  describe('#arrange(setup)', () => {
-    it('creates a new interaction', async () => {
-      await assert(I.arrange(() => {}) instanceof Interaction,
-        'Expected arrange to return an Interaction instance');
+  describe('#arrange(callback)', () => {
+    it('creates a new arrangement', async () => {
+      await assert(I.arrange(() => {}) instanceof Arrangement,
+        'Expected arrange to return an Arrangement instance');
       await assert(await I.arrange(() => 'test') === 'test',
         'Expected setup to return "test"');
     });
@@ -205,31 +213,17 @@ describe('Interactor', () => {
         'Expected test array to contain "foo", "bar", "baz"');
     });
 
-    it('calls any returned cleanup function before subsequent calls of the same setup function', async () => {
+    it('can manipulate the interactor context', async () => {
       let I = new Interactor();
-      let test = [];
 
-      let setup1 = () => {
-        test.push('setup 1');
-        return () => test.push('cleanup 1');
-      };
+      await I.arrange(async ctx => {
+        await assert(ctx instanceof Context,
+          'Expected a Context instance');
+        ctx.set({ test: 'foobar' });
+      });
 
-      let setup2 = async () => {
-        test.push('setup 2');
-        return async () => test.push('cleanup 2');
-      };
-
-      await I.arrange(setup1);
-      await I.arrange(setup2);
-      await I.arrange(setup1)
-        .then.arrange(setup2);
-
-      await assert([
-        'setup 1', 'setup 2',
-        'cleanup 1', 'setup 1',
-        'cleanup 2', 'setup 2'
-      ].every((t, i) => test[i] === t),
-      'Expected setup and cleanup to be in a specific order');
+      await assert(I[Context.Symbol].test === 'foobar',
+        'Expected interactor context to contain a test property');
     });
   });
 
