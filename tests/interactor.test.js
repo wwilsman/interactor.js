@@ -571,6 +571,23 @@ describe('Assert', () => {
         'Negated message');
     });
 
+    it('accepts an assertion that returns an assertion object', async () => {
+      TestAssert.defineAssertion('test', (expected, msg) => ({
+        assertion: expected === true,
+        failureMessage: `Failure message (${msg})`,
+        negatedMessage: `Negated message (${msg})`
+      }));
+
+      await assert(typeof T.assert.test === 'function',
+        'Expected test to be a function');
+      await assert(T.assert.test(true) instanceof Assertion,
+        'Expected test to return an Interaction instance');
+      await assert.throws(T.assert.test(false, 'foo'),
+        'Failure message (foo)');
+      await assert.throws(T.assert.not.test(true, 'bar'),
+        'Negated message (bar)');
+    });
+
     it('accepts an assertion class', async () => {
       let pass = false;
 
