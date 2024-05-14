@@ -1,4 +1,3 @@
-import { createTestHook } from 'moonshiner/utils';
 import { Interactor } from 'interactor.js';
 
 // Test interactor scoped to the testing fixtures
@@ -8,20 +7,21 @@ export const I = new Interactor({
 });
 
 // Test hook which sets up and tears down HTML fixtures
-export const fixture = createTestHook(innerHTML => {
-  let $test = document.createElement('div');
+export const fixture = innerHTML => {
+  // clean up any existing testing-root
+  document.getElementById('testing-root')?.remove();
 
   // format HTML to remove extraneous spaces
   let ind = innerHTML.match(/^\n(\s*)/)?.[1]?.length;
   innerHTML = innerHTML.replace(new RegExp(`^\\s{${ind}}`, 'mg'), '').trim();
 
   // assign HTML and append to the body
-  Object.assign($test, { id: 'testing-root', innerHTML });
-  document.body.appendChild($test);
-
-  // return a cleanup function
-  return () => $test.remove();
-});
+  document.body.appendChild(
+    Object.assign(document.createElement('div'), {
+      id: 'testing-root',
+      innerHTML
+    }));
+};
 
 // Test helper to create an event listener spy
 export function listen(selector, event, fn) {
