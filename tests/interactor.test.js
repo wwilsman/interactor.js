@@ -23,7 +23,7 @@ describe('Interactor', () => {
 
     await assert(ctx.root() === document.body,
       'Expected the default root return the document body');
-    await assert(ctx.selector() === document.body,
+    await assert(ctx.selector.query() === document.body,
       'Expected the default selector to return the root element');
     await assert(ctx.assert.timeout === 1000,
       'Expected the default assert timeout to be 1000');
@@ -44,7 +44,7 @@ describe('Interactor', () => {
 
     await assert(ctx.root()?.id === 'testing-root',
       'Expected the root id to be "testing-root"');
-    await assert(ctx.selector().tagName.toLowerCase() === 'p',
+    await assert(ctx.selector.query().tagName.toLowerCase() === 'p',
       'Expected the selector to return a paragraph element');
     await assert(ctx.assert.timeout === 100,
       'Expected the assert timeout to be 100');
@@ -334,6 +334,8 @@ describe('Interactor', () => {
     });
 
     it('references the root element by default', async () => {
+      fixture('<p id="test">Test</p>');
+
       await assert(I.assert(({ $ }) => $.id === 'testing-root'),
         'Expected root element id to be "testing-root"');
 
