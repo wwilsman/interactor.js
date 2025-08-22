@@ -31,6 +31,24 @@ describe('Actions | #trigger(eventName, options?)', () => {
       'Expected "xyzzy" event to not bubble and not be cancelable');
   });
 
+  it('returns the event dispatch result', async () => {
+    let event = listen('.foo', 'xyzzy', e => {
+      if (event.calls.length >= 1) e.preventDefault();
+    });
+
+    let res1 = await I.find('Foo')
+      .then.trigger('foobar');
+
+    await assert(res1 === true,
+      'Expected the result to be true');
+
+    let res2 = await I.find('Foo')
+      .then.trigger('foobar');
+
+    await assert(res2 === true,
+      'Expected the result to be false');
+  });
+
   it('does not update the context element', async () => {
     let $ = await I.find('Foo')
       .then.trigger('foobar')

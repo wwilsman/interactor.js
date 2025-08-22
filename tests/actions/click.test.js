@@ -15,6 +15,15 @@ describe('Actions | #click(selector?)', () => {
       'Expected to click "Foo" a second time');
   });
 
+  it('returns the clicked element', async () => {
+    fixture('<button id="foo">Foo</button>');
+
+    let $ = await I.click('Foo');
+
+    await assert($.id === 'foo',
+      'Expected the returned element to be "Foo"');
+  });
+
   it('updates the context element', async () => {
     fixture('<button id="foo">Foo</button>');
 

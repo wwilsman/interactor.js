@@ -8,10 +8,26 @@ describe('Actions | #type(string, options?)', () => {
 
   it('types text into the current or specified element', async () => {
     await I.find('Foo').then.type('Foo');
+
+    await assert(document.querySelector('input').value === 'Foo',
+      'Expected input value to be "Foo"');
+
     await I.type('Bar').into('Foo');
 
     await assert(document.querySelector('input').value === 'FooBar',
       'Expected input value to be "FooBar"');
+  });
+
+  it('returns the current or specified element', async () => {
+    let $f = await I.find('Foo').then.type('Foo');
+
+    await assert($f.placeholder === 'Foo',
+      'Expected the return element to be "Foo" input');
+
+    let $t = await I.type('Bar').into('Foo');
+
+    await assert($t.placeholder === 'Foo',
+      'Expected the `into` return element to be "Foo" input');
   });
 
   it('updates the context element when specified', async () => {
