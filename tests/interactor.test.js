@@ -315,16 +315,17 @@ describe('Interactor', () => {
     });
 
     it('retries assertions until passing', async () => {
-      let attempts = 1;
+      let T = new Interactor({ assert: { timeout: 500, reliability: 0 } });
+      let attempts = 0;
 
-      await I.assert(() => (attempts += 1) === 5);
+      await T.assert(() => (attempts += 1) === 5);
 
       await assert(attempts === 5,
         'Expected 5 assertion attempts');
     });
 
     it('runs assertions again after passing', async () => {
-      let T = new Interactor({ assert: { reliability: 5 } });
+      let T = new Interactor({ assert: { timeout: 500, reliability: 5 } });
       let attempts = 0;
 
       await T.assert(() => (attempts += 1) >= 5);
