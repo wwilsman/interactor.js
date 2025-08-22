@@ -87,4 +87,16 @@ describe('Actions | #type(string, options?)', () => {
     await assert(delta > 100 && delta < 150,
       'Expected total delay to be between 100-150ms');
   });
+
+  it('can replace existing input values', async () => {
+    await I.find('Foo').then.type('Foo');
+
+    await assert(document.querySelector('input').value === 'Foo',
+      'Expected input value to be "Foo"');
+
+    await I.type('Bar', { replace: true }).into('Foo');
+
+    await assert(document.querySelector('input').value === 'Bar',
+      'Expected input value to be "Bar"');
+  });
 });
