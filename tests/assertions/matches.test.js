@@ -10,13 +10,13 @@ describe('Assert | #matches(selector)', () => {
     await I.find('Foo').matches('.foo');
 
     await assert.throws(I.find('Foo').matches('.bar'),
-      '"Foo" does not match `.bar`');
+      `"Foo" does not match '.bar'`);
   });
 
   it('can assert that the current element does not match the selector', async () => {
     await I.find('Foo').not.matches('.bar');
 
     await assert.throws(I.find('Foo').not.matches('.foo'),
-      '"Foo" matches `.foo`');
+      `"Foo" matches '.foo'`);
   });
 });
