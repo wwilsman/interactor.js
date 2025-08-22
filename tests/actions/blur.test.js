@@ -9,6 +9,17 @@ describe('Actions | #blur(selector?)', () => {
     `);
   });
 
+  it('updates the context element', async () => {
+    let $foo = document.querySelector('h1');
+    $foo.focus();
+
+    let $ = await I.blur('Foo')
+      .then.act(({ $ }) => $);
+
+    await assert($.tagName.toLowerCase() === 'h1',
+      'Expected the context element to be "Foo"');
+  });
+
   it('blurs the current element', async () => {
     let $foo = document.querySelector('h1');
     let $bar = document.querySelector('button');

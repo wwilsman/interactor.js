@@ -14,6 +14,20 @@ describe('Actions | #type(string, options?)', () => {
       'Expected input value to be "FooBar"');
   });
 
+  it('updates the context element when specified', async () => {
+    let $f = await I.find('Foo').then.type('Foo')
+      .then.act(({ $ }) => $);
+
+    await assert($f.placeholder === 'Foo',
+      'Expected the context element to be "Foo" input');
+
+    let $t = await I.type('Bar').into('Foo')
+      .then.act(({ $ }) => $);
+
+    await assert($t.placeholder === 'Foo',
+      'Expected the `into` context element to be "Foo" input');
+  });
+
   it('focuses and blurs the current element', async () => {
     let focus = listen('input', 'focus');
     let blur = listen('input', 'blur');

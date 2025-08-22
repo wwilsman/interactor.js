@@ -15,6 +15,16 @@ describe('Actions | #click(selector?)', () => {
       'Expected to click "Foo" a second time');
   });
 
+  it('updates the context element', async () => {
+    fixture('<button id="foo">Foo</button>');
+
+    let $ = await I.click('Foo')
+      .then.act(({ $ }) => $);
+
+    await assert($.id === 'foo',
+      'Expected the context element to be "Foo"');
+  });
+
   it('asserts the element is not disabled', async () => {
     fixture('<button disabled>Bar</button>');
     let event = listen('button', 'click');

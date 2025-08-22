@@ -23,6 +23,14 @@ describe('Actions | #focus(selector?)', () => {
       'Expected "Bar" to have focus');
   });
 
+  it('updates the context element', async () => {
+    let $ = await I.focus('Foo')
+      .then.act(({ $ }) => $);
+
+    await assert($.tagName.toLowerCase() === 'h1',
+      'Expected the context element to be "Foo"');
+  });
+
   it('asserts the element is focusable', async () => {
     await assert.throws(I.focus('Baz'),
       '"Baz" is not focusable');

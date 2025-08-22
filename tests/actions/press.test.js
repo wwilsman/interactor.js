@@ -59,6 +59,17 @@ describe('Actions | #press(keys, options?)', () => {
       'Expected second input event to be canceled');
   });
 
+  it('does not update the context element', async () => {
+    fixture('<div class="foo">Foo</div>');
+
+    let $ = await I.find('Foo')
+      .then.press('Delete')
+      .then.act(({ $ }) => $);
+
+    await assert($.className === 'foo',
+      'Expected the returned element to be "Foo"');
+  });
+
   it('does not accept arbitrary key names', async () => {
     await assert.throws(() => I.press('KeyFoo'),
       'Unknown key `KeyFoo`');

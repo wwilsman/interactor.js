@@ -30,4 +30,13 @@ describe('Actions | #trigger(eventName, options?)', () => {
     await assert(!event.calls[1][0].bubbles && !event.calls[1][0].cancelable,
       'Expected "xyzzy" event to not bubble and not be cancelable');
   });
+
+  it('does not update the context element', async () => {
+    let $ = await I.find('Foo')
+      .then.trigger('foobar')
+      .then.act(({ $ }) => $);
+
+    await assert($.className === 'foo',
+      'Expected the context element to be "Foo"');
+  });
 });
