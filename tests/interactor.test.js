@@ -353,6 +353,7 @@ describe('Interactor', () => {
         <p class="bar">Bar</p>
         <p data-test="baz">Baz</p>
         <p data-test-qux>Qux</p>
+        <div><input placeholder="Xyyz"/></div>
         <p>Foo</p>
       `);
     });
@@ -385,6 +386,18 @@ describe('Interactor', () => {
         'Expected to find the last "Foo" element');
     });
 
+    it('accepts a regular expression', async () => {
+      let $qux = document.querySelector('[data-test-qux]');
+
+      await assert(await I.find(/^Q/) === $qux,
+        'Expected to find the "Qux" element');
+
+      let $xyyz = document.querySelector('div > input');
+
+      await assert(await I.find(/y{2}/) === $xyyz,
+        'Expected to find the "Xyyz" input element');
+    });
+
     it('accepts a selector function', async () => {
       let $bar = document.querySelector('.bar');
 
@@ -392,7 +405,7 @@ describe('Interactor', () => {
         'Expected to resolve the "Bar" element');
     });
 
-    it('accepts element instances', async () => {
+    it('accepts an element instance', async () => {
       let $baz = document.querySelector('[data-test="baz"]');
 
       await assert((await I.find($baz)) === $baz,
