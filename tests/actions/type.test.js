@@ -21,12 +21,16 @@ describe('Actions | #type(string, options?)', () => {
   it('returns the current or specified element', async () => {
     let $f = await I.find('Foo').then.type('Foo');
 
-    await assert($f.placeholder === 'Foo',
+    await assert(
+      /** @type {HTMLInputElement} */
+      ($f).placeholder === 'Foo',
       'Expected the return element to be "Foo" input');
 
     let $t = await I.type('Bar').into('Foo');
 
-    await assert($t.placeholder === 'Foo',
+    await assert(
+      /** @type {HTMLInputElement} */
+      ($t).placeholder === 'Foo',
       'Expected the `into` return element to be "Foo" input');
   });
 
@@ -34,13 +38,17 @@ describe('Actions | #type(string, options?)', () => {
     let $f = await I.find('Foo').then.type('Foo')
       .then.act(({ $ }) => $);
 
-    await assert($f.placeholder === 'Foo',
+    await assert(
+      /** @type {HTMLInputElement} */
+      ($f).placeholder === 'Foo',
       'Expected the context element to be "Foo" input');
 
     let $t = await I.type('Bar').into('Foo')
       .then.act(({ $ }) => $);
 
-    await assert($t.placeholder === 'Foo',
+    await assert(
+      /** @type {HTMLInputElement} */
+      ($t).placeholder === 'Foo',
       'Expected the `into` context element to be "Foo" input');
   });
 

@@ -1,5 +1,6 @@
 import { describe, it, beforeEach } from 'moonshiner';
 import { I, assert, fixture } from '../helpers';
+import { Interactor } from 'interactor.js';
 
 describe('Assert | #focusable()', () => {
   beforeEach(() => {
@@ -24,7 +25,7 @@ describe('Assert | #focusable()', () => {
     let $f = document.querySelector('iframe');
     $f.focus = () => {};
 
-    let F = new I.constructor({
+    let F = new Interactor({
       assert: { timeout: 100, reliability: 0 },
       root: () => $f.contentDocument.body
     });

@@ -87,6 +87,8 @@ describe('Actions | #press(keys, options?)', () => {
 
   it('can insert or replace text within relevant elements', async () => {
     fixture('<div contenteditable>Fo</div>');
+
+    /** @type {HTMLElement} */
     let $ = document.querySelector('[contenteditable]');
 
     await I.find($)
@@ -112,6 +114,8 @@ describe('Actions | #press(keys, options?)', () => {
 
   it('replaces any existing text selection', async () => {
     fixture('<div contenteditable>Qoox</div>');
+
+    /** @type {HTMLElement} */
     let $ = document.querySelector('[contenteditable]');
 
     let range = document.createRange();

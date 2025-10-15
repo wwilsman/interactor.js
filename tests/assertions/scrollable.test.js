@@ -60,6 +60,7 @@ describe('Assert | #scrollable(axis?)', () => {
   });
 
   it('does not accept an unknown axis', async () => {
+    // @ts-expect-error - testing invalid axis value
     await assert.throws(() => I.find('$(.scrollable)').scrollable('z'),
       'Invalid scroll axis: z');
   });

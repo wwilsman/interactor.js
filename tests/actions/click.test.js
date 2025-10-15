@@ -55,23 +55,35 @@ describe('Actions | #click(selector?)', () => {
     `);
 
     await I.click('Baz');
-    await assert(document.getElementById('check').checked === true,
+    await assert(
+      /** @type {HTMLInputElement} */
+      (document.getElementById('check')).checked === true,
       'Expected "Baz" to be checked');
 
     await I.click('Baz');
-    await assert(document.getElementById('check').checked === false,
+    await assert(
+      /** @type {HTMLInputElement} */
+      (document.getElementById('check')).checked === false,
       'Expected "Baz" to not be checked');
 
     await I.click('Qux');
-    await assert(document.getElementById('radio-1').checked === true,
+    await assert(
+      /** @type {HTMLInputElement} */
+      (document.getElementById('radio-1')).checked === true,
       'Expected "Qux" to be checked');
-    await assert(document.getElementById('radio-2').checked === false,
+    await assert(
+      /** @type {HTMLInputElement} */
+      (document.getElementById('radio-2')).checked === false,
       'Expected "Xyzzy" to not be checked');
 
     await I.click('Xyzzy');
-    await assert(document.getElementById('radio-1').checked === false,
+    await assert(
+      /** @type {HTMLInputElement} */
+      (document.getElementById('radio-1')).checked === false,
       'Expected "Qux" to not be checked');
-    await assert(document.getElementById('radio-2').checked === true,
+    await assert(
+      /** @type {HTMLInputElement} */
+      (document.getElementById('radio-2')).checked === true,
       'Expected "Xyzzy" to be checked');
   });
 

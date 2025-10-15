@@ -52,6 +52,7 @@ describe('Assert | #overflows(axis?)', () => {
   });
 
   it('does not accept an unknown axis', async () => {
+    // @ts-expect-error - testing invalid axis value
     await assert.throws(() => I.find('$(.overflow)').overflows('z'),
       'Invalid overflow axis: z');
   });

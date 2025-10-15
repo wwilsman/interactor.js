@@ -50,6 +50,23 @@ jobs:
       - run: npm install
       - run: npm run build
 
+  types:
+    name: Types
+    needs: [install, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: v1/${{ runner.os }}/node-20/${{ hashFiles('yarn.lock') }}
+          restore-keys: v1/${{ runner.os }}/node-20/
+      - run: npm install
+      - run: npm run test:types
+
   test:
     name: Test
     needs: [install]

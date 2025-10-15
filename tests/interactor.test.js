@@ -59,6 +59,7 @@ describe('Interactor', () => {
     let test = 1;
 
     await I.act(() => test++)
+      // @ts-expect-error - type limitation: .then() supports signal at runtime
       .then({ signal: ctrl.signal });
 
     await assert.throws(
@@ -67,6 +68,7 @@ describe('Interactor', () => {
         .then.act(() => ctrl.abort(
           new Error('Interaction aborted')))
         .then.assert(() => test === 0)
+        // @ts-expect-error - type limitation: .then() supports signal at runtime
         .then({ signal: ctrl.signal }),
       'Interaction aborted');
 
@@ -77,6 +79,7 @@ describe('Interactor', () => {
   describe('.defineAction(name, action)', () => {
     it('defines an action', async () => {
       class TestInteractor extends Interactor {}
+      /** @type {import('./types.test.d.ts').TestInteractor} */
       let T = new TestInteractor();
       let pass = false;
 
@@ -98,6 +101,7 @@ describe('Interactor', () => {
 
     it('accepts an interaction class', async () => {
       class TestInteractor extends Interactor {}
+      /** @type {import('./types.test.d.ts').TestInteractor} */
       let T = new TestInteractor();
       let pass = false;
 
@@ -198,10 +202,12 @@ describe('Interactor', () => {
         static assert = { test: b => pass = b };
       }
 
+      /** @type {import('./types.test.d.ts').TestInteractor} */
       let T = new TestInteractor({
         assert: { timeout: 100, reliability: 0 }
       });
 
+      // @ts-expect-error - testing invalid property access
       await assert(typeof I.assert.test === 'undefined',
         'Expected test not to be defined on the base interactor');
       await assert(typeof T.assert.test === 'function',
@@ -427,6 +433,7 @@ describe('Interactor', () => {
     });
 
     it('accepts a selector function', async () => {
+      /** @type {HTMLElement} */
       let $bar = document.querySelector('.bar');
 
       await assert((await I.find(() => $bar)) === $bar,
@@ -434,6 +441,7 @@ describe('Interactor', () => {
     });
 
     it('accepts an element instance', async () => {
+      /** @type {HTMLElement} */
       let $baz = document.querySelector('[data-test="baz"]');
 
       await assert((await I.find($baz)) === $baz,
@@ -446,6 +454,7 @@ describe('Interactor', () => {
     });
 
     it('uses the selector in error messages', async () => {
+      /** @type {HTMLElement} */
       let $qux = document.querySelector('[data-test-qux]');
 
       await assert.throws(
@@ -468,18 +477,26 @@ describe('Interactor', () => {
         <label for="nothing">Baz</label>
       `);
 
-      await assert((await I.find('Foo')).value === 'Bar',
+      await assert(
+        /** @type {HTMLInputElement} */
+        (await I.find('Foo')).value === 'Bar',
         'Expected to find the input associated with the label');
-      await assert((await I.find('"Foo" $(label)')).control?.value === 'Bar',
+      await assert(
+        /** @type {HTMLInputElement} */ ( /** @type {HTMLLabelElement} */
+        (await I.find('"Foo" $(label)')).control)?.value === 'Bar',
         'Expected to find the label element itself');
-      await assert((await I.find('Baz')).htmlFor === 'nothing',
+      await assert(
+        /** @type {HTMLLabelElement} */
+        (await I.find('Baz')).htmlFor === 'nothing',
         'Expected to find the label element without an associated input');
     });
 
     it('finds form elements by placeholder', async () => {
       fixture('<input placeholder="Foo"/>');
 
-      await assert((await I.find('Foo')).placeholder === 'Foo',
+      await assert(
+        /** @type {HTMLInputElement} */
+        (await I.find('Foo')).placeholder === 'Foo',
         'Expected to find the "Foo" input by placeholder');
     });
 
