@@ -190,6 +190,33 @@ describe('Interactor', () => {
     });
   });
 
+  describe('.assert', () => {
+    it('can define custom assertions on an instance', async () => {
+      let pass = false;
+
+      class TestInteractor extends Interactor {
+        static assert = { test: b => pass = b };
+      }
+
+      let T = new TestInteractor({
+        assert: { timeout: 100, reliability: 0 }
+      });
+
+      await assert(typeof I.assert.test === 'undefined',
+        'Expected test not to be defined on the base interactor');
+      await assert(typeof T.assert.test === 'function',
+        'Expected test to be a function');
+      await assert(T.assert.test(true) instanceof Assertion,
+        'Expected test to return an Assertion instance');
+      await assert(!pass,
+        'Expected test not to pass');
+      await assert(await T.assert.test(true) === true,
+        'Expected test assertion to resolve true');
+      await assert(pass,
+        'Expected test to pass');
+    });
+  });
+
   describe('#arrange(callback)', () => {
     it('creates a new arrangement', async () => {
       await assert(I.arrange(() => {}) instanceof Arrangement,
