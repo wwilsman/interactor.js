@@ -49,6 +49,13 @@ jobs:
           restore-keys: v1/${{ runner.os }}/node-20/
       - run: npm install
       - run: npm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-output
+          path: |
+            bundle/**
+            types/**
+          if-no-files-found: error
 
   types:
     name: Types
@@ -65,6 +72,10 @@ jobs:
           key: v1/${{ runner.os }}/node-20/${{ hashFiles('yarn.lock') }}
           restore-keys: v1/${{ runner.os }}/node-20/
       - run: npm install
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-output
+          path: .
       - run: npm run test:types
 
   test:
