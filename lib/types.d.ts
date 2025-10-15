@@ -35,6 +35,7 @@ declare module './interactor' {
     press: InteractorMethod<typeof import('./actions/press').default>
     trigger: InteractorMethod<typeof import('./actions/trigger').default>
     type: InteractorMethod<typeof import('./actions/type').default>
+    wait: InteractorMethod<typeof import('./actions/wait').default>
   }
 }
 
@@ -42,6 +43,7 @@ declare module './assert' {
   interface Assert {
     attribute: AssertMethod<typeof import('./assertions/attribute').default>
     checked: AssertMethod<typeof import('./assertions/checked').default>
+    contains: AssertMethod<typeof import('./assertions/contains').default>
     disabled: AssertMethod<typeof import('./assertions/disabled').default>
     exists: AssertMethod<typeof import('./assertions/exists').default>
     focusable: AssertMethod<typeof import('./assertions/focusable').default>
@@ -54,6 +56,7 @@ declare module './assert' {
     text: AssertMethod<typeof import('./assertions/text').default>
     value: AssertMethod<typeof import('./assertions/value').default>
     visible: AssertMethod<typeof import('./assertions/visible').default>
+    within: AssertMethod<typeof import('./assertions/within').default>
   }
 }
 
