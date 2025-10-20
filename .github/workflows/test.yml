@@ -72,7 +72,7 @@ jobs:
           key: v1/${{ runner.os }}/node-20/${{ hashFiles('yarn.lock') }}
           restore-keys: v1/${{ runner.os }}/node-20/
       - run: npm install
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: build-output
           path: .
