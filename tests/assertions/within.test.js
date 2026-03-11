@@ -31,4 +31,23 @@ describe('Assert | #within(selector)', () => {
       I.find('Bar').not.within('.foobar'),
       `"Bar" is within '.foobar'`);
   });
+
+  it('supports test attribute selector syntax', async () => {
+    fixture(`
+      <div data-test="container">
+        <p>Content</p>
+      </div>
+      <div data-test-wrapper>
+        <p>Other</p>
+      </div>
+    `);
+
+    await I.find('Content').within('::(container)');
+    await I.find('Other').within('::wrapper');
+
+    await assert.throws(I.find('Content').within('::container'),
+      `"Content" is not within '::container'`);
+    await assert.throws(I.find('Other').within('::(wrapper)'),
+      `"Other" is not within '::(wrapper)'`);
+  });
 });
