@@ -49,7 +49,7 @@ jobs:
           restore-keys: v1/${{ runner.os }}/node-20/
       - run: npm install
       - run: npm run build
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: build-output
           path: |
