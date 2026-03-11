@@ -19,4 +19,19 @@ describe('Assert | #matches(selector)', () => {
     await assert.throws(I.find('Foo').not.matches('.foo'),
       `"Foo" matches '.foo'`);
   });
+
+  it('supports test attribute selector syntax', async () => {
+    fixture(`
+      <div data-test="bar">Bar</div>
+      <div data-test-baz>Baz</div>
+    `);
+
+    await I.find('Bar').matches('::(bar)');
+    await I.find('Baz').matches('::baz');
+
+    await assert.throws(I.find('Bar').matches('::bar'),
+      `"Bar" does not match '::bar'`);
+    await assert.throws(I.find('Baz').matches('::(baz)'),
+      `"Baz" does not match '::(baz)'`);
+  });
 });
