@@ -155,4 +155,18 @@ describe('Actions | #click(selector?)', () => {
       !event.$.selectedOptions[1],
       'Expected only "Bar" to be selected');
   });
+
+  it('clicks SVG elements', async () => {
+    fixture(`
+      <svg width="100" height="100">
+        <circle cx="50" cy="50" r="40" />
+      </svg>
+    `);
+
+    let event = listen('circle', 'click');
+
+    await I.click('$(svg circle)');
+    await assert(event.calls.length === 1,
+      'Expected to click the SVG circle');
+  });
 });
