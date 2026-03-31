@@ -44,7 +44,7 @@
     "eslint": "^9.34.0",
     "globals": "^16.3.0",
     "istanbul-lib-coverage": "^3.2.2",
-    "moonshiner": "^1.0.0-beta.15",
+    "moonshiner": "^1.3.0",
     "nyc": "^17.1.0",
     "rollup": "^4.47.1",
     "rollup-plugin-glob-import": "^0.5.0",
