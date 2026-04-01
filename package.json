@@ -9,6 +9,7 @@
   "types": "types/index.d.ts",
   "browser": "bundle/interactor.js",
   "exports": {
+    "types": "./types/index.d.ts",
     "module": "./lib/index.js",
     "default": "./bundle/interactor.js"
   },
@@ -21,6 +22,7 @@
     "build": "npm run build:bundle && npm run build:types",
     "build:bundle": "rollup --config",
     "build:types": "tsc --outDir types",
+    "prepack": "npm run build",
     "test": "npm run lint && npm run test:coverage",
     "test:coverage": "nyc npm run test:only",
     "test:debug": "npm run test:only -- --debug",
