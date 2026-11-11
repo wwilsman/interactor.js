@@ -132,6 +132,76 @@ describe('Actions | #press(keys, options?)', () => {
       'Expected content editable text to be "Qux"');
   });
 
+  it('keeps editable paragraphs and moves the caret after typed text', async () => {
+    fixture('<div contenteditable><div>First line</div><div>Second</div></div>');
+    /** @type {HTMLElement} */
+    let $ = document.querySelector('[contenteditable]');
+    let paragraph = $.lastElementChild;
+    window.getSelection().collapse(paragraph, paragraph.childNodes.length);
+
+    await I.find($).then.type(' line');
+
+    await assert($.innerText === 'First line\nSecond line',
+      'Expected typing to preserve both paragraphs');
+    await assert($.lastElementChild === paragraph,
+      'Expected typing to keep the existing paragraph');
+    await assert($.contains(window.getSelection().anchorNode),
+      'Expected the caret to remain inside the editor');
+    let selection = window.getSelection();
+    let caret = document.createRange();
+    caret.selectNodeContents($);
+    caret.setEnd(selection.focusNode, selection.focusOffset);
+    await assert(caret.toString() === $.textContent,
+      'Expected the caret after the last typed character');
+  });
+
+  it('inserts at the start of an editable selection without deleting surrounding markup', async () => {
+    fixture('<div contenteditable><strong>World</strong></div>');
+    /** @type {HTMLElement} */
+    let $ = document.querySelector('[contenteditable]');
+    let strong = $.firstElementChild;
+    window.getSelection().collapse(strong.firstChild, 0);
+
+    await I.find($).then.press('!');
+
+    await assert($.innerText === '!World' && $.firstElementChild === strong,
+      'Expected insertion at the caret to keep the existing formatting');
+  });
+
+  it('replaces an empty editor and deletes text across inline elements', async () => {
+    fixture('<div contenteditable></div>');
+    await I.find('$(div[contenteditable])').then.type('Hi', { replace: true });
+    await I.find('$(div[contenteditable])').text('Hi');
+
+    fixture('<div contenteditable><strong>Foo</strong><span>Bar</span></div>');
+    /** @type {HTMLElement} */
+    let $ = document.querySelector('[contenteditable]');
+    let span = $.lastElementChild;
+    window.getSelection().collapse(span.firstChild, 1);
+    await I.find($).then.press('Backspace');
+    await assert($.innerText === 'Fooar' && $.lastElementChild === span,
+      'Expected deletion to preserve inline elements');
+  });
+
+  it('replaces the whole editor without leaving empty paragraphs', async () => {
+    fixture('<div contenteditable><div>First line</div><div>Second line</div></div>');
+    await I.find('$(div[contenteditable])').then.type('Replacement', { replace: true });
+    await I.find('$(div[contenteditable])').text('Replacement');
+  });
+
+  it('types into an empty paragraph without retaining its placeholder line break', async () => {
+    fixture('<div contenteditable><div>First line</div><div><br></div></div>');
+    /** @type {HTMLElement} */
+    let $ = document.querySelector('[contenteditable]');
+    let paragraph = $.lastElementChild;
+    window.getSelection().collapse(paragraph, 0);
+
+    await I.find($).then.type('Second line');
+
+    await assert($.innerText === 'First line\nSecond line' && $.lastElementChild === paragraph,
+      'Expected typing to replace the empty paragraph placeholder');
+  });
+
   it('can delete text within relevant elements', async () => {
     fixture('<input placeholder="Foo" value="FFooo" />');
 
