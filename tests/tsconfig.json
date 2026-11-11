@@ -12,7 +12,7 @@
     "noEmit": true,
     "skipLibCheck": true,
     "paths": {
-      "interactor.js": ["../types/index.d.ts"]
+      "interactor.js": ["../types/types.d.ts"]
     }
   }
 }
