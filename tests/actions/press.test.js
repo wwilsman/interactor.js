@@ -134,6 +134,7 @@ describe('Actions | #press(keys, options?)', () => {
 
   it('keeps editable paragraphs and moves the caret after typed text', async () => {
     fixture('<div contenteditable><div>First line</div><div>Second</div></div>');
+
     /** @type {HTMLElement} */
     let $ = document.querySelector('[contenteditable]');
     let paragraph = $.lastElementChild;
@@ -147,16 +148,19 @@ describe('Actions | #press(keys, options?)', () => {
       'Expected typing to keep the existing paragraph');
     await assert($.contains(window.getSelection().anchorNode),
       'Expected the caret to remain inside the editor');
+
     let selection = window.getSelection();
     let caret = document.createRange();
     caret.selectNodeContents($);
     caret.setEnd(selection.focusNode, selection.focusOffset);
+
     await assert(caret.toString() === $.textContent,
       'Expected the caret after the last typed character');
   });
 
   it('inserts at the start of an editable selection without deleting surrounding markup', async () => {
     fixture('<div contenteditable><strong>World</strong></div>');
+
     /** @type {HTMLElement} */
     let $ = document.querySelector('[contenteditable]');
     let strong = $.firstElementChild;
@@ -174,9 +178,11 @@ describe('Actions | #press(keys, options?)', () => {
     await I.find('$(div[contenteditable])').text('Hi');
 
     fixture('<div contenteditable><strong>Foo</strong><span>Bar</span></div>');
+
     /** @type {HTMLElement} */
     let $ = document.querySelector('[contenteditable]');
     let span = $.lastElementChild;
+
     window.getSelection().collapse(span.firstChild, 1);
     await I.find($).then.press('Backspace');
     await assert($.innerText === 'Fooar' && $.lastElementChild === span,
@@ -191,6 +197,7 @@ describe('Actions | #press(keys, options?)', () => {
 
   it('types into an empty paragraph without retaining its placeholder line break', async () => {
     fixture('<div contenteditable><div>First line</div><div><br></div></div>');
+
     /** @type {HTMLElement} */
     let $ = document.querySelector('[contenteditable]');
     let paragraph = $.lastElementChild;
