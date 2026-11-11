@@ -1,4 +1,4 @@
-import { describe, it } from 'moonshiner';
+import { describe, it } from 'vitest';
 import { I, assert } from '../helpers';
 
 describe('Actions | #wait(timeout)', () => {

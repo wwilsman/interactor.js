@@ -1,4 +1,4 @@
-import { describe, it } from 'moonshiner';
+import { describe, it } from 'vitest';
 import { I, assert, fixture, listen } from '../helpers';
 
 describe('Actions | #click(selector?)', () => {

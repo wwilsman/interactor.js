@@ -1,5 +1,5 @@
 import { fileURLToPath } from 'node:url';
-import { defineConfig, globalIgnores } from 'eslint/config';
+import { defineConfig } from 'eslint/config';
 import { includeIgnoreFile } from '@eslint/compat';
 import stylistic from '@stylistic/eslint-plugin';
 import globals from 'globals';
@@ -10,9 +10,6 @@ export default defineConfig([
   includeIgnoreFile(fileURLToPath(
     new URL('.gitignore', import.meta.url)
   )),
-  globalIgnores([
-    'nyc.config.cjs'
-  ]),
   {
     languageOptions: {
       globals: {

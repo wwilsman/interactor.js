@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   comments: false,
   presets: [
     ['@babel/env', {
@@ -8,12 +8,5 @@ module.exports = {
   ],
   plugins: [
     '@babel/transform-runtime'
-  ],
-  env: {
-    test: {
-      plugins: [
-        'istanbul'
-      ]
-    }
-  }
+  ]
 };

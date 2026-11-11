@@ -1,4 +1,4 @@
-import { describe, it, beforeEach } from 'moonshiner';
+import { describe, it, beforeEach } from 'vitest';
 import { I, assert, fixture, listen } from '../helpers';
 
 describe('Actions | #type(string, options?)', () => {

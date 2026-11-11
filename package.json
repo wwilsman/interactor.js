@@ -24,9 +24,9 @@
     "build:types": "tsc --outDir types",
     "prepack": "npm run build",
     "test": "npm run lint && npm run test:coverage",
-    "test:coverage": "nyc npm run test:only",
-    "test:debug": "npm run test:only -- --debug",
-    "test:only": "NODE_ENV=test npx moonshiner",
+    "test:coverage": "vitest run --coverage",
+    "test:debug": "vitest --browser.headless=false",
+    "test:only": "vitest run",
     "test:types": "tsc --project tests",
     "lint": "eslint ."
   },
@@ -37,18 +37,20 @@
     "@eslint/compat": "^2.1.1",
     "@eslint/js": "^10.0.1",
     "@rollup/plugin-babel": "^7.1.0",
-    "@rollup/plugin-commonjs": "^29.0.3",
-    "@rollup/plugin-html": "^2.0.0",
-    "@rollup/plugin-node-resolve": "^16.0.3",
     "@stylistic/eslint-plugin": "^5.10.0",
-    "babel-plugin-istanbul": "^8.0.0",
+    "@vitest/browser-playwright": "^5.1.0",
+    "@vitest/coverage-istanbul": "^5.1.0",
     "eslint": "^10.14.0",
     "globals": "^17.14.0",
-    "istanbul-lib-coverage": "^3.2.2",
-    "moonshiner": "^1.4.1",
-    "nyc": "^18.0.0",
+    "playwright": "^1.65.0",
     "rollup": "^4.68.2",
-    "rollup-plugin-glob-import": "^0.5.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite": "^8.3.8",
+    "vitest": "^5.1.0"
+  },
+  "overrides": {
+    "eslint": {
+      "minimatch": "^11.0.7"
+    }
   }
 }
