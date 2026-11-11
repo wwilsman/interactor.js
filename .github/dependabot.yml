@@ -1,14 +1,42 @@
 version: 2
 updates:
-- package-ecosystem: npm
-  directory: /
-  schedule:
-    interval: weekly
-  commit-message:
-    prefix: ⬆
-- package-ecosystem: github-actions
-  directory: /
-  schedule:
-    interval: weekly
-  commit-message:
-    prefix: 👷
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'sunday'
+      time: '21:00'
+      timezone: 'America/Chicago'
+    commit-message:
+      prefix: '⬆️'
+    groups:
+      dependencies:
+        patterns:
+          - '*'
+        update-types:
+          - 'minor'
+          - 'patch'
+      major-dependencies:
+        patterns:
+          - '*'
+        update-types:
+          - 'major'
+    open-pull-requests-limit: 20
+    cooldown:
+      semver-major-days: 30
+      semver-minor-days: 14
+      semver-patch-days: 7
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'sunday'
+      time: '21:00'
+      timezone: 'America/Chicago'
+    commit-message:
+      prefix: '👷'
+    groups:
+      all-actions:
+        patterns:
+          - '*'
+    open-pull-requests-limit: 20
