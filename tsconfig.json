@@ -2,6 +2,7 @@
   "files": ["lib/types.d.ts"],
   "include": ["lib/**/*"],
   "compilerOptions": {
+    "strict": false,
     "rootDir": "lib",
     "composite": true,
     "target": "esnext",

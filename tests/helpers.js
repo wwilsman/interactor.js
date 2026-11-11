@@ -38,7 +38,7 @@ export function listen(selector, event, fn) {
 
 // Test helper to throw an error if an assertion fails
 export async function assert(assertion, failureMessage) {
-  let result = false;
+  let result;
 
   if (typeof assertion === 'function')
     result = await assertion();

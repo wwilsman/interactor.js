@@ -293,7 +293,10 @@ describe('Interactor', () => {
     it('can set context properties for nested interactions', async () => {
       let interaction = I.act(({ set }) => {
         set({ test: 'foobar' });
-        return I.act(({ test }) => test);
+        return I.act(
+          /** @param {import('../lib/context').IContext<{ test: string }>} context */
+          ({ test }) => test
+        );
       });
 
       await assert(await interaction === 'foobar',
