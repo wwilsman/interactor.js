@@ -61,3 +61,4 @@ declare module './assert' {
 }
 
 export * from './index';
+export { default } from './index';
