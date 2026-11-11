@@ -1,12 +1,15 @@
 name: Changelog
 on:
   push:
-    branches: [master]
+    branches: [main]
+permissions:
+  contents: write
+  pull-requests: read
 jobs:
   update:
     name: Update
     runs-on: ubuntu-latest
     steps:
-      - uses: release-drafter/release-drafter@v6
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: release-drafter/release-drafter@978bb0b30c5ee8cdd332ced253758157150d43f0 # v7.10.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}

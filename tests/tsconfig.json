@@ -2,6 +2,7 @@
   "include": ["./**/*.test.js"],
   "references": [{ "path": ".." }],
   "compilerOptions": {
+    "strict": false,
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "bundler",
