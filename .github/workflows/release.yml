@@ -2,35 +2,50 @@ name: Release
 on:
   release:
     types: [published]
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
 jobs:
   publish:
     name: Publish
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ github.event.release.target_commitish }}
-          token: ${{ secrets.GH_PAT }}
+          ref: refs/tags/${{ github.event.release.tag_name }}
+          persist-credentials: false
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: .nvmrc
           package-manager-cache: false
           registry-url: 'https://registry.npmjs.org'
-      - run: npm ci
-      - run: npm run build
-      - name: Bump version
-        if: ${{ github.event.release.target_commitish == 'main' }}
+      - name: Verify release version
         run: |
-          npm version --no-git-tag-version ${TAG_NAME:1}
-          git config user.name wwilsman
-          git config user.email wil@wilsman.dev
-          git add .
-          git commit --message "🔖 $TAG_NAME"
-          git tag $TAG_NAME
-          git push origin main
-          git push origin refs/tags/$TAG_NAME --force
+          node --input-type=module <<'JS'
+          import { readFile } from 'node:fs/promises';
+
+          let { name, version } = JSON.parse(await readFile('package.json', 'utf8'));
+          let tag = process.env.RELEASE_TAG;
+          if (tag !== `v${version}`)
+            throw new Error(`Release tag ${tag} does not match package version ${version}. Bump the package version before creating the release.`);
+
+          let response = await fetch(`https://registry.npmjs.org/${encodeURIComponent(name)}/${encodeURIComponent(version)}`);
+          if (response.ok)
+            throw new Error(`${name}@${version} is already published. Create a new version instead of republishing or moving its tag.`);
+          if (response.status !== 404)
+            throw new Error(`Could not check ${name}@${version}: npm returned HTTP ${response.status}.`);
+          JS
         env:
-          TAG_NAME: ${{ github.event.release.tag_name }}
-      - run: npm publish
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+      - name: Setup npm for trusted publishing
+        run: npm install --global npm@11.21.2
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: npm run test:types
+      - name: Publish to npm
+        run: npm publish --provenance --access public --ignore-scripts --tag "$NPM_DIST_TAG"
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_DIST_TAG: ${{ github.event.release.prerelease && 'next' || 'latest' }}
